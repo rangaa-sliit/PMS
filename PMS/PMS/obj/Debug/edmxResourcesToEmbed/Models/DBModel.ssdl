@@ -1,0 +1,679 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PMSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Appointment">
+    <Key>
+      <PropertyRef Name="AppointmentId" />
+    </Key>
+    <Property Name="AppointmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="AppointmentTypeId" Type="int" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="date" Nullable="false" />
+    <Property Name="AppointmentTo" Type="date" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="AppointmentType">
+    <Key>
+      <PropertyRef Name="AppointmentTypeId" />
+    </Key>
+    <Property Name="AppointmentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AppointmentTypeName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ApprovalStages">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="StageName" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="250" />
+    <Property Name="Priority" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="CalendarPeriod">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PeriodName" Type="nvarchar" MaxLength="150" />
+    <Property Name="Description" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Campus">
+    <Key>
+      <PropertyRef Name="CampusId" />
+    </Key>
+    <Property Name="CampusId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CampusName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ConductedLectures">
+    <Key>
+      <PropertyRef Name="CLId" />
+    </Key>
+    <Property Name="CLId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="LectureDate" Type="date" Nullable="false" />
+    <Property Name="StartTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="EndTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="LectureTypeId" Type="int" Nullable="false" />
+    <Property Name="LectureHallId" Type="int" Nullable="false" />
+    <Property Name="Location" Type="int" Nullable="false" />
+    <Property Name="StudentBatchId" Type="int" Nullable="false" />
+    <Property Name="StudentCount" Type="int" Nullable="false" />
+    <Property Name="StudentAttendanceSheet" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ApprovalStageId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ConfigurationalSettings">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ConfigurationKey" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="150" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Degree">
+    <Key>
+      <PropertyRef Name="DegreeId" />
+    </Key>
+    <Property Name="DegreeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="nvarchar" MaxLength="100" />
+    <Property Name="Name" Type="nvarchar" MaxLength="1000" />
+    <Property Name="Description" Type="nvarchar" MaxLength="2000" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentId" />
+    </Key>
+    <Property Name="DepartmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DepartmentCode" Type="nvarchar" MaxLength="100" />
+    <Property Name="DepartmentName" Type="nvarchar" MaxLength="500" Nullable="false" />
+    <Property Name="HOD" Type="nvarchar" MaxLength="50" />
+    <Property Name="FacultyId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Designation">
+    <Key>
+      <PropertyRef Name="DesignationId" />
+    </Key>
+    <Property Name="DesignationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DesignationName" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Faculty">
+    <Key>
+      <PropertyRef Name="FacultyId" />
+    </Key>
+    <Property Name="FacultyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FacultyCode" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="FacultyName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="DEAN" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Institute">
+    <Key>
+      <PropertyRef Name="InstituteId" />
+    </Key>
+    <Property Name="InstituteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="InstituteCode" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="InstituteName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="LectureHall">
+    <Key>
+      <PropertyRef Name="HallId" />
+    </Key>
+    <Property Name="HallId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CampusId" Type="int" Nullable="false" />
+    <Property Name="Building" Type="nvarchar" MaxLength="150" />
+    <Property Name="Floor" Type="nvarchar" MaxLength="150" />
+    <Property Name="HallName" Type="nvarchar" MaxLength="150" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="LectureType">
+    <Key>
+      <PropertyRef Name="LectureTypeId" />
+    </Key>
+    <Property Name="LectureTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LectureTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PaymentRate">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DegreeId" Type="int" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="SubjectId" Type="int" />
+    <Property Name="DesignationId" Type="int" />
+    <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="IsApproved" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SemesterRegistration">
+    <Key>
+      <PropertyRef Name="SemesterId" />
+    </Key>
+    <Property Name="SemesterId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AcadamicYear" Type="int" Nullable="false" />
+    <Property Name="AcadamicSemester" Type="int" Nullable="false" />
+    <Property Name="From" Type="datetime" Nullable="false" />
+    <Property Name="To" Type="datetime" Nullable="false" />
+    <Property Name="DegreeId" Type="int" Nullable="false" />
+    <Property Name="CalendarYear" Type="int" Nullable="false" />
+    <Property Name="CalendarPeriod" Type="int" Nullable="false" />
+    <Property Name="FacultyId" Type="int" Nullable="false" />
+    <Property Name="InstituteId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SemesterSubject">
+    <Key>
+      <PropertyRef Name="SemesterRegistrationId" />
+      <PropertyRef Name="SubjectId" />
+    </Key>
+    <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
+    <Property Name="SubjectId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Specialization">
+    <Key>
+      <PropertyRef Name="SpecializationId" />
+    </Key>
+    <Property Name="SpecializationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="nvarchar" MaxLength="100" />
+    <Property Name="Name" Type="nvarchar" MaxLength="1000" />
+    <Property Name="DegreeId" Type="int" Nullable="false" />
+    <Property Name="InstituteId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="StudentBatch">
+    <Key>
+      <PropertyRef Name="StudentBatchId" />
+    </Key>
+    <Property Name="StudentBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CalendarYear" Type="int" Nullable="false" />
+    <Property Name="CalendarPeriod" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="Degree" Type="nvarchar" MaxLength="1000" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Subject">
+    <Key>
+      <PropertyRef Name="SubjectId" />
+    </Key>
+    <Property Name="SubjectId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SubjectCode" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="SubjectName" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <Association Name="FK_Appointment_AppointmentType">
+    <End Role="AppointmentType" Type="Self.AppointmentType" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AppointmentType">
+        <PropertyRef Name="AppointmentTypeId" />
+      </Principal>
+      <Dependent Role="Appointment">
+        <PropertyRef Name="AppointmentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLectures_ApprovalStages">
+    <End Role="ApprovalStages" Type="Self.ApprovalStages" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ApprovalStages">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="ApprovalStageId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLectures_Campus">
+    <End Role="Campus" Type="Self.Campus" Multiplicity="1" />
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Campus">
+        <PropertyRef Name="CampusId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="Location" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLectures_LectureHall">
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="LectureHallId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLectures_LectureType">
+    <End Role="LectureType" Type="Self.LectureType" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLectures_StudentBatch">
+    <End Role="StudentBatch" Type="Self.StudentBatch" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="StudentBatch">
+        <PropertyRef Name="StudentBatchId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="StudentBatchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Degree_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="Degree">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Department_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Department" Type="Self.Department" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="Department">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureHall_Campus">
+    <End Role="Campus" Type="Self.Campus" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Campus">
+        <PropertyRef Name="CampusId" />
+      </Principal>
+      <Dependent Role="LectureHall">
+        <PropertyRef Name="CampusId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRate_Degree">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRate_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRate_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRate_Subject">
+    <End Role="Subject" Type="Self.Subject" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Subject">
+        <PropertyRef Name="SubjectId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Degree">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="1" />
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Institute">
+    <End Role="Institute" Type="Self.Institute" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Institute">
+        <PropertyRef Name="InstituteId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="InstituteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterSubject_SemesterRegistration">
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="SemesterSubject">
+        <PropertyRef Name="SemesterRegistrationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterSubject_Subject">
+    <End Role="Subject" Type="Self.Subject" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Subject">
+        <PropertyRef Name="SubjectId" />
+      </Principal>
+      <Dependent Role="SemesterSubject">
+        <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Specialization_Degree">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="Specialization">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Specialization_Institute">
+    <End Role="Institute" Type="Self.Institute" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Institute">
+        <PropertyRef Name="InstituteId" />
+      </Principal>
+      <Dependent Role="Specialization">
+        <PropertyRef Name="InstituteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="PMSModelStoreContainer">
+    <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ApprovalStages" EntityType="Self.ApprovalStages" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CalendarPeriod" EntityType="Self.CalendarPeriod" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Campus" EntityType="Self.Campus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ConductedLectures" EntityType="Self.ConductedLectures" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ConfigurationalSettings" EntityType="Self.ConfigurationalSettings" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Degree" EntityType="Self.Degree" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Faculty" EntityType="Self.Faculty" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StudentBatch" EntityType="Self.StudentBatch" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Appointment_AppointmentType" Association="Self.FK_Appointment_AppointmentType">
+      <End Role="AppointmentType" EntitySet="AppointmentType" />
+      <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="Self.FK_ConductedLectures_ApprovalStages">
+      <End Role="ApprovalStages" EntitySet="ApprovalStages" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_Campus" Association="Self.FK_ConductedLectures_Campus">
+      <End Role="Campus" EntitySet="Campus" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_LectureHall" Association="Self.FK_ConductedLectures_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_LectureType" Association="Self.FK_ConductedLectures_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_StudentBatch" Association="Self.FK_ConductedLectures_StudentBatch">
+      <End Role="StudentBatch" EntitySet="StudentBatch" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Degree_Faculty" Association="Self.FK_Degree_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Degree" EntitySet="Degree" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Department_Faculty" Association="Self.FK_Department_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Department" EntitySet="Department" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureHall_Campus" Association="Self.FK_LectureHall_Campus">
+      <End Role="Campus" EntitySet="Campus" />
+      <End Role="LectureHall" EntitySet="LectureHall" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_Designation" Association="Self.FK_PaymentRate_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_Faculty" Association="Self.FK_PaymentRate_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_Subject" Association="Self.FK_PaymentRate_Subject">
+      <End Role="Subject" EntitySet="Subject" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Degree" Association="Self.FK_SemesterRegistration_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Faculty" Association="Self.FK_SemesterRegistration_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Institute" Association="Self.FK_SemesterRegistration_Institute">
+      <End Role="Institute" EntitySet="Institute" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubject_SemesterRegistration" Association="Self.FK_SemesterSubject_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubject_Subject" Association="Self.FK_SemesterSubject_Subject">
+      <End Role="Subject" EntitySet="Subject" />
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Specialization_Degree" Association="Self.FK_Specialization_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="Specialization" EntitySet="Specialization" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Specialization_Institute" Association="Self.FK_Specialization_Institute">
+      <End Role="Institute" EntitySet="Institute" />
+      <End Role="Specialization" EntitySet="Specialization" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

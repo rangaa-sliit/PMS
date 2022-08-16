@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/DataTable/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body id="page-top">
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Popper/js")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <div id="loader"></div>
+    <div id="wrapper">
+        @Html.Partial("~/Views/Shared/Sidebar.cshtml")
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                @Html.Partial("~/Views/Shared/TopNavbar.cshtml")
+
+                <hr class="ml-2 mr-2 mb-0" />
+
+                @RenderBody()
+            </div>
+            @Html.Partial("~/Views/Shared/Footer.cshtml")
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    @Scripts.Render("~/DataTable/js")
+    @Scripts.Render("~/Notify/js")
+    <script>
+        $(document).ready(function () {
+            $('#accordionSidebar').find('li.active').removeClass('active');
+
+            var cPath = window.location.pathname;
+            var splittedPath = cPath.split("/");
+            //var cAction = splittedPath[1] + "/" + splittedPath[2];
+            //alert(cAction);
+            //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
+            //alert(cPage);
+            if (splittedPath[2] == undefined) {
+                $('#dashboard-nav-item').addClass('active');
+            }
+            else if (splittedPath[2] == 'ManageInstitutes' || splittedPath[2] == 'AddOrEditInstitute') {
+                $('#masterData-nav-item').addClass('active');
+            }
+        })
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

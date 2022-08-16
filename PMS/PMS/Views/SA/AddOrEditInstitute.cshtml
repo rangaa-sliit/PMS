@@ -1,0 +1,173 @@
+﻿@model PMS.Models.Institute
+
+@{
+    ViewBag.Title = "AddOrEditInstitute";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageInstitutes", "SA")">Manage Institutes</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeInstituteMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeInstituteCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditInstitute", "SA", FormMethod.Post, new { onsubmit = "return SubmitInstituteForm(this)", @id = "instituteForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.InstituteId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.InstituteCode, "Institute Code: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.InstituteCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Institute Code", @id = "instituteCode", oninput = "onInstituteCodeInput()" } })
+                        @Html.ValidationMessageFor(model => model.InstituteCode)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.InstituteName, "Institute Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.InstituteName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Institute Name", @id = "instituteName", oninput = "onInstituteNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.InstituteName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "instituteStatusList", onchange = "onInstituteStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="instituteSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="instituteClearBtn" onclick="clearInstituteForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $("#loader").hide();
+        var operation;
+        //var oldInstituteCode, oldInstituteName, oldInstituteStatus, resourceGroupFormOpenAction, resourceGroupDataTable;
+        //var isResourceGroupFormStatusChanged = false;
+        //var resorceGroupData = null;
+        //var resGroupForm = null;
+        //var resourceGroupStatus = null;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#instituteSubmitBtn").prop("disabled", true);
+                $("#instituteClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeInstituteMainTitle").html("Edit Institutes");
+                    $("#aeInstituteCardTitle").html("Edit Institutes");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Institute</li>`);
+                    //oldInstituteCode = $("#instituteCode").val();
+                    //oldInstituteName = $("#instituteName").val();
+                    //oldInstituteStatus = $("instituteStatusList :selected").val();
+                }
+                else {
+                    $("#aeInstituteMainTitle").html("View Institutes");
+                    $("#aeInstituteCardTitle").html("View Institutes");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Institute</li>`);
+                    $("#instituteCode").prop("disabled", true);
+                    $("#instituteName").prop("disabled", true);
+                    $("#instituteStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeInstituteMainTitle").html("Add Institutes");
+                $("#aeInstituteCardTitle").html("Add Institutes");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Institute</li>`);
+                $("#instituteStatusList").val("true");
+            }
+        })
+
+        function SubmitInstituteForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#instituteCode").val("");
+                                $("#instituteName").val("");
+                                $("#instituteStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearInstituteForm() {
+            if (operation == undefined) {
+                $("#instituteCode").val("");
+                $("#instituteName").val("");
+                $("#instituteStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onInstituteCodeInput() {
+            $("#instituteSubmitBtn").prop("disabled", false);
+            $("#instituteClearBtn").prop("disabled", false);
+        }
+
+        function onInstituteNameInput() {
+            $("#instituteSubmitBtn").prop("disabled", false);
+            $("#instituteClearBtn").prop("disabled", false);
+        }
+
+        function onInstituteStatusChange(newStatus) {
+            $("#instituteSubmitBtn").prop("disabled", false);
+            $("#instituteClearBtn").prop("disabled", false);
+        }
+    </script>
+}
+
