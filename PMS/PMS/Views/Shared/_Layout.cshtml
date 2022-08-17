@@ -10,11 +10,6 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body id="page-top">
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/Popper/js")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryval")
-
     <div id="loader"></div>
     <div id="wrapper">
         @Html.Partial("~/Views/Shared/Sidebar.cshtml")
@@ -32,6 +27,10 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/Popper/js")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/DataTable/js")
     @Scripts.Render("~/Notify/js")
     <script>
