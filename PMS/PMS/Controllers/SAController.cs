@@ -25,8 +25,8 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<Institute> InstituteList = (from i in db.Institute orderby i.InstituteId descending select i).ToList();
-                return Json(new { data = InstituteList }, JsonRequestBehavior.AllowGet);
+                List<Institute> instituteList = (from i in db.Institute orderby i.InstituteId descending select i).ToList();
+                return Json(new { data = instituteList }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -131,5 +131,36 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        public ActionResult ManageCampuses()
+        {
+            return View();
+        }
+
+        public ActionResult GetCampuses()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Campus> campusesList = (from c in db.Campus orderby c.CampusId descending select c).ToList();
+                return Json(new { data = campusesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult AddOrEditCampus(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Campus());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from c in db.Campus where c.CampusId.Equals(id) select c).FirstOrDefault<Campus>());
+                }
+            }
+        }
+
     }
 }

@@ -64,6 +64,7 @@
             <PropertyRef Name="CampusId" />
           </Key>
           <Property Name="CampusId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CampusCode" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="CampusName" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -858,6 +859,7 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="Campus" ToRole="ConductedLectures" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_LectureHall_Campus" FromRole="Campus" ToRole="LectureHall" />
+          <Property Name="CampusCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ConductedLectures">
           <Key>
@@ -1468,6 +1470,7 @@
           <EntitySetMapping Name="Campus">
             <EntityTypeMapping TypeName="PMSModel.Campus">
               <MappingFragment StoreEntitySet="Campus">
+                <ScalarProperty Name="CampusCode" ColumnName="CampusCode" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />

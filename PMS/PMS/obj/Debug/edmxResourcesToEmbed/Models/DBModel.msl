@@ -62,6 +62,7 @@
     <EntitySetMapping Name="Campus">
       <EntityTypeMapping TypeName="PMSModel.Campus">
         <MappingFragment StoreEntitySet="Campus">
+          <ScalarProperty Name="CampusCode" ColumnName="CampusCode" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />

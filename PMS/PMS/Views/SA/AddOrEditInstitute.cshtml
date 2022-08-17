@@ -82,16 +82,16 @@
                 $("#instituteSubmitBtn").prop("disabled", true);
                 $("#instituteClearBtn").prop("disabled", true);
                 if (operation == "Edit") {
-                    $("#aeInstituteMainTitle").html("Edit Institutes");
-                    $("#aeInstituteCardTitle").html("Edit Institutes");
+                    $("#aeInstituteMainTitle").html("Edit Institute");
+                    $("#aeInstituteCardTitle").html("Edit Institute");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Institute</li>`);
                     //oldInstituteCode = $("#instituteCode").val();
                     //oldInstituteName = $("#instituteName").val();
                     //oldInstituteStatus = $("instituteStatusList :selected").val();
                 }
                 else {
-                    $("#aeInstituteMainTitle").html("View Institutes");
-                    $("#aeInstituteCardTitle").html("View Institutes");
+                    $("#aeInstituteMainTitle").html("View Institute");
+                    $("#aeInstituteCardTitle").html("View Institute");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Institute</li>`);
                     $("#instituteCode").prop("disabled", true);
                     $("#instituteName").prop("disabled", true);
@@ -99,8 +99,8 @@
                 }
             }
             else {
-                $("#aeInstituteMainTitle").html("Add Institutes");
-                $("#aeInstituteCardTitle").html("Add Institutes");
+                $("#aeInstituteMainTitle").html("Add Institute");
+                $("#aeInstituteCardTitle").html("Add Institute");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Institute</li>`);
                 $("#instituteStatusList").val("true");
             }
@@ -170,4 +170,3 @@
         }
     </script>
 }
-

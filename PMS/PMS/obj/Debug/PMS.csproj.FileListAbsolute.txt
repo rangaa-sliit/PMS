@@ -1,3 +1,4 @@
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -12,7 +13,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSha
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CSharp.Core.targets
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
@@ -102,3 +102,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

@@ -403,6 +403,8 @@
     <Content Include="Views\SA\ManageInstitutes.cshtml" />
     <Content Include="Views\Shared\Footer.cshtml" />
     <Content Include="Views\SA\AddOrEditInstitute.cshtml" />
+    <Content Include="Views\SA\ManageCampuses.cshtml" />
+    <Content Include="Views\SA\AddOrEditCampus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
