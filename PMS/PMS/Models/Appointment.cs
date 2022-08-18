@@ -26,5 +26,6 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         public virtual AppointmentType AppointmentType { get; set; }
+        public virtual AspNetUsers AspNetUsers { get; set; }
     }
 }

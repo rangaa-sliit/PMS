@@ -44,18 +44,18 @@
             "columns": [
                 {
                     "title": "",
-                        "data": "InstituteId",
-                        "render": function (data) {
-                            return `<div class='dropdown dropright'>`
-                                    + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                                    + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                                    + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                    + `<a class='dropdown-item btn' onclick="NavigateInstituteForm('@Url.Action("AddOrEditInstitute", "SA")/` + data + `', 'View')">View Institute</a>`
-                                    + `<a class='dropdown-item btn' onclick="NavigateInstituteForm('@Url.Action("AddOrEditInstitute", "SA")/` + data + `', 'Edit')">Edit Institute</a></div></div>`
-                        },
-                        "orderable": false,
-                        "searchable": false,
-                        "width": "20px"
+                    "data": "InstituteId",
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="NavigateInstituteForm('@Url.Action("AddOrEditInstitute", "SA")/` + data + `', 'View')">View Institute</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateInstituteForm('@Url.Action("AddOrEditInstitute", "SA")/` + data + `', 'Edit')">Edit Institute</a></div></div>`
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
                 },
                 {
                     "title": "Code",

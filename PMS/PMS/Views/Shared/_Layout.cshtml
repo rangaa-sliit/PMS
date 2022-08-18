@@ -34,6 +34,8 @@
     @Scripts.Render("~/DataTable/js")
     @Scripts.Render("~/Notify/js")
     <script>
+        $("#loader").hide();
+
         $(document).ready(function () {
             $('#accordionSidebar').find('li.active').removeClass('active');
 

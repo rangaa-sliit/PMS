@@ -29,9 +29,15 @@ namespace PMS.Models
         public virtual DbSet<Appointment> Appointment { get; set; }
         public virtual DbSet<AppointmentType> AppointmentType { get; set; }
         public virtual DbSet<ApprovalStages> ApprovalStages { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<CalendarPeriod> CalendarPeriod { get; set; }
         public virtual DbSet<Campus> Campus { get; set; }
         public virtual DbSet<ConductedLectures> ConductedLectures { get; set; }
+        public virtual DbSet<ConfigurationalSettings> ConfigurationalSettings { get; set; }
         public virtual DbSet<Degree> Degree { get; set; }
         public virtual DbSet<Department> Department { get; set; }
         public virtual DbSet<Designation> Designation { get; set; }
@@ -46,6 +52,6 @@ namespace PMS.Models
         public virtual DbSet<StudentBatch> StudentBatch { get; set; }
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
-        public virtual DbSet<ConfigurationalSettings> ConfigurationalSettings { get; set; }
+        public virtual DbSet<Title> Title { get; set; }
     }
 }

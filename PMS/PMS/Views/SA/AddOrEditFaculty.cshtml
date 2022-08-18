@@ -1,0 +1,181 @@
+﻿@model PMS.Models.Faculty
+
+@{
+    ViewBag.Title = "AddOrEditFaculty";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageFaculties", "SA")">Manage Faculties</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeFacultyMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeFacultyCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditFaculty", "SA", FormMethod.Post, new { onsubmit = "return SubmitFacultyForm(this)", @id = "facultyForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.FacultyId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyCode, "Faculty Code: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FacultyCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Faculty Code", @id = "facultyCode", oninput = "onFacultyCodeInput()" } })
+                        @Html.ValidationMessageFor(model => model.FacultyCode)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyName, "Faculty Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FacultyName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Faculty Name", @id = "facultyName", oninput = "onFacultyNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.FacultyName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyDean, "Faculty Dean: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyDean, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "facultyStatusList", onchange = "onFacultyStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="facultySubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="facultyClearBtn" onclick="clearFacultyForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#facultySubmitBtn").prop("disabled", true);
+                $("#facultyClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeFacultyMainTitle").html("Edit Faculty");
+                    $("#aeFacultyCardTitle").html("Edit Faculty");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Faculty</li>`);
+                }
+                else {
+                    $("#aeFacultyMainTitle").html("View Faculty");
+                    $("#aeFacultyCardTitle").html("View Faculty");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Faculty</li>`);
+                    $("#facultyCode").prop("disabled", true);
+                    $("#facultyName").prop("disabled", true);
+                    $("#usersList").prop("disabled", true);
+                    $("#facultyStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeFacultyMainTitle").html("Add Faculty");
+                $("#aeFacultyCardTitle").html("Add Faculty");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Faculty</li>`);
+                $("#facultyStatusList").val("true");
+            }
+        })
+
+        function SubmitFacultyForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#facultyCode").val("");
+                                $("#facultyName").val("");
+                                $("#usersList").val("");
+                                $("#facultyStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearFacultyForm() {
+            if (operation == undefined) {
+                $("#facultyCode").val("");
+                $("#facultyName").val("");
+                $("#usersList").val("");
+                $("#facultyStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onFacultyCodeInput() {
+            $("#facultySubmitBtn").prop("disabled", false);
+            $("#facultyClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyNameInput() {
+            $("#facultySubmitBtn").prop("disabled", false);
+            $("#facultyClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyDeanChange(newDean) {
+            $("#facultySubmitBtn").prop("disabled", false);
+            $("#facultyClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyStatusChange(newStatus) {
+            $("#facultySubmitBtn").prop("disabled", false);
+            $("#facultyClearBtn").prop("disabled", false);
+        }
+    </script>
+}
+

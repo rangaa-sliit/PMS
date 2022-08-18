@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "ManageCampuses";
+    ViewBag.Title = "ManageFaculties";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -7,22 +7,22 @@
     <div class="col-12">
         <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
-            <li class="breadcrumb-item active">Manage Campuses</li>
+            <li class="breadcrumb-item active">Manage Faculties</li>
         </ol>
     </div>
 </div>
 <hr class="ml-2 mr-2 mt-0 mb-2" />
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Manage Campuses</h1>
+    <h1 class="h3 mb-2 text-gray-800">Manage Faculties</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Campuses</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Faculties</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateFacultiesForm('@Url.Action("AddOrEditFaculty", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="campusTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="facultyTbl" class="table table-bordered data-table nowrap"></table>
             </div>
         </div>
     </div>
@@ -30,28 +30,28 @@
 
 @section scripts {
     <script>
-        var campusTbl;
+        var facultyTbl;
 
-        campusTbl = $("#campusTbl").DataTable({
+        facultyTbl = $("#facultyTbl").DataTable({
             "scrollY": "30vh",
             "scroller": true,
             "order": [],
             "ajax": {
-                "url": "@Url.Action("GetCampuses", "SA")",
+                "url": "@Url.Action("GetFaculties", "SA")",
                 "type": "GET",
                 "dataType": "json"
             },
             "columns": [
                 {
                     "title": "",
-                    "data": "CampusId",
+                    "data": "FacultyId",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'View')">View Campuses</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'Edit')">Edit Campuses</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="NavigateFacultiesForm('@Url.Action("AddOrEditFaculty", "SA")/` + data + `', 'View')">View Faculty</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateFacultiesForm('@Url.Action("AddOrEditFaculty", "SA")/` + data + `', 'Edit')">Edit Faculty</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,
@@ -59,11 +59,23 @@
                 },
                 {
                     "title": "Code",
-                    "data": "CampusCode"
+                    "data": "FacultyCode"
                 },
                 {
                     "title": "Name",
-                    "data": "CampusName"
+                    "data": "FacultyName"
+                },
+                {
+                    "title": "Faculty Dean",
+                    "data": "FacultyDean",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
                 },
                 {
                     "title": "Status",
@@ -79,11 +91,11 @@
                 }
             ],
             "language": {
-                "emptyTable": "No Campuses Found!"
+                "emptyTable": "No Faculties Found!"
             }
         })
 
-        function NavigateCampusesForm(url, action) {
+        function NavigateFacultiesForm(url, action) {
             if (action == "Add") {
                 window.location.href = url;
             }
@@ -96,3 +108,4 @@
         }
     </script>
 }
+

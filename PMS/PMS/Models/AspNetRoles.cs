@@ -12,26 +12,25 @@ namespace PMS.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class PaymentRate
+    public partial class AspNetRoles
     {
-        public int Id { get; set; }
-        public Nullable<int> DegreeId { get; set; }
-        public Nullable<int> SpecializationId { get; set; }
-        public Nullable<int> FacultyId { get; set; }
-        public Nullable<int> SubjectId { get; set; }
-        public int DesignationId { get; set; }
-        public double RatePerHour { get; set; }
-        public bool IsApproved { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public AspNetRoles()
+        {
+            this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
+        }
+    
+        public string Id { get; set; }
+        public string Name { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+        public string ConcurrencyStamp { get; set; }
+        public string NormalizedName { get; set; }
     
-        public virtual Degree Degree { get; set; }
-        public virtual Designation Designation { get; set; }
-        public virtual Faculty Faculty { get; set; }
-        public virtual Specialization Specialization { get; set; }
-        public virtual Subject Subject { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
     }
 }

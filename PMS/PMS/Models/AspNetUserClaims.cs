@@ -12,20 +12,13 @@ namespace PMS.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Department
+    public partial class AspNetUserClaims
     {
-        public int DepartmentId { get; set; }
-        public string DepartmentCode { get; set; }
-        public string DepartmentName { get; set; }
-        public string HOD { get; set; }
-        public int FacultyId { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public string CreatedBy { get; set; }
-        public System.DateTime ModifiedDate { get; set; }
-        public string ModifiedBy { get; set; }
-        public bool IsActive { get; set; }
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        public string ClaimType { get; set; }
+        public string ClaimValue { get; set; }
     
         public virtual AspNetUsers AspNetUsers { get; set; }
-        public virtual Faculty Faculty { get; set; }
     }
 }
