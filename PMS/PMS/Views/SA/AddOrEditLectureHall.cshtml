@@ -1,0 +1,198 @@
+﻿@model PMS.ViewModels.LectureHallVM
+
+@{
+    ViewBag.Title = "AddOrEditLectureHall";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageLectureHalls", "SA")">Manage Lecture Halls</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeLectureHallMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeLectureHallCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditLectureHall", "SA", FormMethod.Post, new { onsubmit = "return SubmitLectureHallForm(this)", @id = "lectureHallForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.HallId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.CampusId, "Campus: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList", onchange = "onCampusChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.CampusId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Building, "Building: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Building, new { htmlAttributes = new { @class = "form-control", @placeholder = "Building", @id = "building", oninput = "onBuildingInput()" } })
+                        @Html.ValidationMessageFor(model => model.Building)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Floor, "Floor: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Floor, new { htmlAttributes = new { @class = "form-control", @placeholder = "Floor", @id = "floor", oninput = "onFloorInput()" } })
+                        @Html.ValidationMessageFor(model => model.Floor)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.HallName, "Hall Name: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.HallName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Hall Name", @id = "hallName", oninput = "onHallNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.HallName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "lectureHallStatusList", onchange = "onLectureHallStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="lectureHallSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="lectureHallClearBtn" onclick="clearLectureHallForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#lectureHallSubmitBtn").prop("disabled", true);
+                $("#lectureHallClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeLectureHallMainTitle").html("Edit Lecture Hall");
+                    $("#aeLectureHallCardTitle").html("Edit Lecture Hall");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Lecture Hall</li>`);
+                }
+                else {
+                    $("#aeLectureHallMainTitle").html("View Lecture Hall");
+                    $("#aeLectureHallCardTitle").html("View Lecture Hall");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Lecture Hall</li>`);
+                    $("#campusList").prop("disabled", true);
+                    $("#building").prop("disabled", true);
+                    $("#floor").prop("disabled", true);
+                    $("#hallName").prop("disabled", true);
+                    $("#lectureHallStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeLectureHallMainTitle").html("Add Lecture Hall");
+                $("#aeLectureHallCardTitle").html("Add Lecture Hall");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Lecture Hall</li>`);
+                $("#lectureHallStatusList").val("true");
+            }
+        })
+
+        function SubmitLectureHallForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#campusList").val("");
+                                $("#building").val("");
+                                $("#floor").val("");
+                                $("#hallName").val("");
+                                $("#lectureHallStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearLectureHallForm() {
+            if (operation == undefined) {
+                $("#campusList").val("");
+                $("#building").val("");
+                $("#floor").val("");
+                $("#hallName").val("");
+                $("#lectureHallStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onCampusChange(newCampus) {
+            $("#lectureHallSubmitBtn").prop("disabled", false);
+            $("#lectureHallClearBtn").prop("disabled", false);
+        }
+
+        function onBuildingInput() {
+            $("#lectureHallSubmitBtn").prop("disabled", false);
+            $("#lectureHallClearBtn").prop("disabled", false);
+        }
+
+        function onFloorInput() {
+            $("#lectureHallSubmitBtn").prop("disabled", false);
+            $("#lectureHallClearBtn").prop("disabled", false);
+        }
+
+        function onHallNameInput() {
+            $("#lectureHallSubmitBtn").prop("disabled", false);
+            $("#lectureHallClearBtn").prop("disabled", false);
+        }
+
+        function onLectureHallStatusChange(newStatus) {
+            $("#lectureHallSubmitBtn").prop("disabled", false);
+            $("#lectureHallClearBtn").prop("disabled", false);
+        }
+    </script>
+}

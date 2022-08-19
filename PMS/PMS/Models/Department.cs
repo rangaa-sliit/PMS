@@ -18,7 +18,7 @@ namespace PMS.Models
         public string DepartmentCode { get; set; }
         public string DepartmentName { get; set; }
         public string HOD { get; set; }
-        public int FacultyId { get; set; }
+        public Nullable<int> FacultyId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }

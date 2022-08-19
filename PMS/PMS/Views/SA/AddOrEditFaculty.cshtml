@@ -1,4 +1,4 @@
-﻿@model PMS.Models.Faculty
+﻿@model PMS.ViewModels.FacultyVM
 
 @{
     ViewBag.Title = "AddOrEditFaculty";
@@ -46,10 +46,10 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.FacultyDean, "Faculty Dean: ")
+                        @Html.LabelFor(model => model.FacultyDeanId, "Faculty Dean: ")
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.FacultyDean, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
+                        @Html.DropDownListFor(model => model.FacultyDeanId, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
                     </div>
                 </div>
                 <div class="form-group row">
@@ -178,4 +178,3 @@
         }
     </script>
 }
-

@@ -378,7 +378,7 @@
     <Property Name="DepartmentCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="DepartmentName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="HOD" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="FacultyId" Type="Int32" Nullable="false" />
+    <Property Name="FacultyId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -874,7 +874,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Department_Faculty">
-    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="1">
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Type="PMSModel.Department" Role="Department" Multiplicity="*" />

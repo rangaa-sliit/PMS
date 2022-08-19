@@ -201,7 +201,7 @@
     <Property Name="DepartmentCode" Type="nvarchar" MaxLength="100" />
     <Property Name="DepartmentName" Type="nvarchar" MaxLength="500" Nullable="false" />
     <Property Name="HOD" Type="nvarchar" MaxLength="256" />
-    <Property Name="FacultyId" Type="int" Nullable="false" />
+    <Property Name="FacultyId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -597,7 +597,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Department_Faculty">
-    <End Role="Faculty" Type="Self.Faculty" Multiplicity="1">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="Department" Type="Self.Department" Multiplicity="*" />

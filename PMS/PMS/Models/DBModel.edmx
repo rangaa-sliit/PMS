@@ -206,7 +206,7 @@
           <Property Name="DepartmentCode" Type="nvarchar" MaxLength="100" />
           <Property Name="DepartmentName" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="HOD" Type="nvarchar" MaxLength="256" />
-          <Property Name="FacultyId" Type="int" Nullable="false" />
+          <Property Name="FacultyId" Type="int" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -602,7 +602,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_Faculty">
-          <End Role="Faculty" Type="Self.Faculty" Multiplicity="1">
+          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Department" Type="Self.Department" Multiplicity="*" />
@@ -1334,7 +1334,7 @@
           <Property Name="DepartmentCode" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="DepartmentName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="HOD" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="FacultyId" Type="Int32" Nullable="false" />
+          <Property Name="FacultyId" Type="Int32" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -1830,7 +1830,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_Faculty">
-          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="1">
+          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Type="PMSModel.Department" Role="Department" Multiplicity="*" />
