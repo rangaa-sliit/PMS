@@ -27,7 +27,7 @@ Modified On:- 2022/08/22*@
             <h6 class="m-0 font-weight-bold text-primary" id="aeConfigurationalSettingsCardTitle"></h6>
         </div>
         <div class="card-body">
-            @using (Html.BeginForm("AddOrEditConfigurationalSettings", "SA", FormMethod.Post, new { onsubmit = "return SubmitConfigurationalSettingsForm(this)", @id = "configurationalSettingsForm", autocomplete = "off" }))
+            @using (Html.BeginForm("AddOrEditConfigurationalSetting", "SA", FormMethod.Post, new { onsubmit = "return SubmitConfigurationalSettingsForm(this)", @id = "configurationalSettingsForm", autocomplete = "off" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(model => model.Id)
@@ -80,7 +80,7 @@ Modified On:- 2022/08/22*@
 
             if (operation != undefined) {
                 $("#configurationalSettingsSubmitBtn").prop("disabled", true);
-                $("#configurationalSettingsSubmitBtn").prop("disabled", true);
+                $("#configurationalSettingsClearBtn").prop("disabled", true);
                 if (operation == "Edit") {
                     $("#aeConfigurationalSettingsMainTitle").html("Edit Configuration");
                     $("#aeConfigurationalSettingsCardTitle").html("Edit Configuration");

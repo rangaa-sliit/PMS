@@ -11,8 +11,7 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
+    
     public partial class Faculty
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -26,11 +25,7 @@ namespace PMS.Models
         }
     
         public int FacultyId { get; set; }
-        //[Required(ErrorMessage = "Faculty Code is required")]
-        //[MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string FacultyCode { get; set; }
-        //[Required(ErrorMessage = "Faculty Name is required")]
-        //[MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string FacultyName { get; set; }
         public string FacultyDean { get; set; }
         public System.DateTime CreatedDate { get; set; }
