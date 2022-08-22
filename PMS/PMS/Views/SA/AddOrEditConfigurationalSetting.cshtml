@@ -1,0 +1,169 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+Developed On:- 2022/08/19
+Modified By:- Ranga Athapaththu
+Modified On:- 2022/08/22*@
+
+@model PMS.Models.ConfigurationalSettings
+
+@{
+    ViewBag.Title = "AddOrEditConfigurationalSetting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageConfigurationalSettings", "SA")">Manage Configurations</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeConfigurationalSettingsMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeConfigurationalSettingsCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditConfigurationalSettings", "SA", FormMethod.Post, new { onsubmit = "return SubmitConfigurationalSettingsForm(this)", @id = "configurationalSettingsForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ConfigurationKey, "Configuration Key: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ConfigurationKey, new { htmlAttributes = new { @class = "form-control", @placeholder = "Configuration Key", @id = "configurationKey", oninput = "onConfigurationKeyInput()" } })
+                        @Html.ValidationMessageFor(model => model.ConfigurationKey)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ConfigurationValue, "Configuration Value: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ConfigurationValue, new { htmlAttributes = new { @class = "form-control", @placeholder = "Configuration Value", @id = "configurationValue", oninput = "onConfigurationValueInput()" } })
+                        @Html.ValidationMessageFor(model => model.ConfigurationValue)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "configurationalSettingsStatusList", onchange = "onConfigurationalSettingsStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="configurationalSettingsSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="configurationalSettingsClearBtn" onclick="clearConfigurationalSettingsForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $("#loader").hide();
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#configurationalSettingsSubmitBtn").prop("disabled", true);
+                $("#configurationalSettingsSubmitBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeConfigurationalSettingsMainTitle").html("Edit Configuration");
+                    $("#aeConfigurationalSettingsCardTitle").html("Edit Configuration");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Configuration</li>`);
+                }
+                else {
+                    $("#aeConfigurationalSettingsMainTitle").html("View Configuration");
+                    $("#aeConfigurationalSettingsCardTitle").html("View Configuration");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Configuration</li>`);
+                    $("#configurationKey").prop("disabled", true);
+                    $("#configurationValue").prop("disabled", true);
+                    $("#configurationalSettingsStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeConfigurationalSettingsMainTitle").html("Add Configuration");
+                $("#aeConfigurationalSettingsCardTitle").html("Add Configuration");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Configuration</li>`);
+                $("#configurationalSettingsStatusList").val("true");
+            }
+        })
+
+        function SubmitConfigurationalSettingsForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#configurationKey").val("");
+                                $("#configurationValue").val("");
+                                $("#configurationalSettingsList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearConfigurationalSettingsForm() {
+            if (operation == undefined) {
+                $("#configurationKey").val("");
+                $("#configurationValue").val("");
+                $("#configurationalSettingsStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onConfigurationKeyInput() {
+            $("#configurationalSettingsSubmitBtn").prop("disabled", false);
+            $("#configurationalSettingsClearBtn").prop("disabled", false);
+        }
+
+        function onConfigurationValueInput() {
+            $("#configurationalSettingsSubmitBtn").prop("disabled", false);
+            $("#configurationalSettingsClearBtn").prop("disabled", false);
+        }
+
+        function onConfigurationalSettingsStatusChange(newStatus) {
+            $("#configurationalSettingsSubmitBtn").prop("disabled", false);
+            $("#configurationalSettingsClearBtn").prop("disabled", false);
+        }
+    </script>
+}

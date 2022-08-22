@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class AppointmentType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,6 +22,8 @@ namespace PMS.Models
         }
     
         public int AppointmentTypeId { get; set; }
+        [Required(ErrorMessage = "Appointment Type is required")]
+        [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string AppointmentTypeName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

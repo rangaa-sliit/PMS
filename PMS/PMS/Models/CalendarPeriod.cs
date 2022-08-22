@@ -11,11 +11,15 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class CalendarPeriod
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "Calendar Period is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string PeriodName { get; set; }
+        [MaxLength(250, ErrorMessage = "Maximum 250 characters exceeded")]
         public string Description { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

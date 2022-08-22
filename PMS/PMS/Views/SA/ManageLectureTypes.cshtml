@@ -1,0 +1,99 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+Developed On:- 2022/08/18
+Modified By:- Ranga Athapaththu
+Modified On:- 2022/08/22*@
+
+@{
+    ViewBag.Title = "ManageLectureTypes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item active">Manage Lecture Types</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Lecture Types</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lecture Types</h6>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateLectureTypeForm('@Url.Action("AddOrEditLectureType", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <div class="table-responsive">
+                <table id="lectureTypeTbl" class="table table-bordered data-table nowrap"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var lectureTypeTbl;
+
+        lectureTypeTbl = $("#lectureTypeTbl").DataTable({
+            "scrollY": "30vh",
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetLectureTypes", "SA")",
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": "LectureTypeId",
+                        "render": function (data) {
+                            return `<div class='dropdown dropright'>`
+                                    + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                    + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                    + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="NavigateLectureTypeForm('@Url.Action("AddOrEditLectureType", "SA")/` + data + `', 'View')">View Lecture Type</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateLectureTypeForm('@Url.Action("AddOrEditLectureType", "SA")/` + data + `', 'Edit')">Edit Lecture Type</a></div></div>`
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "20px"
+                },
+                {
+                    "title": "Name",
+                    "data": "LectureTypeName"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Lecture Types Found!"
+            }
+        })
+
+        function NavigateLectureTypeForm(url, action) {
+            if (action == "Add") {
+                window.location.href = url;
+            }
+            else if (action == "Edit") {
+                window.location.href = url + "/Edit";
+            }
+            else {
+                window.location.href = url + "/View";
+            }
+        }
+    </script>
+}

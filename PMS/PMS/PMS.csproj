@@ -432,6 +432,16 @@
     <Content Include="Views\SA\AddOrEditDepartment.cshtml" />
     <Content Include="Views\SA\ManageLectureHalls.cshtml" />
     <Content Include="Views\SA\AddOrEditLectureHall.cshtml" />
+    <Content Include="Views\SA\ManageUserTitles.cshtml" />
+    <Content Include="Views\SA\AddOrEditUserTitle.cshtml" />
+    <Content Include="Views\SA\ManageCalendarPeriods.cshtml" />
+    <Content Include="Views\SA\AddOrEditCalendarPeriod.cshtml" />
+    <Content Include="Views\SA\ManageAppointmentTypes.cshtml" />
+    <Content Include="Views\SA\AddOrEditAppointmentType.cshtml" />
+    <Content Include="Views\SA\ManageLectureTypes.cshtml" />
+    <Content Include="Views\SA\AddOrEditLectureType.cshtml" />
+    <Content Include="Views\SA\ManageConfigurationalSettings.cshtml" />
+    <Content Include="Views\SA\AddOrEditConfigurationalSetting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

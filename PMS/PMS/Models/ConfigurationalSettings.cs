@@ -11,11 +11,16 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class ConfigurationalSettings
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "Configuration Key is required")]
+        [MaxLength(250, ErrorMessage = "Maximum 250 characters exceeded")]
         public string ConfigurationKey { get; set; }
+        [Required(ErrorMessage = "Configuration Value is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string ConfigurationValue { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

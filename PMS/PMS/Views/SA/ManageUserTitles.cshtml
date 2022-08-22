@@ -1,8 +1,8 @@
 ﻿@*Developed By:- Ranga Athapaththu
-Developed On:- 2022/08/19*@
+Developed On:- 2022/08/22*@
 
 @{
-    ViewBag.Title = "ManageDepartments";
+    ViewBag.Title = "ManageUserTitles";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,22 +10,22 @@ Developed On:- 2022/08/19*@
     <div class="col-12">
         <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
-            <li class="breadcrumb-item active">Manage Departments</li>
+            <li class="breadcrumb-item active">Manage User Titles</li>
         </ol>
     </div>
 </div>
 <hr class="ml-2 mr-2 mt-0 mb-2" />
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Manage Departments</h1>
+    <h1 class="h3 mb-2 text-gray-800">Manage User Titles</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Departments</h6>
+            <h6 class="m-0 font-weight-bold text-primary">User Titles</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateDepartmentsForm('@Url.Action("AddOrEditDepartment", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateUserTitlesForm('@Url.Action("AddOrEditUserTitle", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="departmentTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="userTitlesTbl" class="table table-bordered data-table nowrap"></table>
             </div>
         </div>
     </div>
@@ -33,62 +33,46 @@ Developed On:- 2022/08/19*@
 
 @section scripts {
     <script>
-        var departmentTbl;
+        var userTitlesTbl;
 
-        departmentTbl = $("#departmentTbl").DataTable({
+        userTitlesTbl = $("#userTitlesTbl").DataTable({
             "scrollY": "30vh",
             "scroller": true,
             "order": [],
             "ajax": {
-                "url": "@Url.Action("GetDepartments", "SA")",
+                "url": "@Url.Action("GetUserTitles", "SA")",
                 "type": "GET",
                 "dataType": "json"
             },
             "columns": [
                 {
                     "title": "",
-                    "data": "DepartmentId",
+                    "data": "TitleId",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateDepartmentsForm('@Url.Action("AddOrEditDepartment", "SA")/` + data + `', 'View')">View Department</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateDepartmentsForm('@Url.Action("AddOrEditDepartment", "SA")/` + data + `', 'Edit')">Edit Department</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="NavigateUserTitlesForm('@Url.Action("AddOrEditUserTitle", "SA")/` + data + `', 'View')">View User Titles</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateUserTitlesForm('@Url.Action("AddOrEditUserTitle", "SA")/` + data + `', 'Edit')">Edit User Titles</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,
                     "width": "20px"
                 },
                 {
-                    "title": "Code",
-                    "data": "DepartmentCode"
+                    "title": "Title Name",
+                    "data": "TitleName"
                 },
                 {
-                    "title": "Name",
-                    "data": "DepartmentName"
-                },
-                {
-                    "title": "HOD",
-                    "data": "HOD",
+                    "title": "Description",
+                    "data": "Description",
                     "render": function (data) {
                         if (data == null) {
-                            return "N/A";
+                            return 'N/A';
                         }
                         else {
-                            return data.FirstName + " " + data.LastName;
-                        }
-                    }
-                },
-                {
-                    "title": "Faculty",
-                    "data": "Faculty",
-                    "render": function (data) {
-                        if (data == null) {
-                            return "N/A";
-                        }
-                        else {
-                            return data.FacultyName;
+                            return data;
                         }
                     }
                 },
@@ -106,11 +90,11 @@ Developed On:- 2022/08/19*@
                 }
             ],
             "language": {
-                "emptyTable": "No Departments Found!"
+                "emptyTable": "No User Titles Found!"
             }
         })
 
-        function NavigateDepartmentsForm(url, action) {
+        function NavigateUserTitlesForm(url, action) {
             if (action == "Add") {
                 window.location.href = url;
             }

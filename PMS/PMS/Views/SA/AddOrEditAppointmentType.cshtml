@@ -1,0 +1,153 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+Developed On:- 2022/08/18
+Modified By:- Ranga Athapaththu
+Modified On:- 2022/08/22*@
+
+@model PMS.Models.AppointmentType
+
+@{
+    ViewBag.Title = "AddOrEditAppointmentType";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageAppointmentTypes", "SA")">Manage Appointment Types</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeAppointmentTypeMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeAppointmentTypeCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditAppointmentType", "SA", FormMethod.Post, new { onsubmit = "return SubmitAppointmentTypeForm(this)", @id = "AppointmentTypeForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.AppointmentTypeId)
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.AppointmentTypeName, "Appointment Type : ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.AppointmentTypeName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Appointment Type", @id = "appointmentTypeName", oninput = "onAppointmentTypeNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.AppointmentTypeName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "appointmentTypeStatusList", onchange = "onAppointmentTypeStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="appointmentTypeSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="appointmentTypeClearBtn" onclick="clearAppointmentTypeForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $("#loader").hide();
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#appointmentTypeSubmitBtn").prop("disabled", true);
+                $("#appointmentTypeClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeAppointmentTypeMainTitle").html("Edit Appointment Type");
+                    $("#aeAppointmentTypeCardTitle").html("Edit Appointment Type");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Appointment Type</li>`);
+                }
+                else {
+                    $("#aeAppointmentTypeMainTitle").html("View Appointment Type");
+                    $("#aeAppointmentTypeCardTitle").html("View Appointment Type");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Appointment Type</li>`);
+                    $("#appointmentTypeName").prop("disabled", true);
+                    $("#appointmentTypeStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeAppointmentTypeMainTitle").html("Add Appointment Type");
+                $("#aeAppointmentTypeCardTitle").html("Add Appointment Type");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Appointment Type</li>`);
+                $("#appointmentTypeStatusList").val("true");
+            }
+        })
+
+        function SubmitAppointmentTypeForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#appointmentTypeName").val("");
+                                $("#appointmentTypeStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearAppointmentTypeForm() {
+            if (operation == undefined) {
+                $("#appointmentTypeName").val("");
+                $("#appointmentTypeStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onAppointmentTypeNameInput() {
+            $("#appointmentTypeSubmitBtn").prop("disabled", false);
+            $("#appointmentTypeClearBtn").prop("disabled", false);
+        }
+
+        function onAppointmentTypeStatusChange(newStatus) {
+            $("#appointmentTypeSubmitBtn").prop("disabled", false);
+            $("#appointmentTypeClearBtn").prop("disabled", false);
+        }
+    </script>
+}

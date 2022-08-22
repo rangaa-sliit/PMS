@@ -1,4 +1,7 @@
-﻿<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/08/16*@
+
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon">
             <img src="~/Content/Images/SLIIT_Logo_Crest.png" height="50" alt="" />
@@ -36,10 +39,11 @@
                 <a class="collapse-item" href="@Url.Action("ManageLectureHalls", "SA")">Lecture Halls</a>
                 <div class="collapse-divider"></div>
                 <h6 class="collapse-header">Other Master Data:</h6>
-                <a class="collapse-item" href="#">Calendar Periods</a>
-                <a class="collapse-item" href="#">Appointment Types</a>
-                <a class="collapse-item" href="#">Lecture Types</a>
-                <a class="collapse-item" href="#">Configurations</a>
+                <a class="collapse-item" href="@Url.Action("ManageUserTitles", "SA")">User Titles</a>
+                <a class="collapse-item" href="@Url.Action("ManageCalendarPeriods", "SA")">Calendar Periods</a>
+                <a class="collapse-item" href="@Url.Action("ManageAppointmentTypes", "SA")">Appointment Types</a>
+                <a class="collapse-item" href="@Url.Action("ManageLectureTypes", "SA")">Lecture Types</a>
+                <a class="collapse-item" href="@Url.Action("ManageConfigurationalSettings", "SA")">Configurations</a>
             </div>
         </div>
     </li>

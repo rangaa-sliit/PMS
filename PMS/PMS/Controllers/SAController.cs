@@ -17,11 +17,15 @@ namespace PMS.Controllers
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         public ActionResult ManageInstitutes()
         {
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         public ActionResult GetInstitutes()
         {
             using (PMSEntities db = new PMSEntities())
@@ -31,6 +35,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         [HttpGet]
         public ActionResult AddOrEditInstitute(int id = 0)
         {
@@ -47,6 +53,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditInstitute(Institute institute)
@@ -155,11 +163,15 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         public ActionResult ManageCampuses()
         {
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         public ActionResult GetCampuses()
         {
             using (PMSEntities db = new PMSEntities())
@@ -169,6 +181,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         [HttpGet]
         public ActionResult AddOrEditCampus(int id = 0)
         {
@@ -185,6 +199,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/17
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditCampus(Campus campus)
@@ -293,11 +309,15 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/18
         public ActionResult ManageFaculties()
         {
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/18
         public ActionResult GetFaculties()
         {
             using (PMSEntities db = new PMSEntities())
@@ -318,6 +338,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/18
         [HttpGet]
         public ActionResult AddOrEditFaculty(int id = 0)
         {
@@ -359,6 +381,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/18
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditFaculty(FacultyVM facultyVM)
@@ -474,11 +498,15 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         public ActionResult ManageDepartments()
         {
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         public ActionResult GetDepartments()
         {
             using (PMSEntities db = new PMSEntities())
@@ -503,6 +531,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         [HttpGet]
         public ActionResult AddOrEditDepartment(int id = 0)
         {
@@ -561,6 +591,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditDepartment(DepartmentVM departmentVM)
@@ -680,11 +712,15 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         public ActionResult ManageLectureHalls()
         {
             return View();
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         public ActionResult GetLectureHalls()
         {
             using (PMSEntities db = new PMSEntities())
@@ -706,6 +742,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         [HttpGet]
         public ActionResult AddOrEditLectureHall(int id = 0)
         {
@@ -747,6 +785,8 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/19
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditLectureHall(LectureHallVM lectureHallVM)
@@ -811,6 +851,646 @@ namespace PMS.Controllers
                             editingLectureHall.ModifiedDate = dateTime;
 
                             db.Entry(editingLectureHall).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        public ActionResult ManageUserTitles()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        public ActionResult GetUserTitles()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Title> titlesList = (from t in db.Title select t).ToList();
+
+                return Json(new { data = titlesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        [HttpGet]
+        public ActionResult AddOrEditUserTitle(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Title());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from t in db.Title where t.TitleId.Equals(id) select t).FirstOrDefault<Title>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditUserTitle(Title title)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (title.TitleId == 0)
+                    {
+                        Title validationRecord = (from t in db.Title where t.TitleName.Equals(title.TitleName) select t).FirstOrDefault<Title>();
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This User Title Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            title.CreatedBy = "Ranga";
+                            title.CreatedDate = dateTime;
+                            title.ModifiedBy = "Ranga";
+                            title.ModifiedDate = dateTime;
+
+                            db.Title.Add(title);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Title editingTitle = (from t in db.Title where t.TitleId.Equals(title.TitleId) select t).FirstOrDefault<Title>();
+
+                        if (editingTitle.TitleName != title.TitleName || editingTitle.Description != title.Description || editingTitle.IsActive != title.IsActive)
+                        {
+                            editingTitle.TitleName = title.TitleName;
+                            editingTitle.Description = title.Description;
+                            editingTitle.IsActive = title.IsActive;
+                            editingTitle.ModifiedBy = "Ranga";
+                            editingTitle.ModifiedDate = dateTime;
+
+                            db.Entry(editingTitle).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/17
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult ManageCalendarPeriods()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/17
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult GetCalendarPeriods()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<CalendarPeriod> CalendarPeriodList = (from cp in db.CalendarPeriod orderby cp.Id descending select cp).ToList();
+                return Json(new { data = CalendarPeriodList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/17
+        [HttpGet]
+        public ActionResult AddOrEditCalendarPeriod(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new CalendarPeriod());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from cp in db.CalendarPeriod where cp.Id.Equals(id) select cp).FirstOrDefault<CalendarPeriod>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/17
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditCalendarPeriod(CalendarPeriod calendarPeriod)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (calendarPeriod.Id == 0)
+                    {
+                        CalendarPeriod validationRecord = (from cp in db.CalendarPeriod where cp.PeriodName.Equals(calendarPeriod.PeriodName) select cp).FirstOrDefault<CalendarPeriod>();
+
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Calendar Period Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            calendarPeriod.CreatedBy = "Dulanjalee";
+                            calendarPeriod.CreatedDate = dateTime;
+                            calendarPeriod.ModifiedBy = "Dulanjalee";
+                            calendarPeriod.ModifiedDate = dateTime;
+
+                            db.CalendarPeriod.Add(calendarPeriod);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        CalendarPeriod editingCalendarPeriod = (from cp in db.CalendarPeriod where cp.Id.Equals(calendarPeriod.Id) select cp).FirstOrDefault<CalendarPeriod>();
+
+                        if (editingCalendarPeriod.PeriodName != calendarPeriod.PeriodName || editingCalendarPeriod.Description != calendarPeriod.Description || editingCalendarPeriod.IsActive != calendarPeriod.IsActive)
+                        {
+                            editingCalendarPeriod.PeriodName = calendarPeriod.PeriodName;
+                            editingCalendarPeriod.Description = calendarPeriod.Description;
+                            editingCalendarPeriod.IsActive = calendarPeriod.IsActive;
+                            editingCalendarPeriod.ModifiedBy = "Dulanjalee";
+                            editingCalendarPeriod.ModifiedDate = dateTime;
+
+                            db.Entry(editingCalendarPeriod).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult ManageAppointmentTypes()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult GetAppointmentTypes()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AppointmentType> AppointmentTypeList = (from at in db.AppointmentType orderby at.AppointmentTypeId descending select at).ToList();
+                return Json(new { data = AppointmentTypeList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        [HttpGet]
+        public ActionResult AddOrEditAppointmentType(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new AppointmentType());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from at in db.AppointmentType where at.AppointmentTypeId.Equals(id) select at).FirstOrDefault<AppointmentType>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditAppointmentType(AppointmentType appointmentType)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (appointmentType.AppointmentTypeId == 0)
+                    {
+                        AppointmentType validationRecord = (from at in db.AppointmentType where at.AppointmentTypeName.Equals(appointmentType.AppointmentTypeName) select at).FirstOrDefault<AppointmentType>();
+
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Appointment Type Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            appointmentType.CreatedBy = "Dulanjalee";
+                            appointmentType.CreatedDate = dateTime;
+                            appointmentType.ModifiedBy = "Dulanjalee";
+                            appointmentType.ModifiedDate = dateTime;
+
+                            db.AppointmentType.Add(appointmentType);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        AppointmentType editingAppointmentType = (from at in db.AppointmentType where at.AppointmentTypeId.Equals(appointmentType.AppointmentTypeId) select at).FirstOrDefault<AppointmentType>();
+
+                        if (editingAppointmentType.AppointmentTypeName != appointmentType.AppointmentTypeName || editingAppointmentType.IsActive != appointmentType.IsActive)
+                        {
+                            editingAppointmentType.AppointmentTypeName = appointmentType.AppointmentTypeName;
+                            editingAppointmentType.IsActive = appointmentType.IsActive;
+                            editingAppointmentType.ModifiedBy = "Dulanjalee";
+                            editingAppointmentType.ModifiedDate = dateTime;
+
+                            db.Entry(editingAppointmentType).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult ManageLectureTypes()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        public ActionResult GetLectureTypes()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<LectureType> LectureTypeList = (from lt in db.LectureType orderby lt.LectureTypeId descending select lt).ToList();
+                return Json(new { data = LectureTypeList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        [HttpGet]
+        public ActionResult AddOrEditLectureType(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new LectureType());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from lt in db.LectureType where lt.LectureTypeId.Equals(id) select lt).FirstOrDefault<LectureType>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/18
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditLectureType(LectureType lectureType)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (lectureType.LectureTypeId == 0)
+                    {
+                        LectureType validationRecord = (from lt in db.LectureType where lt.LectureTypeName.Equals(lectureType.LectureTypeName) select lt).FirstOrDefault<LectureType>();
+
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Lecture Type Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            lectureType.CreatedBy = "Dulanjalee";
+                            lectureType.CreatedDate = dateTime;
+                            lectureType.ModifiedBy = "Dulanjalee";
+                            lectureType.ModifiedDate = dateTime;
+
+                            db.LectureType.Add(lectureType);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        LectureType editingLectureType = (from lt in db.LectureType where lt.LectureTypeId.Equals(lectureType.LectureTypeId) select lt).FirstOrDefault<LectureType>();
+
+                        if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.IsActive != lectureType.IsActive)
+                        {
+                            editingLectureType.LectureTypeName = lectureType.LectureTypeName;
+                            editingLectureType.IsActive = lectureType.IsActive;
+                            editingLectureType.ModifiedBy = "Dulanjalee";
+                            editingLectureType.ModifiedDate = dateTime;
+
+                            db.Entry(editingLectureType).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/19
+        public ActionResult ManageConfigurationalSettings()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/19
+        public ActionResult GetConfigurationalSettings()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<ConfigurationalSettings> ConfigurationalSettingsList = (from c in db.ConfigurationalSettings orderby c.Id descending select c).ToList();
+                return Json(new { data = ConfigurationalSettingsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/19
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        [HttpGet]
+        public ActionResult AddOrEditConfigurationalSetting(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new ConfigurationalSettings());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from c in db.ConfigurationalSettings where c.Id.Equals(id) select c).FirstOrDefault<ConfigurationalSettings>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/19
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/08/22
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditConfigurationalSetting(ConfigurationalSettings configurationalSettings)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (configurationalSettings.Id == 0)
+                    {
+                        ConfigurationalSettings validationRecord = (from c in db.ConfigurationalSettings where c.ConfigurationKey.Equals(configurationalSettings.ConfigurationKey) select c).FirstOrDefault<ConfigurationalSettings>();
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Configuration Key Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            configurationalSettings.CreatedBy = "Dulanjalee";
+                            configurationalSettings.CreatedDate = dateTime;
+                            configurationalSettings.ModifiedBy = "Dulanjalee";
+                            configurationalSettings.ModifiedDate = dateTime;
+
+                            db.ConfigurationalSettings.Add(configurationalSettings);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        ConfigurationalSettings editingConfigurationalSettings = (from c in db.ConfigurationalSettings where c.Id.Equals(configurationalSettings.Id) select c).FirstOrDefault<ConfigurationalSettings>();
+
+                        if (editingConfigurationalSettings.ConfigurationKey != configurationalSettings.ConfigurationKey || editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
+                        {
+                            editingConfigurationalSettings.ConfigurationKey = configurationalSettings.ConfigurationKey;
+                            editingConfigurationalSettings.ConfigurationValue = configurationalSettings.ConfigurationValue;
+                            editingConfigurationalSettings.IsActive = configurationalSettings.IsActive;
+                            editingConfigurationalSettings.ModifiedBy = "Dulanjalee";
+                            editingConfigurationalSettings.ModifiedDate = dateTime;
+
+                            db.Entry(editingConfigurationalSettings).State = EntityState.Modified;
                             db.SaveChanges();
 
                             return Json(new

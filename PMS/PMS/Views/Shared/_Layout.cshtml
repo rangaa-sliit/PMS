@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/08/16*@
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -41,6 +44,17 @@
 
             var cPath = window.location.pathname;
             var splittedPath = cPath.split("/");
+            var urlArray = ['ManageInstitutes', 'AddOrEditInstitute',
+                'ManageCampuses', 'AddOrEditCampus',
+                'ManageFaculties', 'AddOrEditFaculty',
+                'ManageDepartments', 'AddOrEditDepartment',
+                'ManageLectureHalls', 'AddOrEditLectureHall',
+                'ManageUserTitles', 'AddOrEditUserTitle',
+                'ManageCalendarPeriods', 'AddOrEditCalendarPeriod',
+                'ManageAppointmentTypes', 'AddOrEditAppointmentType',
+                'ManageLectureTypes', 'AddOrEditLectureType',
+                'ManageConfigurationalSettings', 'AddOrEditConfigurationalSetting'
+            ];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -48,7 +62,10 @@
             if (splittedPath[2] == undefined) {
                 $('#dashboard-nav-item').addClass('active');
             }
-            else if (splittedPath[2] == 'ManageInstitutes' || splittedPath[2] == 'AddOrEditInstitute' || splittedPath[2] == 'ManageCampuses' || splittedPath[2] == 'AddOrEditCampus') {
+            //else if (splittedPath[2] == 'ManageInstitutes' || splittedPath[2] == 'AddOrEditInstitute' || splittedPath[2] == 'ManageCampuses' || splittedPath[2] == 'AddOrEditCampus') {
+            //    $('#masterData-nav-item').addClass('active');
+            //}
+            else if (urlArray.indexOf(splittedPath[2]) != -1) {
                 $('#masterData-nav-item').addClass('active');
             }
         })
