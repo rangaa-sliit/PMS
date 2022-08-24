@@ -188,10 +188,12 @@
             <PropertyRef Name="DegreeId" />
           </Key>
           <Property Name="DegreeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Code" Type="nvarchar" MaxLength="100" />
-          <Property Name="Name" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Code" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="2000" />
           <Property Name="FacultyId" Type="int" />
+          <Property Name="InstituteId" Type="int" />
+          <Property Name="DepartmentId" Type="int" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -336,9 +338,10 @@
           </Key>
           <Property Name="SpecializationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="100" />
-          <Property Name="Name" Type="nvarchar" MaxLength="1000" />
-          <Property Name="DegreeId" Type="int" Nullable="false" />
-          <Property Name="InstituteId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="DegreeId" Type="int" />
+          <Property Name="InstituteId" Type="int" />
+          <Property Name="DepartmentId" Type="int" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -573,6 +576,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Degree_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Degree">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Degree_Faculty">
           <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -584,6 +599,18 @@
             </Principal>
             <Dependent Role="Degree">
               <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Degree_Institute">
+          <End Role="Institute" Type="Self.Institute" Multiplicity="0..1" />
+          <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Institute">
+              <PropertyRef Name="InstituteId" />
+            </Principal>
+            <Dependent Role="Degree">
+              <PropertyRef Name="InstituteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -776,7 +803,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Degree">
-          <End Role="Degree" Type="Self.Degree" Multiplicity="1">
+          <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
@@ -789,8 +816,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Specialization_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Specialization">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Specialization_Institute">
-          <End Role="Institute" Type="Self.Institute" Multiplicity="1">
+          <End Role="Institute" Type="Self.Institute" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
@@ -883,8 +922,16 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
+          <AssociationSet Name="FK_Degree_Department" Association="Self.FK_Degree_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Degree" EntitySet="Degree" />
+          </AssociationSet>
           <AssociationSet Name="FK_Degree_Faculty" Association="Self.FK_Degree_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
+            <End Role="Degree" EntitySet="Degree" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Degree_Institute" Association="Self.FK_Degree_Institute">
+            <End Role="Institute" EntitySet="Institute" />
             <End Role="Degree" EntitySet="Degree" />
           </AssociationSet>
           <AssociationSet Name="FK_Department_AspNetUsers" Association="Self.FK_Department_AspNetUsers">
@@ -945,6 +992,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_Specialization_Degree" Association="Self.FK_Specialization_Degree">
             <End Role="Degree" EntitySet="Degree" />
+            <End Role="Specialization" EntitySet="Specialization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Specialization_Department" Association="Self.FK_Specialization_Department">
+            <End Role="Department" EntitySet="Department" />
             <End Role="Specialization" EntitySet="Specialization" />
           </AssociationSet>
           <AssociationSet Name="FK_Specialization_Institute" Association="Self.FK_Specialization_Institute">
@@ -1048,8 +1099,16 @@
             <End Role="StudentBatch" EntitySet="StudentBatch" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
+          <AssociationSet Name="FK_Degree_Department" Association="PMSModel.FK_Degree_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Degree" EntitySet="Degree" />
+          </AssociationSet>
           <AssociationSet Name="FK_Degree_Faculty" Association="PMSModel.FK_Degree_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
+            <End Role="Degree" EntitySet="Degree" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Degree_Institute" Association="PMSModel.FK_Degree_Institute">
+            <End Role="Institute" EntitySet="Institute" />
             <End Role="Degree" EntitySet="Degree" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRate_Degree" Association="PMSModel.FK_PaymentRate_Degree">
@@ -1067,6 +1126,10 @@
           <AssociationSet Name="FK_Department_Faculty" Association="PMSModel.FK_Department_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
             <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Specialization_Department" Association="PMSModel.FK_Specialization_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Specialization" EntitySet="Specialization" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRate_Designation" Association="PMSModel.FK_PaymentRate_Designation">
             <End Role="Designation" EntitySet="Designation" />
@@ -1244,7 +1307,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PeriodName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PeriodName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -1312,16 +1375,20 @@
             <PropertyRef Name="DegreeId" />
           </Key>
           <Property Name="DegreeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
           <Property Name="FacultyId" Type="Int32" />
+          <Property Name="InstituteId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Department" Relationship="PMSModel.FK_Degree_Department" FromRole="Degree" ToRole="Department" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Degree_Faculty" FromRole="Degree" ToRole="Faculty" />
+          <NavigationProperty Name="Institute" Relationship="PMSModel.FK_Degree_Institute" FromRole="Degree" ToRole="Institute" />
           <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Degree" FromRole="Degree" ToRole="PaymentRate" />
           <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Degree" FromRole="Degree" ToRole="SemesterRegistration" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Degree" FromRole="Degree" ToRole="Specialization" />
@@ -1341,7 +1408,9 @@
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="Department" ToRole="AspNetUsers" />
+          <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Department" FromRole="Department" ToRole="Degree" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Department_Faculty" FromRole="Department" ToRole="Faculty" />
+          <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Department" FromRole="Department" ToRole="Specialization" />
         </EntityType>
         <EntityType Name="Designation">
           <Key>
@@ -1388,6 +1457,7 @@
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Institute" FromRole="Institute" ToRole="Degree" />
           <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="Institute" ToRole="SemesterRegistration" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Institute" FromRole="Institute" ToRole="Specialization" />
         </EntityType>
@@ -1489,15 +1559,17 @@
           </Key>
           <Property Name="SpecializationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="DegreeId" Type="Int32" Nullable="false" />
-          <Property Name="InstituteId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="DegreeId" Type="Int32" />
+          <Property Name="InstituteId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Specialization_Degree" FromRole="Specialization" ToRole="Degree" />
+          <NavigationProperty Name="Department" Relationship="PMSModel.FK_Specialization_Department" FromRole="Specialization" ToRole="Department" />
           <NavigationProperty Name="Institute" Relationship="PMSModel.FK_Specialization_Institute" FromRole="Specialization" ToRole="Institute" />
           <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="Specialization" ToRole="PaymentRate" />
         </EntityType>
@@ -1773,6 +1845,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Degree_Department">
+          <End Type="PMSModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Degree">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Degree_Faculty">
           <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -1784,6 +1868,18 @@
             </Principal>
             <Dependent Role="Degree">
               <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Degree_Institute">
+          <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1" />
+          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Institute">
+              <PropertyRef Name="InstituteId" />
+            </Principal>
+            <Dependent Role="Degree">
+              <PropertyRef Name="InstituteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1816,7 +1912,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Degree">
-          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="1">
+          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
@@ -1840,6 +1936,18 @@
             </Principal>
             <Dependent Role="Department">
               <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Specialization_Department">
+          <End Type="PMSModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Specialization">
+              <PropertyRef Name="DepartmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1896,7 +2004,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Institute">
-          <End Type="PMSModel.Institute" Role="Institute" Multiplicity="1">
+          <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
           <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
@@ -2164,6 +2272,8 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
+                <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2320,6 +2430,7 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
                 <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
                 <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

@@ -18,6 +18,7 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Institute()
         {
+            this.Degree = new HashSet<Degree>();
             this.SemesterRegistration = new HashSet<SemesterRegistration>();
             this.Specialization = new HashSet<Specialization>();
         }
@@ -35,6 +36,8 @@ namespace PMS.Models
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Degree> Degree { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
