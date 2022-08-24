@@ -5,33 +5,33 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="e30ce572a79840c18ae24eb0c987de6e" Name="Diagram1">
-        <EntityTypeShape EntityType="PMSModel.Appointment" Width="1.5" PointX="5.25" PointY="17" />
-        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="3" PointY="11.375" />
-        <EntityTypeShape EntityType="PMSModel.ApprovalStages" Width="1.5" PointX="8" PointY="0.75" />
-        <EntityTypeShape EntityType="PMSModel.AspNetRoles" Width="1.5" PointX="6" PointY="13.25" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="5.25" PointY="24.25" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="5.25" PointY="21.625" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserRoles" Width="1.5" PointX="8.25" PointY="17.375" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUsers" Width="1.5" PointX="3" PointY="15" />
+        <EntityTypeShape EntityType="PMSModel.Appointment" Width="1.5" PointX="5.25" PointY="14.5" />
+        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="3" PointY="12" />
+        <EntityTypeShape EntityType="PMSModel.ApprovalStages" Width="1.5" PointX="11" PointY="12.75" />
+        <EntityTypeShape EntityType="PMSModel.AspNetRoles" Width="1.5" PointX="6" PointY="10.75" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="5.25" PointY="18.75" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="5.25" PointY="21.5" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserRoles" Width="1.5" PointX="8.25" PointY="17.875" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUsers" Width="1.5" PointX="3" PointY="15.5" />
         <EntityTypeShape EntityType="PMSModel.CalendarPeriod" Width="1.5" PointX="0.75" PointY="1.5" />
-        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="5.75" PointY="5.25" />
-        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="10.25" PointY="4.125" />
+        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="8.75" PointY="5.25" />
+        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="13.25" PointY="4.125" />
         <EntityTypeShape EntityType="PMSModel.ConfigurationalSettings" Width="1.5" PointX="2.75" PointY="1.5" />
-        <EntityTypeShape EntityType="PMSModel.Degree" Width="1.5" PointX="7.5" PointY="31.125" />
-        <EntityTypeShape EntityType="PMSModel.Department" Width="1.5" PointX="7.5" PointY="23.25" />
-        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="10.5" PointY="22.875" />
-        <EntityTypeShape EntityType="PMSModel.Faculty" Width="1.5" PointX="5.25" PointY="31" />
-        <EntityTypeShape EntityType="PMSModel.Institute" Width="1.5" PointX="7.5" PointY="36.5" />
-        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="8" PointY="5" />
-        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="8" PointY="9.5" />
-        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="12.75" PointY="30.75" />
-        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="9.75" PointY="30.625" />
-        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="15" PointY="31.625" />
-        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="9.75" PointY="26.25" />
-        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="8" PointY="40.75" />
-        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="10.5" PointY="36.125" />
+        <EntityTypeShape EntityType="PMSModel.Degree" Width="1.5" PointX="9.75" PointY="27.625" />
+        <EntityTypeShape EntityType="PMSModel.Department" Width="1.5" PointX="7.5" PointY="23.875" />
+        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="12" PointY="21.75" />
+        <EntityTypeShape EntityType="PMSModel.Faculty" Width="1.5" PointX="5.25" PointY="32" />
+        <EntityTypeShape EntityType="PMSModel.Institute" Width="1.5" PointX="7.5" PointY="29.25" />
+        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="11" PointY="5" />
+        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="11" PointY="9.5" />
+        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="14.25" PointY="28.625" />
+        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="12" PointY="31.375" />
+        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="14.25" PointY="34.375" />
+        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="12" PointY="26" />
+        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="11" PointY="0.75" />
+        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="12" PointY="37.125" />
         <EntityTypeShape EntityType="PMSModel.sysdiagrams" Width="1.5" PointX="4.75" PointY="1.5" />
-        <EntityTypeShape EntityType="PMSModel.Title" Width="1.5" PointX="0.75" PointY="17.375" />
+        <EntityTypeShape EntityType="PMSModel.Title" Width="1.5" PointX="0.75" PointY="17.875" />
         <AssociationConnector Association="PMSModel.FK_Appointment_AppointmentType" />
         <AssociationConnector Association="PMSModel.FK_Appointment_AspNetUsers" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_ApprovalStages" />
@@ -48,11 +48,14 @@
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_LectureHall" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_LectureType" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_StudentBatch" />
+        <AssociationConnector Association="PMSModel.FK_Degree_Department" />
         <AssociationConnector Association="PMSModel.FK_Degree_Faculty" />
+        <AssociationConnector Association="PMSModel.FK_Degree_Institute" />
         <AssociationConnector Association="PMSModel.FK_PaymentRate_Degree" />
         <AssociationConnector Association="PMSModel.FK_SemesterRegistration_Degree" />
         <AssociationConnector Association="PMSModel.FK_Specialization_Degree" />
         <AssociationConnector Association="PMSModel.FK_Department_Faculty" />
+        <AssociationConnector Association="PMSModel.FK_Specialization_Department" />
         <AssociationConnector Association="PMSModel.FK_PaymentRate_Designation" />
         <AssociationConnector Association="PMSModel.FK_PaymentRate_Faculty" />
         <AssociationConnector Association="PMSModel.FK_SemesterRegistration_Faculty" />

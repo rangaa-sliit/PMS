@@ -23,8 +23,9 @@ namespace PMS.Models
         public int SpecializationId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public int DegreeId { get; set; }
-        public int InstituteId { get; set; }
+        public Nullable<int> DegreeId { get; set; }
+        public Nullable<int> InstituteId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -32,6 +33,7 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         public virtual Degree Degree { get; set; }
+        public virtual Department Department { get; set; }
         public virtual Institute Institute { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }

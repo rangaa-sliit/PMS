@@ -183,10 +183,12 @@
       <PropertyRef Name="DegreeId" />
     </Key>
     <Property Name="DegreeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Code" Type="nvarchar" MaxLength="100" />
-    <Property Name="Name" Type="nvarchar" MaxLength="1000" />
+    <Property Name="Code" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
     <Property Name="Description" Type="nvarchar" MaxLength="2000" />
     <Property Name="FacultyId" Type="int" />
+    <Property Name="InstituteId" Type="int" />
+    <Property Name="DepartmentId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -331,9 +333,10 @@
     </Key>
     <Property Name="SpecializationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="nvarchar" MaxLength="100" />
-    <Property Name="Name" Type="nvarchar" MaxLength="1000" />
-    <Property Name="DegreeId" Type="int" Nullable="false" />
-    <Property Name="InstituteId" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
+    <Property Name="DegreeId" Type="int" />
+    <Property Name="InstituteId" Type="int" />
+    <Property Name="DepartmentId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -568,6 +571,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Degree_Department">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentId" />
+      </Principal>
+      <Dependent Role="Degree">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Degree_Faculty">
     <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
@@ -579,6 +594,18 @@
       </Principal>
       <Dependent Role="Degree">
         <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Degree_Institute">
+    <End Role="Institute" Type="Self.Institute" Multiplicity="0..1" />
+    <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Institute">
+        <PropertyRef Name="InstituteId" />
+      </Principal>
+      <Dependent Role="Degree">
+        <PropertyRef Name="InstituteId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -771,7 +798,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Specialization_Degree">
-    <End Role="Degree" Type="Self.Degree" Multiplicity="1">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
@@ -784,8 +811,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Specialization_Department">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentId" />
+      </Principal>
+      <Dependent Role="Specialization">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Specialization_Institute">
-    <End Role="Institute" Type="Self.Institute" Multiplicity="1">
+    <End Role="Institute" Type="Self.Institute" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
@@ -878,8 +917,16 @@
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
     </AssociationSet>
+    <AssociationSet Name="FK_Degree_Department" Association="Self.FK_Degree_Department">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Degree" EntitySet="Degree" />
+    </AssociationSet>
     <AssociationSet Name="FK_Degree_Faculty" Association="Self.FK_Degree_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Degree" EntitySet="Degree" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Degree_Institute" Association="Self.FK_Degree_Institute">
+      <End Role="Institute" EntitySet="Institute" />
       <End Role="Degree" EntitySet="Degree" />
     </AssociationSet>
     <AssociationSet Name="FK_Department_AspNetUsers" Association="Self.FK_Department_AspNetUsers">
@@ -940,6 +987,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Specialization_Degree" Association="Self.FK_Specialization_Degree">
       <End Role="Degree" EntitySet="Degree" />
+      <End Role="Specialization" EntitySet="Specialization" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Specialization_Department" Association="Self.FK_Specialization_Department">
+      <End Role="Department" EntitySet="Department" />
       <End Role="Specialization" EntitySet="Specialization" />
     </AssociationSet>
     <AssociationSet Name="FK_Specialization_Institute" Association="Self.FK_Specialization_Institute">
