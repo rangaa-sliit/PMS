@@ -442,6 +442,8 @@
     <Content Include="Views\SA\AddOrEditLectureType.cshtml" />
     <Content Include="Views\SA\ManageConfigurationalSettings.cshtml" />
     <Content Include="Views\SA\AddOrEditConfigurationalSetting.cshtml" />
+    <Content Include="Views\SA\ManageSubject.cshtml" />
+    <Content Include="Views\SA\AddOrEditSubject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

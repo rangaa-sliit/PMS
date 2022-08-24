@@ -1526,5 +1526,151 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        public ActionResult ManageSubject()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        public ActionResult GetSubject()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Subject> subjectList = (from s in db.Subject orderby s.SubjectId descending select s).ToList();
+                return Json(new { data = subjectList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        [HttpGet]
+        public ActionResult AddOrEditSubject(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Subject());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from s in db.Subject where s.SubjectId.Equals(id) select s).FirstOrDefault<Subject>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSubject(Subject subject)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (subject.SubjectId == 0)
+                    {
+                        Subject validationRecord = (from s in db.Subject where s.SubjectCode.Equals(subject.SubjectCode) || s.SubjectName.Equals(subject.SubjectName) select s).FirstOrDefault<Subject>();
+                        if (validationRecord != null)
+                        {
+                            if (validationRecord.SubjectCode == subject.SubjectCode && validationRecord.SubjectName == subject.SubjectName)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Subject Code and Name Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                if (validationRecord.SubjectCode == subject.SubjectCode)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Subject Code Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Subject Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            subject.CreatedBy = "Dulanjalee";
+                            subject.CreatedDate = dateTime;
+                            subject.ModifiedBy = "Dulanjalee";
+                            subject.ModifiedDate = dateTime;
+
+                            db.Subject.Add(subject);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Subject editingSubject = (from i in db.Subject where i.SubjectId.Equals(subject.SubjectId) select i).FirstOrDefault<Subject>();
+
+                        if (editingSubject.SubjectCode != subject.SubjectCode || editingSubject.SubjectName != subject.SubjectName || editingSubject.IsActive != subject.IsActive)
+                        {
+                            editingSubject.SubjectCode = subject.SubjectCode;
+                            editingSubject.SubjectName = subject.SubjectName;
+                            editingSubject.IsActive = subject.IsActive;
+                            editingSubject.ModifiedBy = "Dulanjalee";
+                            editingSubject.ModifiedDate = dateTime;
+
+                            db.Entry(editingSubject).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }

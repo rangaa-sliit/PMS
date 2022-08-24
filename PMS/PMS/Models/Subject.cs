@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Subject
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,7 +23,11 @@ namespace PMS.Models
         }
     
         public int SubjectId { get; set; }
+        [Required(ErrorMessage = "Subject Code is required")]
+        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string SubjectCode { get; set; }
+        [Required(ErrorMessage = "Subject Name is required")]
+        [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string SubjectName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
