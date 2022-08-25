@@ -1672,5 +1672,238 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        public ActionResult ManageDegree()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        public ActionResult GetDegree()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<DegreeVM> degreeList = (from d in db.Degree
+                                             join f in db.Faculty on d.FacultyId equals f.FacultyId into d_f
+                                             from fac in d_f.DefaultIfEmpty()
+                                             join i in db.Institute on d.InstituteId equals i.InstituteId into d_i
+                                             from ins in d_i.DefaultIfEmpty()
+                                             join dp in db.Department on d.DepartmentId equals dp.DepartmentId into d_dp
+                                             from dep in d_dp.DefaultIfEmpty()
+                                             orderby d.DegreeId descending
+                                             select new DegreeVM
+                                             {
+                                                 DegreeId = d.DegreeId,
+                                                 Code = d.Code,
+                                                 Name = d.Name,
+                                                 Description = d.Description,
+                                                 FacultyId = fac.FacultyId,
+                                                 FacultyObj = fac,
+                                                 InstituteId = ins.InstituteId,
+                                                 InstituteObj = ins,
+                                                 DepartmentId = dep.DepartmentId,
+                                                 DepartmentObj = dep,
+                                                 IsActive = d.IsActive
+                                             }).ToList();
+
+                return Json(new { data = degreeList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        [HttpGet]
+        public ActionResult AddOrEditDegree(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var faculty = (from f in db.Faculty
+                             where f.IsActive.Equals(true)
+                             select new
+                             {
+                                 Text = f.FacultyName,
+                                 Value = f.FacultyId
+                             }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                ViewBag.facultyList = facultyList;
+
+                var institute = (from i in db.Institute
+                                 where i.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = i.InstituteName,
+                                     Value = i.InstituteId
+                                 }).ToList();
+
+                List<SelectListItem> instituteList = new SelectList(institute, "Value", "Text").ToList();
+                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
+                ViewBag.instituteList = instituteList;
+
+                var department = (from d in db.Department
+                                 where d.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = d.DepartmentName,
+                                     Value = d.DepartmentId
+                                 }).ToList();
+
+                List<SelectListItem> departmentList = new SelectList(department, "Value", "Text").ToList();
+                departmentList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                ViewBag.departmentList = departmentList;
+
+                if (id == 0)
+                {
+                    return View(new DegreeVM());
+                }
+                else
+                {
+                    DegreeVM degreeVM = (from d in db.Degree
+                                         join f in db.Faculty on d.FacultyId equals f.FacultyId into d_f
+                                         from fac in d_f.DefaultIfEmpty()
+                                         join i in db.Institute on d.InstituteId equals i.InstituteId into d_i
+                                         from ins in d_i.DefaultIfEmpty()
+                                         join dp in db.Department on d.DepartmentId equals dp.DepartmentId into d_dp
+                                         from dep in d_dp.DefaultIfEmpty()
+                                         orderby d.DegreeId descending
+                                         where d.DegreeId.Equals(id)
+                                         select new DegreeVM
+                                         {
+                                                     DegreeId = d.DegreeId,
+                                                     Code = d.Code,
+                                                     Name = d.Name,
+                                                     Description = d.Description,
+                                                     FacultyId = fac.FacultyId,
+                                                     FacultyObj = fac,
+                                                     InstituteId = ins.InstituteId,
+                                                     InstituteObj = ins,
+                                                     DepartmentId = dep.DepartmentId,
+                                                     DepartmentObj = dep,
+                                                     IsActive = d.IsActive
+                                                 }).FirstOrDefault<DegreeVM>();
+
+                    return View(degreeVM);
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/24
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditDegree(Degree degree)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (degree.DegreeId == 0)
+                    {
+                        Degree validationRecord = (from d in db.Degree where d.Code.Equals(degree.Code) || d.Name.Equals(degree.Name) select d).FirstOrDefault<Degree>();
+                        if (validationRecord != null)
+                        {
+                            if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Degree Code and Name Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                if (validationRecord.Code == degree.Code)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Degree Code Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Degree Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            degree.CreatedBy = "Dulanjalee";
+                            degree.CreatedDate = dateTime;
+                            degree.ModifiedBy = "Dulanjalee";
+                            degree.ModifiedDate = dateTime;
+
+                            db.Degree.Add(degree);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Degree editingDegree = (from d in db.Degree where d.DegreeId.Equals(degree.DegreeId) select d).FirstOrDefault<Degree>();
+
+                        if (editingDegree.Code != degree.Code || editingDegree.Name != degree.Name || editingDegree.Description != degree.Description || editingDegree.FacultyId != degree.FacultyId || editingDegree.InstituteId != degree.InstituteId || editingDegree.DepartmentId != degree.DepartmentId || editingDegree.IsActive != degree.IsActive)
+                        {
+                            editingDegree.Code = degree.Code;
+                            editingDegree.Name = degree.Name;
+                            editingDegree.Description = degree.Description;
+                            editingDegree.FacultyId = degree.FacultyId;
+                            editingDegree.InstituteId = degree.InstituteId;
+                            editingDegree.DepartmentId = degree.DepartmentId;
+                            editingDegree.IsActive = degree.IsActive;
+                            editingDegree.ModifiedBy = "Dulanjalee";
+                            editingDegree.ModifiedDate = dateTime;
+
+                            db.Entry(editingDegree).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }
