@@ -1526,5 +1526,290 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/24
+        public ActionResult ManageIntakes()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/24
+        public ActionResult GetIntakes()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<IntakeVM> intakesList = (from i in db.Intake
+                                            orderby i.IntakeId descending
+                                            select new IntakeVM
+                                            {
+                                                IntakeId = i.IntakeId,
+                                                IntakeYear = i.IntakeYear,
+                                                IntakeCode = i.IntakeCode,
+                                                IntakeName = i.IntakeName,
+                                                FromDate = i.FromDate.ToString().Substring(0, 10),
+                                                ToDate = i.ToDate.ToString().Substring(0, 10),
+                                                IsActive = i.IsActive
+                                            }).ToList();
+
+                return Json(new { data = intakesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/24
+        [HttpGet]
+        public ActionResult AddOrEditIntake(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Intake());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from i in db.Intake where i.IntakeId.Equals(id) select i).FirstOrDefault<Intake>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/24
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditIntake(Intake intake)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (intake.IntakeId == 0)
+                    {
+                        Intake validationRecord = (from i in db.Intake
+                                                   where i.IntakeYear.Value.Equals(intake.IntakeYear.Value) && i.IntakeName.Equals(intake.IntakeName)
+                                                   select i).FirstOrDefault<Intake>();
+
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Intake Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            intake.CreatedBy = "Ranga";
+                            intake.CreatedDate = dateTime;
+                            intake.ModifiedBy = "Ranga";
+                            intake.ModifiedDate = dateTime;
+
+                            db.Intake.Add(intake);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Intake editingIntake = (from i in db.Intake where i.IntakeId.Equals(intake.IntakeId) select i).FirstOrDefault<Intake>();
+
+                        if (editingIntake.IntakeYear != intake.IntakeYear || editingIntake.IntakeCode != intake.IntakeCode
+                            || editingIntake.IntakeName != intake.IntakeName || editingIntake.FromDate != intake.FromDate
+                            || editingIntake.ToDate != intake.ToDate || editingIntake.IsActive != intake.IsActive)
+                        {
+                            editingIntake.IntakeYear = intake.IntakeYear;
+                            editingIntake.IntakeCode = intake.IntakeCode;
+                            editingIntake.IntakeName = intake.IntakeName;
+                            editingIntake.FromDate = intake.FromDate;
+                            editingIntake.ToDate = intake.ToDate;
+                            editingIntake.IsActive = intake.IsActive;
+                            editingIntake.ModifiedBy = "Ranga";
+                            editingIntake.ModifiedDate = dateTime;
+
+                            db.Entry(editingIntake).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        public ActionResult ManageDesignations()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        public ActionResult GetDesignations()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Designation> designationsList = (from d in db.Designation orderby d.DesignationId descending select d).ToList();
+                return Json(new { data = designationsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        [HttpGet]
+        public ActionResult AddOrEditDesignation(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new Designation());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from d in db.Designation where d.DesignationId.Equals(id) select d).FirstOrDefault<Designation>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditDesignation(Designation designation)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (designation.DesignationId == 0)
+                    {
+                        Designation validationRecord = (from d in db.Designation where d.DesignationName.Equals(designation.DesignationName) select d).FirstOrDefault<Designation>();
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Designation Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            designation.CreatedBy = "Ranga";
+                            designation.CreatedDate = dateTime;
+                            designation.ModifiedBy = "Ranga";
+                            designation.ModifiedDate = dateTime;
+
+                            db.Designation.Add(designation);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Designation editingDesignation = (from d in db.Designation where d.DesignationId.Equals(designation.DesignationId) select d).FirstOrDefault<Designation>();
+
+                        if (editingDesignation.DesignationName != designation.DesignationName || editingDesignation.IsActive != designation.IsActive)
+                        {
+                            editingDesignation.DesignationName = designation.DesignationName;
+                            editingDesignation.IsActive = designation.IsActive;
+                            editingDesignation.ModifiedBy = "Ranga";
+                            editingDesignation.ModifiedDate = dateTime;
+
+                            db.Entry(editingDesignation).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        public ActionResult ManageAppointments()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        public ActionResult GetAppointments()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Designation> designationsList = (from d in db.Designation orderby d.DesignationId descending select d).ToList();
+                return Json(new { data = designationsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

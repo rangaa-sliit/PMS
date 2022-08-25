@@ -160,6 +160,7 @@
       <End Role="Subject" EntitySet="Subject" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
     </AssociationSet>
+    <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
   </EntityContainer>
   <EntityType Name="Appointment">
     <Key>
@@ -1064,4 +1065,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Intake">
+    <Key>
+      <PropertyRef Name="IntakeId" />
+    </Key>
+    <Property Name="IntakeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FromDate" Type="DateTime" Precision="0" />
+    <Property Name="ToDate" Type="DateTime" Precision="0" />
+    <Property Name="IntakeCode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeYear" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+  </EntityType>
 </Schema>

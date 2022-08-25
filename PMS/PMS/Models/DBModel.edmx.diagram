@@ -65,6 +65,7 @@
         <AssociationConnector Association="PMSModel.FK_PaymentRate_Subject" />
         <AssociationConnector Association="PMSModel.FK_SemesterSubject_SemesterRegistration" />
         <AssociationConnector Association="PMSModel.FK_SemesterSubject_Subject" />
+        <EntityTypeShape EntityType="PMSModel.Intake" Width="1.5" PointX="0.75" PointY="5.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

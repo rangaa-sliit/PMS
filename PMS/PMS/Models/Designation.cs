@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Designation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,6 +22,8 @@ namespace PMS.Models
         }
     
         public int DesignationId { get; set; }
+        [Required(ErrorMessage = "Designation Name is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string DesignationName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

@@ -1,0 +1,226 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/08/24*@
+
+@model PMS.Models.Intake
+
+@{
+    ViewBag.Title = "AddOrEditIntake";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageIntakes", "SA")">Manage Intakes</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeIntakeMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeIntakeCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditIntake", "SA", FormMethod.Post, new { onsubmit = "return SubmitIntakeForm(this)", @id = "intakeForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.IntakeId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IntakeYear, "Intake Year: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.IntakeYear, new { htmlAttributes = new { @class = "form-control", @placeholder = "Intake Year", @type = "number", @id = "intakeYear", oninput = "onIntakeYearInput()" } })
+                        @Html.ValidationMessageFor(model => model.IntakeYear)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IntakeCode, "Intake Code: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.IntakeCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "Intake Code", @id = "intakeCode", oninput = "onIntakeCodeInput()" } })
+                        @Html.ValidationMessageFor(model => model.IntakeCode)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IntakeName, "Intake Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.IntakeName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Intake Name", @id = "intakeName", oninput = "onIntakeNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.IntakeName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FromDate, "From Date: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "From Date", @type = "date", @id = "fromDate", oninput = "onFromDateInput()" } })
+                        @Html.ValidationMessageFor(model => model.FromDate)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ToDate, "To Date: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "To Date", @type = "date", @id = "toDate", oninput = "onToDateInput()" } })
+                        @Html.ValidationMessageFor(model => model.ToDate)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "intakeStatusList", onchange = "onIntakeStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="intakeSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="intakeClearBtn" onclick="clearIntakeForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#intakeSubmitBtn").prop("disabled", true);
+                $("#intakeClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeIntakeMainTitle").html("Edit Intake");
+                    $("#aeIntakeCardTitle").html("Edit Intake");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Intake</li>`);
+                }
+                else {
+                    $("#aeIntakeMainTitle").html("View Intake");
+                    $("#aeIntakeCardTitle").html("View Institute");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Intake</li>`);
+                    $("#intakeYear").prop("disabled", true);
+                    $("#intakeCode").prop("disabled", true);
+                    $("#intakeName").prop("disabled", true);
+                    $("#fromDate").prop("disabled", true);
+                    $("#toDate").prop("disabled", true);
+                    $("#intakeStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeIntakeMainTitle").html("Add Intake");
+                $("#aeIntakeCardTitle").html("Add Intake");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Intake</li>`);
+                $("#intakeStatusList").val("true");
+            }
+        })
+
+        function SubmitIntakeForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                var fromDate = new Date($("#fromDate").val());
+                var toDate = new Date($("#toDate").val());
+
+                if (toDate <= fromDate) {
+                    alert("To Date should be greater than From Date");
+                }
+                else {
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: $(form).serialize(),
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#intakeYear").val("");
+                                    $("#intakeCode").val("");
+                                    $("#intakeName").val("");
+                                    $("#fromDate").val("");
+                                    $("#toDate").val("true");
+                                    $("#intakeStatusList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
+                        }
+                    });
+                }
+            }
+            return false;
+        }
+
+        function clearIntakeForm() {
+            if (operation == undefined) {
+                $("#intakeYear").val("");
+                $("#intakeCode").val("");
+                $("#intakeName").val("");
+                $("#fromDate").val("");
+                $("#toDate").val("true");
+                $("#intakeStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onIntakeYearInput() {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+
+        function onIntakeCodeInput() {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+
+        function onIntakeNameInput() {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+
+        function onFromDateInput() {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+
+        function onToDateInput() {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+
+        function onIntakeStatusChange(newStatus) {
+            $("#intakeSubmitBtn").prop("disabled", false);
+            $("#intakeClearBtn").prop("disabled", false);
+        }
+    </script>
+}

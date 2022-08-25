@@ -254,6 +254,22 @@
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Intake">
+          <Key>
+            <PropertyRef Name="IntakeId" />
+          </Key>
+          <Property Name="IntakeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FromDate" Type="date" />
+          <Property Name="ToDate" Type="date" />
+          <Property Name="IntakeCode" Type="nvarchar" MaxLength="150" />
+          <Property Name="IntakeName" Type="nvarchar" MaxLength="200" />
+          <Property Name="IntakeYear" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="LectureHall">
           <Key>
             <PropertyRef Name="HallId" />
@@ -860,6 +876,7 @@
           <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Faculty" EntityType="Self.Faculty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
@@ -1167,6 +1184,7 @@
             <End Role="Subject" EntitySet="Subject" />
             <End Role="SemesterSubject" EntitySet="SemesterSubject" />
           </AssociationSet>
+          <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
         </EntityContainer>
         <EntityType Name="Appointment">
           <Key>
@@ -2071,6 +2089,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Intake">
+          <Key>
+            <PropertyRef Name="IntakeId" />
+          </Key>
+          <Property Name="IntakeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FromDate" Type="DateTime" Precision="0" />
+          <Property Name="ToDate" Type="DateTime" Precision="0" />
+          <Property Name="IntakeCode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="IntakeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IntakeYear" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2490,6 +2524,23 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="TitleName" ColumnName="TitleName" />
                 <ScalarProperty Name="TitleId" ColumnName="TitleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Intake">
+            <EntityTypeMapping TypeName="PMSModel.Intake">
+              <MappingFragment StoreEntitySet="Intake">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
+                <ScalarProperty Name="IntakeName" ColumnName="IntakeName" />
+                <ScalarProperty Name="IntakeCode" ColumnName="IntakeCode" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
