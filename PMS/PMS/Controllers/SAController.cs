@@ -1701,11 +1701,11 @@ namespace PMS.Controllers
                                                  Name = d.Name,
                                                  Description = d.Description,
                                                  FacultyId = fac.FacultyId,
-                                                 FacultyObj = fac,
+                                                 FacultyName = fac.FacultyName,
                                                  InstituteId = ins.InstituteId,
-                                                 InstituteObj = ins,
+                                                 InstituteName = ins.InstituteName,
                                                  DepartmentId = dep.DepartmentId,
-                                                 DepartmentObj = dep,
+                                                 DepartmentName = dep.DepartmentName,
                                                  IsActive = d.IsActive
                                              }).ToList();
 
@@ -1759,35 +1759,11 @@ namespace PMS.Controllers
 
                 if (id == 0)
                 {
-                    return View(new DegreeVM());
+                    return View(new Degree());
                 }
                 else
                 {
-                    DegreeVM degreeVM = (from d in db.Degree
-                                         join f in db.Faculty on d.FacultyId equals f.FacultyId into d_f
-                                         from fac in d_f.DefaultIfEmpty()
-                                         join i in db.Institute on d.InstituteId equals i.InstituteId into d_i
-                                         from ins in d_i.DefaultIfEmpty()
-                                         join dp in db.Department on d.DepartmentId equals dp.DepartmentId into d_dp
-                                         from dep in d_dp.DefaultIfEmpty()
-                                         orderby d.DegreeId descending
-                                         where d.DegreeId.Equals(id)
-                                         select new DegreeVM
-                                         {
-                                                     DegreeId = d.DegreeId,
-                                                     Code = d.Code,
-                                                     Name = d.Name,
-                                                     Description = d.Description,
-                                                     FacultyId = fac.FacultyId,
-                                                     FacultyObj = fac,
-                                                     InstituteId = ins.InstituteId,
-                                                     InstituteObj = ins,
-                                                     DepartmentId = dep.DepartmentId,
-                                                     DepartmentObj = dep,
-                                                     IsActive = d.IsActive
-                                                 }).FirstOrDefault<DegreeVM>();
-
-                    return View(degreeVM);
+                    return View((from d in db.Degree where d.DegreeId.Equals(id) select d).FirstOrDefault<Degree>());
                 }
             }
         }
@@ -1870,6 +1846,213 @@ namespace PMS.Controllers
                             editingDegree.ModifiedDate = dateTime;
 
                             db.Entry(editingDegree).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        public ActionResult ManageSpecialization()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        public ActionResult GetSpecialization()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<SpecializationVM> specializationList = (from s in db.Specialization
+                                                             join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                             from deg in s_d.DefaultIfEmpty()
+                                                             join i in db.Institute on s.InstituteId equals i.InstituteId into s_i
+                                                             from ins in s_i.DefaultIfEmpty()
+                                                             join dp in db.Department on s.DepartmentId equals dp.DepartmentId into s_dp
+                                                             from dep in s_dp.DefaultIfEmpty()
+                                                             orderby s.SpecializationId descending
+                                                             select new SpecializationVM
+                                                             {
+                                                             SpecializationId = s.SpecializationId,
+                                                             Code = s.Code,
+                                                             Name = s.Name,
+                                                             DegreeId=deg.DegreeId,
+                                                             DegreeName = deg.Name,
+                                                             InstituteId = ins.InstituteId,
+                                                             InstituteName = ins.InstituteName,
+                                                             DepartmentId = dep.DepartmentId,
+                                                             DepartmentName = dep.DepartmentName,
+                                                             IsActive = s.IsActive
+                                                             }).ToList();
+
+                return Json(new { data = specializationList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        [HttpGet]
+        public ActionResult AddOrEditSpecialization(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var degree = (from d in db.Degree
+                               where d.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = d.Name,
+                                   Value = d.DegreeId
+                               }).ToList();
+
+                List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
+                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                ViewBag.degreeList = degreeList;
+
+                var institute = (from i in db.Institute
+                                 where i.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = i.InstituteName,
+                                     Value = i.InstituteId
+                                 }).ToList();
+
+                List<SelectListItem> instituteList = new SelectList(institute, "Value", "Text").ToList();
+                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
+                ViewBag.instituteList = instituteList;
+
+                var department = (from d in db.Department
+                                  where d.IsActive.Equals(true)
+                                  select new
+                                  {
+                                      Text = d.DepartmentName,
+                                      Value = d.DepartmentId
+                                  }).ToList();
+
+                List<SelectListItem> departmentList = new SelectList(department, "Value", "Text").ToList();
+                departmentList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                ViewBag.departmentList = departmentList;
+
+                if (id == 0)
+                {
+                    return View(new Specialization());
+                }
+                else
+                {
+                    return View((from s in db.Specialization where s.SpecializationId.Equals(id) select s).FirstOrDefault<Specialization>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSpecialization(Specialization specialization)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (specialization.SpecializationId == 0)
+                    {
+                        Specialization validationRecord = (from s in db.Specialization where s.Code.Equals(specialization.Code) || s.Name.Equals(specialization.Name) select s).FirstOrDefault<Specialization>();
+                        if (validationRecord != null)
+                        {
+                            if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Specialization Code and Name Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                if (validationRecord.Code == specialization.Code)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Specialization Code Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Specialization Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            specialization.CreatedBy = "Dulanjalee";
+                            specialization.CreatedDate = dateTime;
+                            specialization.ModifiedBy = "Dulanjalee";
+                            specialization.ModifiedDate = dateTime;
+
+                            db.Specialization.Add(specialization);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Specialization editingSpecialization = (from s in db.Specialization where s.SpecializationId.Equals(specialization.SpecializationId) select s).FirstOrDefault<Specialization>();
+
+                        if (editingSpecialization.Code != specialization.Code || editingSpecialization.Name != specialization.Name || editingSpecialization.DegreeId != specialization.DegreeId || editingSpecialization.InstituteId != specialization.InstituteId || editingSpecialization.DepartmentId != specialization.DepartmentId || editingSpecialization.IsActive != specialization.IsActive)
+                        {
+                            editingSpecialization.Code = specialization.Code;
+                            editingSpecialization.Name = specialization.Name;
+                            editingSpecialization.DegreeId = specialization.DegreeId;
+                            editingSpecialization.InstituteId = specialization.InstituteId;
+                            editingSpecialization.DepartmentId = specialization.DepartmentId;
+                            editingSpecialization.IsActive = specialization.IsActive;
+                            editingSpecialization.ModifiedBy = "Dulanjalee";
+                            editingSpecialization.ModifiedDate = dateTime;
+
+                            db.Entry(editingSpecialization).State = EntityState.Modified;
                             db.SaveChanges();
 
                             return Json(new

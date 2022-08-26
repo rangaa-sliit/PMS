@@ -1,10 +1,10 @@
 ﻿@*Developed By:- Dulanjalee Wickremasinghe
-    Developed On:- 2022/08/24*@
+    Developed On:- 2022/08/25*@
 
-@model PMS.Models.Degree
+@model PMS.Models.Specialization
 
 @{
-    ViewBag.Title = "AddOrEditDegree";
+    ViewBag.Title = "AddOrEditSpecialization";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -12,57 +12,48 @@
     <div class="col-12">
         <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("ManageDegree", "SA")">Manage Degrees</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageSpecialization", "SA")">Manage Specialization</a></li>
         </ol>
     </div>
 </div>
 <hr class="ml-2 mr-2 mt-0 mb-2" />
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800" id="aeDegreeMainTitle"></h1>
+    <h1 class="h3 mb-2 text-gray-800" id="aeSpecializationMainTitle"></h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary" id="aeDegreeCardTitle"></h6>
+            <h6 class="m-0 font-weight-bold text-primary" id="aeSpecializationCardTitle"></h6>
         </div>
         <div class="card-body">
-            @using (Html.BeginForm("AddOrEditDegree", "SA", FormMethod.Post, new { onsubmit = "return SubmitDegreeForm(this)", @id = "degreeForm", autocomplete = "off" }))
+            @using (Html.BeginForm("AddOrEditSpecialization", "SA", FormMethod.Post, new { onsubmit = "return SubmitSpecializationForm(this)", @id = "specializationForm", autocomplete = "off" }))
             {
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.DegreeId)
+                @Html.HiddenFor(model => model.SpecializationId)
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Code, "Degree Code: ", new { @class = "required" })
+                        @Html.LabelFor(model => model.Code, "Specialization Code: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "Degree Code", @id = "Code", oninput = "onDegreeCodeInput()" } })
+                        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "Specialization Code", @id = "Code", oninput = "onSpecializationCodeInput()" } })
                         @Html.ValidationMessageFor(model => model.Code)
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Name, "Degree Name: ", new { @class = "required" })
+                        @Html.LabelFor(model => model.Name, "Specialization Name: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Degree Name", @id = "Name", oninput = "onDegreeNameInput()" } })
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Specialization Name", @id = "Name", oninput = "onSpecializationNameInput()" } })
                         @Html.ValidationMessageFor(model => model.Name)
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Description, "Description: ")
+                        @Html.LabelFor(model => model.DegreeId, "Degree: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @placeholder = "Description", @id = "Description", oninput = "onDegreeDescriptionInput()" } })
-                        @Html.ValidationMessageFor(model => model.Description)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.FacultyId, "Faculty: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "FacultyId", onchange = "onFacultyChange(this.value)" })
-                        @Html.ValidationMessageFor(model => model.FacultyId)
+                        @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.degreeList, new { @class = "form-control", @id = "DegreeId", onchange = "onDegreeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DegreeId)
                     </div>
                 </div>
                 <div class="form-group row">
@@ -92,13 +83,13 @@
                         {
                             new SelectListItem{ Text = "Active", Value = "true" },
                             new SelectListItem{ Text = "Inactive", Value = "false" }
-                        }, new { @class = "form-control", @id = "degreeStatusList", onchange = "onDegreeStatusChange(this.value)" })
+                        }, new { @class = "form-control", @id = "specializationStatusList", onchange = "onSpecializationStatusChange(this.value)" })
                     </div>
                 </div>
                 <hr />
                 <div class="form-group">
-                    <button class="btn btn-primary" type="submit" id="degreeSubmitBtn">Save</button>
-                    <button class="btn btn-light" type="button" id="degreeClearBtn" onclick="clearDegreeForm()">Clear Changes</button>
+                    <button class="btn btn-primary" type="submit" id="specializationSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="specializationClearBtn" onclick="clearSpecializationForm()">Clear Changes</button>
                 </div>
             }
         </div>
@@ -113,38 +104,43 @@
             operation = window.location.pathname.toString().split('/')[4];
 
             if (operation != undefined) {
-                $("#degreeSubmitBtn").prop("disabled", true);
-                $("#degreeClearBtn").prop("disabled", true);
+                $("#specializationSubmitBtn").prop("disabled", true);
+                $("#specializationClearBtn").prop("disabled", true);
                 if (operation == "Edit") {
-                    $("#aeDegreeMainTitle").html("Edit Degree");
-                    $("#aeDegreeCardTitle").html("Edit Degree");
-                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Degree</li>`);
+                    $("#aeSpecializationMainTitle").html("Edit Specialization");
+                    $("#aeSpecializationCardTitle").html("Edit Specialization");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Specialization</li>`);
+                    //oldCode = $("#Code").val();
+                    //oldName = $("#Name").val();
+                    //oldDegree = $("#Degree").val();
+                    //oldInstitute = $("#Institute").val();
+                    //oldDepartment = $("#Department").val();
+                    //oldSpecializationStatus = $("specializationStatusList :selected").val();
                 }
                 else {
-                    $("#aeDegreetMainTitle").html("View Degree");
-                    $("#aeDegreeCardTitle").html("View Degree");
-                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Degree</li>`);
+                    $("#aeSpecializationtMainTitle").html("View Specialization");
+                    $("#aeSpecializationCardTitle").html("View Specialization");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Specialization</li>`);
                     $("#Code").prop("disabled", true);
                     $("#Name").prop("disabled", true);
-                    $("#Description").prop("disabled", true);
-                    $("#FacultyId").prop("disabled", true);
+                    $("#DegreeId").prop("disabled", true);
                     $("#InstituteId").prop("disabled", true);
                     $("#DepartmentId").prop("disabled", true);
-                    $("#degreeStatusList").prop("disabled", true);
+                    $("#specializationStatusList").prop("disabled", true);
                 }
             }
             else {
-                $("#aeDegreeMainTitle").html("Add Degree");
-                $("#aeDegreetCardTitle").html("Add Degree");
-                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Degree</li>`);
-                $("#FacultyId").val("");
+                $("#aeSpecializationMainTitle").html("Add Specialization");
+                $("#aeSpecializationtCardTitle").html("Add Specialization");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Specialization</li>`);
+                $("#DegreeId").val("");
                 $("#InstituteId").val("");
                 $("#DepartmentId").val("");
-                $("#degreeStatusList").val("true");
+                $("#specializationStatusList").val("true");
             }
         })
 
-        function SubmitDegreeForm(form) {
+        function SubmitSpecializationForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
@@ -161,11 +157,10 @@
                             if (operation == undefined) {
                                 $("#Code").val("");
                                 $("#Name").val("");
-                                $("#Description").val("");
-                                $("#FacultyId").val("");
+                                $("#DegreeId").val("");
                                 $("#InstituteId").val("");
                                 $("#DepartmentId").val("");
-                                $("#degreeStatusList").val("true");
+                                $("#specializationStatusList").val("true");
                             }
 
                             $.notify(data.message, {
@@ -185,54 +180,48 @@
             return false;
         }
 
-        function clearDegreeForm() {
+        function clearSpecializationForm() {
             if (operation == undefined) {
                 $("#Code").val("");
                 $("#Name").val("");
-                $("#Description").val("");
-                $("#FacultyId").val("");
+                $("#DegreeId").val("");
                 $("#InstituteId").val("");
                 $("#DepartmentId").val("");
-                $("#degreeStatusList").val("true");
+                $("#specializationStatusList").val("true");
             }
             else {
                 window.location.reload();
             }
         }
 
-        function onDegreeCodeInput() {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+        function onSpecializationCodeInput() {
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
 
-        function onDegreeNameInput() {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+        function onSpecializationNameInput() {
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
 
-        function onDegreeDescriptionInput() {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
-        }
-
-        function onFacultyChange(newFaculty) {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+        function onDegreeChange(newDegree) {
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
 
         function onInstituteChange(newInstitute) {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
 
         function onDepartmentChange(newDepartment) {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
 
-        function onDegreeStatusChange(newStatus) {
-            $("#degreeSubmitBtn").prop("disabled", false);
-            $("#degreeClearBtn").prop("disabled", false);
+        function onSpecializationStatusChange(newStatus) {
+            $("#specializationSubmitBtn").prop("disabled", false);
+            $("#specializationClearBtn").prop("disabled", false);
         }
     </script>
 }

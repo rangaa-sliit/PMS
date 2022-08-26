@@ -203,8 +203,8 @@ D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\bin\Microsoft.Owin.Sec
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\bin\Microsoft.Owin.Security.OAuth.xml
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs.cache
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.dll
 D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.pdb
+D:\Projects\PMS-Payment Management System\Dev\PMS\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache
