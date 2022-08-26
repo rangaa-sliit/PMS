@@ -330,7 +330,7 @@ namespace PMS.Controllers
                                                      FacultyId = f.FacultyId,
                                                      FacultyCode = f.FacultyCode,
                                                      FacultyName = f.FacultyName,
-                                                     FacultyDean = usr,
+                                                     FacultyDean = usr != null ? usr.FirstName + " " + usr.LastName : null,
                                                      IsActive = f.IsActive
                                                  }).ToList();
 
@@ -359,24 +359,11 @@ namespace PMS.Controllers
 
                 if (id == 0)
                 {
-                    return View(new FacultyVM());
+                    return View(new Faculty());
                 }
                 else
                 {
-                    FacultyVM facultyVM = (from f in db.Faculty
-                                           join u in db.AspNetUsers on f.FacultyDean equals u.Id into f_u
-                                           from usr in f_u.DefaultIfEmpty()
-                                           where f.FacultyId.Equals(id)
-                                           select new FacultyVM
-                                           {
-                                               FacultyId = f.FacultyId,
-                                               FacultyCode = f.FacultyCode,
-                                               FacultyName = f.FacultyName,
-                                               FacultyDeanId = usr.Id,
-                                               FacultyDean = usr,
-                                               IsActive = f.IsActive
-                                           }).FirstOrDefault<FacultyVM>();
-                    return View(facultyVM);
+                    return View((from f in db.Faculty where f.FacultyId.Equals(id) select f).FirstOrDefault<Faculty>());
                 }
             }
         }
@@ -385,19 +372,19 @@ namespace PMS.Controllers
         //Developed On:- 2022/08/18
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditFaculty(FacultyVM facultyVM)
+        public ActionResult AddOrEditFaculty(Faculty faculty)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 try
                 {
                     var dateTime = DateTime.Now;
-                    if (facultyVM.FacultyId == 0)
+                    if (faculty.FacultyId == 0)
                     {
-                        Faculty validationRecord = (from f in db.Faculty where f.FacultyCode.Equals(facultyVM.FacultyCode) || f.FacultyName.Equals(facultyVM.FacultyName) select f).FirstOrDefault<Faculty>();
+                        Faculty validationRecord = (from f in db.Faculty where f.FacultyCode.Equals(faculty.FacultyCode) || f.FacultyName.Equals(faculty.FacultyName) select f).FirstOrDefault<Faculty>();
                         if (validationRecord != null)
                         {
-                            if (validationRecord.FacultyCode == facultyVM.FacultyCode && validationRecord.FacultyName == facultyVM.FacultyName)
+                            if (validationRecord.FacultyCode == faculty.FacultyCode && validationRecord.FacultyName == faculty.FacultyName)
                             {
                                 return Json(new
                                 {
@@ -407,7 +394,7 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                if (validationRecord.FacultyCode == facultyVM.FacultyCode)
+                                if (validationRecord.FacultyCode == faculty.FacultyCode)
                                 {
                                     return Json(new
                                     {
@@ -427,12 +414,6 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            Faculty faculty = new Faculty();
-
-                            faculty.FacultyCode = facultyVM.FacultyCode;
-                            faculty.FacultyName = facultyVM.FacultyName;
-                            faculty.FacultyDean = facultyVM.FacultyDeanId;
-                            faculty.IsActive = facultyVM.IsActive;
                             faculty.CreatedBy = "Ranga";
                             faculty.CreatedDate = dateTime;
                             faculty.ModifiedBy = "Ranga";
@@ -450,14 +431,14 @@ namespace PMS.Controllers
                     }
                     else
                     {
-                        Faculty editingFaculty = (from f in db.Faculty where f.FacultyId.Equals(facultyVM.FacultyId) select f).FirstOrDefault<Faculty>();
+                        Faculty editingFaculty = (from f in db.Faculty where f.FacultyId.Equals(faculty.FacultyId) select f).FirstOrDefault<Faculty>();
 
-                        if (editingFaculty.FacultyCode != facultyVM.FacultyCode || editingFaculty.FacultyName != facultyVM.FacultyName || editingFaculty.FacultyDean != facultyVM.FacultyDeanId || editingFaculty.IsActive != facultyVM.IsActive)
+                        if (editingFaculty.FacultyCode != faculty.FacultyCode || editingFaculty.FacultyName != faculty.FacultyName || editingFaculty.FacultyDean != faculty.FacultyDean || editingFaculty.IsActive != faculty.IsActive)
                         {
-                            editingFaculty.FacultyCode = facultyVM.FacultyCode;
-                            editingFaculty.FacultyName = facultyVM.FacultyName;
-                            editingFaculty.FacultyDean = facultyVM.FacultyDeanId;
-                            editingFaculty.IsActive = facultyVM.IsActive;
+                            editingFaculty.FacultyCode = faculty.FacultyCode;
+                            editingFaculty.FacultyName = faculty.FacultyName;
+                            editingFaculty.FacultyDean = faculty.FacultyDean;
+                            editingFaculty.IsActive = faculty.IsActive;
                             editingFaculty.ModifiedBy = "Ranga";
                             editingFaculty.ModifiedDate = dateTime;
 
@@ -522,8 +503,8 @@ namespace PMS.Controllers
                                                           DepartmentId = d.DepartmentId,
                                                           DepartmentCode = d.DepartmentCode,
                                                           DepartmentName = d.DepartmentName,
-                                                          HOD = usr,
-                                                          Faculty = fac,
+                                                          HODName = usr != null ? usr.FirstName + " " + usr.LastName : null,
+                                                          FacultyName = fac.FacultyName,
                                                           IsActive = d.IsActive
                                                       }).ToList();
 
@@ -564,29 +545,11 @@ namespace PMS.Controllers
 
                 if (id == 0)
                 {
-                    return View(new DepartmentVM());
+                    return View(new Department());
                 }
                 else
                 {
-                    DepartmentVM departmentVM = (from d in db.Department
-                                                 join u in db.AspNetUsers on d.HOD equals u.Id into d_u
-                                                 from usr in d_u.DefaultIfEmpty()
-                                                 join f in db.Faculty on d.FacultyId equals f.FacultyId into d_f
-                                                 from fac in d_f.DefaultIfEmpty()
-                                                 where d.DepartmentId.Equals(id)
-                                                 select new DepartmentVM
-                                                 {
-                                                     DepartmentId = d.DepartmentId,
-                                                     DepartmentCode = d.DepartmentCode,
-                                                     DepartmentName = d.DepartmentName,
-                                                     HODId = usr.Id,
-                                                     HOD = usr,
-                                                     FacultyId =fac.FacultyId,
-                                                     Faculty = fac,
-                                                     IsActive = d.IsActive
-                                                 }).FirstOrDefault<DepartmentVM>();
-
-                    return View(departmentVM);
+                    return View((from d in db.Department where d.DepartmentId.Equals(id) select d).FirstOrDefault<Department>());
                 }
             }
         }
@@ -595,19 +558,19 @@ namespace PMS.Controllers
         //Developed On:- 2022/08/19
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditDepartment(DepartmentVM departmentVM)
+        public ActionResult AddOrEditDepartment(Department department)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 try
                 {
                     var dateTime = DateTime.Now;
-                    if (departmentVM.DepartmentId == 0)
+                    if (department.DepartmentId == 0)
                     {
-                        Department validationRecord = (from d in db.Department where d.DepartmentCode.Equals(departmentVM.DepartmentCode) || d.DepartmentName.Equals(departmentVM.DepartmentName) select d).FirstOrDefault<Department>();
+                        Department validationRecord = (from d in db.Department where d.DepartmentCode.Equals(department.DepartmentCode) || d.DepartmentName.Equals(department.DepartmentName) select d).FirstOrDefault<Department>();
                         if (validationRecord != null)
                         {
-                            if (validationRecord.DepartmentCode == departmentVM.DepartmentCode && validationRecord.DepartmentName == departmentVM.DepartmentName)
+                            if (validationRecord.DepartmentCode == department.DepartmentCode && validationRecord.DepartmentName == department.DepartmentName)
                             {
                                 return Json(new
                                 {
@@ -617,7 +580,7 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                if (validationRecord.DepartmentCode == departmentVM.DepartmentCode)
+                                if (validationRecord.DepartmentCode == department.DepartmentCode)
                                 {
                                     return Json(new
                                     {
@@ -637,13 +600,6 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            Department department = new Department();
-
-                            department.DepartmentCode = departmentVM.DepartmentCode;
-                            department.DepartmentName = departmentVM.DepartmentName;
-                            department.HOD = departmentVM.HODId;
-                            department.FacultyId = departmentVM.FacultyId;
-                            department.IsActive = departmentVM.IsActive;
                             department.CreatedBy = "Ranga";
                             department.CreatedDate = dateTime;
                             department.ModifiedBy = "Ranga";
@@ -661,17 +617,17 @@ namespace PMS.Controllers
                     }
                     else
                     {
-                        Department editingDepartment = (from d in db.Department where d.DepartmentId.Equals(departmentVM.DepartmentId) select d).FirstOrDefault<Department>();
+                        Department editingDepartment = (from d in db.Department where d.DepartmentId.Equals(department.DepartmentId) select d).FirstOrDefault<Department>();
 
-                        if (editingDepartment.DepartmentCode != departmentVM.DepartmentCode || editingDepartment.DepartmentName != departmentVM.DepartmentName 
-                            || editingDepartment.HOD != departmentVM.HODId || editingDepartment.FacultyId != departmentVM.FacultyId 
-                            || editingDepartment.IsActive != departmentVM.IsActive)
+                        if (editingDepartment.DepartmentCode != department.DepartmentCode || editingDepartment.DepartmentName != department.DepartmentName 
+                            || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId 
+                            || editingDepartment.IsActive != department.IsActive)
                         {
-                            editingDepartment.DepartmentCode = departmentVM.DepartmentCode;
-                            editingDepartment.DepartmentName = departmentVM.DepartmentName;
-                            editingDepartment.HOD = departmentVM.HODId;
-                            editingDepartment.FacultyId = departmentVM.FacultyId;
-                            editingDepartment.IsActive = departmentVM.IsActive;
+                            editingDepartment.DepartmentCode = department.DepartmentCode;
+                            editingDepartment.DepartmentName = department.DepartmentName;
+                            editingDepartment.HOD = department.HOD;
+                            editingDepartment.FacultyId = department.FacultyId;
+                            editingDepartment.IsActive = department.IsActive;
                             editingDepartment.ModifiedBy = "Ranga";
                             editingDepartment.ModifiedDate = dateTime;
 
@@ -727,11 +683,12 @@ namespace PMS.Controllers
             {
                 List<LectureHallVM> lectureHallsList = (from l in db.LectureHall
                                                         join c in db.Campus on l.CampusId equals c.CampusId
+                                                        orderby l.HallId descending
                                                         select new LectureHallVM
                                                         {
                                                             HallId = l.HallId,
                                                             CampusId = c.CampusId,
-                                                            Campus = c,
+                                                            CampusName = c.CampusName,
                                                             Building = l.Building,
                                                             Floor = l.Floor,
                                                             HallName = l.HallName,
@@ -763,24 +720,11 @@ namespace PMS.Controllers
 
                 if (id == 0)
                 {
-                    return View(new LectureHallVM());
+                    return View(new LectureHall());
                 }
                 else
                 {
-                    LectureHallVM lectureHallVM = (from l in db.LectureHall
-                                                   join c in db.Campus on l.CampusId equals c.CampusId
-                                                   select new LectureHallVM
-                                                   {
-                                                       HallId = l.HallId,
-                                                       CampusId = c.CampusId,
-                                                       Campus = c,
-                                                       Building = l.Building,
-                                                       Floor = l.Floor,
-                                                       HallName = l.HallName,
-                                                       IsActive = l.IsActive
-                                                   }).FirstOrDefault<LectureHallVM>();
-
-                    return View(lectureHallVM);
+                    return View((from l in db.LectureHall where l.HallId.Equals(id) select l).FirstOrDefault<LectureHall>());
                 }
             }
         }
@@ -789,18 +733,18 @@ namespace PMS.Controllers
         //Developed On:- 2022/08/19
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditLectureHall(LectureHallVM lectureHallVM)
+        public ActionResult AddOrEditLectureHall(LectureHall lectureHall)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 try
                 {
                     var dateTime = DateTime.Now;
-                    if (lectureHallVM.HallId == 0)
+                    if (lectureHall.HallId == 0)
                     {
                         LectureHall validationRecord = (from l in db.LectureHall
-                                                        where l.CampusId.Equals(lectureHallVM.CampusId) && l.Building.Equals(lectureHallVM.Building)
-                                                        && l.Floor.Equals(lectureHallVM.Floor) && l.HallName.Equals(lectureHallVM.HallName)
+                                                        where l.CampusId.Equals(lectureHall.CampusId) && l.Building.Equals(lectureHall.Building)
+                                                        && l.Floor.Equals(lectureHall.Floor) && l.HallName.Equals(lectureHall.HallName)
                                                         select l).FirstOrDefault<LectureHall>();
                         if (validationRecord != null)
                         {
@@ -812,13 +756,6 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            LectureHall lectureHall = new LectureHall();
-
-                            lectureHall.CampusId = lectureHallVM.CampusId;
-                            lectureHall.Building = lectureHallVM.Building;
-                            lectureHall.Floor = lectureHallVM.Floor;
-                            lectureHall.HallName = lectureHallVM.HallName;
-                            lectureHall.IsActive = lectureHallVM.IsActive;
                             lectureHall.CreatedBy = "Ranga";
                             lectureHall.CreatedDate = dateTime;
                             lectureHall.ModifiedBy = "Ranga";
@@ -836,17 +773,17 @@ namespace PMS.Controllers
                     }
                     else
                     {
-                        LectureHall editingLectureHall = (from l in db.LectureHall where l.HallId.Equals(lectureHallVM.HallId) select l).FirstOrDefault<LectureHall>();
+                        LectureHall editingLectureHall = (from l in db.LectureHall where l.HallId.Equals(lectureHall.HallId) select l).FirstOrDefault<LectureHall>();
 
-                        if (editingLectureHall.CampusId != lectureHallVM.CampusId || editingLectureHall.Building != lectureHallVM.Building
-                            || editingLectureHall.Floor != lectureHallVM.Floor || editingLectureHall.HallName != lectureHallVM.HallName
-                            || editingLectureHall.IsActive != lectureHallVM.IsActive)
+                        if (editingLectureHall.CampusId != lectureHall.CampusId || editingLectureHall.Building != lectureHall.Building
+                            || editingLectureHall.Floor != lectureHall.Floor || editingLectureHall.HallName != lectureHall.HallName
+                            || editingLectureHall.IsActive != lectureHall.IsActive)
                         {
-                            editingLectureHall.CampusId = lectureHallVM.CampusId;
-                            editingLectureHall.Building = lectureHallVM.Building;
-                            editingLectureHall.Floor = lectureHallVM.Floor;
-                            editingLectureHall.HallName = lectureHallVM.HallName;
-                            editingLectureHall.IsActive = lectureHallVM.IsActive;
+                            editingLectureHall.CampusId = lectureHall.CampusId;
+                            editingLectureHall.Building = lectureHall.Building;
+                            editingLectureHall.Floor = lectureHall.Floor;
+                            editingLectureHall.HallName = lectureHall.HallName;
+                            editingLectureHall.IsActive = lectureHall.IsActive;
                             editingLectureHall.ModifiedBy = "Ranga";
                             editingLectureHall.ModifiedDate = dateTime;
 
@@ -1807,8 +1744,167 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<Designation> designationsList = (from d in db.Designation orderby d.DesignationId descending select d).ToList();
-                return Json(new { data = designationsList }, JsonRequestBehavior.AllowGet);
+                List<AppointmentVM> appointmentList = (from a in db.Appointment
+                                                       join u in db.AspNetUsers on a.UserId equals u.Id
+                                                       join at in db.AppointmentType on a.AppointmentTypeId equals at.AppointmentTypeId
+                                                       join d in db.Designation on a.DesignationId equals d.DesignationId
+                                                       orderby a.AppointmentId descending
+                                                       select new AppointmentVM
+                                                       {
+                                                           AppointmentId = a.AppointmentId,
+                                                           EmployeeName = u.FirstName + " " + u.LastName,
+                                                           AppointmentTypeName = at.AppointmentTypeName,
+                                                           DesignationName = d.DesignationName,
+                                                           AppointmentFrom = a.AppointmentFrom.ToString().Substring(0, 10),
+                                                           AppointmentTo = a.AppointmentTo.ToString().Substring(0, 10),
+                                                           IsActive = a.IsActive
+                                                       }).ToList();
+
+                return Json(new { data = appointmentList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        [HttpGet]
+        public ActionResult AddOrEditAppointment(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var users = (from u in db.AspNetUsers
+                             where u.IsActive.Equals(true)
+                             select new
+                             {
+                                 Text = u.FirstName + " " + u.LastName,
+                                 Value = u.Id
+                             }).ToList();
+
+                List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
+                usersList.Insert(0, new SelectListItem() { Text = "-- Select Employee --", Value = "", Disabled = true, Selected = true });
+                ViewBag.usersList = usersList;
+
+                var designations = (from d in db.Designation
+                                    where d.IsActive.Equals(true)
+                                    select new
+                                    {
+                                        Text = d.DesignationName,
+                                        Value = d.DesignationId
+                                    }).ToList();
+
+                List<SelectListItem> designationList = new SelectList(designations, "Value", "Text").ToList();
+                designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                ViewBag.designationList = designationList;
+
+                var appointmentTypes = (from at in db.AppointmentType
+                                        where at.IsActive.Equals(true)
+                                        select new
+                                        {
+                                            Text = at.AppointmentTypeName,
+                                            Value = at.AppointmentTypeId
+                                        }).ToList();
+
+                List<SelectListItem> appointmentTypeList = new SelectList(appointmentTypes, "Value", "Text").ToList();
+                appointmentTypeList.Insert(0, new SelectListItem() { Text = "-- Select Appointment Type --", Value = "", Disabled = true, Selected = true });
+                ViewBag.appointmentTypeList = appointmentTypeList;
+
+                if (id == 0)
+                {
+                    return View(new Appointment());
+                }
+                else
+                {
+                    return View((from a in db.Appointment where a.AppointmentId.Equals(id) select a).FirstOrDefault<Appointment>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/26
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditAppointment(Appointment appointment)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (appointment.DesignationId == 0)
+                    {
+                        Appointment validationRecord = (from a in db.Appointment
+                                                        where a.UserId.Equals(appointment.UserId) && a.DesignationId.Equals(appointment.DesignationId)
+                                                        && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
+                                                        select a).FirstOrDefault<Appointment>();
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Designation Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            appointment.CreatedBy = "Ranga";
+                            appointment.CreatedDate = dateTime;
+                            appointment.ModifiedBy = "Ranga";
+                            appointment.ModifiedDate = dateTime;
+
+                            db.Appointment.Add(appointment);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Designation editingDesignation = (from d in db.Designation where d.DesignationId.Equals(designation.DesignationId) select d).FirstOrDefault<Designation>();
+
+                        if (editingDesignation.DesignationName != designation.DesignationName || editingDesignation.IsActive != designation.IsActive)
+                        {
+                            editingDesignation.DesignationName = designation.DesignationName;
+                            editingDesignation.IsActive = designation.IsActive;
+                            editingDesignation.ModifiedBy = "Ranga";
+                            editingDesignation.ModifiedDate = dateTime;
+
+                            db.Entry(editingDesignation).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
             }
         }
     }
