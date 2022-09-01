@@ -65,18 +65,18 @@ Developed On:- 2022/08/25*@
                     "data": "EmployeeName"
                 },
                 {
-                    "title": "Appointment Type",
-                    "data": "AppointmentTypeName"
-                },
-                {
                     "title": "Designation",
                     "data": "DesignationName"
+                },
+                {
+                    "title": "Appointment Type",
+                    "data": "AppointmentTypeName"
                 },
                 {
                     "title": "Appoint From",
                     "data": "AppointmentFrom",
                     "render": function (data) {
-                        if (data == null) {
+                        if (data == "") {
                             return "N/A";
                         }
                         else {

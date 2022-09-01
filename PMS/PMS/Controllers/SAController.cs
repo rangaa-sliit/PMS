@@ -1756,7 +1756,7 @@ namespace PMS.Controllers
                                                            AppointmentTypeName = at.AppointmentTypeName,
                                                            DesignationName = d.DesignationName,
                                                            AppointmentFrom = a.AppointmentFrom.ToString().Substring(0, 10),
-                                                           AppointmentTo = a.AppointmentTo.ToString().Substring(0, 10),
+                                                           AppointmentTo = a.AppointmentTo.HasValue ? a.AppointmentTo.ToString().Substring(0, 10) : null,
                                                            IsActive = a.IsActive
                                                        }).ToList();
 
@@ -1829,21 +1829,72 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
-                    if (appointment.DesignationId == 0)
+                    if (appointment.AppointmentId == 0)
                     {
+                        bool existingNotFound = true;
+                        var appointmentFrom = Convert.ToDateTime(appointment.AppointmentFrom);
                         Appointment validationRecord = (from a in db.Appointment
                                                         where a.UserId.Equals(appointment.UserId) && a.DesignationId.Equals(appointment.DesignationId)
-                                                        && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
+                                                        && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId) && a.IsActive.Equals(true)
                                                         select a).FirstOrDefault<Appointment>();
+
                         if (validationRecord != null)
                         {
-                            return Json(new
+                            if (!appointment.AppointmentTo.HasValue)
                             {
-                                success = false,
-                                message = "This Designation Already Exists"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (!validationRecord.AppointmentTo.HasValue)
+                                {
+                                    existingNotFound = false;
+                                }
+                                else
+                                {
+                                    if(appointmentFrom <= validationRecord.AppointmentTo.Value)
+                                    {
+                                        existingNotFound = false;
+                                    }
+                                    else
+                                    {
+                                        existingNotFound = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var appointmentTo = Convert.ToDateTime(appointment.AppointmentTo.Value);
+
+                                if (!validationRecord.AppointmentTo.HasValue)
+                                {
+                                    if(validationRecord.AppointmentFrom <= appointmentTo)
+                                    {
+                                        existingNotFound = false;
+                                    }
+                                    else
+                                    {
+                                        existingNotFound = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if((appointmentFrom <= validationRecord.AppointmentFrom && validationRecord.AppointmentFrom <= appointmentTo)
+                                        || (validationRecord.AppointmentFrom <= appointmentFrom && appointmentFrom <= validationRecord.AppointmentTo.Value)
+                                        || (appointmentFrom <= validationRecord.AppointmentFrom && validationRecord.AppointmentTo.Value <= appointmentTo)
+                                        || (validationRecord.AppointmentFrom <= appointmentFrom && appointmentTo <= validationRecord.AppointmentTo.Value))
+                                    {
+                                        existingNotFound = false;
+                                    }
+                                    else
+                                    {
+                                        existingNotFound = true;
+                                    }
+                                }
+                            }
                         }
                         else
+                        {
+                            existingNotFound = true;
+                        }
+
+                        if (existingNotFound)
                         {
                             appointment.CreatedBy = "Ranga";
                             appointment.CreatedDate = dateTime;
@@ -1859,19 +1910,33 @@ namespace PMS.Controllers
                                 message = "Successfully Saved"
                             }, JsonRequestBehavior.AllowGet);
                         }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Appointment Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
                     }
                     else
                     {
-                        Designation editingDesignation = (from d in db.Designation where d.DesignationId.Equals(designation.DesignationId) select d).FirstOrDefault<Designation>();
+                        Appointment editingAppointment = (from a in db.Appointment where a.AppointmentId.Equals(appointment.AppointmentId) select a).FirstOrDefault<Appointment>();
 
-                        if (editingDesignation.DesignationName != designation.DesignationName || editingDesignation.IsActive != designation.IsActive)
+                        if (editingAppointment.UserId != appointment.UserId || editingAppointment.DesignationId != appointment.DesignationId 
+                            || editingAppointment.AppointmentTypeId != appointment.AppointmentTypeId || editingAppointment.AppointmentFrom != appointment.AppointmentFrom 
+                            || editingAppointment.AppointmentTo != appointment.AppointmentTo || editingAppointment.IsActive != appointment.IsActive)
                         {
-                            editingDesignation.DesignationName = designation.DesignationName;
-                            editingDesignation.IsActive = designation.IsActive;
-                            editingDesignation.ModifiedBy = "Ranga";
-                            editingDesignation.ModifiedDate = dateTime;
+                            editingAppointment.UserId = appointment.UserId;
+                            editingAppointment.DesignationId = appointment.DesignationId;
+                            editingAppointment.AppointmentTypeId = appointment.AppointmentTypeId;
+                            editingAppointment.AppointmentFrom = appointment.AppointmentFrom;
+                            editingAppointment.AppointmentTo = appointment.AppointmentTo;
+                            editingAppointment.IsActive = appointment.IsActive;
+                            editingAppointment.ModifiedBy = "Ranga";
+                            editingAppointment.ModifiedDate = dateTime;
 
-                            db.Entry(editingDesignation).State = EntityState.Modified;
+                            db.Entry(editingAppointment).State = EntityState.Modified;
                             db.SaveChanges();
 
                             return Json(new
