@@ -106,6 +106,7 @@ Developed On:- 2022/08/26*@
             if (operation != undefined) {
                 $("#appointmentSubmitBtn").prop("disabled", true);
                 $("#appointmentClearBtn").prop("disabled", true);
+                $("#employeeList").prop("disabled", true);
                 if (operation == "Edit") {
                     $("#aeAppointmentMainTitle").html("Edit Appointment");
                     $("#aeAppointmentCardTitle").html("Edit Appointment");
@@ -115,7 +116,6 @@ Developed On:- 2022/08/26*@
                     $("#aeAppointmentMainTitle").html("View Appointment");
                     $("#aeAppointmentCardTitle").html("View Appointment");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Appointment</li>`);
-                    $("#employeeList").prop("disabled", true);
                     $("#designationList").prop("disabled", true);
                     $("#appointmentTypeList").prop("disabled", true);
                     $("#appointmentFrom").prop("disabled", true);
@@ -140,36 +140,44 @@ Developed On:- 2022/08/26*@
             $.validator.unobtrusive.parse(form);
 
             if ($(form).valid()) {
-                $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    url: form.action,
-                    data: $(form).serialize(),
-                    success: function (data) {
-                        $("#loader").hide();
-                        if (data.success) {
-                            if (operation == undefined) {
-                                $("#employeeList").val("");
-                                $("#designationList").val("");
-                                $("#appointmentTypeList").val("");
-                                $("#appointmentFrom").val("");
-                                $("#appointmentTo").val("");
-                                $("#appointmentStatusList").val("true");
-                            }
+                var fromDate = new Date($("#appointmentFrom").val());
+                var toDate = new Date($("#appointmentTo").val());
 
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "success"
-                            })
+                if (toDate < fromDate) {
+                    alert("Appointment To Date should be greater than Appointment From Date");
+                }
+                else {
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: $(form).serialize(),
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#employeeList").val("");
+                                    $("#designationList").val("");
+                                    $("#appointmentTypeList").val("");
+                                    $("#appointmentFrom").val("");
+                                    $("#appointmentTo").val("");
+                                    $("#appointmentStatusList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
                         }
-                        else {
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "error"
-                            })
-                        }
-                    }
-                });
+                    });
+                }
             }
             return false;
         }
