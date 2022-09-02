@@ -2088,5 +2088,221 @@ namespace PMS.Controllers
                 }
             }
         }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        public ActionResult ManagePaymentRate()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/25
+        public ActionResult GetPaymentRate()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<PaymentRateVM> paymentRateList = (from pr in db.PaymentRate
+                                                       join ds in db.Designation on pr.DesignationId equals ds.DesignationId into pr_ds
+                                                       from des in pr_ds.DefaultIfEmpty()
+                                                       join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
+                                                       from fac in pr_f.DefaultIfEmpty()
+                                                       join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
+                                                       from deg in pr_d.DefaultIfEmpty()
+                                                       join sp in db.Specialization on pr.SpecializationId equals sp.SpecializationId into pr_sp
+                                                       from spc in pr_sp.DefaultIfEmpty()
+                                                       join s in db.Subject on pr.SubjectId equals s.SubjectId into pr_s
+                                                       from sub in pr_s.DefaultIfEmpty()
+                                                       orderby pr.Id descending
+                                                       select new PaymentRateVM
+                                                             {
+                                                                 Id = pr.Id,
+                                                                 DegreeId = deg.DegreeId,
+                                                                 DegreeName = deg.Name,
+                                                                 FacultyId = fac.FacultyId,
+                                                                 FacultyName = fac.FacultyName,
+                                                                 SubjectId = sub.SubjectId,
+                                                                 SubjectName = sub.SubjectName,
+                                                                 SpecializationId = spc.SpecializationId,
+                                                                 SpecializationName = spc.Name,
+                                                                 DesignationId = des.DesignationId,
+                                                                 DesignationName = des.DesignationName,
+                                                                 IsActive = pr.IsActive
+                                                             }).ToList();
+
+                return Json(new { data = paymentRateList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/31
+        [HttpGet]
+        public ActionResult AddOrEditPaymentRate(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var designation = (from ds in db.Designation
+                              where ds.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = ds.DesignationName,
+                                  Value = ds.DesignationId
+                              }).ToList();
+
+                List<SelectListItem> designationList = new SelectList(designation, "Value", "Text").ToList();
+                designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                ViewBag.designationList = designationList;
+
+                var faculty = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                ViewBag.facultyList = facultyList;
+
+                var degree = (from d in db.Degree
+                                  where d.IsActive.Equals(true)
+                                  select new
+                                  {
+                                      Text = d.Name,
+                                      Value = d.DegreeId
+                                  }).ToList();
+
+                List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
+                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                ViewBag.degreeList = degreeList;
+
+                var specialization = (from sp in db.Specialization
+                              where sp.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = sp.Name,
+                                  Value = sp.SpecializationId
+                              }).ToList();
+
+                List<SelectListItem> specializationList = new SelectList(specialization, "Value", "Text").ToList();
+                specializationList.Insert(0, new SelectListItem() { Text = "-- Select Specialization --", Value = "", Disabled = true, Selected = true });
+                ViewBag.specializationList = specializationList;
+
+                var subject = (from s in db.Subject
+                                      where s.IsActive.Equals(true)
+                                      select new
+                                      {
+                                          Text = s.SubjectName,
+                                          Value = s.SubjectId
+                                      }).ToList();
+
+                List<SelectListItem> subjectList = new SelectList(subject, "Value", "Text").ToList();
+                subjectList.Insert(0, new SelectListItem() { Text = "-- Select Subject --", Value = "", Disabled = true, Selected = true });
+                ViewBag.subjectList = subjectList;
+
+                if (id == 0)
+                {
+                    return View(new PaymentRate());
+                }
+                else
+                {
+                    return View((from pr in db.PaymentRate where pr.Id.Equals(id) select pr).FirstOrDefault<PaymentRate>());
+                }
+            }
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/08/31
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditPaymentRate(PaymentRate paymentRate)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    if (paymentRate.Id == 0)
+                    {
+                        PaymentRate validationRecord = (from pr in db.PaymentRate where pr.FacultyId.Equals(paymentRate.FacultyId) && pr.DesignationId.Equals(paymentRate.DesignationId) && pr.DegreeId.Equals(paymentRate.DegreeId) && pr.SpecializationId.Equals(paymentRate.SpecializationId) && pr.SubjectId.Equals(paymentRate.SubjectId) select pr).FirstOrDefault<PaymentRate>();
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This PaymentRate Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            paymentRate.CreatedBy = "Dulanjalee";
+                            paymentRate.CreatedDate = dateTime;
+                            paymentRate.ModifiedBy = "Dulanjalee";
+                            paymentRate.ModifiedDate = dateTime;
+
+                            db.PaymentRate.Add(paymentRate);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(paymentRate.Id) select pr).FirstOrDefault<PaymentRate>();
+
+                        if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.FacultyId != paymentRate.FacultyId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId || editingPaymentRate.IsActive != paymentRate.IsActive)
+                        {
+                            editingPaymentRate.DesignationId = paymentRate.DesignationId;
+                            editingPaymentRate.SubjectId = paymentRate.SubjectId;
+                            editingPaymentRate.DegreeId = paymentRate.DegreeId;
+                            editingPaymentRate.FacultyId = paymentRate.FacultyId;
+                            editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
+                            editingPaymentRate.IsActive = paymentRate.IsActive;
+                            editingPaymentRate.ModifiedBy = "Dulanjalee";
+                            editingPaymentRate.ModifiedDate = dateTime;
+
+                            db.Entry(editingPaymentRate).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }

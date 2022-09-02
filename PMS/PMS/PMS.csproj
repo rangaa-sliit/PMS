@@ -284,6 +284,7 @@
     <Compile Include="ViewModels\DepartmentVM.cs" />
     <Compile Include="ViewModels\FacultyVM.cs" />
     <Compile Include="ViewModels\LectureHallVM.cs" />
+    <Compile Include="ViewModels\PaymentRateVM.cs" />
     <Compile Include="ViewModels\SpecializationVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -450,6 +451,8 @@
     <Content Include="Views\SA\AddOrEditDegree.cshtml" />
     <Content Include="Views\SA\ManageSpecialization.cshtml" />
     <Content Include="Views\SA\AddOrEditSpecialization.cshtml" />
+    <Content Include="Views\SA\ManagePaymentRate.cshtml" />
+    <Content Include="Views\SA\AddOrEditPaymentRate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
