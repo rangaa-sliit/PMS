@@ -1,7 +1,7 @@
 ﻿@*Developed By:- Ranga Athapaththu
 Developed On:- 2022/08/19*@
 
-@model PMS.ViewModels.LectureHallVM
+@model PMS.Models.LectureHall
 
 @{
     ViewBag.Title = "AddOrEditLectureHall";
@@ -117,6 +117,7 @@ Developed On:- 2022/08/19*@
                 $("#aeLectureHallMainTitle").html("Add Lecture Hall");
                 $("#aeLectureHallCardTitle").html("Add Lecture Hall");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Lecture Hall</li>`);
+                $("#campusList").val("");
                 $("#lectureHallStatusList").val("true");
             }
         })

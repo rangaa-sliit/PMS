@@ -1,0 +1,229 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/08/26*@
+
+@model PMS.Models.Appointment
+
+@{
+    ViewBag.Title = "AddOrEditAppointment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageAppointments", "SA")">Manage Appointments</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeAppointmentMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeAppointmentCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditAppointment", "SA", FormMethod.Post, new { onsubmit = "return SubmitAppointmentForm(this)", @id = "appointmentForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.AppointmentId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.UserId, "Employee: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.UserId, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "employeeList", onchange = "onEmployeeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.UserId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DesignationId, "Designation: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DesignationId, (IEnumerable<SelectListItem>)ViewBag.designationList, new { @class = "form-control", @id = "designationList", onchange = "onDesignationChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DesignationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.AppointmentTypeId, "Appointment Type: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.AppointmentTypeId, (IEnumerable<SelectListItem>)ViewBag.appointmentTypeList, new { @class = "form-control", @id = "appointmentTypeList", onchange = "onAppointmentTypeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.AppointmentTypeId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.AppointmentFrom, "Appointment From: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.AppointmentFrom, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "appointmentFrom", oninput = "onAppointmentFromInput()" } })
+                        @Html.ValidationMessageFor(model => model.AppointmentFrom)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.AppointmentTo, "Appointment To: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.AppointmentTo, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "appointmentTo", oninput = "onAppointmentToInput()" } })
+                        @Html.ValidationMessageFor(model => model.AppointmentTo)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "appointmentStatusList", onchange = "onAppointmentStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="appointmentSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="appointmentClearBtn" onclick="clearAppointmentForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#appointmentSubmitBtn").prop("disabled", true);
+                $("#appointmentClearBtn").prop("disabled", true);
+                $("#employeeList").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeAppointmentMainTitle").html("Edit Appointment");
+                    $("#aeAppointmentCardTitle").html("Edit Appointment");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Appointment</li>`);
+                }
+                else {
+                    $("#aeAppointmentMainTitle").html("View Appointment");
+                    $("#aeAppointmentCardTitle").html("View Appointment");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Appointment</li>`);
+                    $("#designationList").prop("disabled", true);
+                    $("#appointmentTypeList").prop("disabled", true);
+                    $("#appointmentFrom").prop("disabled", true);
+                    $("#appointmentTo").prop("disabled", true);
+                    $("#appointmentStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeAppointmentMainTitle").html("Add Appointment");
+                $("#aeAppointmentCardTitle").html("Add Appointment");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Appointment</li>`);
+                $("#employeeList").val("");
+                $("#designationList").val("");
+                $("#appointmentTypeList").val("");
+                $("#appointmentStatusList").val("true");
+            }
+        })
+
+        function SubmitAppointmentForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                var fromDate = new Date($("#appointmentFrom").val());
+                var toDate = new Date($("#appointmentTo").val());
+
+                if (toDate < fromDate) {
+                    alert("Appointment To Date should be greater than Appointment From Date");
+                }
+                else {
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: $(form).serialize(),
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#employeeList").val("");
+                                    $("#designationList").val("");
+                                    $("#appointmentTypeList").val("");
+                                    $("#appointmentFrom").val("");
+                                    $("#appointmentTo").val("");
+                                    $("#appointmentStatusList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
+                        }
+                    });
+                }
+            }
+            return false;
+        }
+
+        function clearAppointmentForm() {
+            if (operation == undefined) {
+                $("#employeeList").val("");
+                $("#designationList").val("");
+                $("#appointmentTypeList").val("");
+                $("#appointmentFrom").val("");
+                $("#appointmentTo").val("");
+                $("#appointmentStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onEmployeeChange(newEmployee) {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+
+        function onDesignationChange(newDesignation) {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+
+        function onAppointmentTypeChange(newAppointmentType) {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+
+        function onAppointmentFromInput() {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+
+        function onAppointmentToInput() {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+
+        function onAppointmentStatusChange(newAppointmentStatus) {
+            $("#appointmentSubmitBtn").prop("disabled", false);
+            $("#appointmentClearBtn").prop("disabled", false);
+        }
+    </script>
+}

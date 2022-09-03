@@ -43,6 +43,7 @@ namespace PMS.Models
         public virtual DbSet<Designation> Designation { get; set; }
         public virtual DbSet<Faculty> Faculty { get; set; }
         public virtual DbSet<Institute> Institute { get; set; }
+        public virtual DbSet<Intake> Intake { get; set; }
         public virtual DbSet<LectureHall> LectureHall { get; set; }
         public virtual DbSet<LectureType> LectureType { get; set; }
         public virtual DbSet<PaymentRate> PaymentRate { get; set; }
