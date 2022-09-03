@@ -21,24 +21,30 @@ namespace PMS.Models
         }
     
         public int SemesterId { get; set; }
-        public int AcadamicYear { get; set; }
-        public int AcadamicSemester { get; set; }
-        public System.DateTime From { get; set; }
-        public System.DateTime To { get; set; }
-        public int DegreeId { get; set; }
-        public int CalendarYear { get; set; }
-        public int CalendarPeriod { get; set; }
-        public int FacultyId { get; set; }
-        public int InstituteId { get; set; }
+        public Nullable<int> CalendarYear { get; set; }
+        public Nullable<int> CalendarPeriodId { get; set; }
+        public Nullable<int> IntakeYear { get; set; }
+        public Nullable<int> IntakeId { get; set; }
+        public Nullable<int> AcadamicYear { get; set; }
+        public Nullable<int> AcadamicSemester { get; set; }
+        public Nullable<int> FacultyId { get; set; }
+        public Nullable<int> InstituteId { get; set; }
+        public Nullable<int> DegreeId { get; set; }
+        public Nullable<int> SpecializationId { get; set; }
+        public Nullable<System.DateTime> FromDate { get; set; }
+        public Nullable<System.DateTime> ToDate { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
+        public virtual CalendarPeriod CalendarPeriod { get; set; }
         public virtual Degree Degree { get; set; }
         public virtual Faculty Faculty { get; set; }
         public virtual Institute Institute { get; set; }
+        public virtual Intake Intake { get; set; }
+        public virtual Specialization Specialization { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterSubject> SemesterSubject { get; set; }
     }

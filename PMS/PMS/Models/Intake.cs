@@ -15,6 +15,12 @@ namespace PMS.Models
 
     public partial class Intake
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Intake()
+        {
+            this.SemesterRegistration = new HashSet<SemesterRegistration>();
+        }
+    
         public int IntakeId { get; set; }
         [Required(ErrorMessage = "From Date is required")]
         [DataType(DataType.Date)]
@@ -30,12 +36,15 @@ namespace PMS.Models
         [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string IntakeName { get; set; }
         [Required(ErrorMessage = "Intake Year is required")]
-        [Range(2022, int.MaxValue, ErrorMessage = "Years grater than 2022 are allowed")]
+        [Range(2015, int.MaxValue, ErrorMessage = "Years grater than 2022 are allowed")]
         public Nullable<int> IntakeYear { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
     }
 }

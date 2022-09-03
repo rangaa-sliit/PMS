@@ -28,6 +28,7 @@ namespace PMS.Models
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
         public int PaymentRateId { get; set; }
+        public bool SentForApproval { get; set; }
     
         public virtual Degree Degree { get; set; }
         public virtual Designation Designation { get; set; }

@@ -29,6 +29,7 @@ namespace PMS.Models
         [Required(ErrorMessage = "Designation is required")]
         public int DesignationId { get; set; }
         [Required(ErrorMessage = "Rate Per Hour is required")]
+        [Range(0, int.MaxValue, ErrorMessage = "Only positive values are allowed")]
         public double RatePerHour { get; set; }
         public bool IsApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -36,6 +37,7 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+        public bool SentForApproval { get; set; }
     
         public virtual Degree Degree { get; set; }
         public virtual Designation Designation { get; set; }

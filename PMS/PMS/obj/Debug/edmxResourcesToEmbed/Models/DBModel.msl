@@ -315,6 +315,7 @@
     <EntitySetMapping Name="PaymentRate">
       <EntityTypeMapping TypeName="PMSModel.PaymentRate">
         <MappingFragment StoreEntitySet="PaymentRate">
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -334,6 +335,7 @@
     <EntitySetMapping Name="PaymentRateLog">
       <EntityTypeMapping TypeName="PMSModel.PaymentRateLog">
         <MappingFragment StoreEntitySet="PaymentRateLog">
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="PaymentRateId" ColumnName="PaymentRateId" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
@@ -359,15 +361,18 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+          <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+          <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
+          <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
           <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
-          <ScalarProperty Name="CalendarPeriod" ColumnName="CalendarPeriod" />
-          <ScalarProperty Name="CalendarYear" ColumnName="CalendarYear" />
-          <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
-          <ScalarProperty Name="To" ColumnName="To" />
-          <ScalarProperty Name="From" ColumnName="From" />
           <ScalarProperty Name="AcadamicSemester" ColumnName="AcadamicSemester" />
           <ScalarProperty Name="AcadamicYear" ColumnName="AcadamicYear" />
+          <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
+          <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
+          <ScalarProperty Name="CalendarPeriodId" ColumnName="CalendarPeriodId" />
+          <ScalarProperty Name="CalendarYear" ColumnName="CalendarYear" />
           <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
         </MappingFragment>
       </EntityTypeMapping>

@@ -20,6 +20,7 @@ namespace PMS.Models
         {
             this.PaymentRate = new HashSet<PaymentRate>();
             this.PaymentRateLog = new HashSet<PaymentRateLog>();
+            this.SemesterRegistration = new HashSet<SemesterRegistration>();
         }
     
         public int SpecializationId { get; set; }
@@ -47,5 +48,7 @@ namespace PMS.Models
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
     }
 }

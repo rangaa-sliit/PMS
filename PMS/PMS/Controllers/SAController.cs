@@ -2798,5 +2798,12 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/03
+        public ActionResult ManageSemesterRegistrations()
+        {
+            return View();
+        }
     }
 }
