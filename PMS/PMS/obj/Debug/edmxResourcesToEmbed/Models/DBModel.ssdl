@@ -7,7 +7,8 @@
     <Property Name="AppointmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="AppointmentTypeId" Type="int" Nullable="false" />
-    <Property Name="AppointmentFrom" Type="date" Nullable="false" />
+    <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="date" />
     <Property Name="AppointmentTo" Type="date" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -249,6 +250,22 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="Intake">
+    <Key>
+      <PropertyRef Name="IntakeId" />
+    </Key>
+    <Property Name="IntakeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FromDate" Type="date" />
+    <Property Name="ToDate" Type="date" />
+    <Property Name="IntakeCode" Type="nvarchar" MaxLength="150" />
+    <Property Name="IntakeName" Type="nvarchar" MaxLength="200" />
+    <Property Name="IntakeYear" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="LectureHall">
     <Key>
       <PropertyRef Name="HallId" />
@@ -418,6 +435,20 @@
       </Principal>
       <Dependent Role="Appointment">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Appointment_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="Appointment">
+        <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -855,6 +886,7 @@
     <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Faculty" EntityType="Self.Faculty" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
@@ -871,6 +903,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Appointment_AspNetUsers" Association="Self.FK_Appointment_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Appointment_Designation" Association="Self.FK_Appointment_Designation">
+      <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
     </AssociationSet>
     <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="Self.FK_AspNetUserRoles_AspNetRoles_RoleId">

@@ -11,16 +11,20 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Designation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Designation()
         {
+            this.Appointment = new HashSet<Appointment>();
             this.PaymentRate = new HashSet<PaymentRate>();
         }
     
         public int DesignationId { get; set; }
+        [Required(ErrorMessage = "Designation Name is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string DesignationName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
@@ -28,6 +32,8 @@ namespace PMS.Models
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Appointment> Appointment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
     }

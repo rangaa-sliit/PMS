@@ -18,6 +18,7 @@
     <EntitySet Name="Designation" EntityType="PMSModel.Designation" />
     <EntitySet Name="Faculty" EntityType="PMSModel.Faculty" />
     <EntitySet Name="Institute" EntityType="PMSModel.Institute" />
+    <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
     <EntitySet Name="LectureHall" EntityType="PMSModel.LectureHall" />
     <EntitySet Name="LectureType" EntityType="PMSModel.LectureType" />
     <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
@@ -34,6 +35,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Appointment_AspNetUsers" Association="PMSModel.FK_Appointment_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Appointment_Designation" Association="PMSModel.FK_Appointment_Designation">
+      <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="PMSModel.FK_ConductedLectures_ApprovalStages">
@@ -168,7 +173,8 @@
     <Property Name="AppointmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="AppointmentTypeId" Type="Int32" Nullable="false" />
-    <Property Name="AppointmentFrom" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="DesignationId" Type="Int32" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="DateTime" Precision="0" />
     <Property Name="AppointmentTo" Type="DateTime" Precision="0" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -177,6 +183,7 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AppointmentType" Relationship="PMSModel.FK_Appointment_AppointmentType" FromRole="Appointment" ToRole="AppointmentType" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Appointment_AspNetUsers" FromRole="Appointment" ToRole="AspNetUsers" />
+    <NavigationProperty Name="Designation" Relationship="PMSModel.FK_Appointment_Designation" FromRole="Appointment" ToRole="Designation" />
   </EntityType>
   <EntityType Name="AppointmentType">
     <Key>
@@ -416,6 +423,7 @@
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_Designation" FromRole="Designation" ToRole="Appointment" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Designation" FromRole="Designation" ToRole="PaymentRate" />
   </EntityType>
   <EntityType Name="Faculty">
@@ -453,6 +461,22 @@
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Institute" FromRole="Institute" ToRole="Degree" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="Institute" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Institute" FromRole="Institute" ToRole="Specialization" />
+  </EntityType>
+  <EntityType Name="Intake">
+    <Key>
+      <PropertyRef Name="IntakeId" />
+    </Key>
+    <Property Name="IntakeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FromDate" Type="DateTime" Precision="0" />
+    <Property Name="ToDate" Type="DateTime" Precision="0" />
+    <Property Name="IntakeCode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeYear" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
   </EntityType>
   <EntityType Name="LectureHall">
     <Key>
@@ -645,6 +669,20 @@
       </Principal>
       <Dependent Role="Appointment">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Appointment_Designation">
+    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="PMSModel.Appointment" Role="Appointment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="Appointment">
+        <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class LectureHall
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,9 +22,13 @@ namespace PMS.Models
         }
     
         public int HallId { get; set; }
+        [Required(ErrorMessage = "Campus is required")]
         public int CampusId { get; set; }
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string Building { get; set; }
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string Floor { get; set; }
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string HallName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
