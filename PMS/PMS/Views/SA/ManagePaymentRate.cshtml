@@ -46,8 +46,12 @@
             },
             "columns": [
                 {
+                    "data": null,
+                    "defaultContent": ''
+                },
+                {
                     "title": "",
-                    "data": "PaymentRateId",
+                    "data": "Id",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
@@ -60,7 +64,6 @@
                     "searchable": false,
                     "width": "20px"
                 },
-                
                 {
                     "title": "Designation",
                     "data": "DesignationName",
@@ -122,6 +125,18 @@
                     }
                 },
                 {
+                    "title": "Approval Status",
+                    "data": "IsApproved",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Approved';
+                        }
+                        else {
+                            return 'Not Approved';
+                        }
+                    }
+                },
+                {
                     "title": "Status",
                     "data": "IsActive",
                     "render": function (data) {
@@ -134,6 +149,17 @@
                     }
                 }
             ],
+            "columnDefs": [
+                {
+                    "orderable": false,
+                    "className": 'select-checkbox',
+                    "targets": 0,
+                }
+            ],
+            "select": {
+                "style": 'multi',
+                "selector": 'td:first-child'
+            },
             "language": {
                 "emptyTable": "No Payment Rates Found!"
             }

@@ -1886,7 +1886,8 @@ namespace PMS.Controllers
                                 }
 
                                 
-                                activeAppointments[i].ModifiedBy = "Due to New Appointment Creation";
+                                activeAppointments[i].Comment = "Due to New Appointment Creation";
+                                activeAppointments[i].ModifiedBy = "Ranga";
                                 activeAppointments[i].ModifiedDate = dateTime;
                                 db.Entry(activeAppointments[i]).State = EntityState.Modified;
                             }
@@ -2547,13 +2548,14 @@ namespace PMS.Controllers
 
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/25
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/09/03
         public ActionResult GetPaymentRate()
         {
             using (PMSEntities db = new PMSEntities())
             {
                 List<PaymentRateVM> paymentRateList = (from pr in db.PaymentRate
-                                                       join ds in db.Designation on pr.DesignationId equals ds.DesignationId into pr_ds
-                                                       from des in pr_ds.DefaultIfEmpty()
+                                                       join ds in db.Designation on pr.DesignationId equals ds.DesignationId
                                                        join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
                                                        from fac in pr_f.DefaultIfEmpty()
                                                        join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
@@ -2564,20 +2566,16 @@ namespace PMS.Controllers
                                                        from sub in pr_s.DefaultIfEmpty()
                                                        orderby pr.Id descending
                                                        select new PaymentRateVM
-                                                             {
-                                                                 Id = pr.Id,
-                                                                 DegreeId = deg.DegreeId,
-                                                                 DegreeName = deg.Name,
-                                                                 FacultyId = fac.FacultyId,
-                                                                 FacultyName = fac.FacultyName,
-                                                                 SubjectId = sub.SubjectId,
-                                                                 SubjectName = sub.SubjectName,
-                                                                 SpecializationId = spc.SpecializationId,
-                                                                 SpecializationName = spc.Name,
-                                                                 DesignationId = des.DesignationId,
-                                                                 DesignationName = des.DesignationName,
-                                                                 IsActive = pr.IsActive
-                                                             }).ToList();
+                                                       {
+                                                           Id = pr.Id,
+                                                           DegreeName = deg.Name,
+                                                           FacultyName = fac.FacultyName,
+                                                           SubjectName = sub.SubjectName,
+                                                           SpecializationName = spc.Name,
+                                                           DesignationName = ds.DesignationName,
+                                                           IsApproved = pr.IsApproved,
+                                                           IsActive = pr.IsActive
+                                                       }).ToList();
 
                 return Json(new { data = paymentRateList }, JsonRequestBehavior.AllowGet);
             }
@@ -2586,69 +2584,71 @@ namespace PMS.Controllers
 
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/31
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/09/03
         [HttpGet]
         public ActionResult AddOrEditPaymentRate(int id = 0)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 var designation = (from ds in db.Designation
-                              where ds.IsActive.Equals(true)
-                              select new
-                              {
-                                  Text = ds.DesignationName,
-                                  Value = ds.DesignationId
-                              }).ToList();
+                                   where ds.IsActive.Equals(true)
+                                   select new
+                                   {
+                                       Text = ds.DesignationName,
+                                       Value = ds.DesignationId
+                                   }).ToList();
 
                 List<SelectListItem> designationList = new SelectList(designation, "Value", "Text").ToList();
                 designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
                 ViewBag.designationList = designationList;
 
                 var faculty = (from f in db.Faculty
-                                 where f.IsActive.Equals(true)
-                                 select new
-                                 {
-                                     Text = f.FacultyName,
-                                     Value = f.FacultyId
-                                 }).ToList();
+                               where f.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = f.FacultyName,
+                                   Value = f.FacultyId
+                               }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
-                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.facultyList = facultyList;
 
                 var degree = (from d in db.Degree
-                                  where d.IsActive.Equals(true)
-                                  select new
-                                  {
-                                      Text = d.Name,
-                                      Value = d.DegreeId
-                                  }).ToList();
+                              where d.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = d.Name,
+                                  Value = d.DegreeId
+                              }).ToList();
 
                 List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
-                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                degreeList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.degreeList = degreeList;
 
                 var specialization = (from sp in db.Specialization
-                              where sp.IsActive.Equals(true)
-                              select new
-                              {
-                                  Text = sp.Name,
-                                  Value = sp.SpecializationId
-                              }).ToList();
+                                      where sp.IsActive.Equals(true)
+                                      select new
+                                      {
+                                          Text = sp.Name,
+                                          Value = sp.SpecializationId
+                                      }).ToList();
 
                 List<SelectListItem> specializationList = new SelectList(specialization, "Value", "Text").ToList();
-                specializationList.Insert(0, new SelectListItem() { Text = "-- Select Specialization --", Value = "", Disabled = true, Selected = true });
+                specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.specializationList = specializationList;
 
                 var subject = (from s in db.Subject
-                                      where s.IsActive.Equals(true)
-                                      select new
-                                      {
-                                          Text = s.SubjectName,
-                                          Value = s.SubjectId
-                                      }).ToList();
+                               where s.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = s.SubjectName,
+                                   Value = s.SubjectId
+                               }).ToList();
 
                 List<SelectListItem> subjectList = new SelectList(subject, "Value", "Text").ToList();
-                subjectList.Insert(0, new SelectListItem() { Text = "-- Select Subject --", Value = "", Disabled = true, Selected = true });
+                subjectList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.subjectList = subjectList;
 
                 if (id == 0)
@@ -2664,6 +2664,8 @@ namespace PMS.Controllers
 
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/31
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/09/03
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditPaymentRate(PaymentRate paymentRate)
@@ -2675,7 +2677,11 @@ namespace PMS.Controllers
                     var dateTime = DateTime.Now;
                     if (paymentRate.Id == 0)
                     {
-                        PaymentRate validationRecord = (from pr in db.PaymentRate where pr.FacultyId.Equals(paymentRate.FacultyId) && pr.DesignationId.Equals(paymentRate.DesignationId) && pr.DegreeId.Equals(paymentRate.DegreeId) && pr.SpecializationId.Equals(paymentRate.SpecializationId) && pr.SubjectId.Equals(paymentRate.SubjectId) select pr).FirstOrDefault<PaymentRate>();
+                        PaymentRate validationRecord = (from pr in db.PaymentRate
+                                                        where pr.DesignationId.Equals(paymentRate.DesignationId) && pr.FacultyId.Equals(paymentRate.FacultyId) 
+                                                        && pr.DegreeId.Equals(paymentRate.DegreeId) && pr.SpecializationId.Equals(paymentRate.SpecializationId) 
+                                                        && pr.SubjectId.Equals(paymentRate.SubjectId) select pr).FirstOrDefault<PaymentRate>();
+
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -2686,12 +2692,31 @@ namespace PMS.Controllers
                         }
                         else
                         {
+                            paymentRate.IsApproved = false;
                             paymentRate.CreatedBy = "Dulanjalee";
                             paymentRate.CreatedDate = dateTime;
                             paymentRate.ModifiedBy = "Dulanjalee";
                             paymentRate.ModifiedDate = dateTime;
 
                             db.PaymentRate.Add(paymentRate);
+
+                            PaymentRateLog prLog = new PaymentRateLog();
+
+                            prLog.DesignationId = paymentRate.DesignationId;
+                            prLog.FacultyId = paymentRate.FacultyId;
+                            prLog.DegreeId = paymentRate.DegreeId;
+                            prLog.SpecializationId = paymentRate.SpecializationId;
+                            prLog.SubjectId = paymentRate.SubjectId;
+                            prLog.RatePerHour = paymentRate.RatePerHour;
+                            prLog.IsActive = paymentRate.IsActive;
+                            prLog.IsApproved = false;
+                            prLog.CreatedBy = "Ranga";
+                            prLog.CreatedDate = dateTime;
+                            prLog.ModifiedBy = "Ranga";
+                            prLog.ModifiedDate = dateTime;
+                            prLog.PaymentRateId = paymentRate.Id;
+
+                            db.PaymentRateLog.Add(prLog);
                             db.SaveChanges();
 
                             return Json(new
@@ -2705,18 +2730,39 @@ namespace PMS.Controllers
                     {
                         PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(paymentRate.Id) select pr).FirstOrDefault<PaymentRate>();
 
-                        if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.FacultyId != paymentRate.FacultyId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId || editingPaymentRate.IsActive != paymentRate.IsActive)
+                        if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.FacultyId != paymentRate.FacultyId
+                            || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
+                            || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
                             editingPaymentRate.DesignationId = paymentRate.DesignationId;
-                            editingPaymentRate.SubjectId = paymentRate.SubjectId;
-                            editingPaymentRate.DegreeId = paymentRate.DegreeId;
                             editingPaymentRate.FacultyId = paymentRate.FacultyId;
+                            editingPaymentRate.DegreeId = paymentRate.DegreeId;
                             editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
+                            editingPaymentRate.SubjectId = paymentRate.SubjectId;
+                            editingPaymentRate.RatePerHour = paymentRate.RatePerHour;
                             editingPaymentRate.IsActive = paymentRate.IsActive;
                             editingPaymentRate.ModifiedBy = "Dulanjalee";
                             editingPaymentRate.ModifiedDate = dateTime;
 
                             db.Entry(editingPaymentRate).State = EntityState.Modified;
+
+                            PaymentRateLog prLog = new PaymentRateLog();
+
+                            prLog.DesignationId = paymentRate.DesignationId;
+                            prLog.FacultyId = paymentRate.FacultyId;
+                            prLog.DegreeId = paymentRate.DegreeId;
+                            prLog.SpecializationId = paymentRate.SpecializationId;
+                            prLog.SubjectId = paymentRate.SubjectId;
+                            prLog.RatePerHour = paymentRate.RatePerHour;
+                            prLog.IsActive = paymentRate.IsActive;
+                            prLog.IsApproved = editingPaymentRate.IsApproved;
+                            prLog.CreatedBy = editingPaymentRate.CreatedBy;
+                            prLog.CreatedDate = editingPaymentRate.CreatedDate;
+                            prLog.ModifiedBy = "Ranga";
+                            prLog.ModifiedDate = dateTime;
+                            prLog.PaymentRateId = editingPaymentRate.Id;
+
+                            db.PaymentRateLog.Add(prLog);
                             db.SaveChanges();
 
                             return Json(new

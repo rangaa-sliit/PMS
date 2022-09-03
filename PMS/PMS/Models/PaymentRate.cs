@@ -11,15 +11,24 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class PaymentRate
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public PaymentRate()
+        {
+            this.PaymentRateLog = new HashSet<PaymentRateLog>();
+        }
+    
         public int Id { get; set; }
         public Nullable<int> DegreeId { get; set; }
         public Nullable<int> SpecializationId { get; set; }
         public Nullable<int> FacultyId { get; set; }
         public Nullable<int> SubjectId { get; set; }
+        [Required(ErrorMessage = "Designation is required")]
         public int DesignationId { get; set; }
+        [Required(ErrorMessage = "Rate Per Hour is required")]
         public double RatePerHour { get; set; }
         public bool IsApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -33,5 +42,7 @@ namespace PMS.Models
         public virtual Faculty Faculty { get; set; }
         public virtual Specialization Specialization { get; set; }
         public virtual Subject Subject { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
     }
 }

@@ -14,6 +14,7 @@
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="256" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="AppointmentType">
@@ -310,6 +311,25 @@
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PaymentRateLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DegreeId" Type="int" />
+    <Property Name="SpecializationId" Type="int" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="SubjectId" Type="int" />
+    <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="IsApproved" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="PaymentRateId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
@@ -760,6 +780,78 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentRateLog_Degree">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_PaymentRate">
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentRate">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="PaymentRateId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Specialization">
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Specialization">
+        <PropertyRef Name="SpecializationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SpecializationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Subject">
+    <End Role="Subject" Type="Self.Subject" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Subject">
+        <PropertyRef Name="SubjectId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -890,6 +982,7 @@
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
@@ -1000,6 +1093,30 @@
     <AssociationSet Name="FK_PaymentRate_Subject" Association="Self.FK_PaymentRate_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Degree" Association="Self.FK_PaymentRateLog_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Designation" Association="Self.FK_PaymentRateLog_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Faculty" Association="Self.FK_PaymentRateLog_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_PaymentRate" Association="Self.FK_PaymentRateLog_PaymentRate">
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Specialization" Association="Self.FK_PaymentRateLog_Specialization">
+      <End Role="Specialization" EntitySet="Specialization" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Subject" Association="Self.FK_PaymentRateLog_Subject">
+      <End Role="Subject" EntitySet="Subject" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Degree" Association="Self.FK_SemesterRegistration_Degree">
       <End Role="Degree" EntitySet="Degree" />
