@@ -2805,5 +2805,135 @@ namespace PMS.Controllers
         {
             return View();
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/05
+        public ActionResult GetSemesterRegistrations()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<SemesterRegistrationVM> semesterRegistrationList = (from sr in db.SemesterRegistration
+                                                                         join cp in db.CalendarPeriod on sr.CalendarPeriodId equals cp.Id into sr_cp
+                                                                         from calP in sr_cp.DefaultIfEmpty()
+                                                                         join it in db.Intake on sr.IntakeId equals it.IntakeId into sr_it
+                                                                         from intk in sr_it.DefaultIfEmpty()
+                                                                         join f in db.Faculty on sr.FacultyId equals f.FacultyId into sr_f
+                                                                         from fac in sr_f.DefaultIfEmpty()
+                                                                         join ins in db.Institute on sr.InstituteId equals ins.InstituteId into sr_ins
+                                                                         from inst in sr_ins.DefaultIfEmpty()
+                                                                         join d in db.Degree on sr.DegreeId equals d.DegreeId into sr_d
+                                                                         from dg in sr_d.DefaultIfEmpty()
+                                                                         join sp in db.Specialization on sr.SpecializationId equals sp.SpecializationId into sr_sp
+                                                                         from splz in sr_sp.DefaultIfEmpty()
+                                                                         orderby sr.SemesterId descending
+                                                                         select new SemesterRegistrationVM
+                                                                         {
+                                                                             CalendarYear = sr.CalendarYear,
+                                                                             CalendarPeriodName = calP.PeriodName,
+                                                                             IntakeYear = intk.IntakeYear,
+                                                                             IntakeName = intk.IntakeName,
+                                                                             AcadamicYear = sr.AcadamicYear,
+                                                                             AcadamicSemester = sr.AcadamicSemester,
+                                                                             FacultyName = fac.FacultyName,
+                                                                             InstituteName = inst.InstituteName,
+                                                                             DegreeName = dg.Name,
+                                                                             SpecializationName = splz.Name,
+                                                                             FromDate = sr.FromDate.Value.ToString().Substring(0, 10),
+                                                                             ToDate = sr.ToDate.Value.ToString().Substring(0, 10),
+                                                                             IsActive = sr.IsActive
+                                                                         }).ToList();
+
+                return Json(new { data = semesterRegistrationList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/25
+        [HttpGet]
+        public ActionResult AddOrEditSemesterRegistration(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var calendarPeriods = (from cp in db.CalendarPeriod
+                                       where cp.IsActive.Equals(true)
+                                       select new
+                                       {
+                                           Text = cp.PeriodName,
+                                           Value = cp.Id
+                                       }).ToList();
+
+                List<SelectListItem> calendarPeriodList = new SelectList(calendarPeriods, "Value", "Text").ToList();
+                calendarPeriodList.Insert(0, new SelectListItem() { Text = "-- Select Calendar Period --", Value = "", Disabled = true, Selected = true });
+                ViewBag.calendarPeriodList = calendarPeriodList;
+
+                var intakes = (from i in db.Intake where i.IsActive.Equals(true) select i).ToList();
+
+                var intakeYears = intakes.Select(i => new {
+                    Text = i.IntakeYear,
+                    Value = i.IntakeYear
+                }).Distinct().OrderBy(i => i.Value);
+
+                List<SelectListItem> intakeYearList = new SelectList(intakeYears, "Value", "Text").ToList();
+                intakeYearList.Insert(0, new SelectListItem() { Text = "-- Select Intake Year --", Value = "", Disabled = true, Selected = true });
+                ViewBag.intakeYearList = intakeYearList;
+
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                ViewBag.facultyList = facultyList;
+
+                //var users = (from u in db.AspNetUsers
+                //             where u.IsActive.Equals(true)
+                //             select new
+                //             {
+                //                 Text = u.FirstName + " " + u.LastName,
+                //                 Value = u.Id
+                //             }).ToList();
+
+                //List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
+                //usersList.Insert(0, new SelectListItem() { Text = "-- Select Employee --", Value = "", Disabled = true, Selected = true });
+                //ViewBag.usersList = usersList;
+
+                //var designations = (from d in db.Designation
+                //                    where d.IsActive.Equals(true)
+                //                    select new
+                //                    {
+                //                        Text = d.DesignationName,
+                //                        Value = d.DesignationId
+                //                    }).ToList();
+
+                //List<SelectListItem> designationList = new SelectList(designations, "Value", "Text").ToList();
+                //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                //ViewBag.designationList = designationList;
+
+                //var appointmentTypes = (from at in db.AppointmentType
+                //                        where at.IsActive.Equals(true)
+                //                        select new
+                //                        {
+                //                            Text = at.AppointmentTypeName,
+                //                            Value = at.AppointmentTypeId
+                //                        }).ToList();
+
+                //List<SelectListItem> appointmentTypeList = new SelectList(appointmentTypes, "Value", "Text").ToList();
+                //appointmentTypeList.Insert(0, new SelectListItem() { Text = "-- Select Appointment Type --", Value = "", Disabled = true, Selected = true });
+                //ViewBag.appointmentTypeList = appointmentTypeList;
+
+                if (id == 0)
+                {
+                    return View(new SemesterRegistration());
+                }
+                else
+                {
+                    return View((from sr in db.SemesterRegistration where sr.SemesterId.Equals(id) select sr).FirstOrDefault<SemesterRegistration>());
+                }
+            }
+        }
     }
 }

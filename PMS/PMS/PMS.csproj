@@ -293,6 +293,7 @@
     <Compile Include="ViewModels\IntakeVM.cs" />
     <Compile Include="ViewModels\LectureHallVM.cs" />
     <Compile Include="ViewModels\PaymentRateVM.cs" />
+    <Compile Include="ViewModels\SemesterRegistrationVM.cs" />
     <Compile Include="ViewModels\SpecializationVM.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -474,6 +475,7 @@
     <Content Include="Views\SA\ManageAppointments.cshtml" />
     <Content Include="Views\SA\AddOrEditAppointment.cshtml" />
     <Content Include="Views\SA\ManageSemesterRegistrations.cshtml" />
+    <Content Include="Views\SA\AddOrEditSemesterRegistration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
