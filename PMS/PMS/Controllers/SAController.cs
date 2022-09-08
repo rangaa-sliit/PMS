@@ -1,4 +1,5 @@
-﻿using PMS.Models;
+﻿using PMS.Custom_Classes;
+using PMS.Models;
 using PMS.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -2866,16 +2867,20 @@ namespace PMS.Controllers
                 calendarPeriodList.Insert(0, new SelectListItem() { Text = "-- Select Calendar Period --", Value = "", Disabled = true, Selected = true });
                 ViewBag.calendarPeriodList = calendarPeriodList;
 
-                var intakes = (from i in db.Intake where i.IsActive.Equals(true) select i).ToList();
+                var intakes = (from i in db.Intake
+                               where i.IsActive.Equals(true)
+                               select new {
+                                   Text = i.IntakeYear,
+                                   Value = i.IntakeYear
+                               }).Distinct().OrderBy(i => i.Value).ToList();
 
-                var intakeYears = intakes.Select(i => new {
-                    Text = i.IntakeYear,
-                    Value = i.IntakeYear
-                }).Distinct().OrderBy(i => i.Value);
-
-                List<SelectListItem> intakeYearList = new SelectList(intakeYears, "Value", "Text").ToList();
+                List<SelectListItem> intakeYearList = new SelectList(intakes, "Value", "Text").ToList();
                 intakeYearList.Insert(0, new SelectListItem() { Text = "-- Select Intake Year --", Value = "", Disabled = true, Selected = true });
                 ViewBag.intakeYearList = intakeYearList;
+
+                List<SelectListItem> intakeList = new List<SelectListItem>();
+                intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
+                ViewBag.intakeList = intakeList;
 
                 var faculties = (from f in db.Faculty
                                  where f.IsActive.Equals(true)
@@ -2889,41 +2894,25 @@ namespace PMS.Controllers
                 facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
                 ViewBag.facultyList = facultyList;
 
-                //var users = (from u in db.AspNetUsers
-                //             where u.IsActive.Equals(true)
-                //             select new
-                //             {
-                //                 Text = u.FirstName + " " + u.LastName,
-                //                 Value = u.Id
-                //             }).ToList();
+                var institutes = (from i in db.Institute
+                                  where i.IsActive.Equals(true)
+                                  select new
+                                  {
+                                      Text = i.InstituteName,
+                                      Value = i.InstituteId
+                                  }).ToList();
 
-                //List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
-                //usersList.Insert(0, new SelectListItem() { Text = "-- Select Employee --", Value = "", Disabled = true, Selected = true });
-                //ViewBag.usersList = usersList;
+                List<SelectListItem> instituteList = new SelectList(institutes, "Value", "Text").ToList();
+                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Awarding Institute --", Value = "", Disabled = true, Selected = true });
+                ViewBag.instituteList = instituteList;
 
-                //var designations = (from d in db.Designation
-                //                    where d.IsActive.Equals(true)
-                //                    select new
-                //                    {
-                //                        Text = d.DesignationName,
-                //                        Value = d.DesignationId
-                //                    }).ToList();
+                List<SelectListItem> degreeList = new List<SelectListItem>();
+                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                ViewBag.degreeList = degreeList;
 
-                //List<SelectListItem> designationList = new SelectList(designations, "Value", "Text").ToList();
-                //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
-                //ViewBag.designationList = designationList;
-
-                //var appointmentTypes = (from at in db.AppointmentType
-                //                        where at.IsActive.Equals(true)
-                //                        select new
-                //                        {
-                //                            Text = at.AppointmentTypeName,
-                //                            Value = at.AppointmentTypeId
-                //                        }).ToList();
-
-                //List<SelectListItem> appointmentTypeList = new SelectList(appointmentTypes, "Value", "Text").ToList();
-                //appointmentTypeList.Insert(0, new SelectListItem() { Text = "-- Select Appointment Type --", Value = "", Disabled = true, Selected = true });
-                //ViewBag.appointmentTypeList = appointmentTypeList;
+                List<SelectListItem> specializationList = new List<SelectListItem>();
+                specializationList.Insert(0, new SelectListItem() { Text = "-- Select Specialization --", Value = "", Disabled = true, Selected = true });
+                ViewBag.specializationList = specializationList;
 
                 if (id == 0)
                 {
@@ -2932,6 +2921,185 @@ namespace PMS.Controllers
                 else
                 {
                     return View((from sr in db.SemesterRegistration where sr.SemesterId.Equals(id) select sr).FirstOrDefault<SemesterRegistration>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/06
+        [HttpGet]
+        public ActionResult GetIntakesByIntakeYear(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var intakes = (from i in db.Intake
+                               where i.IntakeYear == id && i.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = i.IntakeName,
+                                   Value = i.IntakeId
+                               }).ToList();
+
+                return Json(intakes, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/07
+        [HttpPost]
+        public ActionResult GetDegreesByFacultyInstitute(SemesterRegistrationCC semesterRegistrationCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var degrees = (from d in db.Degree
+                               where d.FacultyId == semesterRegistrationCC.FacultyId && d.InstituteId == semesterRegistrationCC.InstituteId
+                               && d.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = d.Name,
+                                   Value = d.DegreeId
+                               }).ToList();
+
+                return Json(degrees, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/07
+        [HttpGet]
+        public ActionResult GetSpecializationsByDegree(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var specializations = (from s in db.Specialization
+                                       where s.DegreeId == id && s.IsActive.Equals(true)
+                                       select new
+                                       {
+                                           Text = s.Name,
+                                           Value = s.SpecializationId
+                                       }).ToList();
+
+                return Json(specializations, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/08
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSemesterRegistration(SemesterRegistration semesterRegistration)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    SemesterRegistration validationRecord = (from s in db.SemesterRegistration
+                                                             where s.CalendarYear.Value.Equals(semesterRegistration.CalendarYear.Value) && s.CalendarPeriodId.Value.Equals(semesterRegistration.CalendarPeriodId.Value)
+                                                             && s.IntakeYear.Value.Equals(semesterRegistration.IntakeYear.Value) && s.IntakeId.Value.Equals(semesterRegistration.IntakeId.Value)
+                                                             && s.AcadamicYear.Value.Equals(semesterRegistration.AcadamicYear.Value) && s.AcadamicSemester.Value.Equals(semesterRegistration.AcadamicSemester.Value)
+                                                             && s.FacultyId.Value.Equals(semesterRegistration.FacultyId.Value) && s.InstituteId.Value.Equals(semesterRegistration.InstituteId.Value)
+                                                             && s.DegreeId.Value.Equals(semesterRegistration.DegreeId.Value) && s.SpecializationId.Value.Equals(semesterRegistration.SpecializationId.Value)
+                                                             select s).FirstOrDefault<SemesterRegistration>();
+
+                    if (semesterRegistration.SemesterId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Semester Registration Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            semesterRegistration.CreatedBy = "Ranga";
+                            semesterRegistration.CreatedDate = dateTime;
+                            semesterRegistration.ModifiedBy = "Ranga";
+                            semesterRegistration.ModifiedDate = dateTime;
+
+                            db.SemesterRegistration.Add(semesterRegistration);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        SemesterRegistration editingSemesterRegistration = (from s in db.SemesterRegistration where s.SemesterId.Equals(semesterRegistration.SemesterId) select s).FirstOrDefault<SemesterRegistration>();
+
+                        if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId 
+                            || editingSemesterRegistration.IntakeYear != semesterRegistration.IntakeYear || editingSemesterRegistration.IntakeId != semesterRegistration.IntakeId
+                            || editingSemesterRegistration.AcadamicYear != semesterRegistration.AcadamicYear || editingSemesterRegistration.AcadamicSemester != semesterRegistration.AcadamicSemester
+                            || editingSemesterRegistration.FacultyId != semesterRegistration.FacultyId || editingSemesterRegistration.InstituteId != semesterRegistration.InstituteId
+                            || editingSemesterRegistration.DegreeId != semesterRegistration.DegreeId || editingSemesterRegistration.SpecializationId != semesterRegistration.SpecializationId
+                            || editingSemesterRegistration.FromDate != semesterRegistration.FromDate || editingSemesterRegistration.ToDate != semesterRegistration.ToDate || editingSemesterRegistration.IsActive != semesterRegistration.IsActive)
+                        {
+                            if(validationRecord != null)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Semester Registration Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingSemesterRegistration.CalendarYear = semesterRegistration.CalendarYear;
+                                editingSemesterRegistration.CalendarPeriodId = semesterRegistration.CalendarPeriodId;
+                                editingSemesterRegistration.IntakeYear = semesterRegistration.IntakeYear;
+                                editingSemesterRegistration.IntakeId = semesterRegistration.IntakeId;
+                                editingSemesterRegistration.AcadamicYear = semesterRegistration.AcadamicYear;
+                                editingSemesterRegistration.AcadamicSemester = semesterRegistration.AcadamicSemester;
+                                editingSemesterRegistration.FacultyId = semesterRegistration.FacultyId;
+                                editingSemesterRegistration.InstituteId = semesterRegistration.InstituteId;
+                                editingSemesterRegistration.DegreeId = semesterRegistration.DegreeId;
+                                editingSemesterRegistration.SpecializationId = semesterRegistration.SpecializationId;
+                                editingSemesterRegistration.FromDate = semesterRegistration.FromDate;
+                                editingSemesterRegistration.ToDate = semesterRegistration.ToDate;
+                                editingSemesterRegistration.IsActive = semesterRegistration.IsActive;
+                                editingSemesterRegistration.ModifiedBy = "Ranga";
+                                editingSemesterRegistration.ModifiedDate = dateTime;
+
+                                db.Entry(editingSemesterRegistration).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
                 }
             }
         }

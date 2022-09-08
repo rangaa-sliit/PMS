@@ -34,7 +34,7 @@ Developed On:- 2022/09/05*@
                         @Html.LabelFor(model => model.CalendarYear, "Calendar Year: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.EditorFor(model => model.CalendarYear, new { htmlAttributes = new { @class = "form-control", @type = "number", @id = "calendarYear", oninput = "onCalendarYearInput()" } })
+                        @Html.EditorFor(model => model.CalendarYear, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "-- Enter Calendar Year --", @id = "calendarYear", oninput = "onCalendarYearInput()" } })
                         @Html.ValidationMessageFor(model => model.CalendarYear)
                     </div>
                 </div>
@@ -58,11 +58,21 @@ Developed On:- 2022/09/05*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IntakeId, "Intake: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9" id="intakeListDiv">
+                        @Html.DropDownListFor(model => model.IntakeId, (IEnumerable<SelectListItem>)ViewBag.intakeList, new { @class = "form-control", @id = "intakeList", onchange = "onIntakeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.IntakeId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.AcadamicYear, "Academic Year: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.AcadamicYear, new List<SelectListItem>
                         {
+                            new SelectListItem{ Text = "-- Select Acadamic Year --", Value = "" },
                             new SelectListItem{ Text = "1", Value = "1" },
                             new SelectListItem{ Text = "2", Value = "2" },
                             new SelectListItem{ Text = "3", Value = "3" },
@@ -78,6 +88,7 @@ Developed On:- 2022/09/05*@
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.AcadamicSemester, new List<SelectListItem>
                         {
+                            new SelectListItem{ Text = "-- Select Acadamic Semester --", Value = "" },
                             new SelectListItem{ Text = "1", Value = "1" },
                             new SelectListItem{ Text = "2", Value = "2" }
                         }, new { @class = "form-control", @id = "academicSemesterList", onchange = "onAcademicSemesterChange(this.value)" })
@@ -91,6 +102,51 @@ Developed On:- 2022/09/05*@
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "facultyList", onchange = "onFacultyChange(this.value)" })
                         @Html.ValidationMessageFor(model => model.FacultyId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.InstituteId, "Awarding Institute: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.InstituteId, (IEnumerable<SelectListItem>)ViewBag.instituteList, new { @class = "form-control", @id = "instituteList", onchange = "onInstituteChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.InstituteId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DegreeId, "Degree: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.degreeList, new { @class = "form-control", @id = "degreeList", onchange = "onDegreeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DegreeId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.SpecializationId, "Specialization: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.SpecializationId, (IEnumerable<SelectListItem>)ViewBag.specializationList, new { @class = "form-control", @id = "specializationList", onchange = "onSpecializationChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.SpecializationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FromDate, "From Date: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "srFromDate", oninput = "onSRFromDateInput()" } })
+                        @Html.ValidationMessageFor(model => model.FromDate)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ToDate, "To Date: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "srToDate", oninput = "onSRToDateInput()" } })
+                        @Html.ValidationMessageFor(model => model.ToDate)
                     </div>
                 </div>
                 <div class="form-group row">
@@ -134,114 +190,263 @@ Developed On:- 2022/09/05*@
                     $("#aeSemesterRegistrationMainTitle").html("View Semester Registration");
                     $("#aeSemesterRegistrationCardTitle").html("View Semester Registration");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Semester Registration</li>`);
-                    //$("#designationList").prop("disabled", true);
-                    //$("#appointmentTypeList").prop("disabled", true);
-                    //$("#appointmentFrom").prop("disabled", true);
-                    //$("#appointmentTo").prop("disabled", true);
-                    //$("#appointmentStatusList").prop("disabled", true);
+                    $("#calendarYear").prop("disabled", true);
+                    $("#calendarPeriodList").prop("disabled", true);
+                    $("#intakeYearList").prop("disabled", true);
+                    $("#intakeList").prop("disabled", true);
+                    $("#academicYearList").prop("disabled", true);
+                    $("#academicSemesterList").prop("disabled", true);
+                    $("#facultyList").prop("disabled", true);
+                    $("#instituteList").prop("disabled", true);
+                    $("#degreeList").prop("disabled", true);
+                    $("#specializationList").prop("disabled", true);
+                    $("#srFromDate").prop("disabled", true);
+                    $("#srToDate").prop("disabled", true);
+                    $("#semesterRegistrationStatusList").prop("disabled", true);
                 }
             }
             else {
                 $("#aeSemesterRegistrationMainTitle").html("Add Semester Registration");
                 $("#aeSemesterRegistrationCardTitle").html("Add Semester Registration");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Semester Registration</li>`);
-                //$("#employeeList").val("");
-                //$("#designationList").val("");
-                //$("#appointmentTypeList").val("");
+                $("#calendarYear").val("");
+                $("#calendarPeriodList").val("");
+                $("#intakeYearList").val("");
+                $("#intakeList").val("");
+                $("#academicYearList").val("");
+                $("#academicSemesterList").val("");
+                $("#facultyList").val("");
+                $("#instituteList").val("");
+                $("#degreeList").val("");
+                $("#specializationList").val("");
+                $("#srFromDate").val("");
+                $("#srToDate").val("");
                 $("#semesterRegistrationStatusList").val("true");
             }
         })
 
-        function SubmitAppointmentForm(form) {
+        function SubmitSemesterRegistrationForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
 
             if ($(form).valid()) {
-                var fromDate = new Date($("#appointmentFrom").val());
-                var toDate = new Date($("#appointmentTo").val());
+                if ($("#srFromDate").val() != "" && $("#srToDate").val() != "") {
+                    var fromDate = new Date($("#srFromDate").val());
+                    var toDate = new Date($("#srToDate").val());
 
-                if (toDate < fromDate) {
-                    alert("Appointment To Date should be greater than Appointment From Date");
+                    if (toDate < fromDate) {
+                        alert("Semester Registration To Date should be greater than Appointment From Date");
+                    }
+                    else {
+                        AddOrEditSR(form);
+                    }
                 }
                 else {
-                    $("#loader").show();
-                    $.ajax({
-                        type: "POST",
-                        url: form.action,
-                        data: $(form).serialize(),
-                        success: function (data) {
-                            $("#loader").hide();
-                            if (data.success) {
-                                if (operation == undefined) {
-                                    $("#employeeList").val("");
-                                    $("#designationList").val("");
-                                    $("#appointmentTypeList").val("");
-                                    $("#appointmentFrom").val("");
-                                    $("#appointmentTo").val("");
-                                    $("#appointmentStatusList").val("true");
-                                }
-
-                                $.notify(data.message, {
-                                    globalPosition: "top center",
-                                    className: "success"
-                                })
-                            }
-                            else {
-                                $.notify(data.message, {
-                                    globalPosition: "top center",
-                                    className: "error"
-                                })
-                            }
-                        }
-                    });
+                    AddOrEditSR(form);
                 }
             }
             return false;
         }
 
-        function clearAppointmentForm() {
+        function AddOrEditSR(form) {
+            $("#loader").show();
+            $.ajax({
+                type: "POST",
+                url: form.action,
+                data: $(form).serialize(),
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        if (operation == undefined) {
+                            $("#calendarYear").val("");
+                            $("#calendarPeriodList").val("");
+                            $("#intakeYearList").val("");
+                            $("#intakeList").val("");
+                            $("#academicYearList").val("");
+                            $("#academicSemesterList").val("");
+                            $("#facultyList").val("");
+                            $("#instituteList").val("");
+                            $("#degreeList").val("");
+                            $("#specializationList").val("");
+                            $("#srFromDate").val("");
+                            $("#srToDate").val("");
+                            $("#semesterRegistrationStatusList").val("true");
+                        }
+
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
+
+        function clearSemesterRegistrationForm() {
             if (operation == undefined) {
-                $("#employeeList").val("");
-                $("#designationList").val("");
-                $("#appointmentTypeList").val("");
-                $("#appointmentFrom").val("");
-                $("#appointmentTo").val("");
-                $("#appointmentStatusList").val("true");
+                $("#calendarYear").val("");
+                $("#calendarPeriodList").val("");
+                $("#intakeYearList").val("");
+                $("#intakeList").val("");
+                $("#academicYearList").val("");
+                $("#academicSemesterList").val("");
+                $("#facultyList").val("");
+                $("#instituteList").val("");
+                $("#degreeList").val("");
+                $("#specializationList").val("");
+                $("#srFromDate").val("");
+                $("#srToDate").val("");
+                $("#semesterRegistrationStatusList").val("true");
             }
             else {
                 window.location.reload();
             }
         }
 
-        function onEmployeeChange(newEmployee) {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onCalendarYearInput() {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
         }
 
-        function onDesignationChange(newDesignation) {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onCalendarPeriodChange(calendarPeriod) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
         }
 
-        function onAppointmentTypeChange(newAppointmentType) {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onIntakeYearChange(intakeYear) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetIntakesByIntakeYear", "SA")/' + intakeYear,
+                success: function (response) {
+                    $("#intakeList").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#intakeList option:first").after(dynamicContent);
+                }
+            })
         }
 
-        function onAppointmentFromInput() {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onIntakeChange(intake) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
         }
 
-        function onAppointmentToInput() {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onAcademicYearChange(acadamicYear) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
         }
 
-        function onAppointmentStatusChange(newAppointmentStatus) {
-            $("#appointmentSubmitBtn").prop("disabled", false);
-            $("#appointmentClearBtn").prop("disabled", false);
+        function onAcademicSemesterChange(acadamicSemester) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(facultyId) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+
+            if ($("#instituteList :selected").val() != "") {
+                loadDegrees();
+            }
+            else {
+                $("#degreeList").find('option').not(':first').remove();
+            }
+            $("#degreeList").val("");
+            $("#specializationList").find('option').not(':first').remove();
+            $("#specializationList").val("");
+        }
+
+        function onInstituteChange(instituteId) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+
+            if ($("#facultyList :selected").val() != "") {
+                loadDegrees();
+            }
+            else {
+                $("#degreeList").find('option').not(':first').remove();
+            }
+            $("#degreeList").val("");
+            $("#specializationList").find('option').not(':first').remove();
+            $("#specializationList").val("");
+        }
+
+        function loadDegrees() {
+            var facInsObj = {
+                FacultyId: $("#facultyList :selected").val(),
+                InstituteId: $("#instituteList :selected").val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetDegreesByFacultyInstitute", "SA")',
+                data: facInsObj,
+                success: function (response) {
+                    $("#degreeList").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#degreeList option:first").after(dynamicContent);
+                }
+            })
+        }
+
+        function onDegreeChange(degreeId) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSpecializationsByDegree", "SA")/' + degreeId,
+                success: function (response) {
+                    $("#specializationList").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#specializationList option:first").after(dynamicContent);
+                }
+            });
+            $("#specializationList").val("");
+        }
+
+        function onSpecializationChange(specialization) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+        }
+
+        function onSRFromDateInput() {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+        }
+
+        function onSRToDateInput() {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
+        }
+
+        function onSemesterRegistrationStatusChange(newStatus) {
+            $("#semesterRegistrationSubmitBtn").prop("disabled", false);
+            $("#semesterRegistrationClearBtn").prop("disabled", false);
         }
     </script>
 }

@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class SemesterRegistration
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,17 +22,30 @@ namespace PMS.Models
         }
     
         public int SemesterId { get; set; }
+        [Required(ErrorMessage = "Calendar Year is required")]
         public Nullable<int> CalendarYear { get; set; }
+        [Required(ErrorMessage = "Calendar Period is required")]
         public Nullable<int> CalendarPeriodId { get; set; }
+        [Required(ErrorMessage = "Intake Year is required")]
         public Nullable<int> IntakeYear { get; set; }
+        [Required(ErrorMessage = "Intake is required")]
         public Nullable<int> IntakeId { get; set; }
+        [Required(ErrorMessage = "Academic Year is required")]
         public Nullable<int> AcadamicYear { get; set; }
+        [Required(ErrorMessage = "Academic Semester is required")]
         public Nullable<int> AcadamicSemester { get; set; }
+        [Required(ErrorMessage = "Faculty is required")]
         public Nullable<int> FacultyId { get; set; }
+        [Required(ErrorMessage = "Institute is required")]
         public Nullable<int> InstituteId { get; set; }
+        [Required(ErrorMessage = "Degree is required")]
         public Nullable<int> DegreeId { get; set; }
         public Nullable<int> SpecializationId { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> FromDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> ToDate { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

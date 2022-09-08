@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace PMS.ViewModels
 {
     public class SemesterRegistrationVM
     {
+        public int SemesterId { get; set; }
         public Nullable<int> CalendarYear { get; set; }
         public string CalendarPeriodName { get; set; }
         public Nullable<int> IntakeYear { get; set; }
