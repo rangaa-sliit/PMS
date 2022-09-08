@@ -562,6 +562,7 @@
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
     <Property Name="IsApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -574,7 +575,6 @@
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="PaymentRate" ToRole="Specialization" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="PaymentRate" ToRole="Subject" />
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRate" ToRole="PaymentRateLog" />
-    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
   </EntityType>
   <EntityType Name="PaymentRateLog">
     <Key>
@@ -587,6 +587,7 @@
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
     <Property Name="IsApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -600,7 +601,6 @@
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRateLog" ToRole="PaymentRate" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
-    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
   </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
@@ -611,8 +611,8 @@
     <Property Name="CalendarPeriodId" Type="Int32" />
     <Property Name="IntakeYear" Type="Int32" />
     <Property Name="IntakeId" Type="Int32" />
-    <Property Name="AcadamicYear" Type="Int32" />
-    <Property Name="AcadamicSemester" Type="Int32" />
+    <Property Name="AcademicYear" Type="Int32" />
+    <Property Name="AcademicSemester" Type="Int32" />
     <Property Name="FacultyId" Type="Int32" />
     <Property Name="InstituteId" Type="Int32" />
     <Property Name="DegreeId" Type="Int32" />
@@ -1007,9 +1007,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Degree">
-    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Degree">
@@ -1085,9 +1083,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Designation">
-    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Designation">
@@ -1197,9 +1193,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Subject">
-    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Subject">

@@ -315,13 +315,13 @@
     <EntitySetMapping Name="PaymentRate">
       <EntityTypeMapping TypeName="PMSModel.PaymentRate">
         <MappingFragment StoreEntitySet="PaymentRate">
-          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -335,7 +335,6 @@
     <EntitySetMapping Name="PaymentRateLog">
       <EntityTypeMapping TypeName="PMSModel.PaymentRateLog">
         <MappingFragment StoreEntitySet="PaymentRateLog">
-          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="PaymentRateId" ColumnName="PaymentRateId" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
@@ -343,6 +342,7 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -367,8 +367,8 @@
           <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
           <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
-          <ScalarProperty Name="AcadamicSemester" ColumnName="AcadamicSemester" />
-          <ScalarProperty Name="AcadamicYear" ColumnName="AcadamicYear" />
+          <ScalarProperty Name="AcademicSemester" ColumnName="AcademicSemester" />
+          <ScalarProperty Name="AcademicYear" ColumnName="AcademicYear" />
           <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
           <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
           <ScalarProperty Name="CalendarPeriodId" ColumnName="CalendarPeriodId" />

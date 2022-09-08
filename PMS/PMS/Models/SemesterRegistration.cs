@@ -31,9 +31,9 @@ namespace PMS.Models
         [Required(ErrorMessage = "Intake is required")]
         public Nullable<int> IntakeId { get; set; }
         [Required(ErrorMessage = "Academic Year is required")]
-        public Nullable<int> AcadamicYear { get; set; }
+        public Nullable<int> AcademicYear { get; set; }
         [Required(ErrorMessage = "Academic Semester is required")]
-        public Nullable<int> AcadamicSemester { get; set; }
+        public Nullable<int> AcademicSemester { get; set; }
         [Required(ErrorMessage = "Faculty is required")]
         public Nullable<int> FacultyId { get; set; }
         [Required(ErrorMessage = "Institute is required")]

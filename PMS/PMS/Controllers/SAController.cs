@@ -65,9 +65,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Institute validationRecord = (from i in db.Institute where i.InstituteCode.Equals(institute.InstituteCode) || i.InstituteName.Equals(institute.InstituteName) select i).FirstOrDefault<Institute>();
+
                     if (institute.InstituteId == 0)
                     {
-                        Institute validationRecord = (from i in db.Institute where i.InstituteCode.Equals(institute.InstituteCode) || i.InstituteName.Equals(institute.InstituteName) select i).FirstOrDefault<Institute>();
                         if (validationRecord != null)
                         {
                             if(validationRecord.InstituteCode == institute.InstituteCode && validationRecord.InstituteName == institute.InstituteName)
@@ -121,20 +122,53 @@ namespace PMS.Controllers
 
                         if (editingInstitute.InstituteCode != institute.InstituteCode || editingInstitute.InstituteName != institute.InstituteName || editingInstitute.IsActive != institute.IsActive)
                         {
-                            editingInstitute.InstituteCode = institute.InstituteCode;
-                            editingInstitute.InstituteName = institute.InstituteName;
-                            editingInstitute.IsActive = institute.IsActive;
-                            editingInstitute.ModifiedBy = "Ranga";
-                            editingInstitute.ModifiedDate = dateTime;
-
-                            db.Entry(editingInstitute).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.InstituteCode == institute.InstituteCode && validationRecord.InstituteName == institute.InstituteName)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Institute Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.InstituteCode == institute.InstituteCode)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Institute Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Institute Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingInstitute.InstituteCode = institute.InstituteCode;
+                                editingInstitute.InstituteName = institute.InstituteName;
+                                editingInstitute.IsActive = institute.IsActive;
+                                editingInstitute.ModifiedBy = "Ranga";
+                                editingInstitute.ModifiedDate = dateTime;
+
+                                db.Entry(editingInstitute).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -211,9 +245,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Campus validationRecord = (from c in db.Campus where c.CampusCode.Equals(campus.CampusCode) || c.CampusName.Equals(campus.CampusName) select c).FirstOrDefault<Campus>();
+
                     if (campus.CampusId == 0)
                     {
-                        Campus validationRecord = (from c in db.Campus where c.CampusCode.Equals(campus.CampusCode) || c.CampusName.Equals(campus.CampusName) select c).FirstOrDefault<Campus>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.CampusCode == campus.CampusCode && validationRecord.CampusName == campus.CampusName)
@@ -267,20 +302,53 @@ namespace PMS.Controllers
 
                         if (editingCampus.CampusCode != campus.CampusCode || editingCampus.CampusName != campus.CampusName || editingCampus.IsActive != campus.IsActive)
                         {
-                            editingCampus.CampusCode = campus.CampusCode;
-                            editingCampus.CampusName = campus.CampusName;
-                            editingCampus.IsActive = campus.IsActive;
-                            editingCampus.ModifiedBy = "Ranga";
-                            editingCampus.ModifiedDate = dateTime;
-
-                            db.Entry(editingCampus).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.CampusCode == campus.CampusCode && validationRecord.CampusName == campus.CampusName)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Campus Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.CampusCode == campus.CampusCode)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Campus Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Campus Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingCampus.CampusCode = campus.CampusCode;
+                                editingCampus.CampusName = campus.CampusName;
+                                editingCampus.IsActive = campus.IsActive;
+                                editingCampus.ModifiedBy = "Ranga";
+                                editingCampus.ModifiedDate = dateTime;
+
+                                db.Entry(editingCampus).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -380,9 +448,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Faculty validationRecord = (from f in db.Faculty where f.FacultyCode.Equals(faculty.FacultyCode) || f.FacultyName.Equals(faculty.FacultyName) select f).FirstOrDefault<Faculty>();
+
                     if (faculty.FacultyId == 0)
                     {
-                        Faculty validationRecord = (from f in db.Faculty where f.FacultyCode.Equals(faculty.FacultyCode) || f.FacultyName.Equals(faculty.FacultyName) select f).FirstOrDefault<Faculty>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.FacultyCode == faculty.FacultyCode && validationRecord.FacultyName == faculty.FacultyName)
@@ -436,21 +505,54 @@ namespace PMS.Controllers
 
                         if (editingFaculty.FacultyCode != faculty.FacultyCode || editingFaculty.FacultyName != faculty.FacultyName || editingFaculty.FacultyDean != faculty.FacultyDean || editingFaculty.IsActive != faculty.IsActive)
                         {
-                            editingFaculty.FacultyCode = faculty.FacultyCode;
-                            editingFaculty.FacultyName = faculty.FacultyName;
-                            editingFaculty.FacultyDean = faculty.FacultyDean;
-                            editingFaculty.IsActive = faculty.IsActive;
-                            editingFaculty.ModifiedBy = "Ranga";
-                            editingFaculty.ModifiedDate = dateTime;
-
-                            db.Entry(editingFaculty).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.FacultyCode == faculty.FacultyCode && validationRecord.FacultyName == faculty.FacultyName)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Faculty Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.FacultyCode == faculty.FacultyCode)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Faculty Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Faculty Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingFaculty.FacultyCode = faculty.FacultyCode;
+                                editingFaculty.FacultyName = faculty.FacultyName;
+                                editingFaculty.FacultyDean = faculty.FacultyDean;
+                                editingFaculty.IsActive = faculty.IsActive;
+                                editingFaculty.ModifiedBy = "Ranga";
+                                editingFaculty.ModifiedDate = dateTime;
+
+                                db.Entry(editingFaculty).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -566,9 +668,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Department validationRecord = (from d in db.Department where d.DepartmentCode.Equals(department.DepartmentCode) || d.DepartmentName.Equals(department.DepartmentName) select d).FirstOrDefault<Department>();
+
                     if (department.DepartmentId == 0)
                     {
-                        Department validationRecord = (from d in db.Department where d.DepartmentCode.Equals(department.DepartmentCode) || d.DepartmentName.Equals(department.DepartmentName) select d).FirstOrDefault<Department>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.DepartmentCode == department.DepartmentCode && validationRecord.DepartmentName == department.DepartmentName)
@@ -624,22 +727,55 @@ namespace PMS.Controllers
                             || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId 
                             || editingDepartment.IsActive != department.IsActive)
                         {
-                            editingDepartment.DepartmentCode = department.DepartmentCode;
-                            editingDepartment.DepartmentName = department.DepartmentName;
-                            editingDepartment.HOD = department.HOD;
-                            editingDepartment.FacultyId = department.FacultyId;
-                            editingDepartment.IsActive = department.IsActive;
-                            editingDepartment.ModifiedBy = "Ranga";
-                            editingDepartment.ModifiedDate = dateTime;
-
-                            db.Entry(editingDepartment).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.DepartmentCode == department.DepartmentCode && validationRecord.DepartmentName == department.DepartmentName)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Department Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.DepartmentCode == department.DepartmentCode)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Department Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Department Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingDepartment.DepartmentCode = department.DepartmentCode;
+                                editingDepartment.DepartmentName = department.DepartmentName;
+                                editingDepartment.HOD = department.HOD;
+                                editingDepartment.FacultyId = department.FacultyId;
+                                editingDepartment.IsActive = department.IsActive;
+                                editingDepartment.ModifiedBy = "Ranga";
+                                editingDepartment.ModifiedDate = dateTime;
+
+                                db.Entry(editingDepartment).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -741,12 +877,13 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    LectureHall validationRecord = (from l in db.LectureHall
+                                                    where l.CampusId.Equals(lectureHall.CampusId) && l.Building.Equals(lectureHall.Building)
+                                                    && l.Floor.Equals(lectureHall.Floor) && l.HallName.Equals(lectureHall.HallName)
+                                                    select l).FirstOrDefault<LectureHall>();
+
                     if (lectureHall.HallId == 0)
                     {
-                        LectureHall validationRecord = (from l in db.LectureHall
-                                                        where l.CampusId.Equals(lectureHall.CampusId) && l.Building.Equals(lectureHall.Building)
-                                                        && l.Floor.Equals(lectureHall.Floor) && l.HallName.Equals(lectureHall.HallName)
-                                                        select l).FirstOrDefault<LectureHall>();
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -780,22 +917,33 @@ namespace PMS.Controllers
                             || editingLectureHall.Floor != lectureHall.Floor || editingLectureHall.HallName != lectureHall.HallName
                             || editingLectureHall.IsActive != lectureHall.IsActive)
                         {
-                            editingLectureHall.CampusId = lectureHall.CampusId;
-                            editingLectureHall.Building = lectureHall.Building;
-                            editingLectureHall.Floor = lectureHall.Floor;
-                            editingLectureHall.HallName = lectureHall.HallName;
-                            editingLectureHall.IsActive = lectureHall.IsActive;
-                            editingLectureHall.ModifiedBy = "Ranga";
-                            editingLectureHall.ModifiedDate = dateTime;
-
-                            db.Entry(editingLectureHall).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Lecture Hall Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingLectureHall.CampusId = lectureHall.CampusId;
+                                editingLectureHall.Building = lectureHall.Building;
+                                editingLectureHall.Floor = lectureHall.Floor;
+                                editingLectureHall.HallName = lectureHall.HallName;
+                                editingLectureHall.IsActive = lectureHall.IsActive;
+                                editingLectureHall.ModifiedBy = "Ranga";
+                                editingLectureHall.ModifiedDate = dateTime;
+
+                                db.Entry(editingLectureHall).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -873,9 +1021,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Title validationRecord = (from t in db.Title where t.TitleName.Equals(title.TitleName) select t).FirstOrDefault<Title>();
+
                     if (title.TitleId == 0)
                     {
-                        Title validationRecord = (from t in db.Title where t.TitleName.Equals(title.TitleName) select t).FirstOrDefault<Title>();
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -907,20 +1056,31 @@ namespace PMS.Controllers
 
                         if (editingTitle.TitleName != title.TitleName || editingTitle.Description != title.Description || editingTitle.IsActive != title.IsActive)
                         {
-                            editingTitle.TitleName = title.TitleName;
-                            editingTitle.Description = title.Description;
-                            editingTitle.IsActive = title.IsActive;
-                            editingTitle.ModifiedBy = "Ranga";
-                            editingTitle.ModifiedDate = dateTime;
-
-                            db.Entry(editingTitle).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This User Title Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingTitle.TitleName = title.TitleName;
+                                editingTitle.Description = title.Description;
+                                editingTitle.IsActive = title.IsActive;
+                                editingTitle.ModifiedBy = "Ranga";
+                                editingTitle.ModifiedDate = dateTime;
+
+                                db.Entry(editingTitle).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1003,10 +1163,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    CalendarPeriod validationRecord = (from cp in db.CalendarPeriod where cp.PeriodName.Equals(calendarPeriod.PeriodName) select cp).FirstOrDefault<CalendarPeriod>();
+
                     if (calendarPeriod.Id == 0)
                     {
-                        CalendarPeriod validationRecord = (from cp in db.CalendarPeriod where cp.PeriodName.Equals(calendarPeriod.PeriodName) select cp).FirstOrDefault<CalendarPeriod>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1038,20 +1198,31 @@ namespace PMS.Controllers
 
                         if (editingCalendarPeriod.PeriodName != calendarPeriod.PeriodName || editingCalendarPeriod.Description != calendarPeriod.Description || editingCalendarPeriod.IsActive != calendarPeriod.IsActive)
                         {
-                            editingCalendarPeriod.PeriodName = calendarPeriod.PeriodName;
-                            editingCalendarPeriod.Description = calendarPeriod.Description;
-                            editingCalendarPeriod.IsActive = calendarPeriod.IsActive;
-                            editingCalendarPeriod.ModifiedBy = "Dulanjalee";
-                            editingCalendarPeriod.ModifiedDate = dateTime;
-
-                            db.Entry(editingCalendarPeriod).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Calendar Period Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingCalendarPeriod.PeriodName = calendarPeriod.PeriodName;
+                                editingCalendarPeriod.Description = calendarPeriod.Description;
+                                editingCalendarPeriod.IsActive = calendarPeriod.IsActive;
+                                editingCalendarPeriod.ModifiedBy = "Dulanjalee";
+                                editingCalendarPeriod.ModifiedDate = dateTime;
+
+                                db.Entry(editingCalendarPeriod).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1132,10 +1303,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    AppointmentType validationRecord = (from at in db.AppointmentType where at.AppointmentTypeName.Equals(appointmentType.AppointmentTypeName) select at).FirstOrDefault<AppointmentType>();
+
                     if (appointmentType.AppointmentTypeId == 0)
                     {
-                        AppointmentType validationRecord = (from at in db.AppointmentType where at.AppointmentTypeName.Equals(appointmentType.AppointmentTypeName) select at).FirstOrDefault<AppointmentType>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1167,19 +1338,30 @@ namespace PMS.Controllers
 
                         if (editingAppointmentType.AppointmentTypeName != appointmentType.AppointmentTypeName || editingAppointmentType.IsActive != appointmentType.IsActive)
                         {
-                            editingAppointmentType.AppointmentTypeName = appointmentType.AppointmentTypeName;
-                            editingAppointmentType.IsActive = appointmentType.IsActive;
-                            editingAppointmentType.ModifiedBy = "Dulanjalee";
-                            editingAppointmentType.ModifiedDate = dateTime;
-
-                            db.Entry(editingAppointmentType).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Appointment Type Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingAppointmentType.AppointmentTypeName = appointmentType.AppointmentTypeName;
+                                editingAppointmentType.IsActive = appointmentType.IsActive;
+                                editingAppointmentType.ModifiedBy = "Dulanjalee";
+                                editingAppointmentType.ModifiedDate = dateTime;
+
+                                db.Entry(editingAppointmentType).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1260,10 +1442,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    LectureType validationRecord = (from lt in db.LectureType where lt.LectureTypeName.Equals(lectureType.LectureTypeName) select lt).FirstOrDefault<LectureType>();
+
                     if (lectureType.LectureTypeId == 0)
                     {
-                        LectureType validationRecord = (from lt in db.LectureType where lt.LectureTypeName.Equals(lectureType.LectureTypeName) select lt).FirstOrDefault<LectureType>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1295,19 +1477,30 @@ namespace PMS.Controllers
 
                         if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.IsActive != lectureType.IsActive)
                         {
-                            editingLectureType.LectureTypeName = lectureType.LectureTypeName;
-                            editingLectureType.IsActive = lectureType.IsActive;
-                            editingLectureType.ModifiedBy = "Dulanjalee";
-                            editingLectureType.ModifiedDate = dateTime;
-
-                            db.Entry(editingLectureType).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Lecture Type Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingLectureType.LectureTypeName = lectureType.LectureTypeName;
+                                editingLectureType.IsActive = lectureType.IsActive;
+                                editingLectureType.ModifiedBy = "Dulanjalee";
+                                editingLectureType.ModifiedDate = dateTime;
+
+                                db.Entry(editingLectureType).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1388,9 +1581,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    ConfigurationalSettings validationRecord = (from c in db.ConfigurationalSettings where c.ConfigurationKey.Equals(configurationalSettings.ConfigurationKey) select c).FirstOrDefault<ConfigurationalSettings>();
+
                     if (configurationalSettings.Id == 0)
                     {
-                        ConfigurationalSettings validationRecord = (from c in db.ConfigurationalSettings where c.ConfigurationKey.Equals(configurationalSettings.ConfigurationKey) select c).FirstOrDefault<ConfigurationalSettings>();
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1422,20 +1616,31 @@ namespace PMS.Controllers
 
                         if (editingConfigurationalSettings.ConfigurationKey != configurationalSettings.ConfigurationKey || editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
                         {
-                            editingConfigurationalSettings.ConfigurationKey = configurationalSettings.ConfigurationKey;
-                            editingConfigurationalSettings.ConfigurationValue = configurationalSettings.ConfigurationValue;
-                            editingConfigurationalSettings.IsActive = configurationalSettings.IsActive;
-                            editingConfigurationalSettings.ModifiedBy = "Dulanjalee";
-                            editingConfigurationalSettings.ModifiedDate = dateTime;
-
-                            db.Entry(editingConfigurationalSettings).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Configuration Key Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingConfigurationalSettings.ConfigurationKey = configurationalSettings.ConfigurationKey;
+                                editingConfigurationalSettings.ConfigurationValue = configurationalSettings.ConfigurationValue;
+                                editingConfigurationalSettings.IsActive = configurationalSettings.IsActive;
+                                editingConfigurationalSettings.ModifiedBy = "Dulanjalee";
+                                editingConfigurationalSettings.ModifiedDate = dateTime;
+
+                                db.Entry(editingConfigurationalSettings).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1524,12 +1729,12 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Intake validationRecord = (from i in db.Intake
+                                               where i.IntakeYear.Value.Equals(intake.IntakeYear.Value) && i.IntakeName.Equals(intake.IntakeName)
+                                               select i).FirstOrDefault<Intake>();
+
                     if (intake.IntakeId == 0)
                     {
-                        Intake validationRecord = (from i in db.Intake
-                                                   where i.IntakeYear.Value.Equals(intake.IntakeYear.Value) && i.IntakeName.Equals(intake.IntakeName)
-                                                   select i).FirstOrDefault<Intake>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1563,23 +1768,34 @@ namespace PMS.Controllers
                             || editingIntake.IntakeName != intake.IntakeName || editingIntake.FromDate != intake.FromDate
                             || editingIntake.ToDate != intake.ToDate || editingIntake.IsActive != intake.IsActive)
                         {
-                            editingIntake.IntakeYear = intake.IntakeYear;
-                            editingIntake.IntakeCode = intake.IntakeCode;
-                            editingIntake.IntakeName = intake.IntakeName;
-                            editingIntake.FromDate = intake.FromDate;
-                            editingIntake.ToDate = intake.ToDate;
-                            editingIntake.IsActive = intake.IsActive;
-                            editingIntake.ModifiedBy = "Ranga";
-                            editingIntake.ModifiedDate = dateTime;
-
-                            db.Entry(editingIntake).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Intake Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingIntake.IntakeYear = intake.IntakeYear;
+                                editingIntake.IntakeCode = intake.IntakeCode;
+                                editingIntake.IntakeName = intake.IntakeName;
+                                editingIntake.FromDate = intake.FromDate;
+                                editingIntake.ToDate = intake.ToDate;
+                                editingIntake.IsActive = intake.IsActive;
+                                editingIntake.ModifiedBy = "Ranga";
+                                editingIntake.ModifiedDate = dateTime;
+
+                                db.Entry(editingIntake).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1656,9 +1872,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Designation validationRecord = (from d in db.Designation where d.DesignationName.Equals(designation.DesignationName) select d).FirstOrDefault<Designation>();
+
                     if (designation.DesignationId == 0)
                     {
-                        Designation validationRecord = (from d in db.Designation where d.DesignationName.Equals(designation.DesignationName) select d).FirstOrDefault<Designation>();
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1690,19 +1907,30 @@ namespace PMS.Controllers
 
                         if (editingDesignation.DesignationName != designation.DesignationName || editingDesignation.IsActive != designation.IsActive)
                         {
-                            editingDesignation.DesignationName = designation.DesignationName;
-                            editingDesignation.IsActive = designation.IsActive;
-                            editingDesignation.ModifiedBy = "Ranga";
-                            editingDesignation.ModifiedDate = dateTime;
-
-                            db.Entry(editingDesignation).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Designation Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingDesignation.DesignationName = designation.DesignationName;
+                                editingDesignation.IsActive = designation.IsActive;
+                                editingDesignation.ModifiedBy = "Ranga";
+                                editingDesignation.ModifiedDate = dateTime;
+
+                                db.Entry(editingDesignation).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -1830,14 +2058,13 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Appointment validationRecord = (from a in db.Appointment
+                                                    where a.UserId.Equals(appointment.UserId) && a.DesignationId.Equals(appointment.DesignationId)
+                                                    && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
+                                                    select a).FirstOrDefault<Appointment>();
 
                     if (appointment.AppointmentId == 0)
                     {
-                        Appointment validationRecord = (from a in db.Appointment
-                                                        where a.UserId.Equals(appointment.UserId) && a.DesignationId.Equals(appointment.DesignationId)
-                                                        && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
-                                                        select a).FirstOrDefault<Appointment>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -1916,11 +2143,6 @@ namespace PMS.Controllers
                             || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo 
                             || editingAppointment.IsActive != appointment.IsActive)
                         {
-                            Appointment validationRecord = (from a in db.Appointment
-                                                            where !a.AppointmentId.Equals(appointment.AppointmentId) && a.UserId.Equals(editingAppointment.UserId) 
-                                                            && a.DesignationId.Equals(appointment.DesignationId) && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
-                                                            select a).FirstOrDefault<Appointment>();
-
                             if (validationRecord != null)
                             {
                                 return Json(new
@@ -2024,9 +2246,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Subject validationRecord = (from s in db.Subject where s.SubjectCode.Equals(subject.SubjectCode) || s.SubjectName.Equals(subject.SubjectName) select s).FirstOrDefault<Subject>();
+
                     if (subject.SubjectId == 0)
                     {
-                        Subject validationRecord = (from s in db.Subject where s.SubjectCode.Equals(subject.SubjectCode) || s.SubjectName.Equals(subject.SubjectName) select s).FirstOrDefault<Subject>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.SubjectCode == subject.SubjectCode && validationRecord.SubjectName == subject.SubjectName)
@@ -2080,20 +2303,53 @@ namespace PMS.Controllers
 
                         if (editingSubject.SubjectCode != subject.SubjectCode || editingSubject.SubjectName != subject.SubjectName || editingSubject.IsActive != subject.IsActive)
                         {
-                            editingSubject.SubjectCode = subject.SubjectCode;
-                            editingSubject.SubjectName = subject.SubjectName;
-                            editingSubject.IsActive = subject.IsActive;
-                            editingSubject.ModifiedBy = "Dulanjalee";
-                            editingSubject.ModifiedDate = dateTime;
-
-                            db.Entry(editingSubject).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.SubjectCode == subject.SubjectCode && validationRecord.SubjectName == subject.SubjectName)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Subject Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.SubjectCode == subject.SubjectCode)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Subject Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Subject Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingSubject.SubjectCode = subject.SubjectCode;
+                                editingSubject.SubjectName = subject.SubjectName;
+                                editingSubject.IsActive = subject.IsActive;
+                                editingSubject.ModifiedBy = "Dulanjalee";
+                                editingSubject.ModifiedDate = dateTime;
+
+                                db.Entry(editingSubject).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -2229,9 +2485,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Degree validationRecord = (from d in db.Degree where d.Code.Equals(degree.Code) || d.Name.Equals(degree.Name) select d).FirstOrDefault<Degree>();
+
                     if (degree.DegreeId == 0)
                     {
-                        Degree validationRecord = (from d in db.Degree where d.Code.Equals(degree.Code) || d.Name.Equals(degree.Name) select d).FirstOrDefault<Degree>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
@@ -2285,24 +2542,57 @@ namespace PMS.Controllers
 
                         if (editingDegree.Code != degree.Code || editingDegree.Name != degree.Name || editingDegree.Description != degree.Description || editingDegree.FacultyId != degree.FacultyId || editingDegree.InstituteId != degree.InstituteId || editingDegree.DepartmentId != degree.DepartmentId || editingDegree.IsActive != degree.IsActive)
                         {
-                            editingDegree.Code = degree.Code;
-                            editingDegree.Name = degree.Name;
-                            editingDegree.Description = degree.Description;
-                            editingDegree.FacultyId = degree.FacultyId;
-                            editingDegree.InstituteId = degree.InstituteId;
-                            editingDegree.DepartmentId = degree.DepartmentId;
-                            editingDegree.IsActive = degree.IsActive;
-                            editingDegree.ModifiedBy = "Dulanjalee";
-                            editingDegree.ModifiedDate = dateTime;
-
-                            db.Entry(editingDegree).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Degree Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.Code == degree.Code)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Degree Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Degree Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingDegree.Code = degree.Code;
+                                editingDegree.Name = degree.Name;
+                                editingDegree.Description = degree.Description;
+                                editingDegree.FacultyId = degree.FacultyId;
+                                editingDegree.InstituteId = degree.InstituteId;
+                                editingDegree.DepartmentId = degree.DepartmentId;
+                                editingDegree.IsActive = degree.IsActive;
+                                editingDegree.ModifiedBy = "Dulanjalee";
+                                editingDegree.ModifiedDate = dateTime;
+
+                                db.Entry(editingDegree).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -2437,9 +2727,10 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    Specialization validationRecord = (from s in db.Specialization where s.Code.Equals(specialization.Code) || s.Name.Equals(specialization.Name) select s).FirstOrDefault<Specialization>();
+
                     if (specialization.SpecializationId == 0)
                     {
-                        Specialization validationRecord = (from s in db.Specialization where s.Code.Equals(specialization.Code) || s.Name.Equals(specialization.Name) select s).FirstOrDefault<Specialization>();
                         if (validationRecord != null)
                         {
                             if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
@@ -2493,23 +2784,56 @@ namespace PMS.Controllers
 
                         if (editingSpecialization.Code != specialization.Code || editingSpecialization.Name != specialization.Name || editingSpecialization.DegreeId != specialization.DegreeId || editingSpecialization.InstituteId != specialization.InstituteId || editingSpecialization.DepartmentId != specialization.DepartmentId || editingSpecialization.IsActive != specialization.IsActive)
                         {
-                            editingSpecialization.Code = specialization.Code;
-                            editingSpecialization.Name = specialization.Name;
-                            editingSpecialization.DegreeId = specialization.DegreeId;
-                            editingSpecialization.InstituteId = specialization.InstituteId;
-                            editingSpecialization.DepartmentId = specialization.DepartmentId;
-                            editingSpecialization.IsActive = specialization.IsActive;
-                            editingSpecialization.ModifiedBy = "Dulanjalee";
-                            editingSpecialization.ModifiedDate = dateTime;
-
-                            db.Entry(editingSpecialization).State = EntityState.Modified;
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "This Specialization Code and Name Already Exists"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    if (validationRecord.Code == specialization.Code)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Specialization Code Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "This Specialization Name Already Exists"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                editingSpecialization.Code = specialization.Code;
+                                editingSpecialization.Name = specialization.Name;
+                                editingSpecialization.DegreeId = specialization.DegreeId;
+                                editingSpecialization.InstituteId = specialization.InstituteId;
+                                editingSpecialization.DepartmentId = specialization.DepartmentId;
+                                editingSpecialization.IsActive = specialization.IsActive;
+                                editingSpecialization.ModifiedBy = "Dulanjalee";
+                                editingSpecialization.ModifiedDate = dateTime;
+
+                                db.Entry(editingSpecialization).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -2676,13 +3000,14 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    PaymentRate validationRecord = (from pr in db.PaymentRate
+                                                    where pr.DesignationId.Equals(paymentRate.DesignationId) && pr.FacultyId.Value.Equals(paymentRate.FacultyId.Value)
+                                                    && pr.DegreeId.Value.Equals(paymentRate.DegreeId.Value) && pr.SpecializationId.Value.Equals(paymentRate.SpecializationId.Value)
+                                                    && pr.SubjectId.Value.Equals(paymentRate.SubjectId.Value)
+                                                    select pr).FirstOrDefault<PaymentRate>();
+
                     if (paymentRate.Id == 0)
                     {
-                        PaymentRate validationRecord = (from pr in db.PaymentRate
-                                                        where pr.DesignationId.Equals(paymentRate.DesignationId) && pr.FacultyId.Equals(paymentRate.FacultyId) 
-                                                        && pr.DegreeId.Equals(paymentRate.DegreeId) && pr.SpecializationId.Equals(paymentRate.SpecializationId) 
-                                                        && pr.SubjectId.Equals(paymentRate.SubjectId) select pr).FirstOrDefault<PaymentRate>();
-
                         if (validationRecord != null)
                         {
                             return Json(new
@@ -2735,42 +3060,53 @@ namespace PMS.Controllers
                             || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
                             || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
-                            editingPaymentRate.DesignationId = paymentRate.DesignationId;
-                            editingPaymentRate.FacultyId = paymentRate.FacultyId;
-                            editingPaymentRate.DegreeId = paymentRate.DegreeId;
-                            editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
-                            editingPaymentRate.SubjectId = paymentRate.SubjectId;
-                            editingPaymentRate.RatePerHour = paymentRate.RatePerHour;
-                            editingPaymentRate.IsActive = paymentRate.IsActive;
-                            editingPaymentRate.ModifiedBy = "Dulanjalee";
-                            editingPaymentRate.ModifiedDate = dateTime;
-
-                            db.Entry(editingPaymentRate).State = EntityState.Modified;
-
-                            PaymentRateLog prLog = new PaymentRateLog();
-
-                            prLog.DesignationId = paymentRate.DesignationId;
-                            prLog.FacultyId = paymentRate.FacultyId;
-                            prLog.DegreeId = paymentRate.DegreeId;
-                            prLog.SpecializationId = paymentRate.SpecializationId;
-                            prLog.SubjectId = paymentRate.SubjectId;
-                            prLog.RatePerHour = paymentRate.RatePerHour;
-                            prLog.IsActive = paymentRate.IsActive;
-                            prLog.IsApproved = editingPaymentRate.IsApproved;
-                            prLog.CreatedBy = editingPaymentRate.CreatedBy;
-                            prLog.CreatedDate = editingPaymentRate.CreatedDate;
-                            prLog.ModifiedBy = "Ranga";
-                            prLog.ModifiedDate = dateTime;
-                            prLog.PaymentRateId = editingPaymentRate.Id;
-
-                            db.PaymentRateLog.Add(prLog);
-                            db.SaveChanges();
-
-                            return Json(new
+                            if (validationRecord != null)
                             {
-                                success = true,
-                                message = "Successfully Updated"
-                            }, JsonRequestBehavior.AllowGet);
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This PaymentRate Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingPaymentRate.DesignationId = paymentRate.DesignationId;
+                                editingPaymentRate.FacultyId = paymentRate.FacultyId;
+                                editingPaymentRate.DegreeId = paymentRate.DegreeId;
+                                editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
+                                editingPaymentRate.SubjectId = paymentRate.SubjectId;
+                                editingPaymentRate.RatePerHour = paymentRate.RatePerHour;
+                                editingPaymentRate.IsActive = paymentRate.IsActive;
+                                editingPaymentRate.ModifiedBy = "Dulanjalee";
+                                editingPaymentRate.ModifiedDate = dateTime;
+
+                                db.Entry(editingPaymentRate).State = EntityState.Modified;
+
+                                PaymentRateLog prLog = new PaymentRateLog();
+
+                                prLog.DesignationId = paymentRate.DesignationId;
+                                prLog.FacultyId = paymentRate.FacultyId;
+                                prLog.DegreeId = paymentRate.DegreeId;
+                                prLog.SpecializationId = paymentRate.SpecializationId;
+                                prLog.SubjectId = paymentRate.SubjectId;
+                                prLog.RatePerHour = paymentRate.RatePerHour;
+                                prLog.IsActive = paymentRate.IsActive;
+                                prLog.IsApproved = editingPaymentRate.IsApproved;
+                                prLog.CreatedBy = editingPaymentRate.CreatedBy;
+                                prLog.CreatedDate = editingPaymentRate.CreatedDate;
+                                prLog.ModifiedBy = "Ranga";
+                                prLog.ModifiedDate = dateTime;
+                                prLog.PaymentRateId = editingPaymentRate.Id;
+
+                                db.PaymentRateLog.Add(prLog);
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
                         }
                         else
                         {
@@ -2833,8 +3169,8 @@ namespace PMS.Controllers
                                                                              CalendarPeriodName = calP.PeriodName,
                                                                              IntakeYear = intk.IntakeYear,
                                                                              IntakeName = intk.IntakeName,
-                                                                             AcadamicYear = sr.AcadamicYear,
-                                                                             AcadamicSemester = sr.AcadamicSemester,
+                                                                             AcademicYear = sr.AcademicYear,
+                                                                             AcademicSemester = sr.AcademicSemester,
                                                                              FacultyName = fac.FacultyName,
                                                                              InstituteName = inst.InstituteName,
                                                                              DegreeName = dg.Name,
@@ -2997,7 +3333,7 @@ namespace PMS.Controllers
                     SemesterRegistration validationRecord = (from s in db.SemesterRegistration
                                                              where s.CalendarYear.Value.Equals(semesterRegistration.CalendarYear.Value) && s.CalendarPeriodId.Value.Equals(semesterRegistration.CalendarPeriodId.Value)
                                                              && s.IntakeYear.Value.Equals(semesterRegistration.IntakeYear.Value) && s.IntakeId.Value.Equals(semesterRegistration.IntakeId.Value)
-                                                             && s.AcadamicYear.Value.Equals(semesterRegistration.AcadamicYear.Value) && s.AcadamicSemester.Value.Equals(semesterRegistration.AcadamicSemester.Value)
+                                                             && s.AcademicYear.Value.Equals(semesterRegistration.AcademicYear.Value) && s.AcademicSemester.Value.Equals(semesterRegistration.AcademicSemester.Value)
                                                              && s.FacultyId.Value.Equals(semesterRegistration.FacultyId.Value) && s.InstituteId.Value.Equals(semesterRegistration.InstituteId.Value)
                                                              && s.DegreeId.Value.Equals(semesterRegistration.DegreeId.Value) && s.SpecializationId.Value.Equals(semesterRegistration.SpecializationId.Value)
                                                              select s).FirstOrDefault<SemesterRegistration>();
@@ -3035,7 +3371,7 @@ namespace PMS.Controllers
 
                         if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId 
                             || editingSemesterRegistration.IntakeYear != semesterRegistration.IntakeYear || editingSemesterRegistration.IntakeId != semesterRegistration.IntakeId
-                            || editingSemesterRegistration.AcadamicYear != semesterRegistration.AcadamicYear || editingSemesterRegistration.AcadamicSemester != semesterRegistration.AcadamicSemester
+                            || editingSemesterRegistration.AcademicYear != semesterRegistration.AcademicYear || editingSemesterRegistration.AcademicSemester != semesterRegistration.AcademicSemester
                             || editingSemesterRegistration.FacultyId != semesterRegistration.FacultyId || editingSemesterRegistration.InstituteId != semesterRegistration.InstituteId
                             || editingSemesterRegistration.DegreeId != semesterRegistration.DegreeId || editingSemesterRegistration.SpecializationId != semesterRegistration.SpecializationId
                             || editingSemesterRegistration.FromDate != semesterRegistration.FromDate || editingSemesterRegistration.ToDate != semesterRegistration.ToDate || editingSemesterRegistration.IsActive != semesterRegistration.IsActive)
@@ -3054,8 +3390,8 @@ namespace PMS.Controllers
                                 editingSemesterRegistration.CalendarPeriodId = semesterRegistration.CalendarPeriodId;
                                 editingSemesterRegistration.IntakeYear = semesterRegistration.IntakeYear;
                                 editingSemesterRegistration.IntakeId = semesterRegistration.IntakeId;
-                                editingSemesterRegistration.AcadamicYear = semesterRegistration.AcadamicYear;
-                                editingSemesterRegistration.AcadamicSemester = semesterRegistration.AcadamicSemester;
+                                editingSemesterRegistration.AcademicYear = semesterRegistration.AcademicYear;
+                                editingSemesterRegistration.AcademicSemester = semesterRegistration.AcademicSemester;
                                 editingSemesterRegistration.FacultyId = semesterRegistration.FacultyId;
                                 editingSemesterRegistration.InstituteId = semesterRegistration.InstituteId;
                                 editingSemesterRegistration.DegreeId = semesterRegistration.DegreeId;

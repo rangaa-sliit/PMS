@@ -347,8 +347,8 @@
           <Property Name="CalendarPeriodId" Type="int" />
           <Property Name="IntakeYear" Type="int" />
           <Property Name="IntakeId" Type="int" />
-          <Property Name="AcadamicYear" Type="int" />
-          <Property Name="AcadamicSemester" Type="int" />
+          <Property Name="AcademicYear" Type="int" />
+          <Property Name="AcademicSemester" Type="int" />
           <Property Name="FacultyId" Type="int" />
           <Property Name="InstituteId" Type="int" />
           <Property Name="DegreeId" Type="int" />
@@ -724,6 +724,66 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PaymentRate_Degree">
+          <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Degree">
+              <PropertyRef Name="DegreeId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="DegreeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRate_Designation">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="DesignationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRate_Faculty">
+          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Faculty">
+              <PropertyRef Name="FacultyId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRate_Specialization">
+          <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Specialization">
+              <PropertyRef Name="SpecializationId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="SpecializationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRate_Subject">
+          <End Role="Subject" Type="Self.Subject" Multiplicity="0..1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subject">
+              <PropertyRef Name="SubjectId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="SubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentRateLog_Degree">
           <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
           <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
@@ -1049,6 +1109,26 @@
           <AssociationSet Name="FK_LectureHall_Campus" Association="Self.FK_LectureHall_Campus">
             <End Role="Campus" EntitySet="Campus" />
             <End Role="LectureHall" EntitySet="LectureHall" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
+            <End Role="Degree" EntitySet="Degree" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_Designation" Association="Self.FK_PaymentRate_Designation">
+            <End Role="Designation" EntitySet="Designation" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_Faculty" Association="Self.FK_PaymentRate_Faculty">
+            <End Role="Faculty" EntitySet="Faculty" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_Specialization" Association="Self.FK_PaymentRate_Specialization">
+            <End Role="Specialization" EntitySet="Specialization" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_Subject" Association="Self.FK_PaymentRate_Subject">
+            <End Role="Subject" EntitySet="Subject" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRateLog_Degree" Association="Self.FK_PaymentRateLog_Degree">
             <End Role="Degree" EntitySet="Degree" />
@@ -1685,6 +1765,7 @@
           <Property Name="SubjectId" Type="Int32" />
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
+          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
           <Property Name="IsApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -1697,7 +1778,6 @@
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="PaymentRate" ToRole="Specialization" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="PaymentRate" ToRole="Subject" />
           <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRate" ToRole="PaymentRateLog" />
-          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="PaymentRateLog">
           <Key>
@@ -1710,6 +1790,7 @@
           <Property Name="SubjectId" Type="Int32" />
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
+          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
           <Property Name="IsApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -1723,7 +1804,6 @@
           <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRateLog" ToRole="PaymentRate" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
-          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="SemesterRegistration">
           <Key>
@@ -1734,8 +1814,8 @@
           <Property Name="CalendarPeriodId" Type="Int32" />
           <Property Name="IntakeYear" Type="Int32" />
           <Property Name="IntakeId" Type="Int32" />
-          <Property Name="AcadamicYear" Type="Int32" />
-          <Property Name="AcadamicSemester" Type="Int32" />
+          <Property Name="AcademicYear" Type="Int32" />
+          <Property Name="AcademicSemester" Type="Int32" />
           <Property Name="FacultyId" Type="Int32" />
           <Property Name="InstituteId" Type="Int32" />
           <Property Name="DegreeId" Type="Int32" />
@@ -2130,9 +2210,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PaymentRate_Degree">
-          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
           <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Degree">
@@ -2208,9 +2286,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PaymentRate_Designation">
-          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1" />
           <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Designation">
@@ -2320,9 +2396,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PaymentRate_Subject">
-          <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1" />
           <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Subject">
@@ -2729,13 +2803,13 @@
           <EntitySetMapping Name="PaymentRate">
             <EntityTypeMapping TypeName="PMSModel.PaymentRate">
               <MappingFragment StoreEntitySet="PaymentRate">
-                <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
                 <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -2749,7 +2823,6 @@
           <EntitySetMapping Name="PaymentRateLog">
             <EntityTypeMapping TypeName="PMSModel.PaymentRateLog">
               <MappingFragment StoreEntitySet="PaymentRateLog">
-                <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="PaymentRateId" ColumnName="PaymentRateId" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
@@ -2757,6 +2830,7 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
                 <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -2781,8 +2855,8 @@
                 <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
                 <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
-                <ScalarProperty Name="AcadamicSemester" ColumnName="AcadamicSemester" />
-                <ScalarProperty Name="AcadamicYear" ColumnName="AcadamicYear" />
+                <ScalarProperty Name="AcademicSemester" ColumnName="AcademicSemester" />
+                <ScalarProperty Name="AcademicYear" ColumnName="AcademicYear" />
                 <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
                 <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
                 <ScalarProperty Name="CalendarPeriodId" ColumnName="CalendarPeriodId" />

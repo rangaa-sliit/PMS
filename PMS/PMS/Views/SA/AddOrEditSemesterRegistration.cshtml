@@ -67,10 +67,10 @@ Developed On:- 2022/09/05*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.AcadamicYear, "Academic Year: ", new { @class = "required" })
+                        @Html.LabelFor(model => model.AcademicYear, "Academic Year: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.AcadamicYear, new List<SelectListItem>
+                        @Html.DropDownListFor(model => model.AcademicYear, new List<SelectListItem>
                         {
                             new SelectListItem{ Text = "-- Select Acadamic Year --", Value = "" },
                             new SelectListItem{ Text = "1", Value = "1" },
@@ -78,21 +78,21 @@ Developed On:- 2022/09/05*@
                             new SelectListItem{ Text = "3", Value = "3" },
                             new SelectListItem{ Text = "4", Value = "4" }
                         }, new { @class = "form-control", @id = "academicYearList", onchange = "onAcademicYearChange(this.value)" })
-                        @Html.ValidationMessageFor(model => model.AcadamicYear)
+                        @Html.ValidationMessageFor(model => model.AcademicYear)
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.AcadamicSemester, "Academic Semester: ", new { @class = "required" })
+                        @Html.LabelFor(model => model.AcademicSemester, "Academic Semester: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.AcadamicSemester, new List<SelectListItem>
+                        @Html.DropDownListFor(model => model.AcademicSemester, new List<SelectListItem>
                         {
                             new SelectListItem{ Text = "-- Select Acadamic Semester --", Value = "" },
                             new SelectListItem{ Text = "1", Value = "1" },
                             new SelectListItem{ Text = "2", Value = "2" }
                         }, new { @class = "form-control", @id = "academicSemesterList", onchange = "onAcademicSemesterChange(this.value)" })
-                        @Html.ValidationMessageFor(model => model.AcadamicSemester)
+                        @Html.ValidationMessageFor(model => model.AcademicSemester)
                     </div>
                 </div>
                 <div class="form-group row">
