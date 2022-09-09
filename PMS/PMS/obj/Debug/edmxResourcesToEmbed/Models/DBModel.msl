@@ -387,6 +387,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
           <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -363,9 +363,11 @@
         </EntityType>
         <EntityType Name="SemesterSubject">
           <Key>
+            <PropertyRef Name="Id" />
             <PropertyRef Name="SemesterRegistrationId" />
             <PropertyRef Name="SubjectId" />
           </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
           <Property Name="SubjectId" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -1837,9 +1839,11 @@
         </EntityType>
         <EntityType Name="SemesterSubject">
           <Key>
+            <PropertyRef Name="Id" />
             <PropertyRef Name="SemesterRegistrationId" />
             <PropertyRef Name="SubjectId" />
           </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
           <Property Name="SubjectId" Type="Int32" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2875,6 +2879,7 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
                 <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

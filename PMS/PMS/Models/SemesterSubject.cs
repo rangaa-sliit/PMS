@@ -14,6 +14,7 @@ namespace PMS.Models
     
     public partial class SemesterSubject
     {
+        public int Id { get; set; }
         public int SemesterRegistrationId { get; set; }
         public int SubjectId { get; set; }
         public System.DateTime CreatedDate { get; set; }

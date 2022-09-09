@@ -634,9 +634,11 @@
   </EntityType>
   <EntityType Name="SemesterSubject">
     <Key>
+      <PropertyRef Name="Id" />
       <PropertyRef Name="SemesterRegistrationId" />
       <PropertyRef Name="SubjectId" />
     </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
     <Property Name="SubjectId" Type="Int32" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
