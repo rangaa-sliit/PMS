@@ -617,8 +617,8 @@
     <Property Name="InstituteId" Type="Int32" />
     <Property Name="DegreeId" Type="Int32" />
     <Property Name="SpecializationId" Type="Int32" />
-    <Property Name="FromDate" Type="DateTime" Precision="3" />
-    <Property Name="ToDate" Type="DateTime" Precision="3" />
+    <Property Name="FromDate" Type="DateTime" Precision="0" />
+    <Property Name="ToDate" Type="DateTime" Precision="0" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />

@@ -23,6 +23,7 @@ namespace PMS.Models
     
         public int SemesterId { get; set; }
         [Required(ErrorMessage = "Calendar Year is required")]
+        [Range(2015, int.MaxValue, ErrorMessage = "Years grater than 2015 are allowed")]
         public Nullable<int> CalendarYear { get; set; }
         [Required(ErrorMessage = "Calendar Period is required")]
         public Nullable<int> CalendarPeriodId { get; set; }

@@ -3165,6 +3165,7 @@ namespace PMS.Controllers
                                                                          orderby sr.SemesterId descending
                                                                          select new SemesterRegistrationVM
                                                                          {
+                                                                             SemesterId = sr.SemesterId,
                                                                              CalendarYear = sr.CalendarYear,
                                                                              CalendarPeriodName = calP.PeriodName,
                                                                              IntakeYear = intk.IntakeYear,
@@ -3214,10 +3215,6 @@ namespace PMS.Controllers
                 intakeYearList.Insert(0, new SelectListItem() { Text = "-- Select Intake Year --", Value = "", Disabled = true, Selected = true });
                 ViewBag.intakeYearList = intakeYearList;
 
-                List<SelectListItem> intakeList = new List<SelectListItem>();
-                intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
-                ViewBag.intakeList = intakeList;
-
                 var faculties = (from f in db.Faculty
                                  where f.IsActive.Equals(true)
                                  select new
@@ -3242,21 +3239,64 @@ namespace PMS.Controllers
                 instituteList.Insert(0, new SelectListItem() { Text = "-- Select Awarding Institute --", Value = "", Disabled = true, Selected = true });
                 ViewBag.instituteList = instituteList;
 
-                List<SelectListItem> degreeList = new List<SelectListItem>();
-                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
-                ViewBag.degreeList = degreeList;
-
-                List<SelectListItem> specializationList = new List<SelectListItem>();
-                specializationList.Insert(0, new SelectListItem() { Text = "-- Select Specialization --", Value = "", Disabled = true, Selected = true });
-                ViewBag.specializationList = specializationList;
-
                 if (id == 0)
                 {
+                    List<SelectListItem> intakeList = new List<SelectListItem>();
+                    intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
+                    ViewBag.intakeList = intakeList;
+
+                    List<SelectListItem> degreeList = new List<SelectListItem>();
+                    degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                    ViewBag.degreeList = degreeList;
+
+                    List<SelectListItem> specializationList = new List<SelectListItem>();
+                    specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                    ViewBag.specializationList = specializationList;
+
                     return View(new SemesterRegistration());
                 }
                 else
                 {
-                    return View((from sr in db.SemesterRegistration where sr.SemesterId.Equals(id) select sr).FirstOrDefault<SemesterRegistration>());
+                    SemesterRegistration editingSemesterRegistration = (from sr in db.SemesterRegistration where sr.SemesterId.Equals(id) select sr).FirstOrDefault<SemesterRegistration>();
+
+                    var intakesforIntakeYear = (from i in db.Intake
+                                                where i.IntakeYear == editingSemesterRegistration.IntakeYear && i.IsActive.Equals(true)
+                                                select new
+                                                {
+                                                    Text = i.IntakeName,
+                                                    Value = i.IntakeId
+                                                }).ToList();
+
+                    List<SelectListItem> intakeList = new SelectList(intakesforIntakeYear, "Value", "Text").ToList();
+                    intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
+                    ViewBag.intakeList = intakeList;
+
+                    var degrees = (from d in db.Degree
+                                   where d.FacultyId == editingSemesterRegistration.FacultyId && d.InstituteId == editingSemesterRegistration.InstituteId
+                                   && d.IsActive.Equals(true)
+                                   select new
+                                   {
+                                       Text = d.Name,
+                                       Value = d.DegreeId
+                                   }).ToList();
+
+                    List<SelectListItem> degreeList = new SelectList(degrees, "Value", "Text").ToList();
+                    degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                    ViewBag.degreeList = degreeList;
+
+                    var specializations = (from s in db.Specialization
+                                           where s.DegreeId == editingSemesterRegistration.DegreeId && s.IsActive.Equals(true)
+                                           select new
+                                           {
+                                               Text = s.Name,
+                                               Value = s.SpecializationId
+                                           }).ToList();
+
+                    List<SelectListItem> specializationList = new SelectList(specializations, "Value", "Text").ToList();
+                    specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                    ViewBag.specializationList = specializationList;
+
+                    return View(editingSemesterRegistration);
                 }
             }
         }
@@ -3386,18 +3426,18 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                editingSemesterRegistration.CalendarYear = semesterRegistration.CalendarYear;
-                                editingSemesterRegistration.CalendarPeriodId = semesterRegistration.CalendarPeriodId;
-                                editingSemesterRegistration.IntakeYear = semesterRegistration.IntakeYear;
-                                editingSemesterRegistration.IntakeId = semesterRegistration.IntakeId;
-                                editingSemesterRegistration.AcademicYear = semesterRegistration.AcademicYear;
-                                editingSemesterRegistration.AcademicSemester = semesterRegistration.AcademicSemester;
+                                editingSemesterRegistration.CalendarYear = semesterRegistration.CalendarYear.Value;
+                                editingSemesterRegistration.CalendarPeriodId = semesterRegistration.CalendarPeriodId.Value;
+                                editingSemesterRegistration.IntakeYear = semesterRegistration.IntakeYear.Value;
+                                editingSemesterRegistration.IntakeId = semesterRegistration.IntakeId.Value;
+                                editingSemesterRegistration.AcademicYear = semesterRegistration.AcademicYear.Value;
+                                editingSemesterRegistration.AcademicSemester = semesterRegistration.AcademicSemester.Value;
                                 editingSemesterRegistration.FacultyId = semesterRegistration.FacultyId;
                                 editingSemesterRegistration.InstituteId = semesterRegistration.InstituteId;
                                 editingSemesterRegistration.DegreeId = semesterRegistration.DegreeId;
                                 editingSemesterRegistration.SpecializationId = semesterRegistration.SpecializationId;
-                                editingSemesterRegistration.FromDate = semesterRegistration.FromDate;
-                                editingSemesterRegistration.ToDate = semesterRegistration.ToDate;
+                                editingSemesterRegistration.FromDate = semesterRegistration.FromDate.Value;
+                                editingSemesterRegistration.ToDate = semesterRegistration.ToDate.Value;
                                 editingSemesterRegistration.IsActive = semesterRegistration.IsActive;
                                 editingSemesterRegistration.ModifiedBy = "Ranga";
                                 editingSemesterRegistration.ModifiedDate = dateTime;
@@ -3438,6 +3478,13 @@ namespace PMS.Controllers
                     throw raise;
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/09
+        public ActionResult ManageSemesterSubjects()
+        {
+            return View();
         }
     }
 }

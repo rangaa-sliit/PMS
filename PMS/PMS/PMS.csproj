@@ -477,6 +477,7 @@
     <Content Include="Views\SA\AddOrEditAppointment.cshtml" />
     <Content Include="Views\SA\ManageSemesterRegistrations.cshtml" />
     <Content Include="Views\SA\AddOrEditSemesterRegistration.cshtml" />
+    <Content Include="Views\SA\ManageSemesterSubjects.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

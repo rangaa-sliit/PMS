@@ -353,8 +353,8 @@
           <Property Name="InstituteId" Type="int" />
           <Property Name="DegreeId" Type="int" />
           <Property Name="SpecializationId" Type="int" />
-          <Property Name="FromDate" Type="datetime" />
-          <Property Name="ToDate" Type="datetime" />
+          <Property Name="FromDate" Type="date" />
+          <Property Name="ToDate" Type="date" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1820,8 +1820,8 @@
           <Property Name="InstituteId" Type="Int32" />
           <Property Name="DegreeId" Type="Int32" />
           <Property Name="SpecializationId" Type="Int32" />
-          <Property Name="FromDate" Type="DateTime" Precision="3" />
-          <Property Name="ToDate" Type="DateTime" Precision="3" />
+          <Property Name="FromDate" Type="DateTime" Precision="0" />
+          <Property Name="ToDate" Type="DateTime" Precision="0" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
