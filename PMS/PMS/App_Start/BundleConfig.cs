@@ -33,11 +33,17 @@ namespace PMS
 
             bundles.Add(new ScriptBundle("~/DataTable/css").Include(
                       "~/Content/dataTables.bootstrap4.min.css",
-                      "~/Content/buttons.bootstrap4.min.css"));
+                      "~/Content/buttons.bootstrap4.min.css",
+                      //"~/Content/dataTables.checkboxes.css",
+                      "~/Content/fixedColumns.dataTables.min.css",
+                      "~/Content/select.dataTables.min.css"));
 
             bundles.Add(new ScriptBundle("~/DataTable/js").Include(
                       "~/Scripts/jquery.dataTables.min.js",
                       "~/Scripts/dataTables.bootstrap4.min.js",
+                      "~/Scripts/dataTables.fixedColumns.min.js",
+                      "~/Scripts/dataTables.select.min.js",
+                      //"~/Scripts/dataTables.checkboxes.min.js",
                       "~/Scripts/dataTables.buttons.min.js",
                       "~/Scripts/buttons.bootstrap4.min.js",
                       "~/Scripts/buttons.print.min.js",

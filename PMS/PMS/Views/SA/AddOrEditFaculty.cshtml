@@ -1,7 +1,7 @@
 ﻿@*Developed By:- Ranga Athapaththu
 Developed On:- 2022/08/18*@
 
-@model PMS.ViewModels.FacultyVM
+@model PMS.Models.Faculty
 
 @{
     ViewBag.Title = "AddOrEditFaculty";
@@ -49,10 +49,10 @@ Developed On:- 2022/08/18*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.FacultyDeanId, "Faculty Dean: ")
+                        @Html.LabelFor(model => model.FacultyDean, "Faculty Dean: ")
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.FacultyDeanId, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
+                        @Html.DropDownListFor(model => model.FacultyDean, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
                     </div>
                 </div>
                 <div class="form-group row">
@@ -106,6 +106,7 @@ Developed On:- 2022/08/18*@
                 $("#aeFacultyMainTitle").html("Add Faculty");
                 $("#aeFacultyCardTitle").html("Add Faculty");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Faculty</li>`);
+                $("#usersList").val("");
                 $("#facultyStatusList").val("true");
             }
         })

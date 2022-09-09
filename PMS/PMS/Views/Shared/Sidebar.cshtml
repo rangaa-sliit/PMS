@@ -40,6 +40,7 @@ Developed On:- 2022/08/16*@
                 <div class="collapse-divider"></div>
                 <h6 class="collapse-header">Other Master Data:</h6>
                 <a class="collapse-item" href="@Url.Action("ManageUserTitles", "SA")">User Titles</a>
+                <a class="collapse-item" href="@Url.Action("ManageDesignations", "SA")">Designations</a>
                 <a class="collapse-item" href="@Url.Action("ManageCalendarPeriods", "SA")">Calendar Periods</a>
                 <a class="collapse-item" href="@Url.Action("ManageAppointmentTypes", "SA")">Appointment Types</a>
                 <a class="collapse-item" href="@Url.Action("ManageLectureTypes", "SA")">Lecture Types</a>
@@ -54,7 +55,7 @@ Developed On:- 2022/08/16*@
         Academic Details
     </div>
 
-    <li class="nav-item">
+    <li class="nav-item" id="degreeDetails-nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDegreeDetails" aria-expanded="true" aria-controls="collapseDegreeDetails">
             <i class="fas fa-fw fa-graduation-cap"></i>
             <span>Degree Details</span>
@@ -65,7 +66,7 @@ Developed On:- 2022/08/16*@
                 <a class="collapse-item" href="@Url.Action("ManageDegree", "SA")">Degrees</a>
                 <a class="collapse-item" href="@Url.Action("ManageSpecialization", "SA")">Specializations</a>
                 <a class="collapse-item" href="@Url.Action("ManageSubject", "SA")">Subjects</a>
-                <a class="collapse-item" href="#">Student Batches</a>
+                <a class="collapse-item" href="@Url.Action("ManageIntakes", "SA")">Intakes</a>
             </div>
         </div>
     </li>
@@ -77,7 +78,7 @@ Developed On:- 2022/08/16*@
         <div id="collapseSemesterDetails" class="collapse" aria-labelledby="headingSemesterDetails" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Semester Details:</h6>
-                <a class="collapse-item" href="#">Semester Registrations</a>
+                <a class="collapse-item" href="@Url.Action("ManageSemesterRegistrations", "SA")">Semester Registrations</a>
                 <a class="collapse-item" href="#">Semester Subjects</a>
             </div>
         </div>
@@ -96,7 +97,7 @@ Developed On:- 2022/08/16*@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="@Url.Action("ManageAppointments", "SA")">
             <i class="fas fa-fw fa-briefcase"></i>
             <span>Lecturer Appointments</span>
         </a>
