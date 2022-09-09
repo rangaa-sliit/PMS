@@ -44,7 +44,7 @@ Developed On:- 2022/08/16*@
 
             var cPath = window.location.pathname;
             var splittedPath = cPath.split("/");
-            var urlArray = ['ManageInstitutes', 'AddOrEditInstitute',
+            var masterDataUrlArray = ['ManageInstitutes', 'AddOrEditInstitute',
                 'ManageCampuses', 'AddOrEditCampus',
                 'ManageFaculties', 'AddOrEditFaculty',
                 'ManageDepartments', 'AddOrEditDepartment',
@@ -53,8 +53,11 @@ Developed On:- 2022/08/16*@
                 'ManageCalendarPeriods', 'AddOrEditCalendarPeriod',
                 'ManageAppointmentTypes', 'AddOrEditAppointmentType',
                 'ManageLectureTypes', 'AddOrEditLectureType',
-                'ManageConfigurationalSettings', 'AddOrEditConfigurationalSetting'
+                'ManageConfigurationalSettings', 'AddOrEditConfigurationalSetting',
+                'ManageDesignations', 'AddOrEditDesignation'
             ];
+
+            var DegreeDetailsUrlArray = ['ManageIntakes', 'AddOrEditIntake'];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -65,8 +68,11 @@ Developed On:- 2022/08/16*@
             //else if (splittedPath[2] == 'ManageInstitutes' || splittedPath[2] == 'AddOrEditInstitute' || splittedPath[2] == 'ManageCampuses' || splittedPath[2] == 'AddOrEditCampus') {
             //    $('#masterData-nav-item').addClass('active');
             //}
-            else if (urlArray.indexOf(splittedPath[2]) != -1) {
+            else if (masterDataUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#masterData-nav-item').addClass('active');
+            }
+            else if (DegreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#degreeDetails-nav-item').addClass('active');
             }
         })
     </script>

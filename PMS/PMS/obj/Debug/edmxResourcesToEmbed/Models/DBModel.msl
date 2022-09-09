@@ -5,12 +5,14 @@
       <EntityTypeMapping TypeName="PMSModel.Appointment">
         <MappingFragment StoreEntitySet="Appointment">
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="AppointmentTo" ColumnName="AppointmentTo" />
           <ScalarProperty Name="AppointmentFrom" ColumnName="AppointmentFrom" />
+          <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="AppointmentTypeId" ColumnName="AppointmentTypeId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="AppointmentId" ColumnName="AppointmentId" />
@@ -264,6 +266,23 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Intake">
+      <EntityTypeMapping TypeName="PMSModel.Intake">
+        <MappingFragment StoreEntitySet="Intake">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
+          <ScalarProperty Name="IntakeName" ColumnName="IntakeName" />
+          <ScalarProperty Name="IntakeCode" ColumnName="IntakeCode" />
+          <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+          <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+          <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="LectureHall">
       <EntityTypeMapping TypeName="PMSModel.LectureHall">
         <MappingFragment StoreEntitySet="LectureHall">
@@ -302,6 +321,28 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
+          <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
+          <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
+          <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
+          <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+          <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
+          <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PaymentRateLog">
+      <EntityTypeMapping TypeName="PMSModel.PaymentRateLog">
+        <MappingFragment StoreEntitySet="PaymentRateLog">
+          <ScalarProperty Name="PaymentRateId" ColumnName="PaymentRateId" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -320,15 +361,18 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+          <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+          <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
+          <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
           <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
-          <ScalarProperty Name="CalendarPeriod" ColumnName="CalendarPeriod" />
+          <ScalarProperty Name="AcademicSemester" ColumnName="AcademicSemester" />
+          <ScalarProperty Name="AcademicYear" ColumnName="AcademicYear" />
+          <ScalarProperty Name="IntakeId" ColumnName="IntakeId" />
+          <ScalarProperty Name="IntakeYear" ColumnName="IntakeYear" />
+          <ScalarProperty Name="CalendarPeriodId" ColumnName="CalendarPeriodId" />
           <ScalarProperty Name="CalendarYear" ColumnName="CalendarYear" />
-          <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
-          <ScalarProperty Name="To" ColumnName="To" />
-          <ScalarProperty Name="From" ColumnName="From" />
-          <ScalarProperty Name="AcadamicSemester" ColumnName="AcadamicSemester" />
-          <ScalarProperty Name="AcadamicYear" ColumnName="AcadamicYear" />
           <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -343,6 +387,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
           <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

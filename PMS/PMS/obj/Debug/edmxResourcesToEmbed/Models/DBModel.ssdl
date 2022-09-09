@@ -7,12 +7,14 @@
     <Property Name="AppointmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="AppointmentTypeId" Type="int" Nullable="false" />
-    <Property Name="AppointmentFrom" Type="date" Nullable="false" />
+    <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="date" />
     <Property Name="AppointmentTo" Type="date" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="256" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="AppointmentType">
@@ -249,6 +251,22 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="Intake">
+    <Key>
+      <PropertyRef Name="IntakeId" />
+    </Key>
+    <Property Name="IntakeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FromDate" Type="date" />
+    <Property Name="ToDate" Type="date" />
+    <Property Name="IntakeCode" Type="nvarchar" MaxLength="150" />
+    <Property Name="IntakeName" Type="nvarchar" MaxLength="200" />
+    <Property Name="IntakeYear" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="LectureHall">
     <Key>
       <PropertyRef Name="HallId" />
@@ -287,6 +305,7 @@
     <Property Name="SubjectId" Type="int" />
     <Property Name="DesignationId" Type="int" Nullable="false" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="SentForApproval" Type="bit" Nullable="false" />
     <Property Name="IsApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -294,20 +313,43 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="PaymentRateLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DegreeId" Type="int" />
+    <Property Name="SpecializationId" Type="int" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="SubjectId" Type="int" />
+    <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="SentForApproval" Type="bit" Nullable="false" />
+    <Property Name="IsApproved" Type="bit" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="PaymentRateId" Type="int" Nullable="false" />
+  </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
       <PropertyRef Name="SemesterId" />
     </Key>
     <Property Name="SemesterId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="AcadamicYear" Type="int" Nullable="false" />
-    <Property Name="AcadamicSemester" Type="int" Nullable="false" />
-    <Property Name="From" Type="datetime" Nullable="false" />
-    <Property Name="To" Type="datetime" Nullable="false" />
-    <Property Name="DegreeId" Type="int" Nullable="false" />
-    <Property Name="CalendarYear" Type="int" Nullable="false" />
-    <Property Name="CalendarPeriod" Type="int" Nullable="false" />
-    <Property Name="FacultyId" Type="int" Nullable="false" />
-    <Property Name="InstituteId" Type="int" Nullable="false" />
+    <Property Name="CalendarYear" Type="int" />
+    <Property Name="CalendarPeriodId" Type="int" />
+    <Property Name="IntakeYear" Type="int" />
+    <Property Name="IntakeId" Type="int" />
+    <Property Name="AcademicYear" Type="int" />
+    <Property Name="AcademicSemester" Type="int" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="InstituteId" Type="int" />
+    <Property Name="DegreeId" Type="int" />
+    <Property Name="SpecializationId" Type="int" />
+    <Property Name="FromDate" Type="date" />
+    <Property Name="ToDate" Type="date" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -316,9 +358,11 @@
   </EntityType>
   <EntityType Name="SemesterSubject">
     <Key>
+      <PropertyRef Name="Id" />
       <PropertyRef Name="SemesterRegistrationId" />
       <PropertyRef Name="SubjectId" />
     </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
     <Property Name="SubjectId" Type="int" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -418,6 +462,20 @@
       </Principal>
       <Dependent Role="Appointment">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Appointment_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="Appointment">
+        <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -664,9 +722,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Degree">
-    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Degree">
@@ -678,9 +734,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Designation">
-    <End Role="Designation" Type="Self.Designation" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Designation">
@@ -716,9 +770,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Subject">
-    <End Role="Subject" Type="Self.Subject" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="Subject" Type="Self.Subject" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Subject">
@@ -729,10 +781,92 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentRateLog_Degree">
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_PaymentRate">
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentRate">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="PaymentRateId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Specialization">
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Specialization">
+        <PropertyRef Name="SpecializationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SpecializationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Subject">
+    <End Role="Subject" Type="Self.Subject" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Subject">
+        <PropertyRef Name="SubjectId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_CalendarPeriod">
+    <End Role="CalendarPeriod" Type="Self.CalendarPeriod" Multiplicity="0..1" />
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CalendarPeriod">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="CalendarPeriodId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Degree">
-    <End Role="Degree" Type="Self.Degree" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Degree">
@@ -744,7 +878,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_SemesterRegistration_Faculty">
-    <End Role="Faculty" Type="Self.Faculty" Multiplicity="1" />
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
     <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Faculty">
@@ -756,9 +890,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_SemesterRegistration_Institute">
-    <End Role="Institute" Type="Self.Institute" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="Institute" Type="Self.Institute" Multiplicity="0..1" />
     <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Institute">
@@ -766,6 +898,30 @@
       </Principal>
       <Dependent Role="SemesterRegistration">
         <PropertyRef Name="InstituteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Intake">
+    <End Role="Intake" Type="Self.Intake" Multiplicity="0..1" />
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Intake">
+        <PropertyRef Name="IntakeId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="IntakeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Specialization">
+    <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Specialization">
+        <PropertyRef Name="SpecializationId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="SpecializationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -855,9 +1011,11 @@
     <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Faculty" EntityType="Self.Faculty" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
@@ -871,6 +1029,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Appointment_AspNetUsers" Association="Self.FK_Appointment_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Appointment_Designation" Association="Self.FK_Appointment_Designation">
+      <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
     </AssociationSet>
     <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="Self.FK_AspNetUserRoles_AspNetRoles_RoleId">
@@ -965,6 +1127,34 @@
       <End Role="Subject" EntitySet="Subject" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
     </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Degree" Association="Self.FK_PaymentRateLog_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Designation" Association="Self.FK_PaymentRateLog_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Faculty" Association="Self.FK_PaymentRateLog_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_PaymentRate" Association="Self.FK_PaymentRateLog_PaymentRate">
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Specialization" Association="Self.FK_PaymentRateLog_Specialization">
+      <End Role="Specialization" EntitySet="Specialization" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Subject" Association="Self.FK_PaymentRateLog_Subject">
+      <End Role="Subject" EntitySet="Subject" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="Self.FK_SemesterRegistration_CalendarPeriod">
+      <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Degree" Association="Self.FK_SemesterRegistration_Degree">
       <End Role="Degree" EntitySet="Degree" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
@@ -975,6 +1165,14 @@
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Institute" Association="Self.FK_SemesterRegistration_Institute">
       <End Role="Institute" EntitySet="Institute" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Intake" Association="Self.FK_SemesterRegistration_Intake">
+      <End Role="Intake" EntitySet="Intake" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Specialization" Association="Self.FK_SemesterRegistration_Specialization">
+      <End Role="Specialization" EntitySet="Specialization" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterSubject_SemesterRegistration" Association="Self.FK_SemesterSubject_SemesterRegistration">

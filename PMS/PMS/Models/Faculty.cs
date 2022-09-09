@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Faculty
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,11 +22,16 @@ namespace PMS.Models
             this.Degree = new HashSet<Degree>();
             this.Department = new HashSet<Department>();
             this.PaymentRate = new HashSet<PaymentRate>();
+            this.PaymentRateLog = new HashSet<PaymentRateLog>();
             this.SemesterRegistration = new HashSet<SemesterRegistration>();
         }
     
         public int FacultyId { get; set; }
+        [Required(ErrorMessage = "Faculty Code is required")]
+        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string FacultyCode { get; set; }
+        [Required(ErrorMessage = "Faculty Name is required")]
+        [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string FacultyName { get; set; }
         public string FacultyDean { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -43,6 +49,8 @@ namespace PMS.Models
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
     }

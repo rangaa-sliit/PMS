@@ -1,0 +1,97 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/08/25*@
+
+@{
+    ViewBag.Title = "ManageDesignations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item active">Manage Designations</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Designations</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Designations</h6>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateDesignationForm('@Url.Action("AddOrEditDesignation", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <div class="table-responsive">
+                <table id="designationTbl" class="table table-bordered data-table nowrap"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var designationTbl;
+
+        designationTbl = $("#designationTbl").DataTable({
+            "scrollY": "30vh",
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetDesignations", "SA")",
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": "DesignationId",
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="NavigateDesignationForm('@Url.Action("AddOrEditDesignation", "SA")/` + data + `', 'View')">View Designation</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateDesignationForm('@Url.Action("AddOrEditDesignation", "SA")/` + data + `', 'Edit')">Edit Designation</a></div></div>`
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
+                },
+                {
+                    "title": "Designation Name",
+                    "data": "DesignationName"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Designations Found!"
+            }
+        })
+
+        function NavigateDesignationForm(url, action) {
+            if (action == "Add") {
+                window.location.href = url;
+            }
+            else if (action == "Edit") {
+                window.location.href = url + "/Edit";
+            }
+            else {
+                window.location.href = url + "/View";
+            }
+        }
+    </script>
+}

@@ -62,7 +62,7 @@
                         @Html.LabelFor(model => model.SpecializationId, "Specialization: ")
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.SpecializationId, (IEnumerable<SelectListItem>)ViewBag.specializationList, new { @class = "form-control", @id = "SpecializationId", onchange = "onSpecializationIdChange(this.value)" })
+                        @Html.DropDownListFor(model => model.SpecializationId, (IEnumerable<SelectListItem>)ViewBag.specializationList, new { @class = "form-control", @id = "SpecializationId", onchange = "onSpecializationChange(this.value)" })
                         @Html.ValidationMessageFor(model => model.SpecializationId)
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                         @Html.LabelFor(model => model.SubjectId, "Subject: ")
                     </div>
                     <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.SubjectId, (IEnumerable<SelectListItem>)ViewBag.subjectList, new { @class = "form-control", @id = "SubjectId", onchange = "onSubjectIdChange(this.value)" })
+                        @Html.DropDownListFor(model => model.SubjectId, (IEnumerable<SelectListItem>)ViewBag.subjectList, new { @class = "form-control", @id = "SubjectId", onchange = "onSubjectChange(this.value)" })
                         @Html.ValidationMessageFor(model => model.SubjectId)
                     </div>
                 </div>
@@ -124,12 +124,13 @@
                 else {
                     $("#aePaymentRateMainTitle").html("View Payment Rate");
                     $("#aeDegreeCardTitle").html("View Payment Rate");
-                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Degree</li>`);
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Payment Rate</li>`);
                     $("#DesignationId").prop("disabled", true);
                     $("#SubjectId").prop("disabled", true);
                     $("#DegreeId").prop("disabled", true);
                     $("#FacultyId").prop("disabled", true);
                     $("#SpecializationId").prop("disabled", true);
+                    $("#RatePerHour").prop("disabled", true);
                     $("#paymentRateStatusList").prop("disabled", true);
                 }
             }
@@ -142,6 +143,7 @@
                 $("#DegreeId").val("");
                 $("#DesignationId").val("");
                 $("#SpecializationId").val("");
+                $("#RatePerHour").val("");
                 $("#paymentRateStatusList").val("true");
             }
         })
@@ -163,8 +165,9 @@
                             if (operation == undefined) {
                                 $("#SubjectId").val("");
                                 $("#DegreeId").val("");
-                                $("#Designation").val("");
+                                $("#DesignationId").val("");
                                 $("#FacultyId").val("");
+                                $("#RatePerHour").val("");
                                 $("#SpecializationId").val("");
                                 $("#degreeStatusList").val("true");
                             }
@@ -190,9 +193,10 @@
             if (operation == undefined) {
                 $("#SubjectId").val("");
                 $("#DegreeId").val("");
-                $("#Designation").val("");
+                $("#DesignationId").val("");
                 $("#FacultyId").val("");
                 $("#SpecializationId").val("");
+                $("#RatePerHour").val("");
                 $("#degreeStatusList").val("true");
             }
             else {
@@ -200,37 +204,37 @@
             }
         }
 
-        function onPaymentRateDesignationInput() {
+        function onDesignationChange(newDesignation) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onPaymentRateFacultyInput() {
+        function onFacultyChange(newFaculty) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onPaymentRateDegreeInput() {
+        function onDegreeChange(newDegree) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onPaymentRateSpecializationChange(newFaculty) {
+        function onSpecializationChange(newSpecialization) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onPaymentRateSubjectChange(newInstitute) {
+        function onSubjectChange(newSubject) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onDepartmentChange(newDepartment) {
+        function onRatePerHourInput() {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
 
-        function onDegreeStatusChange(newStatus) {
+        function onPaymentRateStatusChange(newStatus) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }
