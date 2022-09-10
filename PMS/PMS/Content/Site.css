@@ -165,4 +165,14 @@ table.dataTable tbody td {
     padding-bottom: 3px;
 }
 
+/*#ssColumn-left {
+    float: left;
+    width: 58.33%;
+}
+
+.ssColumn-right {
+    width: 41.66%;
+    overflow-y: scroll;
+}*/
+
 /* SB Admin Dashboard End */

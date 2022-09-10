@@ -3482,9 +3482,119 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/09/09
-        public ActionResult ManageSemesterSubjects()
+        public ActionResult ManageSemesterSubjects(int id)
         {
-            return View();
+            using (PMSEntities db = new PMSEntities())
+            {
+                SemesterSubjectCC semesterSubjectDetails = (from sr in db.SemesterRegistration
+                                                            join cp in db.CalendarPeriod on sr.CalendarPeriodId equals cp.Id into sr_cp
+                                                            from calP in sr_cp.DefaultIfEmpty()
+                                                            join it in db.Intake on sr.IntakeId equals it.IntakeId into sr_it
+                                                            from intk in sr_it.DefaultIfEmpty()
+                                                            join f in db.Faculty on sr.FacultyId equals f.FacultyId into sr_f
+                                                            from fac in sr_f.DefaultIfEmpty()
+                                                            join ins in db.Institute on sr.InstituteId equals ins.InstituteId into sr_ins
+                                                            from inst in sr_ins.DefaultIfEmpty()
+                                                            join d in db.Degree on sr.DegreeId equals d.DegreeId into sr_d
+                                                            from dg in sr_d.DefaultIfEmpty()
+                                                            join sp in db.Specialization on sr.SpecializationId equals sp.SpecializationId into sr_sp
+                                                            from splz in sr_sp.DefaultIfEmpty()
+                                                            where sr.SemesterId.Equals(id)
+                                                            select new SemesterSubjectCC
+                                                            {
+                                                                SemesterId = sr.SemesterId,
+                                                                CalendarYear = sr.CalendarYear,
+                                                                CalendarPeriodName = calP.PeriodName,
+                                                                IntakeYear = intk.IntakeYear,
+                                                                IntakeName = intk.IntakeName,
+                                                                AcademicYear = sr.AcademicYear,
+                                                                AcademicSemester = sr.AcademicSemester,
+                                                                FacultyName = fac.FacultyName,
+                                                                InstituteName = inst.InstituteName,
+                                                                DegreeName = dg.Name,
+                                                                SpecializationName = splz.Name != null ? splz.Name : "N/A",
+                                                                SubjectList = (from s in db.Subject where s.IsActive.Equals(true) select s).ToList(),
+                                                                SemesterSubjectList = (from ss in db.SemesterSubject
+                                                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                                                       where ss.SemesterRegistrationId.Equals(id)
+                                                                                       select s).ToList()
+                                                            }).FirstOrDefault<SemesterSubjectCC>();
+
+                return View(semesterSubjectDetails);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/08
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSemesterSubject(SemesterSubjectCC semesterSubjectObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    List<SemesterSubject> semesterSubjectsForSemester = (from ss in db.SemesterSubject where ss.SemesterRegistrationId == semesterSubjectObj.SemesterId select ss).ToList();
+
+                    if (semesterSubjectObj.SemesterSubjectList.Count != 0)
+                    {
+                        List<Subject> addedSubjects = new List<Subject>();
+                        for(int i = 0; i < semesterSubjectObj.SemesterSubjectList.Count; i++)
+                        {
+                            if(semesterSubjectsForSemester.Find(s => s.SubjectId == semesterSubjectObj.SemesterSubjectList[i].SubjectId) == null)
+                            {
+                                SemesterSubject semSub = new SemesterSubject();
+                                semSub.SemesterRegistrationId = semesterSubjectObj.SemesterId;
+                                semSub.SubjectId = semesterSubjectObj.SemesterSubjectList[i].SubjectId;
+                                semSub.CreatedBy = "Ranga";
+                                semSub.CreatedDate = dateTime;
+                                semSub.ModifiedBy = "Ranga";
+                                semSub.ModifiedDate = dateTime;
+                                semSub.IsActive = true;
+
+                                db.SemesterSubject.Add(semSub);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(semesterSubjectsForSemester.Count != 0)
+                        {
+                            for(int i = 0; i < semesterSubjectsForSemester.Count; i++)
+                            {
+                                semesterSubjectsForSemester[i].IsActive = false;
+                                semesterSubjectsForSemester[i].ModifiedBy = "Ranga";
+                                semesterSubjectsForSemester[i].ModifiedDate = dateTime;
+
+                                db.Entry(semesterSubjectsForSemester[i]).State = EntityState.Modified;
+                            }
+                        }
+                    }
+
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Saved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
         }
     }
 }
