@@ -1,4 +1,5 @@
-﻿using PMS.Custom_Classes;
+﻿using Newtonsoft.Json;
+using PMS.Custom_Classes;
 using PMS.Models;
 using PMS.ViewModels;
 using System;
@@ -7,6 +8,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 namespace PMS.Controllers
 {
@@ -122,7 +124,7 @@ namespace PMS.Controllers
 
                         if (editingInstitute.InstituteCode != institute.InstituteCode || editingInstitute.InstituteName != institute.InstituteName || editingInstitute.IsActive != institute.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.InstituteId != institute.InstituteId)
                             {
                                 if (validationRecord.InstituteCode == institute.InstituteCode && validationRecord.InstituteName == institute.InstituteName)
                                 {
@@ -302,7 +304,7 @@ namespace PMS.Controllers
 
                         if (editingCampus.CampusCode != campus.CampusCode || editingCampus.CampusName != campus.CampusName || editingCampus.IsActive != campus.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.CampusId != campus.CampusId)
                             {
                                 if (validationRecord.CampusCode == campus.CampusCode && validationRecord.CampusName == campus.CampusName)
                                 {
@@ -505,7 +507,7 @@ namespace PMS.Controllers
 
                         if (editingFaculty.FacultyCode != faculty.FacultyCode || editingFaculty.FacultyName != faculty.FacultyName || editingFaculty.FacultyDean != faculty.FacultyDean || editingFaculty.IsActive != faculty.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.FacultyId != faculty.FacultyId)
                             {
                                 if (validationRecord.FacultyCode == faculty.FacultyCode && validationRecord.FacultyName == faculty.FacultyName)
                                 {
@@ -727,7 +729,7 @@ namespace PMS.Controllers
                             || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId 
                             || editingDepartment.IsActive != department.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.DepartmentId != department.DepartmentId)
                             {
                                 if (validationRecord.DepartmentCode == department.DepartmentCode && validationRecord.DepartmentName == department.DepartmentName)
                                 {
@@ -917,7 +919,7 @@ namespace PMS.Controllers
                             || editingLectureHall.Floor != lectureHall.Floor || editingLectureHall.HallName != lectureHall.HallName
                             || editingLectureHall.IsActive != lectureHall.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.HallId != lectureHall.HallId)
                             {
                                 return Json(new
                                 {
@@ -1056,7 +1058,7 @@ namespace PMS.Controllers
 
                         if (editingTitle.TitleName != title.TitleName || editingTitle.Description != title.Description || editingTitle.IsActive != title.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.TitleId != title.TitleId)
                             {
                                 return Json(new
                                 {
@@ -1198,7 +1200,7 @@ namespace PMS.Controllers
 
                         if (editingCalendarPeriod.PeriodName != calendarPeriod.PeriodName || editingCalendarPeriod.Description != calendarPeriod.Description || editingCalendarPeriod.IsActive != calendarPeriod.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.Id != calendarPeriod.Id)
                             {
                                 return Json(new
                                 {
@@ -1338,7 +1340,7 @@ namespace PMS.Controllers
 
                         if (editingAppointmentType.AppointmentTypeName != appointmentType.AppointmentTypeName || editingAppointmentType.IsActive != appointmentType.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.AppointmentTypeId != appointmentType.AppointmentTypeId)
                             {
                                 return Json(new
                                 {
@@ -1477,7 +1479,7 @@ namespace PMS.Controllers
 
                         if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.IsActive != lectureType.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.LectureTypeId != lectureType.LectureTypeId)
                             {
                                 return Json(new
                                 {
@@ -1616,7 +1618,7 @@ namespace PMS.Controllers
 
                         if (editingConfigurationalSettings.ConfigurationKey != configurationalSettings.ConfigurationKey || editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.Id != configurationalSettings.Id)
                             {
                                 return Json(new
                                 {
@@ -1768,7 +1770,7 @@ namespace PMS.Controllers
                             || editingIntake.IntakeName != intake.IntakeName || editingIntake.FromDate != intake.FromDate
                             || editingIntake.ToDate != intake.ToDate || editingIntake.IsActive != intake.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.IntakeId != intake.IntakeId)
                             {
                                 return Json(new
                                 {
@@ -1907,7 +1909,7 @@ namespace PMS.Controllers
 
                         if (editingDesignation.DesignationName != designation.DesignationName || editingDesignation.IsActive != designation.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.DesignationId != designation.DesignationId)
                             {
                                 return Json(new
                                 {
@@ -2143,7 +2145,7 @@ namespace PMS.Controllers
                             || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo 
                             || editingAppointment.IsActive != appointment.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.AppointmentId != appointment.AppointmentId)
                             {
                                 return Json(new
                                 {
@@ -2303,7 +2305,7 @@ namespace PMS.Controllers
 
                         if (editingSubject.SubjectCode != subject.SubjectCode || editingSubject.SubjectName != subject.SubjectName || editingSubject.IsActive != subject.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.SubjectId != subject.SubjectId)
                             {
                                 if (validationRecord.SubjectCode == subject.SubjectCode && validationRecord.SubjectName == subject.SubjectName)
                                 {
@@ -2542,7 +2544,7 @@ namespace PMS.Controllers
 
                         if (editingDegree.Code != degree.Code || editingDegree.Name != degree.Name || editingDegree.Description != degree.Description || editingDegree.FacultyId != degree.FacultyId || editingDegree.InstituteId != degree.InstituteId || editingDegree.DepartmentId != degree.DepartmentId || editingDegree.IsActive != degree.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.DegreeId != degree.DegreeId)
                             {
                                 if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
                                 {
@@ -2784,7 +2786,7 @@ namespace PMS.Controllers
 
                         if (editingSpecialization.Code != specialization.Code || editingSpecialization.Name != specialization.Name || editingSpecialization.DegreeId != specialization.DegreeId || editingSpecialization.InstituteId != specialization.InstituteId || editingSpecialization.DepartmentId != specialization.DepartmentId || editingSpecialization.IsActive != specialization.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.SpecializationId != specialization.SpecializationId)
                             {
                                 if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
                                 {
@@ -3060,7 +3062,7 @@ namespace PMS.Controllers
                             || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
                             || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
-                            if (validationRecord != null)
+                            if (validationRecord != null && validationRecord.Id != paymentRate.Id)
                             {
                                 return Json(new
                                 {
@@ -3416,7 +3418,7 @@ namespace PMS.Controllers
                             || editingSemesterRegistration.DegreeId != semesterRegistration.DegreeId || editingSemesterRegistration.SpecializationId != semesterRegistration.SpecializationId
                             || editingSemesterRegistration.FromDate != semesterRegistration.FromDate || editingSemesterRegistration.ToDate != semesterRegistration.ToDate || editingSemesterRegistration.IsActive != semesterRegistration.IsActive)
                         {
-                            if(validationRecord != null)
+                            if(validationRecord != null && validationRecord.SemesterId != semesterRegistration.SemesterId)
                             {
                                 return Json(new
                                 {
@@ -3514,10 +3516,10 @@ namespace PMS.Controllers
                                                                 DegreeName = dg.Name,
                                                                 SpecializationName = splz.Name != null ? splz.Name : "N/A",
                                                                 SubjectList = (from s in db.Subject where s.IsActive.Equals(true) select s).ToList(),
-                                                                SemesterSubjectList = (from ss in db.SemesterSubject
-                                                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                                                                       where ss.SemesterRegistrationId.Equals(id)
-                                                                                       select s).ToList()
+                                                                ViewingSemesterSubjectIdList = (from ss in db.SemesterSubject
+                                                                                                join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                                                                where ss.SemesterRegistrationId.Equals(id) && ss.IsActive.Equals(true)
+                                                                                                select s.SubjectId).ToList()
                                                             }).FirstOrDefault<SemesterSubjectCC>();
 
                 return View(semesterSubjectDetails);
@@ -3535,18 +3537,18 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
+                    var passingSubjectList = new JavaScriptSerializer().Deserialize<List<string>>(semesterSubjectObj.PassingSemesterSubjectIdList).ToList();
                     List<SemesterSubject> semesterSubjectsForSemester = (from ss in db.SemesterSubject where ss.SemesterRegistrationId == semesterSubjectObj.SemesterId select ss).ToList();
 
-                    if (semesterSubjectObj.SemesterSubjectList.Count != 0)
+                    if (passingSubjectList.Count != 0)
                     {
-                        List<Subject> addedSubjects = new List<Subject>();
-                        for(int i = 0; i < semesterSubjectObj.SemesterSubjectList.Count; i++)
+                        for (int i = 0; i < passingSubjectList.Count; i++)
                         {
-                            if(semesterSubjectsForSemester.Find(s => s.SubjectId == semesterSubjectObj.SemesterSubjectList[i].SubjectId) == null)
+                            if (semesterSubjectsForSemester.Find(ss => ss.SubjectId == int.Parse(passingSubjectList[i])) == null)
                             {
                                 SemesterSubject semSub = new SemesterSubject();
                                 semSub.SemesterRegistrationId = semesterSubjectObj.SemesterId;
-                                semSub.SubjectId = semesterSubjectObj.SemesterSubjectList[i].SubjectId;
+                                semSub.SubjectId = int.Parse(passingSubjectList[i]);
                                 semSub.CreatedBy = "Ranga";
                                 semSub.CreatedDate = dateTime;
                                 semSub.ModifiedBy = "Ranga";
@@ -3555,13 +3557,42 @@ namespace PMS.Controllers
 
                                 db.SemesterSubject.Add(semSub);
                             }
+                            else
+                            {
+                                int matchingIndex = semesterSubjectsForSemester.FindIndex(s => s.SubjectId == int.Parse(passingSubjectList[i]));
+                                if(semesterSubjectsForSemester[matchingIndex].IsActive == false)
+                                {
+                                    semesterSubjectsForSemester[matchingIndex].IsActive = true;
+                                    semesterSubjectsForSemester[matchingIndex].ModifiedBy = "Ranga";
+                                    semesterSubjectsForSemester[matchingIndex].ModifiedDate = dateTime;
+
+                                    db.Entry(semesterSubjectsForSemester[matchingIndex]).State = EntityState.Modified;
+                                }
+                                semesterSubjectsForSemester.RemoveAt(semesterSubjectsForSemester.FindIndex(ss => ss.SubjectId == int.Parse(passingSubjectList[i])));
+                            }
+                        }
+
+                        db.SaveChanges();
+
+                        if (semesterSubjectsForSemester.Count != 0)
+                        {
+                            for (int j = 0; j < semesterSubjectsForSemester.Count; j++)
+                            {
+                                semesterSubjectsForSemester[j].IsActive = false;
+                                semesterSubjectsForSemester[j].ModifiedBy = "Ranga";
+                                semesterSubjectsForSemester[j].ModifiedDate = dateTime;
+
+                                db.Entry(semesterSubjectsForSemester[j]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
                         }
                     }
                     else
                     {
-                        if(semesterSubjectsForSemester.Count != 0)
+                        if (semesterSubjectsForSemester.Count != 0)
                         {
-                            for(int i = 0; i < semesterSubjectsForSemester.Count; i++)
+                            for (int i = 0; i < semesterSubjectsForSemester.Count; i++)
                             {
                                 semesterSubjectsForSemester[i].IsActive = false;
                                 semesterSubjectsForSemester[i].ModifiedBy = "Ranga";
@@ -3569,10 +3600,79 @@ namespace PMS.Controllers
 
                                 db.Entry(semesterSubjectsForSemester[i]).State = EntityState.Modified;
                             }
+
+                            db.SaveChanges();
                         }
                     }
+                    //if(semesterSubjectsForSemester.Count != 0)
+                    //{
+                    //    if (semesterSubjectObj.SemesterSubjectIdList.Count != 0)
+                    //    {
+                    //        for (int i = 0; i < semesterSubjectObj.SemesterSubjectIdList.Count; i++)
+                    //        {
+                    //            if (semesterSubjectsForSemester.Find(s => s.SubjectId == semesterSubjectObj.SemesterSubjectIdList[i]) == null)
+                    //            {
+                    //                SemesterSubject semSub = new SemesterSubject();
+                    //                semSub.SemesterRegistrationId = semesterSubjectObj.SemesterId;
+                    //                semSub.SubjectId = semesterSubjectObj.SemesterSubjectIdList[i];
+                    //                semSub.CreatedBy = "Ranga";
+                    //                semSub.CreatedDate = dateTime;
+                    //                semSub.ModifiedBy = "Ranga";
+                    //                semSub.ModifiedDate = dateTime;
+                    //                semSub.IsActive = true;
 
-                    db.SaveChanges();
+                    //                db.SemesterSubject.Add(semSub);
+                    //            }
+                    //            else
+                    //            {
+                    //                int matchingIndex = semesterSubjectsForSemester.FindIndex(s => s.SubjectId == semesterSubjectObj.SemesterSubjectIdList[i]);
+                    //                if (semesterSubjectsForSemester[matchingIndex].IsActive == false)
+                    //                {
+                    //                    semesterSubjectsForSemester[matchingIndex].IsActive = true;
+                    //                    semesterSubjectsForSemester[matchingIndex].ModifiedBy = "Ranga";
+                    //                    semesterSubjectsForSemester[matchingIndex].ModifiedDate = dateTime;
+
+                    //                    db.Entry(semesterSubjectsForSemester[matchingIndex]).State = EntityState.Modified;
+                    //                }
+                    //                semesterSubjectsForSemester.RemoveAt(semesterSubjectsForSemester.FindIndex(s => s.SubjectId == semesterSubjectObj.SemesterSubjectIdList[i]));
+                    //            }
+                    //        }
+                    //    }
+
+                    //    if(semesterSubjectsForSemester.Count != 0)
+                    //    {
+                    //        for (int i = 0; i < semesterSubjectsForSemester.Count; i++)
+                    //        {
+                    //            semesterSubjectsForSemester[i].IsActive = false;
+                    //            semesterSubjectsForSemester[i].ModifiedBy = "Ranga";
+                    //            semesterSubjectsForSemester[i].ModifiedDate = dateTime;
+
+                    //            db.Entry(semesterSubjectsForSemester[i]).State = EntityState.Modified;
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if(semesterSubjectObj.SemesterSubjectIdList.Count != 0)
+                    //    {
+                    //        for (int i = 0; i < semesterSubjectObj.SemesterSubjectIdList.Count; i++)
+                    //        {
+                    //            SemesterSubject semSub = new SemesterSubject();
+                    //            semSub.SemesterRegistrationId = semesterSubjectObj.SemesterId;
+                    //            semSub.SubjectId = semesterSubjectObj.SemesterSubjectIdList[i];
+                    //            semSub.CreatedBy = "Ranga";
+                    //            semSub.CreatedDate = dateTime;
+                    //            semSub.ModifiedBy = "Ranga";
+                    //            semSub.ModifiedDate = dateTime;
+                    //            semSub.IsActive = true;
+
+                    //            db.SemesterSubject.Add(semSub);
+                    //        }
+                    //    }
+                    //}
+
+                    //db.SaveChanges();
+
                     return Json(new
                     {
                         success = true,

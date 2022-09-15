@@ -20,6 +20,7 @@ namespace PMS.Custom_Classes
         public string DegreeName { get; set; }
         public string SpecializationName { get; set; }
         public List<Subject> SubjectList { get; set; }
-        public List<Subject> SemesterSubjectList { get; set; }
+        public List<int> ViewingSemesterSubjectIdList { get; set; }
+        public string PassingSemesterSubjectIdList { get; set; }
     }
 }
