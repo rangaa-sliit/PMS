@@ -41,7 +41,7 @@ namespace PMS.Controllers
         [HttpGet]
         public ActionResult AddOrEditInstitute(int id = 0)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return View(new Institute());
             }
@@ -71,7 +71,7 @@ namespace PMS.Controllers
                     {
                         if (validationRecord != null)
                         {
-                            if(validationRecord.InstituteCode == institute.InstituteCode && validationRecord.InstituteName == institute.InstituteName)
+                            if (validationRecord.InstituteCode == institute.InstituteCode && validationRecord.InstituteName == institute.InstituteName)
                             {
                                 return Json(new
                                 {
@@ -81,7 +81,7 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                if(validationRecord.InstituteCode == institute.InstituteCode)
+                                if (validationRecord.InstituteCode == institute.InstituteCode)
                                 {
                                     return Json(new
                                     {
@@ -723,8 +723,8 @@ namespace PMS.Controllers
                     {
                         Department editingDepartment = (from d in db.Department where d.DepartmentId.Equals(department.DepartmentId) select d).FirstOrDefault<Department>();
 
-                        if (editingDepartment.DepartmentCode != department.DepartmentCode || editingDepartment.DepartmentName != department.DepartmentName 
-                            || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId 
+                        if (editingDepartment.DepartmentCode != department.DepartmentCode || editingDepartment.DepartmentName != department.DepartmentName
+                            || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId
                             || editingDepartment.IsActive != department.IsActive)
                         {
                             if (validationRecord != null)
@@ -1684,17 +1684,17 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 List<IntakeVM> intakesList = (from i in db.Intake
-                                            orderby i.IntakeId descending
-                                            select new IntakeVM
-                                            {
-                                                IntakeId = i.IntakeId,
-                                                IntakeYear = i.IntakeYear,
-                                                IntakeCode = i.IntakeCode,
-                                                IntakeName = i.IntakeName,
-                                                FromDate = i.FromDate.ToString().Substring(0, 10),
-                                                ToDate = i.ToDate.ToString().Substring(0, 10),
-                                                IsActive = i.IsActive
-                                            }).ToList();
+                                              orderby i.IntakeId descending
+                                              select new IntakeVM
+                                              {
+                                                  IntakeId = i.IntakeId,
+                                                  IntakeYear = i.IntakeYear,
+                                                  IntakeCode = i.IntakeCode,
+                                                  IntakeName = i.IntakeName,
+                                                  FromDate = i.FromDate.ToString().Substring(0, 10),
+                                                  ToDate = i.ToDate.ToString().Substring(0, 10),
+                                                  IsActive = i.IsActive
+                                              }).ToList();
 
                 return Json(new { data = intakesList }, JsonRequestBehavior.AllowGet);
             }
@@ -2086,7 +2086,7 @@ namespace PMS.Controllers
                             {
                                 if (!activeAppointments[i].AppointmentTo.HasValue)
                                 {
-                                    if(appointmentFrom >= currentDate)
+                                    if (appointmentFrom >= currentDate)
                                     {
                                         activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
                                         activeAppointments[i].IsActive = true;
@@ -2099,9 +2099,9 @@ namespace PMS.Controllers
                                 }
                                 else
                                 {
-                                    if(activeAppointments[i].AppointmentTo.Value >= currentDate)
+                                    if (activeAppointments[i].AppointmentTo.Value >= currentDate)
                                     {
-                                        if(appointmentFrom <= activeAppointments[i].AppointmentTo.Value)
+                                        if (appointmentFrom <= activeAppointments[i].AppointmentTo.Value)
                                         {
                                             activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
                                         }
@@ -2113,7 +2113,7 @@ namespace PMS.Controllers
                                     }
                                 }
 
-                                
+
                                 activeAppointments[i].Comment = "Due to New Appointment Creation";
                                 activeAppointments[i].ModifiedBy = "Ranga";
                                 activeAppointments[i].ModifiedDate = dateTime;
@@ -2139,8 +2139,8 @@ namespace PMS.Controllers
                     {
                         Appointment editingAppointment = (from a in db.Appointment where a.AppointmentId.Equals(appointment.AppointmentId) select a).FirstOrDefault<Appointment>();
 
-                        if (editingAppointment.DesignationId != appointment.DesignationId || editingAppointment.AppointmentTypeId != appointment.AppointmentTypeId 
-                            || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo 
+                        if (editingAppointment.DesignationId != appointment.DesignationId || editingAppointment.AppointmentTypeId != appointment.AppointmentTypeId
+                            || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo
                             || editingAppointment.IsActive != appointment.IsActive)
                         {
                             if (validationRecord != null)
@@ -2428,12 +2428,12 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 var faculty = (from f in db.Faculty
-                             where f.IsActive.Equals(true)
-                             select new
-                             {
-                                 Text = f.FacultyName,
-                                 Value = f.FacultyId
-                             }).ToList();
+                               where f.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = f.FacultyName,
+                                   Value = f.FacultyId
+                               }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
                 facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
@@ -2452,12 +2452,12 @@ namespace PMS.Controllers
                 ViewBag.instituteList = instituteList;
 
                 var department = (from d in db.Department
-                                 where d.IsActive.Equals(true)
-                                 select new
-                                 {
-                                     Text = d.DepartmentName,
-                                     Value = d.DepartmentId
-                                 }).ToList();
+                                  where d.IsActive.Equals(true)
+                                  select new
+                                  {
+                                      Text = d.DepartmentName,
+                                      Value = d.DepartmentId
+                                  }).ToList();
 
                 List<SelectListItem> departmentList = new SelectList(department, "Value", "Text").ToList();
                 departmentList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
@@ -2645,16 +2645,16 @@ namespace PMS.Controllers
                                                              orderby s.SpecializationId descending
                                                              select new SpecializationVM
                                                              {
-                                                             SpecializationId = s.SpecializationId,
-                                                             Code = s.Code,
-                                                             Name = s.Name,
-                                                             DegreeId=deg.DegreeId,
-                                                             DegreeName = deg.Name,
-                                                             InstituteId = ins.InstituteId,
-                                                             InstituteName = ins.InstituteName,
-                                                             DepartmentId = dep.DepartmentId,
-                                                             DepartmentName = dep.DepartmentName,
-                                                             IsActive = s.IsActive
+                                                                 SpecializationId = s.SpecializationId,
+                                                                 Code = s.Code,
+                                                                 Name = s.Name,
+                                                                 DegreeId = deg.DegreeId,
+                                                                 DegreeName = deg.Name,
+                                                                 InstituteId = ins.InstituteId,
+                                                                 InstituteName = ins.InstituteName,
+                                                                 DepartmentId = dep.DepartmentId,
+                                                                 DepartmentName = dep.DepartmentName,
+                                                                 IsActive = s.IsActive
                                                              }).ToList();
 
                 return Json(new { data = specializationList }, JsonRequestBehavior.AllowGet);
@@ -2670,12 +2670,12 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 var degree = (from d in db.Degree
-                               where d.IsActive.Equals(true)
-                               select new
-                               {
-                                   Text = d.Name,
-                                   Value = d.DegreeId
-                               }).ToList();
+                              where d.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = d.Name,
+                                  Value = d.DegreeId
+                              }).ToList();
 
                 List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
                 degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
@@ -3057,7 +3057,7 @@ namespace PMS.Controllers
                         PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(paymentRate.Id) select pr).FirstOrDefault<PaymentRate>();
 
                         if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.FacultyId != paymentRate.FacultyId
-                            || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
+                            || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId
                             || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
                             if (validationRecord != null)
@@ -3409,14 +3409,14 @@ namespace PMS.Controllers
                     {
                         SemesterRegistration editingSemesterRegistration = (from s in db.SemesterRegistration where s.SemesterId.Equals(semesterRegistration.SemesterId) select s).FirstOrDefault<SemesterRegistration>();
 
-                        if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId 
+                        if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId
                             || editingSemesterRegistration.IntakeYear != semesterRegistration.IntakeYear || editingSemesterRegistration.IntakeId != semesterRegistration.IntakeId
                             || editingSemesterRegistration.AcademicYear != semesterRegistration.AcademicYear || editingSemesterRegistration.AcademicSemester != semesterRegistration.AcademicSemester
                             || editingSemesterRegistration.FacultyId != semesterRegistration.FacultyId || editingSemesterRegistration.InstituteId != semesterRegistration.InstituteId
                             || editingSemesterRegistration.DegreeId != semesterRegistration.DegreeId || editingSemesterRegistration.SpecializationId != semesterRegistration.SpecializationId
                             || editingSemesterRegistration.FromDate != semesterRegistration.FromDate || editingSemesterRegistration.ToDate != semesterRegistration.ToDate || editingSemesterRegistration.IsActive != semesterRegistration.IsActive)
                         {
-                            if(validationRecord != null)
+                            if (validationRecord != null)
                             {
                                 return Json(new
                                 {
@@ -3480,9 +3480,38 @@ namespace PMS.Controllers
             }
         }
 
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/09/09
-        public ActionResult ManageSemesterSubjects()
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/09/14
+
+        public ActionResult ManageClaimManagement()
+        {
+            return View();
+        }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/09/14                           
+      
+        public ActionResult AddOrEditClaimManagement()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/09/15
+
+        public ActionResult ManageGroupClaim()
+        {
+            return View();
+        }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/09/15                           
+
+        public ActionResult AddOrEditGroupClaim()
         {
             return View();
         }

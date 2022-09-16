@@ -478,6 +478,10 @@
     <Content Include="Views\SA\ManageSemesterRegistrations.cshtml" />
     <Content Include="Views\SA\AddOrEditSemesterRegistration.cshtml" />
     <Content Include="Views\SA\ManageSemesterSubjects.cshtml" />
+    <Content Include="Views\SA\ManageClaimManagement.cshtml" />
+    <Content Include="Views\SA\AddOrEditClaimManagement.cshtml" />
+    <Content Include="Views\SA\ManageGroupClaim.cshtml" />
+    <Content Include="Views\SA\AddOrEditGroupClaim.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

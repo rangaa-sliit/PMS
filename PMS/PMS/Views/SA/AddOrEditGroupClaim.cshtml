@@ -1,0 +1,109 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+    Developed On:- 2022/09/15
+*@
+@{
+    ViewBag.Title = "AddOrEditGroupClaim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageClaimManagement", "SA")">Manage Group Claim</a></li>
+        </ol>
+    </div>
+</div>
+<div class="card shadow mt-2 mb-0 ml-2 mr-2">
+
+    <div class="m-0  ml">
+        <h5 class="card-header">Claim Management</h5>
+        <div class="card-body">
+            Group Claims <button type="button" class="btn btn-success btn-sm mb-3" onclick="NavigateGroupClaimForm('@Url.Action("AddOrEditGroupClaim", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New Claim</button>
+        </div>
+    </div>
+
+    <div class="card shadow mt-2 mb-0 ml-2 mr-2">
+        <div class="m-0  ml">
+            <div class="card-body">
+                <div class="form-group inline">
+                    <div class="form-group row">
+                        <label for="groupName" class="col-sm-2 col-form-label">Claim Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="groupName" placeholder="Enter Claim Name">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="description" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="description" placeholder="Enter Description">
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" class="btn btn-success btn-sm mb-3" onclick="#"><i class="fa fa-plus"></i> Add Claim</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mt-2 mb-0 ml-2 mr-2">
+        <div class="m-0  ml">
+            <div class="card-body">
+                <div class="form-group inline">
+                    <table class="table table-bordered">
+                        <thead class="text-center">
+                            <tr>
+                                <th> <input type="checkbox" aria-label="Checkbox for following text input"></th>
+                                <th scope="col">Claim</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr>
+                                <th><input type="checkbox" aria-label="Checkbox for following text input"></th>
+                                <td>View Registration</td>
+                                <td>Active</td>
+                                <td><button type="button" class="btn btn-success btn-sm mb-3" onclick="#"> Edit</button></td>
+                            </tr>
+                            <tr>
+                                <th><input type="checkbox" aria-label="Checkbox for following text input"></th>
+                                <td>Add New Registration </td>
+                                <td>Active</td>
+                                <td><button type="button" class="btn btn-success btn-sm mb-3" onclick="#"> Edit</button></td>
+
+                            </tr>
+                            <tr>
+                                <th><input type="checkbox" aria-label="Checkbox for following text input"></th>
+                                <td>Edit Payments</td>
+                                <td>Active</td>
+                                <td><button type="button" class="btn btn-success btn-sm mb-3" onclick="#"> Edit</button></td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td></td>
+                                <td></td>
+                                <td><button type="button" class="btn btn-success btn-sm mb-3" onclick="#"> Edit</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
