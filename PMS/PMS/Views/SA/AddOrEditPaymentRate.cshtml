@@ -1,0 +1,245 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+    Developed On:- 2022/08/31*@
+
+@model PMS.Models.PaymentRate
+@{
+    ViewBag.Title = "AddOrEditPaymentRate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManagePaymentRate", "SA")">Manage PaymentRates</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aePaymentRateMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aePaymentRateCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditPaymentRate", "SA", FormMethod.Post, new { onsubmit = "return SubmitPaymentRateForm(this)", @id = "paymentRateForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DesignationId, "Designation: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DesignationId, (IEnumerable<SelectListItem>)ViewBag.designationList, new { @class = "form-control", @id = "DesignationId", onchange = "onDesignationChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DesignationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "FacultyId", onchange = "onFacultyChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DegreeId, "Degree: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.degreeList, new { @class = "form-control", @id = "DegreeId", onchange = "onDegreeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DegreeId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.SpecializationId, "Specialization: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.SpecializationId, (IEnumerable<SelectListItem>)ViewBag.specializationList, new { @class = "form-control", @id = "SpecializationId", onchange = "onSpecializationChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.SpecializationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.SubjectId, "Subject: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.SubjectId, (IEnumerable<SelectListItem>)ViewBag.subjectList, new { @class = "form-control", @id = "SubjectId", onchange = "onSubjectChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.SubjectId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.RatePerHour, "Rate Per Hour: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.RatePerHour, new { htmlAttributes = new { @class = "form-control", @placeholder = "RatePerHour", @id = "RatePerHour", oninput = "onRatePerHourInput()" } })
+                        @Html.ValidationMessageFor(model => model.RatePerHour)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "paymentRateStatusList", onchange = "onPaymentRateStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="paymentRateSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="paymentRateClearBtn" onclick="clearPaymentRateForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#paymentRateSubmitBtn").prop("disabled", true);
+                $("#paymentRateClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aePaymentRateMainTitle").html("Edit Degree");
+                    $("#aePaymentRateCardTitle").html("Edit Degree");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Payment Rate</li>`);
+                }
+                else {
+                    $("#aePaymentRateMainTitle").html("View Payment Rate");
+                    $("#aeDegreeCardTitle").html("View Payment Rate");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Payment Rate</li>`);
+                    $("#DesignationId").prop("disabled", true);
+                    $("#SubjectId").prop("disabled", true);
+                    $("#DegreeId").prop("disabled", true);
+                    $("#FacultyId").prop("disabled", true);
+                    $("#SpecializationId").prop("disabled", true);
+                    $("#RatePerHour").prop("disabled", true);
+                    $("#paymentRateStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aePaymentRateMainTitle").html("Add Payment Rate");
+                $("#aePaymentRateCardTitle").html("Add Payment Rate");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Payment Rate</li>`);
+                $("#FacultyId").val("");
+                $("#SubjectId").val("");
+                $("#DegreeId").val("");
+                $("#DesignationId").val("");
+                $("#SpecializationId").val("");
+                $("#RatePerHour").val("");
+                $("#paymentRateStatusList").val("true");
+            }
+        })
+
+        function SubmitPaymentRateForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#SubjectId").val("");
+                                $("#DegreeId").val("");
+                                $("#DesignationId").val("");
+                                $("#FacultyId").val("");
+                                $("#RatePerHour").val("");
+                                $("#SpecializationId").val("");
+                                $("#degreeStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearPaymentRateForm() {
+            if (operation == undefined) {
+                $("#SubjectId").val("");
+                $("#DegreeId").val("");
+                $("#DesignationId").val("");
+                $("#FacultyId").val("");
+                $("#SpecializationId").val("");
+                $("#RatePerHour").val("");
+                $("#degreeStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onDesignationChange(newDesignation) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(newFaculty) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onDegreeChange(newDegree) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onSpecializationChange(newSpecialization) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onSubjectChange(newSubject) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onRatePerHourInput() {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onPaymentRateStatusChange(newStatus) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+    </script>
+}
+
+
+

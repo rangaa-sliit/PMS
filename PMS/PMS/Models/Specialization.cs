@@ -11,20 +11,30 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Specialization
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Specialization()
         {
             this.PaymentRate = new HashSet<PaymentRate>();
+            this.PaymentRateLog = new HashSet<PaymentRateLog>();
+            this.SemesterRegistration = new HashSet<SemesterRegistration>();
         }
     
         public int SpecializationId { get; set; }
+        [Required(ErrorMessage = "Specialization Code is required")]
+        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string Code { get; set; }
+        [Required(ErrorMessage = "Specialization Name is required")]
+        [MaxLength(1000, ErrorMessage = "Maximum 1000 characters exceeded")]
         public string Name { get; set; }
-        public int DegreeId { get; set; }
-        public int InstituteId { get; set; }
+        [Required(ErrorMessage = "Degree is required")]
+        public Nullable<int> DegreeId { get; set; }
+        [Required(ErrorMessage = "Institute is required")]
+        public Nullable<int> InstituteId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -32,8 +42,13 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         public virtual Degree Degree { get; set; }
+        public virtual Department Department { get; set; }
         public virtual Institute Institute { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
     }
 }

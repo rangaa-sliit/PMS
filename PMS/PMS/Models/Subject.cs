@@ -11,18 +11,24 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Subject
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Subject()
         {
             this.PaymentRate = new HashSet<PaymentRate>();
+            this.PaymentRateLog = new HashSet<PaymentRateLog>();
             this.SemesterSubject = new HashSet<SemesterSubject>();
         }
     
         public int SubjectId { get; set; }
+        [Required(ErrorMessage = "Subject Code is required")]
+        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string SubjectCode { get; set; }
+        [Required(ErrorMessage = "Subject Name is required")]
+        [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string SubjectName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
@@ -32,6 +38,8 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterSubject> SemesterSubject { get; set; }
     }

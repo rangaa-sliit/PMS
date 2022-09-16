@@ -1,0 +1,240 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+    Developed On:- 2022/08/24*@
+
+@model PMS.Models.Degree
+
+@{
+    ViewBag.Title = "AddOrEditDegree";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageDegree", "SA")">Manage Degrees</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeDegreeMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeDegreeCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditDegree", "SA", FormMethod.Post, new { onsubmit = "return SubmitDegreeForm(this)", @id = "degreeForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.DegreeId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Code, "Degree Code: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control", @placeholder = "Degree Code", @id = "Code", oninput = "onDegreeCodeInput()" } })
+                        @Html.ValidationMessageFor(model => model.Code)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Name, "Degree Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Degree Name", @id = "Name", oninput = "onDegreeNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.Name)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Description, "Description: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @placeholder = "Description", @id = "Description", oninput = "onDegreeDescriptionInput()" } })
+                        @Html.ValidationMessageFor(model => model.Description)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "FacultyId", onchange = "onFacultyChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.InstituteId, "Institute: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.InstituteId, (IEnumerable<SelectListItem>)ViewBag.instituteList, new { @class = "form-control", @id = "InstituteId", onchange = "onInstituteChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.InstituteId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DepartmentId, "Department: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DepartmentId, (IEnumerable<SelectListItem>)ViewBag.departmentList, new { @class = "form-control", @id = "DepartmentId", onchange = "onDepartmentChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DepartmentId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "degreeStatusList", onchange = "onDegreeStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="degreeSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="degreeClearBtn" onclick="clearDegreeForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#degreeSubmitBtn").prop("disabled", true);
+                $("#degreeClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeDegreeMainTitle").html("Edit Degree");
+                    $("#aeDegreeCardTitle").html("Edit Degree");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Degree</li>`);
+                }
+                else {
+                    $("#aeDegreeMainTitle").html("View Degree");
+                    $("#aeDegreeCardTitle").html("View Degree");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Degree</li>`);
+                    $("#Code").prop("disabled", true);
+                    $("#Name").prop("disabled", true);
+                    $("#Description").prop("disabled", true);
+                    $("#FacultyId").prop("disabled", true);
+                    $("#InstituteId").prop("disabled", true);
+                    $("#DepartmentId").prop("disabled", true);
+                    $("#degreeStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeDegreeMainTitle").html("Add Degree");
+                $("#aeDegreetCardTitle").html("Add Degree");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Degree</li>`);
+                $("#FacultyId").val("");
+                $("#InstituteId").val("");
+                $("#DepartmentId").val("");
+                $("#degreeStatusList").val("true");
+            }
+        })
+
+        function SubmitDegreeForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#Code").val("");
+                                $("#Name").val("");
+                                $("#Description").val("");
+                                $("#FacultyId").val("");
+                                $("#InstituteId").val("");
+                                $("#DepartmentId").val("");
+                                $("#degreeStatusList").val("true");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearDegreeForm() {
+            if (operation == undefined) {
+                $("#Code").val("");
+                $("#Name").val("");
+                $("#Description").val("");
+                $("#FacultyId").val("");
+                $("#InstituteId").val("");
+                $("#DepartmentId").val("");
+                $("#degreeStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onDegreeCodeInput() {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onDegreeNameInput() {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onDegreeDescriptionInput() {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(newFaculty) {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onInstituteChange(newInstitute) {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onDepartmentChange(newDepartment) {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+
+        function onDegreeStatusChange(newStatus) {
+            $("#degreeSubmitBtn").prop("disabled", false);
+            $("#degreeClearBtn").prop("disabled", false);
+        }
+    </script>
+}
+
+

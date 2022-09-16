@@ -18,9 +18,11 @@
     <EntitySet Name="Designation" EntityType="PMSModel.Designation" />
     <EntitySet Name="Faculty" EntityType="PMSModel.Faculty" />
     <EntitySet Name="Institute" EntityType="PMSModel.Institute" />
+    <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
     <EntitySet Name="LectureHall" EntityType="PMSModel.LectureHall" />
     <EntitySet Name="LectureType" EntityType="PMSModel.LectureType" />
     <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
+    <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
     <EntitySet Name="SemesterRegistration" EntityType="PMSModel.SemesterRegistration" />
     <EntitySet Name="SemesterSubject" EntityType="PMSModel.SemesterSubject" />
     <EntitySet Name="Specialization" EntityType="PMSModel.Specialization" />
@@ -34,6 +36,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Appointment_AspNetUsers" Association="PMSModel.FK_Appointment_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Appointment_Designation" Association="PMSModel.FK_Appointment_Designation">
+      <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="PMSModel.FK_ConductedLectures_ApprovalStages">
@@ -72,6 +78,10 @@
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="Faculty" EntitySet="Faculty" />
     </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="PMSModel.FK_SemesterRegistration_CalendarPeriod">
+      <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_Campus" Association="PMSModel.FK_ConductedLectures_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
@@ -92,13 +102,25 @@
       <End Role="StudentBatch" EntitySet="StudentBatch" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
+    <AssociationSet Name="FK_Degree_Department" Association="PMSModel.FK_Degree_Department">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Degree" EntitySet="Degree" />
+    </AssociationSet>
     <AssociationSet Name="FK_Degree_Faculty" Association="PMSModel.FK_Degree_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Degree" EntitySet="Degree" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Degree_Institute" Association="PMSModel.FK_Degree_Institute">
+      <End Role="Institute" EntitySet="Institute" />
       <End Role="Degree" EntitySet="Degree" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Degree" Association="PMSModel.FK_PaymentRate_Degree">
       <End Role="Degree" EntitySet="Degree" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Degree" Association="PMSModel.FK_PaymentRateLog_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Degree" Association="PMSModel.FK_SemesterRegistration_Degree">
       <End Role="Degree" EntitySet="Degree" />
@@ -112,13 +134,25 @@
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="Department" EntitySet="Department" />
     </AssociationSet>
+    <AssociationSet Name="FK_Specialization_Department" Association="PMSModel.FK_Specialization_Department">
+      <End Role="Department" EntitySet="Department" />
+      <End Role="Specialization" EntitySet="Specialization" />
+    </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Designation" Association="PMSModel.FK_PaymentRate_Designation">
       <End Role="Designation" EntitySet="Designation" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
     </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Designation" Association="PMSModel.FK_PaymentRateLog_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Faculty" Association="PMSModel.FK_PaymentRate_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Faculty" Association="PMSModel.FK_PaymentRateLog_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Faculty" Association="PMSModel.FK_SemesterRegistration_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
@@ -132,6 +166,10 @@
       <End Role="Institute" EntitySet="Institute" />
       <End Role="Specialization" EntitySet="Specialization" />
     </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Intake" Association="PMSModel.FK_SemesterRegistration_Intake">
+      <End Role="Intake" EntitySet="Intake" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Specialization" Association="PMSModel.FK_PaymentRate_Specialization">
       <End Role="Specialization" EntitySet="Specialization" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
@@ -139,6 +177,22 @@
     <AssociationSet Name="FK_PaymentRate_Subject" Association="PMSModel.FK_PaymentRate_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_PaymentRate" Association="PMSModel.FK_PaymentRateLog_PaymentRate">
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Specialization" Association="PMSModel.FK_PaymentRateLog_Specialization">
+      <End Role="Specialization" EntitySet="Specialization" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_Subject" Association="PMSModel.FK_PaymentRateLog_Subject">
+      <End Role="Subject" EntitySet="Subject" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Specialization" Association="PMSModel.FK_SemesterRegistration_Specialization">
+      <End Role="Specialization" EntitySet="Specialization" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterSubject_SemesterRegistration" Association="PMSModel.FK_SemesterSubject_SemesterRegistration">
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
@@ -156,15 +210,18 @@
     <Property Name="AppointmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="AppointmentTypeId" Type="Int32" Nullable="false" />
-    <Property Name="AppointmentFrom" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="DesignationId" Type="Int32" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="DateTime" Precision="0" />
     <Property Name="AppointmentTo" Type="DateTime" Precision="0" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Comment" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AppointmentType" Relationship="PMSModel.FK_Appointment_AppointmentType" FromRole="Appointment" ToRole="AppointmentType" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Appointment_AspNetUsers" FromRole="Appointment" ToRole="AspNetUsers" />
+    <NavigationProperty Name="Designation" Relationship="PMSModel.FK_Appointment_Designation" FromRole="Appointment" ToRole="Designation" />
   </EntityType>
   <EntityType Name="AppointmentType">
     <Key>
@@ -288,13 +345,14 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="PeriodName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="PeriodName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_CalendarPeriod" FromRole="CalendarPeriod" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="Campus">
     <Key>
@@ -356,17 +414,22 @@
       <PropertyRef Name="DegreeId" />
     </Key>
     <Property Name="DegreeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
     <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
     <Property Name="FacultyId" Type="Int32" />
+    <Property Name="InstituteId" Type="Int32" />
+    <Property Name="DepartmentId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Department" Relationship="PMSModel.FK_Degree_Department" FromRole="Degree" ToRole="Department" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Degree_Faculty" FromRole="Degree" ToRole="Faculty" />
+    <NavigationProperty Name="Institute" Relationship="PMSModel.FK_Degree_Institute" FromRole="Degree" ToRole="Institute" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Degree" FromRole="Degree" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Degree" FromRole="Degree" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Degree" FromRole="Degree" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Degree" FromRole="Degree" ToRole="Specialization" />
   </EntityType>
@@ -385,7 +448,9 @@
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="Department" ToRole="AspNetUsers" />
+    <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Department" FromRole="Department" ToRole="Degree" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Department_Faculty" FromRole="Department" ToRole="Faculty" />
+    <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Department" FromRole="Department" ToRole="Specialization" />
   </EntityType>
   <EntityType Name="Designation">
     <Key>
@@ -398,7 +463,9 @@
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_Designation" FromRole="Designation" ToRole="Appointment" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Designation" FromRole="Designation" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Designation" FromRole="Designation" ToRole="PaymentRateLog" />
   </EntityType>
   <EntityType Name="Faculty">
     <Key>
@@ -418,6 +485,7 @@
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Faculty" FromRole="Faculty" ToRole="Degree" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_Faculty" FromRole="Faculty" ToRole="Department" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="Faculty" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="Faculty" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="Faculty" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="Institute">
@@ -432,8 +500,26 @@
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Institute" FromRole="Institute" ToRole="Degree" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="Institute" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Institute" FromRole="Institute" ToRole="Specialization" />
+  </EntityType>
+  <EntityType Name="Intake">
+    <Key>
+      <PropertyRef Name="IntakeId" />
+    </Key>
+    <Property Name="IntakeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FromDate" Type="DateTime" Precision="0" />
+    <Property Name="ToDate" Type="DateTime" Precision="0" />
+    <Property Name="IntakeCode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="IntakeYear" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="Intake" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="LectureHall">
     <Key>
@@ -476,6 +562,7 @@
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
     <Property Name="IsApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -487,36 +574,71 @@
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="PaymentRate" ToRole="Faculty" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="PaymentRate" ToRole="Specialization" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="PaymentRate" ToRole="Subject" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRate" ToRole="PaymentRateLog" />
+  </EntityType>
+  <EntityType Name="PaymentRateLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DegreeId" Type="Int32" />
+    <Property Name="SpecializationId" Type="Int32" />
+    <Property Name="FacultyId" Type="Int32" />
+    <Property Name="SubjectId" Type="Int32" />
+    <Property Name="DesignationId" Type="Int32" Nullable="false" />
+    <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
+    <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="PaymentRateId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Degree" Relationship="PMSModel.FK_PaymentRateLog_Degree" FromRole="PaymentRateLog" ToRole="Degree" />
+    <NavigationProperty Name="Designation" Relationship="PMSModel.FK_PaymentRateLog_Designation" FromRole="PaymentRateLog" ToRole="Designation" />
+    <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="PaymentRateLog" ToRole="Faculty" />
+    <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRateLog" ToRole="PaymentRate" />
+    <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
+    <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
   </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
       <PropertyRef Name="SemesterId" />
     </Key>
     <Property Name="SemesterId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="AcadamicYear" Type="Int32" Nullable="false" />
-    <Property Name="AcadamicSemester" Type="Int32" Nullable="false" />
-    <Property Name="From" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="To" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="DegreeId" Type="Int32" Nullable="false" />
-    <Property Name="CalendarYear" Type="Int32" Nullable="false" />
-    <Property Name="CalendarPeriod" Type="Int32" Nullable="false" />
-    <Property Name="FacultyId" Type="Int32" Nullable="false" />
-    <Property Name="InstituteId" Type="Int32" Nullable="false" />
+    <Property Name="CalendarYear" Type="Int32" />
+    <Property Name="CalendarPeriodId" Type="Int32" />
+    <Property Name="IntakeYear" Type="Int32" />
+    <Property Name="IntakeId" Type="Int32" />
+    <Property Name="AcademicYear" Type="Int32" />
+    <Property Name="AcademicSemester" Type="Int32" />
+    <Property Name="FacultyId" Type="Int32" />
+    <Property Name="InstituteId" Type="Int32" />
+    <Property Name="DegreeId" Type="Int32" />
+    <Property Name="SpecializationId" Type="Int32" />
+    <Property Name="FromDate" Type="DateTime" Precision="0" />
+    <Property Name="ToDate" Type="DateTime" Precision="0" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="CalendarPeriod" Relationship="PMSModel.FK_SemesterRegistration_CalendarPeriod" FromRole="SemesterRegistration" ToRole="CalendarPeriod" />
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_SemesterRegistration_Degree" FromRole="SemesterRegistration" ToRole="Degree" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="SemesterRegistration" ToRole="Faculty" />
     <NavigationProperty Name="Institute" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="SemesterRegistration" ToRole="Institute" />
+    <NavigationProperty Name="Intake" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="SemesterRegistration" ToRole="Intake" />
+    <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_SemesterRegistration_Specialization" FromRole="SemesterRegistration" ToRole="Specialization" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterRegistration" ToRole="SemesterSubject" />
   </EntityType>
   <EntityType Name="SemesterSubject">
     <Key>
+      <PropertyRef Name="Id" />
       <PropertyRef Name="SemesterRegistrationId" />
       <PropertyRef Name="SubjectId" />
     </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
     <Property Name="SubjectId" Type="Int32" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -533,17 +655,21 @@
     </Key>
     <Property Name="SpecializationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Code" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-    <Property Name="DegreeId" Type="Int32" Nullable="false" />
-    <Property Name="InstituteId" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+    <Property Name="DegreeId" Type="Int32" />
+    <Property Name="InstituteId" Type="Int32" />
+    <Property Name="DepartmentId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Specialization_Degree" FromRole="Specialization" ToRole="Degree" />
+    <NavigationProperty Name="Department" Relationship="PMSModel.FK_Specialization_Department" FromRole="Specialization" ToRole="Department" />
     <NavigationProperty Name="Institute" Relationship="PMSModel.FK_Specialization_Institute" FromRole="Specialization" ToRole="Institute" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="Specialization" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="Specialization" ToRole="PaymentRateLog" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Specialization" FromRole="Specialization" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="StudentBatch">
     <Key>
@@ -573,6 +699,7 @@
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="Subject" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="Subject" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_Subject" FromRole="Subject" ToRole="SemesterSubject" />
   </EntityType>
   <EntityType Name="sysdiagrams">
@@ -624,6 +751,20 @@
       </Principal>
       <Dependent Role="Appointment">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Appointment_Designation">
+    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="PMSModel.Appointment" Role="Appointment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="Appointment">
+        <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -749,6 +890,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_SemesterRegistration_CalendarPeriod">
+    <End Type="PMSModel.CalendarPeriod" Role="CalendarPeriod" Multiplicity="0..1" />
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CalendarPeriod">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="CalendarPeriodId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_ConductedLectures_Campus">
     <End Type="PMSModel.Campus" Role="Campus" Multiplicity="1" />
     <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
@@ -817,6 +970,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Degree_Department">
+    <End Type="PMSModel.Department" Role="Department" Multiplicity="0..1" />
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentId" />
+      </Principal>
+      <Dependent Role="Degree">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Degree_Faculty">
     <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
@@ -831,10 +996,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Degree_Institute">
+    <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1" />
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Institute">
+        <PropertyRef Name="InstituteId" />
+      </Principal>
+      <Dependent Role="Degree">
+        <PropertyRef Name="InstituteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Degree">
-    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Degree">
@@ -845,10 +1020,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentRateLog_Degree">
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Degree">
-    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
     <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Degree">
@@ -860,7 +1045,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Specialization_Degree">
-    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="1">
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
@@ -887,16 +1072,38 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Specialization_Department">
+    <End Type="PMSModel.Department" Role="Department" Multiplicity="0..1" />
+    <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentId" />
+      </Principal>
+      <Dependent Role="Specialization">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Designation">
-    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Designation">
         <PropertyRef Name="DesignationId" />
       </Principal>
       <Dependent Role="PaymentRate">
+        <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Designation">
+    <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
         <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
@@ -913,8 +1120,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentRateLog_Faculty">
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Faculty">
-    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="1" />
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
     <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Faculty">
@@ -926,9 +1145,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_SemesterRegistration_Institute">
-    <End Type="PMSModel.Institute" Role="Institute" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1" />
     <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Institute">
@@ -940,7 +1157,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Specialization_Institute">
-    <End Type="PMSModel.Institute" Role="Institute" Multiplicity="1">
+    <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
     </End>
     <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
@@ -950,6 +1167,18 @@
       </Principal>
       <Dependent Role="Specialization">
         <PropertyRef Name="InstituteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Intake">
+    <End Type="PMSModel.Intake" Role="Intake" Multiplicity="0..1" />
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Intake">
+        <PropertyRef Name="IntakeId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="IntakeId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -966,9 +1195,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRate_Subject">
-    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Subject">
@@ -976,6 +1203,54 @@
       </Principal>
       <Dependent Role="PaymentRate">
         <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_PaymentRate">
+    <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PaymentRate">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="PaymentRateId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Specialization">
+    <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Specialization">
+        <PropertyRef Name="SpecializationId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SpecializationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_Subject">
+    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Subject">
+        <PropertyRef Name="SubjectId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterRegistration_Specialization">
+    <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="0..1" />
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Specialization">
+        <PropertyRef Name="SpecializationId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="SpecializationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

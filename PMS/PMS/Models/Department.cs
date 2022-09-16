@@ -11,11 +11,23 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Department
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Department()
+        {
+            this.Degree = new HashSet<Degree>();
+            this.Specialization = new HashSet<Specialization>();
+        }
+    
         public int DepartmentId { get; set; }
+        [Required(ErrorMessage = "Department Code is required")]
+        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string DepartmentCode { get; set; }
+        [Required(ErrorMessage = "Department Name is required")]
+        [MaxLength(500, ErrorMessage = "Maximum 500 characters exceeded")]
         public string DepartmentName { get; set; }
         public string HOD { get; set; }
         public Nullable<int> FacultyId { get; set; }
@@ -26,6 +38,10 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         public virtual AspNetUsers AspNetUsers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Degree> Degree { get; set; }
         public virtual Faculty Faculty { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Specialization> Specialization { get; set; }
     }
 }

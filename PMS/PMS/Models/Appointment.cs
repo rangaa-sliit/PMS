@@ -11,21 +11,33 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Appointment
     {
         public int AppointmentId { get; set; }
+        [Required(ErrorMessage = "Employee is required")]
         public string UserId { get; set; }
+        [Required(ErrorMessage = "Appointment Type is required")]
         public int AppointmentTypeId { get; set; }
-        public System.DateTime AppointmentFrom { get; set; }
+        [Required(ErrorMessage = "Designation is required")]
+        public int DesignationId { get; set; }
+        [Required(ErrorMessage = "Appointment From Date is required")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public Nullable<System.DateTime> AppointmentFrom { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> AppointmentTo { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        public string Comment { get; set; }
         public bool IsActive { get; set; }
     
         public virtual AppointmentType AppointmentType { get; set; }
         public virtual AspNetUsers AspNetUsers { get; set; }
+        public virtual Designation Designation { get; set; }
     }
 }

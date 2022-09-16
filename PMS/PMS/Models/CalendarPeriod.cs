@@ -15,6 +15,12 @@ namespace PMS.Models
 
     public partial class CalendarPeriod
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public CalendarPeriod()
+        {
+            this.SemesterRegistration = new HashSet<SemesterRegistration>();
+        }
+    
         public int Id { get; set; }
         [Required(ErrorMessage = "Calendar Period is required")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
@@ -26,5 +32,8 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
     }
 }
