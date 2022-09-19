@@ -723,8 +723,13 @@ namespace PMS.Controllers
                     {
                         Department editingDepartment = (from d in db.Department where d.DepartmentId.Equals(department.DepartmentId) select d).FirstOrDefault<Department>();
 
+<<<<<<< HEAD
                         if (editingDepartment.DepartmentCode != department.DepartmentCode || editingDepartment.DepartmentName != department.DepartmentName
                             || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId
+=======
+                        if (editingDepartment.DepartmentCode != department.DepartmentCode || editingDepartment.DepartmentName != department.DepartmentName 
+                            || editingDepartment.HOD != department.HOD || editingDepartment.FacultyId != department.FacultyId 
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                             || editingDepartment.IsActive != department.IsActive)
                         {
                             if (validationRecord != null)
@@ -1684,6 +1689,7 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 List<IntakeVM> intakesList = (from i in db.Intake
+<<<<<<< HEAD
                                               orderby i.IntakeId descending
                                               select new IntakeVM
                                               {
@@ -1695,6 +1701,19 @@ namespace PMS.Controllers
                                                   ToDate = i.ToDate.ToString().Substring(0, 10),
                                                   IsActive = i.IsActive
                                               }).ToList();
+=======
+                                            orderby i.IntakeId descending
+                                            select new IntakeVM
+                                            {
+                                                IntakeId = i.IntakeId,
+                                                IntakeYear = i.IntakeYear,
+                                                IntakeCode = i.IntakeCode,
+                                                IntakeName = i.IntakeName,
+                                                FromDate = i.FromDate.ToString().Substring(0, 10),
+                                                ToDate = i.ToDate.ToString().Substring(0, 10),
+                                                IsActive = i.IsActive
+                                            }).ToList();
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
 
                 return Json(new { data = intakesList }, JsonRequestBehavior.AllowGet);
             }
@@ -2086,7 +2105,11 @@ namespace PMS.Controllers
                             {
                                 if (!activeAppointments[i].AppointmentTo.HasValue)
                                 {
+<<<<<<< HEAD
                                     if (appointmentFrom >= currentDate)
+=======
+                                    if(appointmentFrom >= currentDate)
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                                     {
                                         activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
                                         activeAppointments[i].IsActive = true;
@@ -2099,9 +2122,15 @@ namespace PMS.Controllers
                                 }
                                 else
                                 {
+<<<<<<< HEAD
                                     if (activeAppointments[i].AppointmentTo.Value >= currentDate)
                                     {
                                         if (appointmentFrom <= activeAppointments[i].AppointmentTo.Value)
+=======
+                                    if(activeAppointments[i].AppointmentTo.Value >= currentDate)
+                                    {
+                                        if(appointmentFrom <= activeAppointments[i].AppointmentTo.Value)
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                                         {
                                             activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
                                         }
@@ -2113,7 +2142,11 @@ namespace PMS.Controllers
                                     }
                                 }
 
+<<<<<<< HEAD
 
+=======
+                                
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                                 activeAppointments[i].Comment = "Due to New Appointment Creation";
                                 activeAppointments[i].ModifiedBy = "Ranga";
                                 activeAppointments[i].ModifiedDate = dateTime;
@@ -2139,8 +2172,13 @@ namespace PMS.Controllers
                     {
                         Appointment editingAppointment = (from a in db.Appointment where a.AppointmentId.Equals(appointment.AppointmentId) select a).FirstOrDefault<Appointment>();
 
+<<<<<<< HEAD
                         if (editingAppointment.DesignationId != appointment.DesignationId || editingAppointment.AppointmentTypeId != appointment.AppointmentTypeId
                             || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo
+=======
+                        if (editingAppointment.DesignationId != appointment.DesignationId || editingAppointment.AppointmentTypeId != appointment.AppointmentTypeId 
+                            || editingAppointment.AppointmentFrom != appointment.AppointmentFrom || editingAppointment.AppointmentTo != appointment.AppointmentTo 
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                             || editingAppointment.IsActive != appointment.IsActive)
                         {
                             if (validationRecord != null)
@@ -3057,7 +3095,11 @@ namespace PMS.Controllers
                         PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(paymentRate.Id) select pr).FirstOrDefault<PaymentRate>();
 
                         if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.FacultyId != paymentRate.FacultyId
+<<<<<<< HEAD
                             || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId
+=======
+                            || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                             || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
                             if (validationRecord != null)
@@ -3409,14 +3451,22 @@ namespace PMS.Controllers
                     {
                         SemesterRegistration editingSemesterRegistration = (from s in db.SemesterRegistration where s.SemesterId.Equals(semesterRegistration.SemesterId) select s).FirstOrDefault<SemesterRegistration>();
 
+<<<<<<< HEAD
                         if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId
+=======
+                        if (editingSemesterRegistration.CalendarYear != semesterRegistration.CalendarYear || editingSemesterRegistration.CalendarPeriodId != semesterRegistration.CalendarPeriodId 
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                             || editingSemesterRegistration.IntakeYear != semesterRegistration.IntakeYear || editingSemesterRegistration.IntakeId != semesterRegistration.IntakeId
                             || editingSemesterRegistration.AcademicYear != semesterRegistration.AcademicYear || editingSemesterRegistration.AcademicSemester != semesterRegistration.AcademicSemester
                             || editingSemesterRegistration.FacultyId != semesterRegistration.FacultyId || editingSemesterRegistration.InstituteId != semesterRegistration.InstituteId
                             || editingSemesterRegistration.DegreeId != semesterRegistration.DegreeId || editingSemesterRegistration.SpecializationId != semesterRegistration.SpecializationId
                             || editingSemesterRegistration.FromDate != semesterRegistration.FromDate || editingSemesterRegistration.ToDate != semesterRegistration.ToDate || editingSemesterRegistration.IsActive != semesterRegistration.IsActive)
                         {
+<<<<<<< HEAD
                             if (validationRecord != null)
+=======
+                            if(validationRecord != null)
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
                             {
                                 return Json(new
                                 {
@@ -3480,6 +3530,7 @@ namespace PMS.Controllers
             }
         }
 
+<<<<<<< HEAD
 
 
         //Developed By:- Dulanjalee Wickremasinghe
@@ -3512,6 +3563,11 @@ namespace PMS.Controllers
         //Developed On:- 2022/09/15                           
 
         public ActionResult AddOrEditGroupClaim()
+=======
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/09
+        public ActionResult ManageSemesterSubjects()
+>>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
         {
             return View();
         }
