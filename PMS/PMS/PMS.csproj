@@ -181,6 +181,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccessGroup.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Appointment.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
@@ -210,6 +213,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Campus.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Claim.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ConductedLectures.cs">
@@ -479,6 +485,10 @@
     <Content Include="Views\SA\ManageSemesterRegistrations.cshtml" />
     <Content Include="Views\SA\AddOrEditSemesterRegistration.cshtml" />
     <Content Include="Views\SA\ManageSemesterSubjects.cshtml" />
+    <Content Include="Views\SA\ManageAccessGroups.cshtml" />
+    <Content Include="Views\SA\AddOrEditAccessGroup.cshtml" />
+    <Content Include="Views\SA\ManageAccessGroupRoles.cshtml" />
+    <Content Include="Views\SA\AddOrEditAccessGroupRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

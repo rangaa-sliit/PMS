@@ -1,0 +1,39 @@
+﻿@model PMS.Models.AspNetRoles
+
+@{
+    ViewBag.Title = "AddOrEditAccessGroupRole";
+    Layout = null;
+}
+
+@using (Html.BeginForm("AddOrEditAccessGroupRole", "SA", FormMethod.Post, new { onsubmit = "return SubmitAccessGroupRoleForm(this)", @id = "accessGroupRoleForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.AccessGroupId)
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.Name, "Role Name: ", new { @class = "required" })
+        </div>
+        <div class="col-sm-9">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Role Name", @id = "roleName", oninput = "onRoleNameInput()" } })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.IsActive, "Status: ")
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+            {
+                new SelectListItem{ Text = "Active", Value = "true" },
+                new SelectListItem{ Text = "Inactive", Value = "false" }
+            }, new { @class = "form-control", @id = "roleStatusList", onchange = "onRoleStatusChange(this.value)" })
+        </div>
+    </div>
+    <hr />
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit" id="accessGroupRoleSubmitBtn">Save</button>
+        <button class="btn btn-light" type="button" id="accessGroupRoleClearBtn" onclick="clearAccessGroupRoleForm()">Clear Changes</button>
+    </div>
+}

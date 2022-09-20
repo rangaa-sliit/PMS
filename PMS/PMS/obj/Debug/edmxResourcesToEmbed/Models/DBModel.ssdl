@@ -1,5 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="PMSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AccessGroup">
+    <Key>
+      <PropertyRef Name="AccessGroupId" />
+    </Key>
+    <Property Name="AccessGroupId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AccessGroupName" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="256" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="Appointment">
     <Key>
       <PropertyRef Name="AppointmentId" />
@@ -56,6 +69,7 @@
     <Property Name="IsActive" Type="bit" Nullable="false" />
     <Property Name="ConcurrencyStamp" Type="nvarchar(max)" />
     <Property Name="NormalizedName" Type="nvarchar" MaxLength="256" />
+    <Property Name="AccessGroupId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="AspNetUserClaims">
     <Key>
@@ -63,8 +77,12 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ClaimType" Type="nvarchar(max)" />
-    <Property Name="ClaimValue" Type="nvarchar(max)" />
+    <Property Name="ClaimId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="AspNetUserLogins">
     <Key>
@@ -139,6 +157,19 @@
     <Property Name="CampusId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="CampusCode" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="CampusName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Claim">
+    <Key>
+      <PropertyRef Name="ClaimId" />
+    </Key>
+    <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ClaimName" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="256" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -392,9 +423,8 @@
       <PropertyRef Name="StudentBatchId" />
     </Key>
     <Property Name="StudentBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="CalendarYear" Type="int" Nullable="false" />
-    <Property Name="CalendarPeriod" Type="nvarchar" MaxLength="150" Nullable="false" />
-    <Property Name="Degree" Type="nvarchar" MaxLength="1000" Nullable="false" />
+    <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
+    <Property Name="BatchName" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -476,6 +506,30 @@
       </Principal>
       <Dependent Role="Appointment">
         <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetRoles_AccessGroup">
+    <End Role="AccessGroup" Type="Self.AccessGroup" Multiplicity="1" />
+    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroup">
+        <PropertyRef Name="AccessGroupId" />
+      </Principal>
+      <Dependent Role="AspNetRoles">
+        <PropertyRef Name="AccessGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetUserClaims_Claim">
+    <End Role="Claim" Type="Self.Claim" Multiplicity="1" />
+    <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Claim">
+        <PropertyRef Name="ClaimId" />
+      </Principal>
+      <Dependent Role="AspNetUserClaims">
+        <PropertyRef Name="ClaimId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -993,7 +1047,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_StudentBatch_SemesterRegistration">
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
+    <End Role="StudentBatch" Type="Self.StudentBatch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="StudentBatch">
+        <PropertyRef Name="SemesterRegistrationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="PMSModelStoreContainer">
+    <EntitySet Name="AccessGroup" EntityType="Self.AccessGroup" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ApprovalStages" EntityType="Self.ApprovalStages" Schema="dbo" store:Type="Tables" />
@@ -1004,6 +1071,7 @@
     <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CalendarPeriod" EntityType="Self.CalendarPeriod" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Campus" EntityType="Self.Campus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Claim" EntityType="Self.Claim" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConductedLectures" EntityType="Self.ConductedLectures" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConfigurationalSettings" EntityType="Self.ConfigurationalSettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Degree" EntityType="Self.Degree" Schema="dbo" store:Type="Tables" />
@@ -1034,6 +1102,14 @@
     <AssociationSet Name="FK_Appointment_Designation" Association="Self.FK_Appointment_Designation">
       <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetRoles_AccessGroup" Association="Self.FK_AspNetRoles_AccessGroup">
+      <End Role="AccessGroup" EntitySet="AccessGroup" />
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetUserClaims_Claim" Association="Self.FK_AspNetUserClaims_Claim">
+      <End Role="Claim" EntitySet="Claim" />
+      <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
     </AssociationSet>
     <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="Self.FK_AspNetUserRoles_AspNetRoles_RoleId">
       <End Role="AspNetRoles" EntitySet="AspNetRoles" />
@@ -1194,6 +1270,10 @@
     <AssociationSet Name="FK_Specialization_Institute" Association="Self.FK_Specialization_Institute">
       <End Role="Institute" EntitySet="Institute" />
       <End Role="Specialization" EntitySet="Specialization" />
+    </AssociationSet>
+    <AssociationSet Name="FK_StudentBatch_SemesterRegistration" Association="Self.FK_StudentBatch_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="StudentBatch" EntitySet="StudentBatch" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

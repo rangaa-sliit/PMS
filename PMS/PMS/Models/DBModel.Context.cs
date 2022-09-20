@@ -26,6 +26,7 @@ namespace PMS.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<AccessGroup> AccessGroup { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
         public virtual DbSet<AppointmentType> AppointmentType { get; set; }
         public virtual DbSet<ApprovalStages> ApprovalStages { get; set; }
@@ -36,6 +37,7 @@ namespace PMS.Models
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<CalendarPeriod> CalendarPeriod { get; set; }
         public virtual DbSet<Campus> Campus { get; set; }
+        public virtual DbSet<Claim> Claim { get; set; }
         public virtual DbSet<ConductedLectures> ConductedLectures { get; set; }
         public virtual DbSet<ConfigurationalSettings> ConfigurationalSettings { get; set; }
         public virtual DbSet<Degree> Degree { get; set; }

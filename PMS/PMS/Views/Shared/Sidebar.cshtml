@@ -52,6 +52,25 @@ Developed On:- 2022/08/16*@
     <hr class="sidebar-divider" />
 
     <div class="sidebar-heading">
+        Access Control
+    </div>
+
+    <li class="nav-item" id="masterData-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessControl" aria-expanded="true" aria-controls="collapseAccessControl">
+            <i class="fas fa-fw fa-users"></i>
+            <span>User Access</span>
+        </a>
+        <div id="collapseAccessControl" class="collapse" aria-labelledby="headingAccessControl" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">User Access:</h6>
+                <a class="collapse-item" href="@Url.Action("ManageAccessGroups", "SA")">Access Groups</a>
+            </div>
+        </div>
+    </li>
+
+    <hr class="sidebar-divider" />
+
+    <div class="sidebar-heading">
         Academic Details
     </div>
 

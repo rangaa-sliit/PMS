@@ -3696,5 +3696,277 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        public ActionResult ManageAccessGroups()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        public ActionResult GetAccessGroups()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AccessGroup> accessGroupList = (from ag in db.AccessGroup orderby ag.AccessGroupId descending select ag).ToList();
+                return Json(new { data = accessGroupList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        [HttpGet]
+        public ActionResult AddOrEditAccessGroup(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new AccessGroup());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from ag in db.AccessGroup where ag.AccessGroupId.Equals(id) select ag).FirstOrDefault<AccessGroup>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditAccessGroup(AccessGroup accessGroup)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    AccessGroup validationRecord = (from ag in db.AccessGroup where ag.AccessGroupName.Equals(accessGroup.AccessGroupName) select ag).FirstOrDefault<AccessGroup>();
+
+                    if (accessGroup.AccessGroupId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Access Group Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            accessGroup.CreatedBy = "Ranga";
+                            accessGroup.CreatedDate = dateTime;
+                            accessGroup.ModifiedBy = "Ranga";
+                            accessGroup.ModifiedDate = dateTime;
+
+                            db.AccessGroup.Add(accessGroup);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        AccessGroup editingAccessGroup = (from ag in db.AccessGroup where ag.AccessGroupId.Equals(accessGroup.AccessGroupId) select ag).FirstOrDefault<AccessGroup>();
+
+                        if (editingAccessGroup.AccessGroupName != accessGroup.AccessGroupName || editingAccessGroup.Description != accessGroup.Description || editingAccessGroup.IsActive != accessGroup.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.AccessGroupId != accessGroup.AccessGroupId)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Access Group Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingAccessGroup.AccessGroupName = accessGroup.AccessGroupName;
+                                editingAccessGroup.Description = accessGroup.Description;
+                                editingAccessGroup.IsActive = accessGroup.IsActive;
+                                editingAccessGroup.ModifiedBy = "Ranga";
+                                editingAccessGroup.ModifiedDate = dateTime;
+
+                                db.Entry(editingAccessGroup).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        public ActionResult ManageAccessGroupRoles()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        public ActionResult GetAccessGroupRoles(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AspNetRoles> accessGroupRolesList = (from agr in db.AspNetRoles where agr.AccessGroupId.Equals(id) orderby agr.Id descending select agr).ToList();
+                return Json(new { data = accessGroupRolesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        [HttpGet]
+        public ActionResult AddOrEditAccessGroupRole(string id)
+        {
+            if (id == null)
+            {
+                return View(new AspNetRoles());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from agr in db.AspNetRoles where agr.Id.Equals(id) select agr).FirstOrDefault<AspNetRoles>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/20
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditAccessGroupRole(AspNetRoles accessGroupRole)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    AspNetRoles validationRecord = (from agr in db.AspNetRoles where agr.AccessGroupId.Equals(accessGroupRole.AccessGroupId) && agr.Name.Equals(accessGroupRole.Name) select agr).FirstOrDefault<AspNetRoles>();
+
+                    if (accessGroupRole.Id == null)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Role Already Exists For Selected Access Group"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            accessGroupRole.Id = Guid.NewGuid().ToString();
+                            accessGroupRole.CreatedBy = "Ranga";
+                            accessGroupRole.CreatedDate = dateTime;
+                            accessGroupRole.ModifiedBy = "Ranga";
+                            accessGroupRole.ModifiedDate = dateTime;
+
+                            db.AspNetRoles.Add(accessGroupRole);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        AspNetRoles editingAccessGroupRole = (from agr in db.AspNetRoles where agr.Id.Equals(accessGroupRole.Id) select agr).FirstOrDefault<AspNetRoles>();
+
+                        if (editingAccessGroupRole.Name != accessGroupRole.Name || editingAccessGroupRole.IsActive != accessGroupRole.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.Id != accessGroupRole.Id)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Role Already Exists For Selected Access Group"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingAccessGroupRole.Name = accessGroupRole.Name;
+                                editingAccessGroupRole.IsActive = accessGroupRole.IsActive;
+                                editingAccessGroupRole.ModifiedBy = "Ranga";
+                                editingAccessGroupRole.ModifiedDate = dateTime;
+
+                                db.Entry(editingAccessGroupRole).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }

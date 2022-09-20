@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="PMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="PMSEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="AccessGroup" EntityType="PMSModel.AccessGroup" />
     <EntitySet Name="Appointment" EntityType="PMSModel.Appointment" />
     <EntitySet Name="AppointmentType" EntityType="PMSModel.AppointmentType" />
     <EntitySet Name="ApprovalStages" EntityType="PMSModel.ApprovalStages" />
@@ -11,6 +12,7 @@
     <EntitySet Name="AspNetUsers" EntityType="PMSModel.AspNetUsers" />
     <EntitySet Name="CalendarPeriod" EntityType="PMSModel.CalendarPeriod" />
     <EntitySet Name="Campus" EntityType="PMSModel.Campus" />
+    <EntitySet Name="Claim" EntityType="PMSModel.Claim" />
     <EntitySet Name="ConductedLectures" EntityType="PMSModel.ConductedLectures" />
     <EntitySet Name="ConfigurationalSettings" EntityType="PMSModel.ConfigurationalSettings" />
     <EntitySet Name="Degree" EntityType="PMSModel.Degree" />
@@ -30,6 +32,10 @@
     <EntitySet Name="Subject" EntityType="PMSModel.Subject" />
     <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
     <EntitySet Name="Title" EntityType="PMSModel.Title" />
+    <AssociationSet Name="FK_AspNetRoles_AccessGroup" Association="PMSModel.FK_AspNetRoles_AccessGroup">
+      <End Role="AccessGroup" EntitySet="AccessGroup" />
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+    </AssociationSet>
     <AssociationSet Name="FK_Appointment_AppointmentType" Association="PMSModel.FK_Appointment_AppointmentType">
       <End Role="AppointmentType" EntitySet="AppointmentType" />
       <End Role="Appointment" EntitySet="Appointment" />
@@ -49,6 +55,10 @@
     <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId">
       <End Role="AspNetRoles" EntitySet="AspNetRoles" />
       <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetUserClaims_Claim" Association="PMSModel.FK_AspNetUserClaims_Claim">
+      <End Role="Claim" EntitySet="Claim" />
+      <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
     </AssociationSet>
     <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -198,11 +208,29 @@
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
     </AssociationSet>
+    <AssociationSet Name="FK_StudentBatch_SemesterRegistration" Association="PMSModel.FK_StudentBatch_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="StudentBatch" EntitySet="StudentBatch" />
+    </AssociationSet>
     <AssociationSet Name="FK_SemesterSubject_Subject" Association="PMSModel.FK_SemesterSubject_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
     </AssociationSet>
   </EntityContainer>
+  <EntityType Name="AccessGroup">
+    <Key>
+      <PropertyRef Name="AccessGroupId" />
+    </Key>
+    <Property Name="AccessGroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AccessGroupName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_AspNetRoles_AccessGroup" FromRole="AccessGroup" ToRole="AspNetRoles" />
+  </EntityType>
   <EntityType Name="Appointment">
     <Key>
       <PropertyRef Name="AppointmentId" />
@@ -264,6 +292,8 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="NormalizedName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="AccessGroupId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AspNetRoles_AccessGroup" FromRole="AspNetRoles" ToRole="AccessGroup" />
     <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId" FromRole="AspNetRoles" ToRole="AspNetUserRoles" />
   </EntityType>
   <EntityType Name="AspNetUserClaims">
@@ -272,8 +302,13 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ClaimId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Claim" Relationship="PMSModel.FK_AspNetUserClaims_Claim" FromRole="AspNetUserClaims" ToRole="Claim" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
   </EntityType>
   <EntityType Name="AspNetUserLogins">
@@ -368,6 +403,20 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="Campus" ToRole="ConductedLectures" />
     <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_LectureHall_Campus" FromRole="Campus" ToRole="LectureHall" />
+  </EntityType>
+  <EntityType Name="Claim">
+    <Key>
+      <PropertyRef Name="ClaimId" />
+    </Key>
+    <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ClaimName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_AspNetUserClaims_Claim" FromRole="Claim" ToRole="AspNetUserClaims" />
   </EntityType>
   <EntityType Name="ConductedLectures">
     <Key>
@@ -631,6 +680,7 @@
     <NavigationProperty Name="Intake" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="SemesterRegistration" ToRole="Intake" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_SemesterRegistration_Specialization" FromRole="SemesterRegistration" ToRole="Specialization" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterRegistration" ToRole="SemesterSubject" />
+    <NavigationProperty Name="StudentBatch" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="SemesterRegistration" ToRole="StudentBatch" />
   </EntityType>
   <EntityType Name="SemesterSubject">
     <Key>
@@ -676,15 +726,15 @@
       <PropertyRef Name="StudentBatchId" />
     </Key>
     <Property Name="StudentBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="CalendarYear" Type="Int32" Nullable="false" />
-    <Property Name="CalendarPeriod" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Degree" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+    <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
+    <Property Name="BatchName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_StudentBatch" FromRole="StudentBatch" ToRole="ConductedLectures" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="StudentBatch" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="Subject">
     <Key>
@@ -726,6 +776,18 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="Title" ToRole="AspNetUsers" />
   </EntityType>
+  <Association Name="FK_AspNetRoles_AccessGroup">
+    <End Type="PMSModel.AccessGroup" Role="AccessGroup" Multiplicity="1" />
+    <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroup">
+        <PropertyRef Name="AccessGroupId" />
+      </Principal>
+      <Dependent Role="AspNetRoles">
+        <PropertyRef Name="AccessGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Appointment_AppointmentType">
     <End Type="PMSModel.AppointmentType" Role="AppointmentType" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -793,6 +855,18 @@
       </Principal>
       <Dependent Role="AspNetUserRoles">
         <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetUserClaims_Claim">
+    <End Type="PMSModel.Claim" Role="Claim" Multiplicity="1" />
+    <End Type="PMSModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Claim">
+        <PropertyRef Name="ClaimId" />
+      </Principal>
+      <Dependent Role="AspNetUserClaims">
+        <PropertyRef Name="ClaimId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1264,6 +1338,18 @@
         <PropertyRef Name="SemesterId" />
       </Principal>
       <Dependent Role="SemesterSubject">
+        <PropertyRef Name="SemesterRegistrationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_StudentBatch_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.StudentBatch" Role="StudentBatch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="StudentBatch">
         <PropertyRef Name="SemesterRegistrationId" />
       </Dependent>
     </ReferentialConstraint>

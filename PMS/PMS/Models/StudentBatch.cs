@@ -21,9 +21,8 @@ namespace PMS.Models
         }
     
         public int StudentBatchId { get; set; }
-        public int CalendarYear { get; set; }
-        public string CalendarPeriod { get; set; }
-        public string Degree { get; set; }
+        public int SemesterRegistrationId { get; set; }
+        public string BatchName { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -32,5 +31,6 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        public virtual SemesterRegistration SemesterRegistration { get; set; }
     }
 }

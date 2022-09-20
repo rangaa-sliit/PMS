@@ -19,6 +19,7 @@ namespace PMS.Models
         public SemesterRegistration()
         {
             this.SemesterSubject = new HashSet<SemesterSubject>();
+            this.StudentBatch = new HashSet<StudentBatch>();
         }
     
         public int SemesterId { get; set; }
@@ -62,5 +63,7 @@ namespace PMS.Models
         public virtual Specialization Specialization { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterSubject> SemesterSubject { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentBatch> StudentBatch { get; set; }
     }
 }

@@ -13,29 +13,27 @@ namespace PMS.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public partial class AspNetRoles
+    public partial class AccessGroup
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRoles()
+        public AccessGroup()
         {
-            this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
+            this.AspNetRoles = new HashSet<AspNetRoles>();
         }
     
-        public string Id { get; set; }
-        [Required(ErrorMessage = "Role Name is required")]
-        [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
-        public string Name { get; set; }
+        public int AccessGroupId { get; set; }
+        [Required(ErrorMessage = "Access Group Name is required")]
+        [MaxLength(256, ErrorMessage = "Maximum 256 characters exceeded")]
+        public string AccessGroupName { get; set; }
+        [MaxLength(256, ErrorMessage = "Maximum 256 characters exceeded")]
+        public string Description { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
-        public string ConcurrencyStamp { get; set; }
-        public string NormalizedName { get; set; }
-        public int AccessGroupId { get; set; }
     
-        public virtual AccessGroup AccessGroup { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual ICollection<AspNetRoles> AspNetRoles { get; set; }
     }
 }

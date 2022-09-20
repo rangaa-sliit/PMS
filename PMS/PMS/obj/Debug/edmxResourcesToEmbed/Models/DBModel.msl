@@ -1,6 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="PMSModelStoreContainer" CdmEntityContainer="PMSEntities">
+    <EntitySetMapping Name="AccessGroup">
+      <EntityTypeMapping TypeName="PMSModel.AccessGroup">
+        <MappingFragment StoreEntitySet="AccessGroup">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="AccessGroupName" ColumnName="AccessGroupName" />
+          <ScalarProperty Name="AccessGroupId" ColumnName="AccessGroupId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Appointment">
       <EntityTypeMapping TypeName="PMSModel.Appointment">
         <MappingFragment StoreEntitySet="Appointment">
@@ -50,6 +64,7 @@
     <EntitySetMapping Name="AspNetRoles">
       <EntityTypeMapping TypeName="PMSModel.AspNetRoles">
         <MappingFragment StoreEntitySet="AspNetRoles">
+          <ScalarProperty Name="AccessGroupId" ColumnName="AccessGroupId" />
           <ScalarProperty Name="NormalizedName" ColumnName="NormalizedName" />
           <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -65,8 +80,12 @@
     <EntitySetMapping Name="AspNetUserClaims">
       <EntityTypeMapping TypeName="PMSModel.AspNetUserClaims">
         <MappingFragment StoreEntitySet="AspNetUserClaims">
-          <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-          <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
@@ -150,6 +169,20 @@
           <ScalarProperty Name="CampusName" ColumnName="CampusName" />
           <ScalarProperty Name="CampusCode" ColumnName="CampusCode" />
           <ScalarProperty Name="CampusId" ColumnName="CampusId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Claim">
+      <EntityTypeMapping TypeName="PMSModel.Claim">
+        <MappingFragment StoreEntitySet="Claim">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ClaimName" ColumnName="ClaimName" />
+          <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -416,9 +449,8 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="Degree" ColumnName="Degree" />
-          <ScalarProperty Name="CalendarPeriod" ColumnName="CalendarPeriod" />
-          <ScalarProperty Name="CalendarYear" ColumnName="CalendarYear" />
+          <ScalarProperty Name="BatchName" ColumnName="BatchName" />
+          <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
           <ScalarProperty Name="StudentBatchId" ColumnName="StudentBatchId" />
         </MappingFragment>
       </EntityTypeMapping>
