@@ -81,6 +81,12 @@ Developed On:- 2022/08/18*@
     <script>
         var operation;
 
+        $(function () {
+            $("#usersList").select2({
+                theme: "bootstrap4"
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 

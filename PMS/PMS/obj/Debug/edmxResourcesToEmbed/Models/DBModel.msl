@@ -181,6 +181,8 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="SubOperation" ColumnName="SubOperation" />
+          <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
           <ScalarProperty Name="ClaimName" ColumnName="ClaimName" />
           <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
         </MappingFragment>

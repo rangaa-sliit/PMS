@@ -1,0 +1,189 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/09/23*@
+
+@{
+    ViewBag.Title = "ManageStudentBatches";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageSemesterRegistrations", "SA")">Manage Semester Registrations</a></li>
+            <li class="breadcrumb-item active">Manage Student Batches</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Student Batches</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Student Batches</h6>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <div class="table-responsive">
+                <table id="studentBatchesTbl" class="table table-bordered data-table nowrap"></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="studentBatchesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="studentBatchesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentBatchesModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="studentBatchFormContent">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var studentBatchesTbl, studentBatchFormOpenAction, oldstudentBatchName, oldstudentBatchStatus;
+        var semesterRegistrationId = window.location.pathname.toString().split('/')[3];
+
+        studentBatchesTbl = $("#studentBatchesTbl").DataTable({
+            "scrollY": "30vh",
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetStudentBatches", "SA")/" + semesterRegistrationId,
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": "StudentBatchId",
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'View')">View Student Batch</a>`
+                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'Edit')">Edit Student Batch</a></div></div>`
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
+                },
+                {
+                    "title": "Student Batch Name",
+                    "data": "BatchName"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Student Batches Found!"
+            }
+        })
+
+        function PopupStudentBatchForm(url, action) {
+            $.get(url)
+                .done(function (response) {
+                    $("#studentBatchFormContent").html(response);
+                    $("#studentBatchesModal").modal("show");
+
+                    if (action == "Add") {
+                        studentBatchFormOpenAction = "Add";
+                        $("#studentBatchesModalLabel").html("Add Student Batch");
+                        $("#SemesterRegistrationId").val(semesterRegistrationId);
+                        $("#studentBatchStatusList").val("true");
+                    }
+                    else {
+                        $("#studentBatchSubmitBtn").prop("disabled", true);
+                        $("#studentBatchSubmitBtn").prop("disabled", true);
+                        if (action == "Edit") {
+                            studentBatchFormOpenAction = "Edit";
+                            $("#studentBatchesModalLabel").html("Edit Student Batch");
+                            oldstudentBatchName = $("#batchName").val();
+                            oldstudentBatchStatus = $("#studentBatchStatusList :selected").val();
+                        }
+                        else {
+                            studentBatchFormOpenAction = "View";
+                            $("#studentBatchesModalLabel").html("View Student Batch");
+                            $("#batchName").prop("disabled", true);
+                            $("#studentBatchStatusList").prop("disabled", true);
+                        }
+                    }
+                })
+        }
+
+        function SubmitStudentBatchForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            $("#studentBatchesModal").modal("hide");
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            });
+
+                            studentBatchesTbl.ajax.reload();
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            });
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearStudentBatchForm() {
+            if (studentBatchFormOpenAction == "Add") {
+                $("#batchName").val("");
+                $("#studentBatchStatusList").val("true");
+            }
+            else if (studentBatchFormOpenAction == "Edit") {
+                $("#batchName").val(oldstudentBatchName);
+                $("#studentBatchStatusList").val(oldstudentBatchStatus);
+            }
+        }
+
+        function onBatchNameInput() {
+            $("#studentBatchSubmitBtn").prop("disabled", false);
+            $("#studentBatchSubmitBtn").prop("disabled", false);
+        }
+
+        function onStudentBatchStatusChange(newStatus) {
+            $("#studentBatchSubmitBtn").prop("disabled", false);
+            $("#studentBatchSubmitBtn").prop("disabled", false);
+        }
+    </script>
+}

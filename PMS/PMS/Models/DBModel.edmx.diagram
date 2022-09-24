@@ -5,37 +5,37 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="e30ce572a79840c18ae24eb0c987de6e" Name="Diagram1" ZoomLevel="83">
-        <EntityTypeShape EntityType="PMSModel.AccessGroup" Width="1.5" PointX="1.5" PointY="40.375" />
-        <EntityTypeShape EntityType="PMSModel.Appointment" Width="1.5" PointX="8.25" PointY="15.875" />
-        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="6" PointY="23.625" />
-        <EntityTypeShape EntityType="PMSModel.ApprovalStages" Width="1.5" PointX="10.5" PointY="2.375" />
-        <EntityTypeShape EntityType="PMSModel.AspNetRoles" Width="1.5" PointX="1.5" PointY="36" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="3.75" PointY="21.25" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="3.75" PointY="17.875" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserRoles" Width="1.5" PointX="3.75" PointY="25.375" />
+        <EntityTypeShape EntityType="PMSModel.AccessGroup" Width="1.5" PointX="2.25" PointY="37.375" />
+        <EntityTypeShape EntityType="PMSModel.Appointment" Width="1.5" PointX="15.5" PointY="9.875" />
+        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="13.25" PointY="5.625" />
+        <EntityTypeShape EntityType="PMSModel.ApprovalStages" Width="1.5" PointX="9.75" PointY="30.375" />
+        <EntityTypeShape EntityType="PMSModel.AspNetRoles" Width="1.5" PointX="4.5" PointY="37" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="3.75" PointY="19.25" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="3.75" PointY="25" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserRoles" Width="1.5" PointX="6.75" PointY="23.375" />
         <EntityTypeShape EntityType="PMSModel.AspNetUsers" Width="1.5" PointX="1.5" PointY="15" />
-        <EntityTypeShape EntityType="PMSModel.CalendarPeriod" Width="1.5" PointX="6" PointY="15.25" />
-        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="10.5" PointY="25.5" />
-        <EntityTypeShape EntityType="PMSModel.Claim" Width="1.5" PointX="1.5" PointY="32.375" />
-        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="12.75" PointY="14.75" />
-        <EntityTypeShape EntityType="PMSModel.ConfigurationalSettings" Width="1.5" PointX="7.75" PointY="0.75" />
+        <EntityTypeShape EntityType="PMSModel.CalendarPeriod" Width="1.5" PointX="5.25" PointY="5.25" />
+        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="9.75" PointY="23.375" />
+        <EntityTypeShape EntityType="PMSModel.Claim" Width="1.5" PointX="1.5" PointY="33.125" />
+        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="12" PointY="15.75" />
+        <EntityTypeShape EntityType="PMSModel.ConfigurationalSettings" Width="1.5" PointX="2.75" PointY="0.75" />
         <EntityTypeShape EntityType="PMSModel.Degree" Width="1.5" PointX="3" PointY="9.375" />
         <EntityTypeShape EntityType="PMSModel.Department" Width="1.5" PointX="0.75" PointY="2.875" />
-        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="3" PointY="5.25" />
-        <EntityTypeShape EntityType="PMSModel.Faculty" Width="1.5" PointX="1.5" PointY="23.875" />
+        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="8.25" PointY="1.25" />
+        <EntityTypeShape EntityType="PMSModel.Faculty" Width="1.5" PointX="1.5" PointY="27.375" />
         <EntityTypeShape EntityType="PMSModel.Institute" Width="1.5" PointX="0.75" PointY="10.125" />
-        <EntityTypeShape EntityType="PMSModel.Intake" Width="1.5" PointX="6" PointY="18.75" />
-        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="10.5" PointY="18.125" />
-        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="10.5" PointY="22.125" />
-        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="5.25" PointY="9.25" />
-        <EntityTypeShape EntityType="PMSModel.PaymentRateLog" Width="1.5" PointX="10.5" PointY="6.375" />
-        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="8.25" PointY="8.75" />
-        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="13.5" PointY="10.25" />
-        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="5.25" PointY="3.625" />
-        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="10.5" PointY="13.875" />
-        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="3" PointY="1" />
-        <EntityTypeShape EntityType="PMSModel.sysdiagrams" Width="1.5" PointX="7.75" PointY="4.75" />
-        <EntityTypeShape EntityType="PMSModel.Title" Width="1.5" PointX="1.5" PointY="28.75" />
+        <EntityTypeShape EntityType="PMSModel.Intake" Width="1.5" PointX="5.25" PointY="14.75" />
+        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="9.75" PointY="34.125" />
+        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="9.75" PointY="27.125" />
+        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="10.5" PointY="9.25" />
+        <EntityTypeShape EntityType="PMSModel.PaymentRateLog" Width="1.5" PointX="12.75" PointY="9.125" />
+        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="7.5" PointY="8.75" />
+        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="9.75" PointY="5.25" />
+        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="5.25" PointY="9.625" />
+        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="9.75" PointY="14.875" />
+        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="8.25" PointY="19" />
+        <EntityTypeShape EntityType="PMSModel.sysdiagrams" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="PMSModel.Title" Width="1.5" PointX="1.5" PointY="23.875" />
         <AssociationConnector Association="PMSModel.FK_AspNetRoles_AccessGroup" />
         <AssociationConnector Association="PMSModel.FK_Appointment_AppointmentType" />
         <AssociationConnector Association="PMSModel.FK_Appointment_AspNetUsers" />

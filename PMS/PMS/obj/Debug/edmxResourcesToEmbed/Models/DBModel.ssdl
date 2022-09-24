@@ -169,6 +169,8 @@
     </Key>
     <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ClaimName" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ClaimValue" Type="nvarchar" MaxLength="500" Nullable="false" />
+    <Property Name="SubOperation" Type="nvarchar" MaxLength="100" />
     <Property Name="Description" Type="nvarchar" MaxLength="256" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />

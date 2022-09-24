@@ -57,6 +57,7 @@ Developed On:- 2022/09/05*@
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
                                 + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'View')">View Semester Registration</a>`
                                 + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'Edit')">Edit Semester Registration</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateStudentBatchForm('@Url.Action("ManageStudentBatches", "SA")/` + data + `')">Manage Student Batches</a>`
                                 + `<a class='dropdown-item btn' onclick="NavigateSemesterSubjectForm('@Url.Action("ManageSemesterSubjects", "SA")/` + data + `')">Manage Semester Subjects</a></div></div>`
                     },
                     "orderable": false,
@@ -235,6 +236,10 @@ Developed On:- 2022/09/05*@
             else {
                 window.location.href = url + "/View";
             }
+        }
+
+        function NavigateStudentBatchForm(url) {
+            window.location.href = url;
         }
 
         function NavigateSemesterSubjectForm(url) {

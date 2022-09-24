@@ -109,6 +109,28 @@
     <script>
         var operation;
 
+        $(function () {
+            $("#FacultyId").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty --"
+                }
+            });
+
+            $("#InstituteId").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Institute --"
+                }
+            });
+
+            $("#DepartmentId").select2({
+                theme: "bootstrap4",
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -137,8 +159,10 @@
                 $("#aeDegreeMainTitle").html("Add Degree");
                 $("#aeDegreetCardTitle").html("Add Degree");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Degree</li>`);
-                $("#FacultyId").val("");
-                $("#InstituteId").val("");
+                //$("#FacultyId").val("");
+                //$("#InstituteId").val("");
+                $("#FacultyId").val(null).change();
+                $("#InstituteId").val(null).change();
                 $("#DepartmentId").val("");
                 $("#degreeStatusList").val("true");
             }

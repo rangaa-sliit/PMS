@@ -22,6 +22,8 @@ namespace PMS.Models
     
         public int ClaimId { get; set; }
         public string ClaimName { get; set; }
+        public string ClaimValue { get; set; }
+        public string SubOperation { get; set; }
         public string Description { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

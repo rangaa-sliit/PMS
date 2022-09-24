@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -854,7 +855,7 @@ namespace PMS.Controllers
                                 }).ToList();
 
                 List<SelectListItem> campusList = new SelectList(campuses, "Value", "Text").ToList();
-                campusList.Insert(0, new SelectListItem() { Text = "-- Select Campus --", Value = "", Disabled = false, Selected = true });
+                //campusList.Insert(0, new SelectListItem() { Text = "-- Select Campus --", Value = "", Disabled = true, Selected = true });
                 ViewBag.campusList = campusList;
 
                 if (id == 0)
@@ -2011,7 +2012,7 @@ namespace PMS.Controllers
                              }).ToList();
 
                 List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
-                usersList.Insert(0, new SelectListItem() { Text = "-- Select Employee --", Value = "", Disabled = true, Selected = true });
+                //usersList.Insert(0, new SelectListItem() { Text = "-- Select Employee --", Value = "", Disabled = true, Selected = true });
                 ViewBag.usersList = usersList;
 
                 var designations = (from d in db.Designation
@@ -2023,7 +2024,7 @@ namespace PMS.Controllers
                                     }).ToList();
 
                 List<SelectListItem> designationList = new SelectList(designations, "Value", "Text").ToList();
-                designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
                 ViewBag.designationList = designationList;
 
                 var appointmentTypes = (from at in db.AppointmentType
@@ -2035,7 +2036,7 @@ namespace PMS.Controllers
                                         }).ToList();
 
                 List<SelectListItem> appointmentTypeList = new SelectList(appointmentTypes, "Value", "Text").ToList();
-                appointmentTypeList.Insert(0, new SelectListItem() { Text = "-- Select Appointment Type --", Value = "", Disabled = true, Selected = true });
+                //appointmentTypeList.Insert(0, new SelectListItem() { Text = "-- Select Appointment Type --", Value = "", Disabled = true, Selected = true });
                 ViewBag.appointmentTypeList = appointmentTypeList;
 
                 if (id == 0)
@@ -2438,7 +2439,7 @@ namespace PMS.Controllers
                              }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
-                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                //facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
                 ViewBag.facultyList = facultyList;
 
                 var institute = (from i in db.Institute
@@ -2450,7 +2451,7 @@ namespace PMS.Controllers
                                  }).ToList();
 
                 List<SelectListItem> instituteList = new SelectList(institute, "Value", "Text").ToList();
-                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
+                //instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
                 ViewBag.instituteList = instituteList;
 
                 var department = (from d in db.Department
@@ -2680,7 +2681,7 @@ namespace PMS.Controllers
                                }).ToList();
 
                 List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
-                degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                //degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
                 ViewBag.degreeList = degreeList;
 
                 var institute = (from i in db.Institute
@@ -2692,7 +2693,7 @@ namespace PMS.Controllers
                                  }).ToList();
 
                 List<SelectListItem> instituteList = new SelectList(institute, "Value", "Text").ToList();
-                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
+                //instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
                 ViewBag.instituteList = instituteList;
 
                 var department = (from d in db.Department
@@ -2927,7 +2928,7 @@ namespace PMS.Controllers
                                    }).ToList();
 
                 List<SelectListItem> designationList = new SelectList(designation, "Value", "Text").ToList();
-                designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
                 ViewBag.designationList = designationList;
 
                 var faculty = (from f in db.Faculty
@@ -3203,7 +3204,7 @@ namespace PMS.Controllers
                                        }).ToList();
 
                 List<SelectListItem> calendarPeriodList = new SelectList(calendarPeriods, "Value", "Text").ToList();
-                calendarPeriodList.Insert(0, new SelectListItem() { Text = "-- Select Calendar Period --", Value = "", Disabled = true, Selected = true });
+                //calendarPeriodList.Insert(0, new SelectListItem() { Text = "-- Select Calendar Period --", Value = "", Disabled = true, Selected = true });
                 ViewBag.calendarPeriodList = calendarPeriodList;
 
                 var intakes = (from i in db.Intake
@@ -3214,7 +3215,7 @@ namespace PMS.Controllers
                                }).Distinct().OrderBy(i => i.Value).ToList();
 
                 List<SelectListItem> intakeYearList = new SelectList(intakes, "Value", "Text").ToList();
-                intakeYearList.Insert(0, new SelectListItem() { Text = "-- Select Intake Year --", Value = "", Disabled = true, Selected = true });
+                //intakeYearList.Insert(0, new SelectListItem() { Text = "-- Select Intake Year --", Value = "", Disabled = true, Selected = true });
                 ViewBag.intakeYearList = intakeYearList;
 
                 var faculties = (from f in db.Faculty
@@ -3226,7 +3227,7 @@ namespace PMS.Controllers
                                  }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
-                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
+                //facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = true, Selected = true });
                 ViewBag.facultyList = facultyList;
 
                 var institutes = (from i in db.Institute
@@ -3238,17 +3239,17 @@ namespace PMS.Controllers
                                   }).ToList();
 
                 List<SelectListItem> instituteList = new SelectList(institutes, "Value", "Text").ToList();
-                instituteList.Insert(0, new SelectListItem() { Text = "-- Select Awarding Institute --", Value = "", Disabled = true, Selected = true });
+                //instituteList.Insert(0, new SelectListItem() { Text = "-- Select Awarding Institute --", Value = "", Disabled = true, Selected = true });
                 ViewBag.instituteList = instituteList;
 
                 if (id == 0)
                 {
                     List<SelectListItem> intakeList = new List<SelectListItem>();
-                    intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
+                    //intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
                     ViewBag.intakeList = intakeList;
 
                     List<SelectListItem> degreeList = new List<SelectListItem>();
-                    degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                    //degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
                     ViewBag.degreeList = degreeList;
 
                     List<SelectListItem> specializationList = new List<SelectListItem>();
@@ -3270,7 +3271,7 @@ namespace PMS.Controllers
                                                 }).ToList();
 
                     List<SelectListItem> intakeList = new SelectList(intakesforIntakeYear, "Value", "Text").ToList();
-                    intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
+                    //intakeList.Insert(0, new SelectListItem() { Text = "-- Select Intake --", Value = "", Disabled = true, Selected = true });
                     ViewBag.intakeList = intakeList;
 
                     var degrees = (from d in db.Degree
@@ -3283,7 +3284,7 @@ namespace PMS.Controllers
                                    }).ToList();
 
                     List<SelectListItem> degreeList = new SelectList(degrees, "Value", "Text").ToList();
-                    degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
+                    //degreeList.Insert(0, new SelectListItem() { Text = "-- Select Degree --", Value = "", Disabled = true, Selected = true });
                     ViewBag.degreeList = degreeList;
 
                     var specializations = (from s in db.Specialization
@@ -3932,6 +3933,424 @@ namespace PMS.Controllers
                                 editingAccessGroupRole.ModifiedDate = dateTime;
 
                                 db.Entry(editingAccessGroupRole).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/21
+        public ActionResult ManageClaims()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/21
+        public ActionResult GetClaims()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Claim> claimList = (from c in db.Claim orderby c.ClaimId descending select c).ToList();
+                return Json(new { data = claimList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/21
+        [HttpGet]
+        public ActionResult AddOrEditClaim(int id = 0)
+        {
+            var asm = Assembly.GetAssembly(typeof(PMS.MvcApplication));
+            var controlleractionlist = asm.GetTypes()
+                    .Where(type => typeof(System.Web.Mvc.Controller).IsAssignableFrom(type))
+                    .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
+                    .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
+                    .Select(x => new {
+                        Controller = x.DeclaringType.Name.Split(new string[] { "Controller" }, StringSplitOptions.None)[0],
+                        Action = x.Name
+                    })
+                    .OrderBy(x => x.Controller).ThenBy(x => x.Action).Distinct().ToList();
+
+            List<SelectListItem> controllerActions = new List<SelectListItem>();
+
+            foreach (var item in controlleractionlist)
+            {
+                if (item.Controller == "SA" || item.Controller == "User")
+                {
+                    controllerActions.Add(new SelectListItem()
+                    {
+                        Text = "/" + item.Controller + "/" + item.Action,
+                        Value = "/" + item.Controller + "/" + item.Action
+                    });
+                }
+            }
+
+            //controllerActions.Insert(0, new SelectListItem() { Text = "-- Select Claim Value --", Value = "", Disabled = true, Selected = false });
+            ViewBag.claimValueList = controllerActions;
+
+            if (id == 0)
+            {
+                ClaimCC claim = new ClaimCC();
+                claim.SelectedClaimValues = new List<string>();
+                return View(claim);
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    ClaimCC claim = (from c in db.Claim
+                                     where c.ClaimId.Equals(id)
+                                     select new ClaimCC
+                                     {
+                                         ClaimId = c.ClaimId,
+                                         ClaimName = c.ClaimName,
+                                         ClaimValue = c.ClaimValue,
+                                         SubOperation = c.SubOperation,
+                                         Description = c.Description,
+                                         IsActive = c.IsActive
+                                     }).FirstOrDefault<ClaimCC>();
+
+                    claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
+
+                    return View(claim);
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditClaim(Claim claim)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    Claim validationRecord = (from c in db.Claim
+                                              where c.ClaimName.Equals(claim.ClaimName) && c.ClaimValue.Equals(claim.ClaimValue) 
+                                              && c.SubOperation.Equals(claim.SubOperation)
+                                              select c).FirstOrDefault<Claim>();
+
+                    if (claim.ClaimId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Claim Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            claim.CreatedBy = "Ranga";
+                            claim.CreatedDate = dateTime;
+                            claim.ModifiedBy = "Ranga";
+                            claim.ModifiedDate = dateTime;
+
+                            db.Claim.Add(claim);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Claim editingClaim = (from c in db.Claim where c.ClaimId.Equals(claim.ClaimId) select c).FirstOrDefault<Claim>();
+
+                        if (editingClaim.ClaimName != claim.ClaimName || editingClaim.ClaimValue != claim.ClaimValue
+                            || editingClaim.SubOperation != claim.SubOperation || editingClaim.Description != claim.Description || editingClaim.IsActive != claim.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.ClaimId != claim.ClaimId)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Claim Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingClaim.ClaimName = claim.ClaimName;
+                                editingClaim.ClaimValue = claim.ClaimValue;
+                                editingClaim.SubOperation = claim.SubOperation;
+                                editingClaim.Description = claim.Description;
+                                editingClaim.IsActive = claim.IsActive;
+                                editingClaim.ModifiedBy = "Ranga";
+                                editingClaim.ModifiedDate = dateTime;
+
+                                db.Entry(editingClaim).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/21
+        public ActionResult TestMethod()
+        {
+            //    List<string> list = new List<string>();
+            //    var types =
+            //from a in AppDomain.CurrentDomain.GetAssemblies()
+            //from t in a.GetTypes()
+            //where typeof(IController).IsAssignableFrom(t) &&
+            //        string.Equals("SA" + "Controller", t.Name, StringComparison.OrdinalIgnoreCase)
+            //select t;
+
+            //    var controllerType = types.FirstOrDefault();
+
+            //    if (controllerType == null)
+            //    {
+            //        list = Enumerable.Empty<string>().ToList();
+            //    }
+            //   list = new ReflectedControllerDescriptor(controllerType)
+            //        .GetCanonicalActions().Select(x => x.ActionName)
+            //        .ToList();
+
+            var asm = Assembly.GetAssembly(typeof(PMS.MvcApplication));
+            var controlleractionlist = asm.GetTypes()
+                    .Where(type => typeof(System.Web.Mvc.Controller).IsAssignableFrom(type))
+                    .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
+                    .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
+                    .Select(x => new {
+                        Controller = x.DeclaringType.Name.Split(new string[] { "Controller" }, StringSplitOptions.None)[0],
+                        Action = x.Name
+                    })
+                    .OrderBy(x => x.Controller).ThenBy(x => x.Action).Distinct().ToList();
+
+            var list = new List<ControllerActions>();
+
+            foreach (var item in controlleractionlist)
+            {
+                if(item.Controller == "SA" || item.Controller == "User")
+                {
+                    list.Add(new ControllerActions()
+                    {
+                        Controller = item.Controller,
+                        Action = item.Action
+                    });
+                }
+            }
+
+            return Json(new { data = list }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult TestMethod1()
+        {
+            //var asm = Assembly.GetAssembly(typeof(PMS.MvcApplication));
+            //var controlleractionlist = asm.GetTypes()
+            //        .Where(type => typeof(System.Web.Mvc.Controller).IsAssignableFrom(type))
+            //        .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
+            //        .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
+            //        .Select(x => new {
+            //            Controller = x.DeclaringType.Name,
+            //            Action = x.Name,
+            //            ReturnType = x.ReturnType.Name,
+            //            Attributes = String.Join(",", x.GetCustomAttributes().Select(a => a.GetType().Name.Replace("Attribute", "")))
+            //        })
+            //        .OrderBy(x => x.Controller).ThenBy(x => x.Action).ToList();
+            //var list = new List<ControllerActions>();
+
+            //foreach (var item in controlleractionlist)
+            //{
+            //    list.Add(new ControllerActions()
+            //    {
+            //        Controller = item.Controller,
+            //        Action = item.Action,
+            //        Attributes = item.Attributes,
+            //        ReturnType = item.ReturnType
+            //    });
+            //}
+
+            using (PMSEntities db = new PMSEntities())
+            {
+                ClaimCC claim = (from c in db.Claim
+                                 where c.ClaimId.Equals(6)
+                                 select new ClaimCC
+                                 {
+                                     ClaimId = c.ClaimId,
+                                     ClaimName = c.ClaimName,
+                                     ClaimValue = c.ClaimValue,
+                                     SubOperation = c.SubOperation,
+                                     Description = c.Description,
+                                     IsActive = c.IsActive
+                                 }).FirstOrDefault<ClaimCC>();
+
+                claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
+
+                return Json(new { data = claim }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/23
+        public ActionResult ManageStudentBatches()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/23
+        public ActionResult GetStudentBatches(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<StudentBatch> studentBatchesList = (from sb in db.StudentBatch where sb.SemesterRegistrationId.Equals(id) orderby sb.StudentBatchId descending select sb).ToList();
+                return Json(new { data = studentBatchesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/23
+        [HttpGet]
+        public ActionResult AddOrEditStudentBatch(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new StudentBatch());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from sb in db.StudentBatch where sb.StudentBatchId.Equals(id) select sb).FirstOrDefault<StudentBatch>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/23
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditStudentBatch(StudentBatch studentBatch)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    StudentBatch validationRecord = (from sb in db.StudentBatch where sb.SemesterRegistrationId.Equals(studentBatch.SemesterRegistrationId) && sb.BatchName.Equals(studentBatch.BatchName) select sb).FirstOrDefault<StudentBatch>();
+
+                    if (studentBatch.StudentBatchId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Student Batch Already Exists For Selected Semester Registration"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            studentBatch.CreatedBy = "Ranga";
+                            studentBatch.CreatedDate = dateTime;
+                            studentBatch.ModifiedBy = "Ranga";
+                            studentBatch.ModifiedDate = dateTime;
+
+                            db.StudentBatch.Add(studentBatch);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        StudentBatch editingStudentBatch = (from sb in db.StudentBatch where sb.StudentBatchId.Equals(studentBatch.StudentBatchId) select sb).FirstOrDefault<StudentBatch>();
+
+                        if (editingStudentBatch.BatchName != studentBatch.BatchName || editingStudentBatch.IsActive != studentBatch.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.StudentBatchId != studentBatch.StudentBatchId)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Student Batch Already Exists For Selected Semester Registration"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingStudentBatch.BatchName = studentBatch.BatchName;
+                                editingStudentBatch.IsActive = studentBatch.IsActive;
+                                editingStudentBatch.ModifiedBy = "Ranga";
+                                editingStudentBatch.ModifiedDate = dateTime;
+
+                                db.Entry(editingStudentBatch).State = EntityState.Modified;
                                 db.SaveChanges();
 
                                 return Json(new

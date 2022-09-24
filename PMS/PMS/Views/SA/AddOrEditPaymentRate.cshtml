@@ -110,6 +110,32 @@
     <script>
         var operation;
 
+        $(function () {
+            $("#DesignationId").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Designation --"
+                }
+            });
+
+            $("#FacultyId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#DegreeId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#SpecializationId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#SubjectId").select2({
+                theme: "bootstrap4",
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -141,7 +167,8 @@
                 $("#FacultyId").val("");
                 $("#SubjectId").val("");
                 $("#DegreeId").val("");
-                $("#DesignationId").val("");
+                //$("#DesignationId").val("");
+                $("#DesignationId").val(null).change();
                 $("#SpecializationId").val("");
                 $("#RatePerHour").val("");
                 $("#paymentRateStatusList").val("true");
