@@ -296,6 +296,7 @@
     <Compile Include="ViewModels\PaymentRateVM.cs" />
     <Compile Include="ViewModels\SemesterRegistrationVM.cs" />
     <Compile Include="ViewModels\SpecializationVM.cs" />
+    <Compile Include="ViewModels\UsersVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -478,13 +479,12 @@
     <Content Include="Views\SA\ManageSemesterRegistrations.cshtml" />
     <Content Include="Views\SA\AddOrEditSemesterRegistration.cshtml" />
     <Content Include="Views\SA\ManageSemesterSubjects.cshtml" />
-<<<<<<< HEAD
     <Content Include="Views\SA\ManageClaimManagement.cshtml" />
     <Content Include="Views\SA\AddOrEditClaimManagement.cshtml" />
     <Content Include="Views\SA\ManageGroupClaim.cshtml" />
     <Content Include="Views\SA\AddOrEditGroupClaim.cshtml" />
-=======
->>>>>>> b358ac7d60b0b893f212906761c0b583fe5887c9
+    <Content Include="Views\SA\ManageUsers.cshtml" />
+    <Content Include="Views\SA\AddOrEditUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class AspNetUsers
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -27,9 +28,12 @@ namespace PMS.Models
     
         public string Id { get; set; }
         public string EmployeeNumber { get; set; }
+        [Required(ErrorMessage = "Employee Title is required")]
         public int EmployeeTitle { get; set; }
+        [Required(ErrorMessage = "First Name is required")]
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
         public string UserName { get; set; }
         public string PhoneNumber { get; set; }

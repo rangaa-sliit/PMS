@@ -1,0 +1,268 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+    Developed On:- 2022/09/19*@
+
+@model PMS.Models.AspNetUsers
+
+@{
+    ViewBag.Title = "AddOrEditUsers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageUsers", "SA")">Manage Users</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeUsersMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeUsersCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditUsers", "SA", FormMethod.Post, new { onsubmit = "return SubmitUsersForm(this)", @id = "usersForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.EmployeeTitle, "User Title: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.EmployeeTitle, (IEnumerable<SelectListItem>)ViewBag.titleList, new { @class = "form-control", @id = "TitleId", onchange = "onUsersChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.EmployeeTitle)
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.EmployeeNumber, "Empoyee Number: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.EmployeeNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Employee Number", @id = "EmployeeNumber", oninput = "onEmployeeNumberInput()" } })
+                        @Html.ValidationMessageFor(model => model.EmployeeNumber)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FirstName, "First Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @placeholder = "First Name", @id = "FirstName", oninput = "onFirstNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.FirstName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LastName, "Last Name: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Last Name", @id = "LastName", oninput = "onLastNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.LastName)
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Email, "Email: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email", @id = "Email", oninput = "onEmailInput()" } })
+                        @Html.ValidationMessageFor(model => model.Email)
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.PhoneNumber, "Contact Number: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Phone Number", @id = "PhoneNumber", oninput = "onPhoneNumberInput()" } })
+                        @Html.ValidationMessageFor(model => model.PhoneNumber)
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "FacultyId", onchange = "onFacultyChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyId)
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "usersStatusList", onchange = "onusersStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="usersSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="usersClearBtn" onclick="clearUsersForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#usersSubmitBtn").prop("disabled", true);
+                $("#usersClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeUsersMainTitle").html("Edit Degree");
+                    $("#aeUsersRateCardTitle").html("Edit Degree");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Users</li>`);
+                }
+                else {
+                    $("#aeUsersRateMainTitle").html("View Users");
+                    $("#aeUsersCardTitle").html("View Users");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Users</li>`);
+                    $("#Id").prop("disabled", true);
+                    $("#EmployeeNumber").prop("disabled", true);
+                    $("#FirstName").prop("disabled", true);
+                    $("#LastName").prop("disabled", true);
+                    $("#Email").prop("disabled", true);
+                    $("#ContactNumber").prop("disabled", true);
+                    $("#FacultyId").prop("disabled", true);
+                    $("#usersStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeUsersMainTitle").html("Add Users");
+                $("#aeUsersCardTitle").html("Add Users");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Users</li>`);
+                $("#Id").val("");
+                $("#EmployeeNumber").val("");
+                $("#FirstName").val("");
+                $("#LastName").val("");
+                $("#Email").val("");
+                $("#ContactNumber").val("");
+                $("#FacultyId").val("");
+                $("#usersStatusList").val("true");
+            }
+        })
+
+        function SubmitUsersForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#Id").val("");
+                                $("#EmployeeNumber").val("");
+                                $("#FirstName").val("");
+                                $("#LastName").val("");
+                                $("#Email").val("");
+                                $("#ContactNumber").val("");
+                                $("#FacultyId").val("");
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearUsersForm() {
+            if (operation == undefined) {
+                $("#Id").val("");
+                $("#EmployeeNumber").val("");
+                $("#FirstName").val("");
+                $("#LastName").val("");
+                $("#Email").val("");
+                $("#ContactNumber").val("");
+                $("#FacultyId").val("");
+                $("#usersStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onUserTitleChange(newUserTitle) {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+
+        function onEmployeeNumberChange() {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+        
+        function onFirstNameChange() {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+
+        function onLastNameChange() {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+
+        function onEmailChange() {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+
+        function onContactNumberInput() {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(newFaculty) {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersRateClearBtn").prop("disabled", false);
+        }
+
+        function onUsersStatusChange(newStatus) {
+            $("#usersSubmitBtn").prop("disabled", false);
+            $("#usersClearBtn").prop("disabled", false);
+        }
+    </script>
+}
+
+
+
