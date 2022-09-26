@@ -1,7 +1,7 @@
 ﻿@*Developed By:- Ranga Athapaththu
 Developed On:- 2022/09/21*@
 
-@model PMS.Custom_Classes.ClaimCC
+@model PMS.Models.Claim
 
 @{
     ViewBag.Title = "AddOrEditClaim";
@@ -134,13 +134,13 @@ Developed On:- 2022/09/21*@
             operation = window.location.pathname.toString().split('/')[4];
 
             if (operation != undefined) {
-                $("#claimSubmitBtn").prop("disabled", true);
-                $("#claimClearBtn").prop("disabled", true);
-                var modelData = @Html.Raw(Json.Encode(Model.SelectedClaimValues));
+                var modelData = JSON.parse(@Html.Raw(Json.Encode(Model.ClaimValue)));
 
                 $("#claimValue").val(modelData).change();
 
-                $("#claimValue :selected").change();
+                $("#claimSubmitBtn").prop("disabled", true);
+                $("#claimClearBtn").prop("disabled", true);
+
                 if (operation == "Edit") {
                     $("#aeClaimsMainTitle").html("Edit Claim");
                     $("#aeClaimsCardTitle").html("Edit Claim");
@@ -161,9 +161,9 @@ Developed On:- 2022/09/21*@
                 $("#aeClaimsMainTitle").html("Add Claim");
                 $("#aeClaimsCardTitle").html("Add Claim");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Claim</li>`);
-                $("#claimValue").val(null).change();
                 $("#subOperationsList").val("");
                 $("#claimStatusList").val("true");
+                $("#claimValue").val(null).change();
             }
         })
 
@@ -202,10 +202,10 @@ Developed On:- 2022/09/21*@
                             if (operation == undefined) {
                                 $("#claimName").val("");
                                 //$("#claimValue").val("");
-                                $("#claimValue").val(null).change();
                                 $("#subOperationsList").val("");
                                 $("#claimDescription").val("");
                                 $("#claimStatusList").val("true");
+                                $("#claimValue").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -229,10 +229,10 @@ Developed On:- 2022/09/21*@
             if (operation == undefined) {
                 $("#claimName").val("");
                 //$("#claimValue").val("");
-                $("#claimValue").val(null).change();
                 $("#subOperationsList").val("");
                 $("#claimDescription").val("");
                 $("#claimStatusList").val("true");
+                $("#claimValue").val(null).change();
             }
             else {
                 window.location.reload();

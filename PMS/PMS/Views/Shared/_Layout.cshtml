@@ -151,6 +151,7 @@ Developed On:- 2022/08/16*@
 
             var cPath = window.location.pathname;
             var splittedPath = cPath.split("/");
+
             var masterDataUrlArray = ['ManageInstitutes', 'AddOrEditInstitute',
                 'ManageCampuses', 'AddOrEditCampus',
                 'ManageFaculties', 'AddOrEditFaculty',
@@ -164,7 +165,25 @@ Developed On:- 2022/08/16*@
                 'ManageDesignations', 'AddOrEditDesignation'
             ];
 
-            var DegreeDetailsUrlArray = ['ManageIntakes', 'AddOrEditIntake'];
+            var accessControlUrlArray = ['ManageAccessGroups', 'AddOrEditAccessGroup',
+                'ManageAccessGroupRoles', 'AddOrEditAccessGroupRole',
+                'ManageClaims', 'AddOrEditClaim'
+            ];
+
+            var degreeDetailsUrlArray = ['ManageDegree', 'AddOrEditDegree',
+                'ManageSpecialization', 'AddOrEditSpecialization',
+                'ManageSubject', 'AddOrEditSubject',
+                'ManageIntakes', 'AddOrEditIntake'
+            ];
+
+            var semesterRegistrationUrlArray = ['ManageSemesterRegistrations', 'AddOrEditSemesterRegistration',
+                'ManageStudentBatches', 'AddOrEditStudentBatch',
+                'ManageSemesterSubjects', 'AddOrEditSemesterSubject'
+            ];
+
+            var paymentRateUrlArray = ['ManagePaymentRate', 'AddOrEditPaymentRate'];
+
+            var lecturerAppointmentUrlArray = ['ManageAppointments', 'AddOrEditAppointment'];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -178,8 +197,20 @@ Developed On:- 2022/08/16*@
             else if (masterDataUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#masterData-nav-item').addClass('active');
             }
-            else if (DegreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
+            else if (accessControlUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#accessControl-nav-item').addClass('active');
+            }
+            else if (degreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#degreeDetails-nav-item').addClass('active');
+            }
+            else if (semesterRegistrationUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#semesterRegistration-nav-item').addClass('active');
+            }
+            else if (paymentRateUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#paymentRate-nav-item').addClass('active');
+            }
+            else if (lecturerAppointmentUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#lecturerAppointment-nav-item').addClass('active');
             }
         })
     </script>

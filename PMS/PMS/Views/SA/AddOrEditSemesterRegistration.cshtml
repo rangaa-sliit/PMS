@@ -288,6 +288,9 @@ Developed On:- 2022/09/05*@
                 //$("#facultyList").val("");
                 //$("#instituteList").val("");
                 //$("#degreeList").val("");
+                $("#srFromDate").val("");
+                $("#srToDate").val("");
+                $("#semesterRegistrationStatusList").val("true");
                 $("#calendarPeriodList").val(null).change();
                 $("#intakeYearList").val(null).change();
                 $("#intakeList").val(null).change();
@@ -296,10 +299,7 @@ Developed On:- 2022/09/05*@
                 $("#facultyList").val(null).change();
                 $("#instituteList").val(null).change();
                 $("#degreeList").val(null).change();
-                $("#specializationList").val("");
-                $("#srFromDate").val("");
-                $("#srToDate").val("");
-                $("#semesterRegistrationStatusList").val("true");
+                $("#specializationList").val(null).change();
             }
         })
 
@@ -338,18 +338,26 @@ Developed On:- 2022/09/05*@
                     if (data.success) {
                         if (operation == undefined) {
                             $("#calendarYear").val("");
-                            $("#calendarPeriodList").val("");
-                            $("#intakeYearList").val("");
-                            $("#intakeList").val("");
-                            $("#academicYearList").val("");
-                            $("#academicSemesterList").val("");
-                            $("#facultyList").val("");
-                            $("#instituteList").val("");
-                            $("#degreeList").val("");
-                            $("#specializationList").val("");
+                            //$("#calendarPeriodList").val("");
+                            //$("#intakeYearList").val("");
+                            //$("#intakeList").val("");
+                            //$("#academicYearList").val("");
+                            //$("#academicSemesterList").val("");
+                            //$("#facultyList").val("");
+                            //$("#instituteList").val("");
+                            //$("#degreeList").val("");
                             $("#srFromDate").val("");
                             $("#srToDate").val("");
                             $("#semesterRegistrationStatusList").val("true");
+                            $("#calendarPeriodList").val(null).change();
+                            $("#intakeYearList").val(null).change();
+                            $("#intakeList").val(null).change();
+                            $("#academicYearList").val(null).change();
+                            $("#academicSemesterList").val(null).change();
+                            $("#facultyList").val(null).change();
+                            $("#instituteList").val(null).change();
+                            $("#degreeList").val(null).change();
+                            $("#specializationList").val(null).change();
                         }
 
                         $.notify(data.message, {
@@ -370,18 +378,26 @@ Developed On:- 2022/09/05*@
         function clearSemesterRegistrationForm() {
             if (operation == undefined) {
                 $("#calendarYear").val("");
-                $("#calendarPeriodList").val("");
-                $("#intakeYearList").val("");
-                $("#intakeList").val("");
-                $("#academicYearList").val("");
-                $("#academicSemesterList").val("");
-                $("#facultyList").val("");
-                $("#instituteList").val("");
-                $("#degreeList").val("");
-                $("#specializationList").val("");
+                //$("#calendarPeriodList").val("");
+                //$("#intakeYearList").val("");
+                //$("#intakeList").val("");
+                //$("#academicYearList").val("");
+                //$("#academicSemesterList").val("");
+                //$("#facultyList").val("");
+                //$("#instituteList").val("");
+                //$("#degreeList").val("");
                 $("#srFromDate").val("");
                 $("#srToDate").val("");
                 $("#semesterRegistrationStatusList").val("true");
+                $("#calendarPeriodList").val(null).change();
+                $("#intakeYearList").val(null).change();
+                $("#intakeList").val(null).change();
+                $("#academicYearList").val(null).change();
+                $("#academicSemesterList").val(null).change();
+                $("#facultyList").val(null).change();
+                $("#instituteList").val(null).change();
+                $("#degreeList").val(null).change();
+                $("#specializationList").val(null).change();
             }
             else {
                 window.location.reload();
@@ -443,9 +459,9 @@ Developed On:- 2022/09/05*@
             else {
                 $("#degreeList").find('option').not(':first').remove();
             }
-            $("#degreeList").val("");
+            $("#degreeList").val(null).change();
             $("#specializationList").find('option').not(':first').remove();
-            $("#specializationList").val("");
+            $("#specializationList").val(null).change();
         }
 
         function onInstituteChange(instituteId) {
@@ -458,9 +474,9 @@ Developed On:- 2022/09/05*@
             else {
                 $("#degreeList").find('option').not(':first').remove();
             }
-            $("#degreeList").val("");
+            $("#degreeList").val(null).change();
             $("#specializationList").find('option').not(':first').remove();
-            $("#specializationList").val("");
+            $("#specializationList").val(null).change();
         }
 
         function loadDegrees() {
@@ -504,7 +520,7 @@ Developed On:- 2022/09/05*@
                     $("#specializationList option:first").after(dynamicContent);
                 }
             });
-            $("#specializationList").val("");
+            $("#specializationList").val(null).change();
         }
 
         function onSpecializationChange(specialization) {

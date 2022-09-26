@@ -161,10 +161,10 @@
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Degree</li>`);
                 //$("#FacultyId").val("");
                 //$("#InstituteId").val("");
+                $("#degreeStatusList").val("true");
                 $("#FacultyId").val(null).change();
                 $("#InstituteId").val(null).change();
-                $("#DepartmentId").val("");
-                $("#degreeStatusList").val("true");
+                $("#DepartmentId").val(null).change();
             }
         })
 
@@ -186,10 +186,12 @@
                                 $("#Code").val("");
                                 $("#Name").val("");
                                 $("#Description").val("");
-                                $("#FacultyId").val("");
-                                $("#InstituteId").val("");
-                                $("#DepartmentId").val("");
+                                //$("#FacultyId").val("");
+                                //$("#InstituteId").val("");
                                 $("#degreeStatusList").val("true");
+                                $("#FacultyId").val(null).change();
+                                $("#InstituteId").val(null).change();
+                                $("#DepartmentId").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -214,10 +216,12 @@
                 $("#Code").val("");
                 $("#Name").val("");
                 $("#Description").val("");
-                $("#FacultyId").val("");
-                $("#InstituteId").val("");
-                $("#DepartmentId").val("");
+                //$("#FacultyId").val("");
+                //$("#InstituteId").val("");
                 $("#degreeStatusList").val("true");
+                $("#FacultyId").val(null).change();
+                $("#InstituteId").val(null).change();
+                $("#DepartmentId").val(null).change();
             }
             else {
                 window.location.reload();

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PMS.Custom_Classes;
+using PMS.Functions;
 using PMS.Models;
 using PMS.ViewModels;
 using System;
@@ -2943,30 +2944,6 @@ namespace PMS.Controllers
                 facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.facultyList = facultyList;
 
-                var degree = (from d in db.Degree
-                              where d.IsActive.Equals(true)
-                              select new
-                              {
-                                  Text = d.Name,
-                                  Value = d.DegreeId
-                              }).ToList();
-
-                List<SelectListItem> degreeList = new SelectList(degree, "Value", "Text").ToList();
-                degreeList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
-                ViewBag.degreeList = degreeList;
-
-                var specialization = (from sp in db.Specialization
-                                      where sp.IsActive.Equals(true)
-                                      select new
-                                      {
-                                          Text = sp.Name,
-                                          Value = sp.SpecializationId
-                                      }).ToList();
-
-                List<SelectListItem> specializationList = new SelectList(specialization, "Value", "Text").ToList();
-                specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
-                ViewBag.specializationList = specializationList;
-
                 var subject = (from s in db.Subject
                                where s.IsActive.Equals(true)
                                select new
@@ -2981,12 +2958,87 @@ namespace PMS.Controllers
 
                 if (id == 0)
                 {
+                    List<SelectListItem> degreeList = new List<SelectListItem>();
+                    degreeList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                    ViewBag.degreeList = degreeList;
+
+                    List<SelectListItem> specializationList = new List<SelectListItem>();
+                    specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                    ViewBag.specializationList = specializationList;
+
                     return View(new PaymentRate());
                 }
                 else
                 {
-                    return View((from pr in db.PaymentRate where pr.Id.Equals(id) select pr).FirstOrDefault<PaymentRate>());
+                    PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(id) select pr).FirstOrDefault<PaymentRate>();
+
+                    if(editingPaymentRate.FacultyId != null)
+                    {
+                        var degrees = (from d in db.Degree
+                                       where d.FacultyId == editingPaymentRate.FacultyId && d.IsActive.Equals(true)
+                                       select new
+                                       {
+                                           Text = d.Name,
+                                           Value = d.DegreeId
+                                       }).ToList();
+
+                        List<SelectListItem> degreeList = new SelectList(degrees, "Value", "Text").ToList();
+                        degreeList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                        ViewBag.degreeList = degreeList;
+
+                        if(editingPaymentRate.DegreeId != null)
+                        {
+                            var specializations = (from s in db.Specialization
+                                                   where s.DegreeId == editingPaymentRate.DegreeId && s.IsActive.Equals(true)
+                                                   select new
+                                                   {
+                                                       Text = s.Name,
+                                                       Value = s.SpecializationId
+                                                   }).ToList();
+
+                            List<SelectListItem> specializationList = new SelectList(specializations, "Value", "Text").ToList();
+                            specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                            ViewBag.specializationList = specializationList;
+                        }
+                        else
+                        {
+                            List<SelectListItem> specializationList = new List<SelectListItem>();
+                            specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                            ViewBag.specializationList = specializationList;
+                        }
+                    }
+                    else
+                    {
+                        List<SelectListItem> degreeList = new List<SelectListItem>();
+                        degreeList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                        ViewBag.degreeList = degreeList;
+
+                        List<SelectListItem> specializationList = new List<SelectListItem>();
+                        specializationList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                        ViewBag.specializationList = specializationList;
+                    }
+
+                    return View(editingPaymentRate);
                 }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/26
+        [HttpGet]
+        public ActionResult GetDegreesByFaculty(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var degrees = (from d in db.Degree
+                               where d.FacultyId.Value == id && d.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = d.Name,
+                                   Value = d.DegreeId
+                               }).ToList();
+
+                return Json(degrees, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -4023,29 +4075,13 @@ namespace PMS.Controllers
 
             if (id == 0)
             {
-                ClaimCC claim = new ClaimCC();
-                claim.SelectedClaimValues = new List<string>();
-                return View(claim);
+                return View(new Claim());
             }
             else
             {
                 using (PMSEntities db = new PMSEntities())
                 {
-                    ClaimCC claim = (from c in db.Claim
-                                     where c.ClaimId.Equals(id)
-                                     select new ClaimCC
-                                     {
-                                         ClaimId = c.ClaimId,
-                                         ClaimName = c.ClaimName,
-                                         ClaimValue = c.ClaimValue,
-                                         SubOperation = c.SubOperation,
-                                         Description = c.Description,
-                                         IsActive = c.IsActive
-                                     }).FirstOrDefault<ClaimCC>();
-
-                    claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
-
-                    return View(claim);
+                    return View((from c in db.Claim where c.ClaimId.Equals(id) select c).FirstOrDefault<Claim>());
                 }
             }
         }
@@ -4233,24 +4269,25 @@ namespace PMS.Controllers
             //    });
             //}
 
-            using (PMSEntities db = new PMSEntities())
-            {
-                ClaimCC claim = (from c in db.Claim
-                                 where c.ClaimId.Equals(6)
-                                 select new ClaimCC
-                                 {
-                                     ClaimId = c.ClaimId,
-                                     ClaimName = c.ClaimName,
-                                     ClaimValue = c.ClaimValue,
-                                     SubOperation = c.SubOperation,
-                                     Description = c.Description,
-                                     IsActive = c.IsActive
-                                 }).FirstOrDefault<ClaimCC>();
+            //using (PMSEntities db = new PMSEntities())
+            //{
+            //    ClaimCC claim = (from c in db.Claim
+            //                     where c.ClaimId.Equals(6)
+            //                     select new ClaimCC
+            //                     {
+            //                         ClaimId = c.ClaimId,
+            //                         ClaimName = c.ClaimName,
+            //                         ClaimValue = c.ClaimValue,
+            //                         SubOperation = c.SubOperation,
+            //                         Description = c.Description,
+            //                         IsActive = c.IsActive
+            //                     }).FirstOrDefault<ClaimCC>();
 
-                claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
+            //    claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
 
-                return Json(new { data = claim }, JsonRequestBehavior.AllowGet);
-            }
+            //    return Json(new { data = claim }, JsonRequestBehavior.AllowGet);
+            //}
+            return Json(new { data = "" }, JsonRequestBehavior.AllowGet);
         }
 
         //Developed By:- Ranga Athapaththu
@@ -4358,6 +4395,223 @@ namespace PMS.Controllers
                                     success = true,
                                     message = "Successfully Updated"
                                 }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/26
+        public ActionResult ManageUsers()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/26
+        public ActionResult GetUsers()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<UserVM> usersList = (from u in db.AspNetUsers
+                                          join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                          join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
+                                          from fac in u_f.DefaultIfEmpty()
+                                          orderby u.EmployeeNumber ascending
+                                          select new UserVM
+                                          {
+                                              Id = u.Id,
+                                              EmployeeNumber = u.EmployeeNumber,
+                                              EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                              Email = u.Email,
+                                              PhoneNumber = u.PhoneNumber,
+                                              FacultyName = fac.FacultyName,
+                                              IsActive = u.IsActive
+                                          }).ToList();
+                return Json(new { data = usersList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/26
+        [HttpGet]
+        public ActionResult AddOrEditUser(string id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var titles = (from t in db.Title
+                              where t.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = t.TitleName,
+                                  Value = t.TitleId
+                              }).ToList();
+
+                List<SelectListItem> titleList = new SelectList(titles, "Value", "Text").ToList();
+                ViewBag.titleList = titleList;
+
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                ViewBag.facultyList = facultyList;
+
+                if (id == null)
+                {
+                    return View(new AspNetUsers());
+                }
+                else
+                {
+                    return View((from u in db.AspNetUsers where u.Id.Equals(id) select u).FirstOrDefault<AspNetUsers>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/26
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditUser(AspNetUsers user)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    UserFunctions usrFunctions = new UserFunctions();
+                    string employeeNumber = usrFunctions.GenerateEmployeeNumber(usrFunctions.ExtractNumbers(user.EmployeeNumber));
+                    AspNetUsers validationRecord = (from u in db.AspNetUsers
+                                                    where u.EmployeeNumber.Equals(employeeNumber) || ((u.FirstName.Equals(user.FirstName)) && (u.LastName.Equals(user.LastName))) 
+                                                    || u.Email.Equals(user.Email) select u).FirstOrDefault<AspNetUsers>();
+
+                    if (user.Id == null)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This User Already Exist"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            if(new UserFunctions().IsValidSLIITEmail(user.Email) == true)
+                            {
+                                user.Id = Guid.NewGuid().ToString();
+                                user.EmployeeNumber = employeeNumber;
+                                user.UserName = user.Email.ToString().Substring(0, user.Email.ToString().IndexOf("@"));
+                                user.CreatedBy = "Ranga";
+                                user.CreatedDate = dateTime;
+                                user.ModifiedBy = "Ranga";
+                                user.ModifiedDate = dateTime;
+                                user.EmailConfirmed = false;
+                                user.PhoneNumberConfirmed = false;
+                                user.TwoFactorEnabled = false;
+                                user.AccessFailedCount = 0;
+                                user.LockoutEnabled = true;
+                                user.SecurityStamp = Guid.NewGuid().ToString();
+
+                                db.AspNetUsers.Add(user);
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Saved"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "Invalid SLIIT Email"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AspNetUsers editingUser = (from u in db.AspNetUsers where u.Id.Equals(user.Id) select u).FirstOrDefault<AspNetUsers>();
+
+                        if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle 
+                            || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName 
+                            || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber 
+                            || editingUser.FacultyId != user.FacultyId || editingUser.IsActive != user.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.Id != user.Id)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This User Already Exist"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                if(new UserFunctions().IsValidSLIITEmail(user.Email) == true)
+                                {
+                                    editingUser.EmployeeNumber = employeeNumber;
+                                    editingUser.EmployeeTitle = user.EmployeeTitle;
+                                    editingUser.FirstName = user.FirstName;
+                                    editingUser.LastName = user.LastName;
+                                    editingUser.Email = user.Email;
+                                    editingUser.UserName = user.Email.ToString().Substring(0, user.Email.ToString().IndexOf("@")); ;
+                                    editingUser.PhoneNumber = user.PhoneNumber;
+                                    editingUser.FacultyId = user.FacultyId;
+                                    editingUser.IsActive = user.IsActive;
+                                    editingUser.ModifiedBy = "Ranga";
+                                    editingUser.ModifiedDate = dateTime;
+
+                                    db.Entry(editingUser).State = EntityState.Modified;
+                                    db.SaveChanges();
+
+                                    return Json(new
+                                    {
+                                        success = true,
+                                        message = "Successfully Updated"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "Invalid SLIIT Email"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
                             }
                         }
                         else

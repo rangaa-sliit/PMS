@@ -1,5 +1,5 @@
 ﻿@*Developed By:- Dulanjalee Wickremasinghe
-    Developed On:- 2022/08/25*@
+Developed On:- 2022/08/25*@
 
 @model PMS.Models.Specialization
 
@@ -158,10 +158,10 @@
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Specialization</li>`);
                 //$("#DegreeId").val("");
                 //$("#InstituteId").val("");
+                $("#specializationStatusList").val("true");
                 $("#DegreeId").val(null).change();
                 $("#InstituteId").val(null).change();
-                $("#DepartmentId").val("");
-                $("#specializationStatusList").val("true");
+                $("#DepartmentId").val(null).change();
             }
         })
 
@@ -182,10 +182,12 @@
                             if (operation == undefined) {
                                 $("#Code").val("");
                                 $("#Name").val("");
-                                $("#DegreeId").val("");
-                                $("#InstituteId").val("");
-                                $("#DepartmentId").val("");
+                                //$("#DegreeId").val("");
+                                //$("#InstituteId").val("");
                                 $("#specializationStatusList").val("true");
+                                $("#DegreeId").val(null).change();
+                                $("#InstituteId").val(null).change();
+                                $("#DepartmentId").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -209,10 +211,12 @@
             if (operation == undefined) {
                 $("#Code").val("");
                 $("#Name").val("");
-                $("#DegreeId").val("");
-                $("#InstituteId").val("");
-                $("#DepartmentId").val("");
+                //$("#DegreeId").val("");
+                //$("#InstituteId").val("");
                 $("#specializationStatusList").val("true");
+                $("#DegreeId").val(null).change();
+                $("#InstituteId").val(null).change();
+                $("#DepartmentId").val(null).change();
             }
             else {
                 window.location.reload();

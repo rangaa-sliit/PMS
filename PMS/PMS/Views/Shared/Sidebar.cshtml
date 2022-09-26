@@ -55,7 +55,7 @@ Developed On:- 2022/08/16*@
         Access Control
     </div>
 
-    <li class="nav-item" id="masterData-nav-item">
+    <li class="nav-item" id="accessControl-nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessControl" aria-expanded="true" aria-controls="collapseAccessControl">
             <i class="fas fa-fw fa-users"></i>
             <span>User Access</span>
@@ -65,6 +65,7 @@ Developed On:- 2022/08/16*@
                 <h6 class="collapse-header">User Access:</h6>
                 <a class="collapse-item" href="@Url.Action("ManageAccessGroups", "SA")">Access Groups</a>
                 <a class="collapse-item" href="@Url.Action("ManageClaims", "SA")">Claims</a>
+                <a class="collapse-item" href="@Url.Action("ManageUsers", "SA")">System Users</a>
             </div>
         </div>
     </li>
@@ -90,7 +91,7 @@ Developed On:- 2022/08/16*@
             </div>
         </div>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" id="semesterRegistration-nav-item">
         <a class="nav-link" href="@Url.Action("ManageSemesterRegistrations", "SA")">
             <i class="fas fa-fw fa-calendar-alt"></i>
             <span>Semester Registrations</span>
@@ -103,13 +104,13 @@ Developed On:- 2022/08/16*@
         PMS Functions
     </div>
 
-    <li class="nav-item">
+    <li class="nav-item" id="paymentRate-nav-item">
         <a class="nav-link" href="@Url.Action("ManagePaymentRate", "SA")">
             <i class="fas fa-fw fa-money-check-alt"></i>
             <span>Payment Rates</span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" id="lecturerAppointment-nav-item">
         <a class="nav-link" href="@Url.Action("ManageAppointments", "SA")">
             <i class="fas fa-fw fa-briefcase"></i>
             <span>Lecturer Appointments</span>

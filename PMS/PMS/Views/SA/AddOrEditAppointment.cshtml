@@ -156,10 +156,10 @@ Developed On:- 2022/08/26*@
                 //$("#employeeList").val("");
                 //$("#designationList").val("");
                 //$("#appointmentTypeList").val("");
+                $("#appointmentStatusList").val("true");
                 $("#employeeList").val(null).change();
                 $("#designationList").val(null).change();
                 $("#appointmentTypeList").val(null).change();
-                $("#appointmentStatusList").val("true");
             }
         })
 
@@ -185,12 +185,15 @@ Developed On:- 2022/08/26*@
                             $("#loader").hide();
                             if (data.success) {
                                 if (operation == undefined) {
-                                    $("#employeeList").val("");
-                                    $("#designationList").val("");
-                                    $("#appointmentTypeList").val("");
+                                    //$("#employeeList").val("");
+                                    //$("#designationList").val("");
+                                    //$("#appointmentTypeList").val("");
                                     $("#appointmentFrom").val("");
                                     $("#appointmentTo").val("");
                                     $("#appointmentStatusList").val("true");
+                                    $("#employeeList").val(null).change();
+                                    $("#designationList").val(null).change();
+                                    $("#appointmentTypeList").val(null).change();
                                 }
 
                                 $.notify(data.message, {
@@ -213,12 +216,15 @@ Developed On:- 2022/08/26*@
 
         function clearAppointmentForm() {
             if (operation == undefined) {
-                $("#employeeList").val("");
-                $("#designationList").val("");
-                $("#appointmentTypeList").val("");
+                //$("#employeeList").val("");
+                //$("#designationList").val("");
+                //$("#appointmentTypeList").val("");
                 $("#appointmentFrom").val("");
                 $("#appointmentTo").val("");
                 $("#appointmentStatusList").val("true");
+                $("#employeeList").val(null).change();
+                $("#designationList").val(null).change();
+                $("#appointmentTypeList").val(null).change();
             }
             else {
                 window.location.reload();

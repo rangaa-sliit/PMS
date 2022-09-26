@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Claim
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,7 +22,10 @@ namespace PMS.Models
         }
     
         public int ClaimId { get; set; }
+        [Required(ErrorMessage = "Claim Name is required")]
+        [MaxLength(256, ErrorMessage = "Maximum 256 characters exceeded")]
         public string ClaimName { get; set; }
+        [Required(ErrorMessage = "Claim Value is required")]
         public string ClaimValue { get; set; }
         public string SubOperation { get; set; }
         public string Description { get; set; }
