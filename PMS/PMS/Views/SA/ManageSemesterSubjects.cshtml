@@ -123,24 +123,24 @@ Developed On:- 2022/09/09*@
                             <div class="card-body" id="ssColumn-right">
                                 @for (int i = 0; i < Model.SubjectList.Count; i++)
                                 {
-                                <div class="form-check">
-                                    @if (Model.ViewingSemesterSubjectIdList.Count != 0)
-                                    {
-                                        if (Model.ViewingSemesterSubjectIdList.FindIndex(ss => ss == Model.SubjectList[i].SubjectId) != -1)
+                                    <div class="form-check">
+                                        @if (Model.ViewingSemesterSubjectIdList.Count != 0)
                                         {
-                                            <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" checked />
+                                            if (Model.ViewingSemesterSubjectIdList.FindIndex(ss => ss == Model.SubjectList[i].SubjectId) != -1)
+                                            {
+                                                <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" checked />
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" />
+                                            }
                                         }
                                         else
                                         {
                                             <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" />
                                         }
-                                    }
-                                    else
-                                    {
-                                        <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" />
-                                    }
-                                    <label class="form-check-label">@Model.SubjectList[i].SubjectCode - @Model.SubjectList[i].SubjectName</label>
-                                </div>
+                                        <label class="form-check-label">@Model.SubjectList[i].SubjectCode - @Model.SubjectList[i].SubjectName</label>
+                                    </div>
                                 }
                             </div>
                         </div>

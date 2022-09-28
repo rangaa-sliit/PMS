@@ -165,6 +165,14 @@ table.dataTable tbody td {
     padding-bottom: 3px;
 }
 
+#userGroupCard, #userRoleCard, #userClaimCard {
+    height: 280px;
+}
+
+#userGroupsCardBody, #userRolesCardBody, #userClaimsCardBody {
+    overflow: auto;
+}
+
 /*#ssColumn-left {
     float: left;
     width: 58.33%;

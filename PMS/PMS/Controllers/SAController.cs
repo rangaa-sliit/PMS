@@ -4641,5 +4641,222 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/27
+        public ActionResult ManageUserClaims(string id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                UserVM user = (from u in db.AspNetUsers
+                            join t in db.Title on u.EmployeeTitle equals t.TitleId
+                            where u.Id.Equals(id)
+                            select new UserVM
+                            {
+                                EmployeeNumber = u.EmployeeNumber,
+                                EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName
+                            }).FirstOrDefault<UserVM>();
+
+                ViewBag.userData = user;
+
+                UserClaimCC userClaim = new UserClaimCC {
+                    UserId = id
+                };
+
+                List<AccessGroup> accessGroups = (from ag in db.AccessGroup where ag.IsActive.Equals(true) select ag).ToList();
+                userClaim.UserGroups = accessGroups;
+
+                List<Claim> claims = (from c in db.Claim where c.IsActive.Equals(true) select c).ToList();
+                userClaim.Claims = claims;
+
+                List<AspNetRoles> selectedUserRoles = (from ur in db.AspNetUserRoles
+                                                       join r in db.AspNetRoles on ur.RoleId equals r.Id
+                                                       where ur.UserId.Equals(id) && ur.IsActive.Equals(true)
+                                                       select r).ToList();
+
+                if(selectedUserRoles.Count != 0)
+                {
+                    userClaim.SelectedUserGroupIds = selectedUserRoles.Distinct().Select(r => r.AccessGroupId).ToList();
+                    userClaim.SelectedUserRoleIds = selectedUserRoles.Select(r => r.Id).ToList();
+
+                    List<AspNetRoles> userRolesByGroups = (from r in db.AspNetRoles where userClaim.SelectedUserGroupIds.Select(sr => sr).Contains(r.AccessGroupId) select r).ToList();
+                    userClaim.UserRoles = userRolesByGroups;
+                }
+                else
+                {
+                    userClaim.SelectedUserGroupIds = new List<int>();
+                    userClaim.SelectedUserRoleIds = new List<string>();
+                    userClaim.UserRoles = new List<AspNetRoles>();
+                }
+
+                List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
+                userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.Id).ToList();
+
+                return View(userClaim);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/28
+        [HttpPost]
+        public ActionResult GetUserRolesByAccessGroups(UserClaimCC userClaimCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AspNetRoles> userRoles = new List<AspNetRoles>();
+
+                if (userClaimCC.SelectedUserGroupIds.Count != 0)
+                {
+                    userRoles = (from ag in db.AccessGroup
+                                 join r in db.AspNetRoles on ag.AccessGroupId equals r.AccessGroupId
+                                 where userClaimCC.SelectedUserGroupIds.Contains(ag.AccessGroupId) && r.IsActive.Equals(true)
+                                 select r).ToList();
+                }
+
+                return Json(userRoles, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/09/28
+        [HttpPost]
+        public ActionResult AddOrEditUserClaim(UserClaimCC userClaimCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    var passingUserGroups = new JavaScriptSerializer().Deserialize<List<int>>(userClaimCC.passingUserGroupIds).ToList();
+                    var passingUserRoles = new JavaScriptSerializer().Deserialize<List<string>>(userClaimCC.passingUserRoleIds).ToList();
+                    var passingUserClaims = new JavaScriptSerializer().Deserialize<List<int>>(userClaimCC.passingUserClaimIds).ToList();
+
+                    List<AspNetUserRoles> userRoles = (from ur in db.AspNetUserRoles where ur.UserId.Equals(userClaimCC.UserId) select ur).ToList();
+
+                    List<AspNetUserClaims> userClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(userClaimCC.UserId) select uc).ToList();
+
+                    if(passingUserRoles.Count != 0)
+                    {
+                        for(int i = 0; i < passingUserRoles.Count; i++)
+                        {
+                            if(userRoles.Find(ur => ur.RoleId == passingUserRoles[i]) == null)
+                            {
+                                AspNetUserRoles userRoleObj = new AspNetUserRoles();
+                                userRoleObj.UserId = userClaimCC.UserId;
+                                userRoleObj.RoleId = passingUserRoles[i];
+                                userRoleObj.CreatedBy = "Ranga";
+                                userRoleObj.CreatedDate = dateTime;
+                                userRoleObj.ModifiedBy = "Ranga";
+                                userRoleObj.ModifiedDate = dateTime;
+                                userRoleObj.IsActive = true;
+
+                                db.AspNetUserRoles.Add(userRoleObj);
+                            }
+                            else
+                            {
+                                int matchingIndex = userRoles.FindIndex(ur => ur.RoleId == passingUserRoles[i]);
+                                if (userRoles[matchingIndex].IsActive == false)
+                                {
+                                    userRoles[matchingIndex].IsActive = true;
+                                    userRoles[matchingIndex].ModifiedBy = "Ranga";
+                                    userRoles[matchingIndex].ModifiedDate = dateTime;
+
+                                    db.Entry(userRoles[matchingIndex]).State = EntityState.Modified;
+                                }
+                            }
+                        }
+
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        if(userRoles.Count != 0)
+                        {
+                            for(int i = 0; i < userRoles.Count; i++)
+                            {
+                                userRoles[i].IsActive = false;
+                                userRoles[i].ModifiedBy = "Ranga";
+                                userRoles[i].ModifiedDate = dateTime;
+
+                                db.Entry(userRoles[i]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
+                        }
+                    }
+
+                    if (passingUserClaims.Count != 0)
+                    {
+                        for (int i = 0; i < passingUserClaims.Count; i++)
+                        {
+                            if (userClaims.Find(uc => uc.ClaimId == passingUserClaims[i]) == null)
+                            {
+                                AspNetUserClaims userClaimObj = new AspNetUserClaims();
+                                userClaimObj.UserId = userClaimCC.UserId;
+                                userClaimObj.ClaimId = passingUserClaims[i];
+                                userClaimObj.CreatedBy = "Ranga";
+                                userClaimObj.CreatedDate = dateTime;
+                                userClaimObj.ModifiedBy = "Ranga";
+                                userClaimObj.ModifiedDate = dateTime;
+                                userClaimObj.IsActive = true;
+
+                                db.AspNetUserClaims.Add(userClaimObj);
+                            }
+                            else
+                            {
+                                int matchingIndex = userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]);
+                                if (userClaims[matchingIndex].IsActive == false)
+                                {
+                                    userClaims[matchingIndex].IsActive = true;
+                                    userClaims[matchingIndex].ModifiedBy = "Ranga";
+                                    userClaims[matchingIndex].ModifiedDate = dateTime;
+
+                                    db.Entry(userClaims[matchingIndex]).State = EntityState.Modified;
+                                }
+                            }
+                        }
+
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        if (userClaims.Count != 0)
+                        {
+                            for (int i = 0; i < userClaims.Count; i++)
+                            {
+                                userClaims[i].IsActive = false;
+                                userClaims[i].ModifiedBy = "Ranga";
+                                userClaims[i].ModifiedDate = dateTime;
+
+                                db.Entry(userClaims[i]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
+                        }
+                    }
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Saved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }
