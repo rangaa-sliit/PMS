@@ -45,6 +45,7 @@ namespace PMS.Models
         public string UserName { get; set; }
         [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string PhoneNumber { get; set; }
+        public Nullable<int> UserCategory { get; set; }
         public Nullable<int> FacultyId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
@@ -73,6 +74,7 @@ namespace PMS.Models
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         public virtual Faculty Faculty { get; set; }
         public virtual Title Title { get; set; }
+        public virtual UserCategory UserCategory1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

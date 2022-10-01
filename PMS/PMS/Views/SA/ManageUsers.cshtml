@@ -110,6 +110,18 @@ Developed On:- 2022/09/26*@
                     }
                 },
                 {
+                    "title": "User Category",
+                    "data": "UserCategory",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
                     "title": "Faculty",
                     "data": "FacultyName",
                     "render": function (data) {

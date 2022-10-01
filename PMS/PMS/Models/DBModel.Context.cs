@@ -27,6 +27,7 @@ namespace PMS.Models
         }
     
         public virtual DbSet<AccessGroup> AccessGroup { get; set; }
+        public virtual DbSet<AccessGroupClaims> AccessGroupClaims { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
         public virtual DbSet<AppointmentType> AppointmentType { get; set; }
         public virtual DbSet<ApprovalStages> ApprovalStages { get; set; }
@@ -57,5 +58,6 @@ namespace PMS.Models
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Title> Title { get; set; }
+        public virtual DbSet<UserCategory> UserCategory { get; set; }
     }
 }

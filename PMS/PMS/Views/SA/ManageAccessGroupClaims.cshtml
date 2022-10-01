@@ -1,0 +1,191 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/10/01*@
+
+@{
+    ViewBag.Title = "ManageAccessGroupClaims";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageAccessGroups", "SA")">Manage Access Groups</a></li>
+            <li class="breadcrumb-item active">Manage Access Group Claims</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Access Group Claims</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Access Group Claims</h6>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <div class="table-responsive">
+                <table id="accessGroupClaimsTbl" class="table table-bordered data-table nowrap"></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="accessGroupRolesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="accessGroupRolesModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accessGroupRolesModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="accessGroupRolesFormContent">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var accessGroupClaimsTbl, accessGroupRolesFormOpenAction, oldRoleName, oldRoleStatus;
+
+        var accessGroupId = window.location.pathname.toString().split('/')[3];
+
+        accessGroupClaimsTbl = $("#accessGroupClaimsTbl").DataTable({
+            "scrollY": "30vh",
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetAccessGroupClaims", "SA")/" + accessGroupId,
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": "Id",
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")/` + data + `', 'View')">View Claims</a>`
+                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")/` + data + `', 'Edit')">Edit Claims</a></div></div>`
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
+                },
+                {
+                    "title": "Claim Name",
+                    "data": "ClaimName"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Claims Found!"
+            }
+        })
+
+        function PopupAccessGroupRolesForm(url, action) {
+            $.get(url)
+                .done(function (response) {
+                    $("#accessGroupRolesFormContent").html(response);
+                    $("#accessGroupRolesModal").modal("show");
+
+                    if (action == "Add") {
+                        accessGroupRolesFormOpenAction = "Add";
+                        $("#accessGroupRolesModalLabel").html("Add Role");
+                        $("#Id").val("");
+                        $("#AccessGroupId").val(accessGroupId);
+                        $("#roleStatusList").val("true");
+                    }
+                    else {
+                        $("#accessGroupRoleSubmitBtn").prop("disabled", true);
+                        $("#accessGroupRoleClearBtn").prop("disabled", true);
+                        if (action == "Edit") {
+                            accessGroupRolesFormOpenAction = "Edit";
+                            $("#accessGroupRolesModalLabel").html("Edit Role");
+                            oldRoleName = $("#roleName").val();
+                            oldRoleStatus = $("#roleStatusList :selected").val();
+                        }
+                        else {
+                            accessGroupRolesFormOpenAction = "View";
+                            $("#accessGroupRolesModalLabel").html("View Role");
+                            $("#roleName").prop("disabled", true);
+                            $("#roleStatusList").prop("disabled", true);
+                        }
+                    }
+                })
+        }
+
+        function SubmitAccessGroupRoleForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            $("#accessGroupRolesModal").modal("hide");
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            });
+
+                            accessGroupRolesTbl.ajax.reload();
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            });
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearAccessGroupRoleForm() {
+            if (accessGroupRolesFormOpenAction == "Add") {
+                $("#roleName").val("");
+                $("#roleStatusList").val("true");
+            }
+            else if (accessGroupRolesFormOpenAction == "Edit") {
+                $("#roleName").val(oldRoleName);
+                $("#roleStatusList").val(oldRoleStatus);
+            }
+        }
+
+        function onRoleNameInput() {
+            $("#accessGroupRoleSubmitBtn").prop("disabled", false);
+            $("#accessGroupRoleClearBtn").prop("disabled", false);
+        }
+
+        function onRoleStatusChange(newStatus) {
+            $("#accessGroupRoleSubmitBtn").prop("disabled", false);
+            $("#accessGroupRoleClearBtn").prop("disabled", false);
+        }
+    </script>
+}

@@ -2216,7 +2216,18 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<Subject> subjectList = (from s in db.Subject orderby s.SubjectId descending select s).ToList();
+                List<SubjectVM> subjectList = (from s in db.Subject
+                                               join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                               from deg in s_d.DefaultIfEmpty()
+                                               orderby s.SubjectId descending
+                                               select new SubjectVM {
+                                                   SubjectId = s.SubjectId,
+                                                   SubjectCode = s.SubjectCode,
+                                                   SubjectName = s.SubjectName,
+                                                   DegreeOrCommon = s.IsCommon == true ? "-- Common Subject --" : deg.Name,
+                                                   IsActive = s.IsActive
+                                               }).ToList();
+
                 return Json(new { data = subjectList }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -2226,13 +2237,24 @@ namespace PMS.Controllers
         [HttpGet]
         public ActionResult AddOrEditSubject(int id = 0)
         {
-            if (id == 0)
+            using (PMSEntities db = new PMSEntities())
             {
-                return View(new Subject());
-            }
-            else
-            {
-                using (PMSEntities db = new PMSEntities())
+                var degrees = (from d in db.Degree
+                               where d.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = d.Name,
+                                   Value = d.DegreeId
+                               }).ToList();
+
+                List<SelectListItem> degreeList = new SelectList(degrees, "Value", "Text").ToList();
+                ViewBag.degreeList = degreeList;
+
+                if (id == 0)
+                {
+                    return View(new Subject());
+                }
+                else
                 {
                     return View((from s in db.Subject where s.SubjectId.Equals(id) select s).FirstOrDefault<Subject>());
                 }
@@ -2305,7 +2327,8 @@ namespace PMS.Controllers
                     {
                         Subject editingSubject = (from i in db.Subject where i.SubjectId.Equals(subject.SubjectId) select i).FirstOrDefault<Subject>();
 
-                        if (editingSubject.SubjectCode != subject.SubjectCode || editingSubject.SubjectName != subject.SubjectName || editingSubject.IsActive != subject.IsActive)
+                        if (editingSubject.SubjectCode != subject.SubjectCode || editingSubject.SubjectName != subject.SubjectName 
+                            || editingSubject.IsCommon != subject.IsCommon || editingSubject.DegreeId != subject.DegreeId || editingSubject.IsActive != subject.IsActive)
                         {
                             if (validationRecord != null && validationRecord.SubjectId != subject.SubjectId)
                             {
@@ -2341,6 +2364,8 @@ namespace PMS.Controllers
                             {
                                 editingSubject.SubjectCode = subject.SubjectCode;
                                 editingSubject.SubjectName = subject.SubjectName;
+                                editingSubject.IsCommon = subject.IsCommon;
+                                editingSubject.DegreeId = subject.DegreeId;
                                 editingSubject.IsActive = subject.IsActive;
                                 editingSubject.ModifiedBy = "Dulanjalee";
                                 editingSubject.ModifiedDate = dateTime;
@@ -4440,6 +4465,8 @@ namespace PMS.Controllers
             {
                 List<UserVM> usersList = (from u in db.AspNetUsers
                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                          join uc in db.UserCategory on u.UserCategory equals uc.Id into u_uc
+                                          from uCat in u_uc.DefaultIfEmpty()
                                           join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                           from fac in u_f.DefaultIfEmpty()
                                           orderby u.EmployeeNumber ascending
@@ -4450,6 +4477,7 @@ namespace PMS.Controllers
                                               EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                               Email = u.Email,
                                               PhoneNumber = u.PhoneNumber,
+                                              UserCategory = uCat.CategoryName,
                                               FacultyName = fac.FacultyName,
                                               IsActive = u.IsActive
                                           }).ToList();
@@ -4689,8 +4717,8 @@ namespace PMS.Controllers
                     userClaim.UserRoles = new List<AspNetRoles>();
                 }
 
-                List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
-                userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.ClaimId).ToList();
+                //List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
+                //userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.ClaimId).ToList();
 
                 return View(userClaim);
             }
@@ -4783,70 +4811,70 @@ namespace PMS.Controllers
                             db.SaveChanges();
                         }
 
-                        if (passingUserClaims.Count != 0)
-                        {
-                            for (int i = 0; i < passingUserClaims.Count; i++)
-                            {
-                                if (userClaims.Find(uc => uc.ClaimId == passingUserClaims[i]) == null)
-                                {
-                                    AspNetUserClaims userClaimObj = new AspNetUserClaims();
-                                    userClaimObj.UserId = userClaimCC.UserId;
-                                    userClaimObj.ClaimId = passingUserClaims[i];
-                                    userClaimObj.CreatedBy = "Ranga";
-                                    userClaimObj.CreatedDate = dateTime;
-                                    userClaimObj.ModifiedBy = "Ranga";
-                                    userClaimObj.ModifiedDate = dateTime;
-                                    userClaimObj.IsActive = true;
+                        //if (passingUserClaims.Count != 0)
+                        //{
+                        //    for (int i = 0; i < passingUserClaims.Count; i++)
+                        //    {
+                        //        if (userClaims.Find(uc => uc.ClaimId == passingUserClaims[i]) == null)
+                        //        {
+                        //            AspNetUserClaims userClaimObj = new AspNetUserClaims();
+                        //            userClaimObj.UserId = userClaimCC.UserId;
+                        //            userClaimObj.ClaimId = passingUserClaims[i];
+                        //            userClaimObj.CreatedBy = "Ranga";
+                        //            userClaimObj.CreatedDate = dateTime;
+                        //            userClaimObj.ModifiedBy = "Ranga";
+                        //            userClaimObj.ModifiedDate = dateTime;
+                        //            userClaimObj.IsActive = true;
 
-                                    db.AspNetUserClaims.Add(userClaimObj);
-                                }
-                                else
-                                {
-                                    int matchingIndex = userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]);
-                                    if (userClaims[matchingIndex].IsActive == false)
-                                    {
-                                        userClaims[matchingIndex].IsActive = true;
-                                        userClaims[matchingIndex].ModifiedBy = "Ranga";
-                                        userClaims[matchingIndex].ModifiedDate = dateTime;
+                        //            db.AspNetUserClaims.Add(userClaimObj);
+                        //        }
+                        //        else
+                        //        {
+                        //            int matchingIndex = userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]);
+                        //            if (userClaims[matchingIndex].IsActive == false)
+                        //            {
+                        //                userClaims[matchingIndex].IsActive = true;
+                        //                userClaims[matchingIndex].ModifiedBy = "Ranga";
+                        //                userClaims[matchingIndex].ModifiedDate = dateTime;
 
-                                        db.Entry(userClaims[matchingIndex]).State = EntityState.Modified;
-                                    }
-                                    userClaims.RemoveAt(userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]));
-                                }
-                            }
+                        //                db.Entry(userClaims[matchingIndex]).State = EntityState.Modified;
+                        //            }
+                        //            userClaims.RemoveAt(userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]));
+                        //        }
+                        //    }
 
-                            db.SaveChanges();
+                        //    db.SaveChanges();
 
-                            if (userClaims.Count != 0)
-                            {
-                                for (int i = 0; i < userClaims.Count; i++)
-                                {
-                                    userClaims[i].IsActive = false;
-                                    userClaims[i].ModifiedBy = "Ranga";
-                                    userClaims[i].ModifiedDate = dateTime;
+                        //    if (userClaims.Count != 0)
+                        //    {
+                        //        for (int i = 0; i < userClaims.Count; i++)
+                        //        {
+                        //            userClaims[i].IsActive = false;
+                        //            userClaims[i].ModifiedBy = "Ranga";
+                        //            userClaims[i].ModifiedDate = dateTime;
 
-                                    db.Entry(userClaims[i]).State = EntityState.Modified;
-                                }
+                        //            db.Entry(userClaims[i]).State = EntityState.Modified;
+                        //        }
 
-                                db.SaveChanges();
-                            }
-                        }
-                        else
-                        {
-                            if (userClaims.Count != 0)
-                            {
-                                for (int i = 0; i < userClaims.Count; i++)
-                                {
-                                    userClaims[i].IsActive = false;
-                                    userClaims[i].ModifiedBy = "Ranga";
-                                    userClaims[i].ModifiedDate = dateTime;
+                        //        db.SaveChanges();
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    if (userClaims.Count != 0)
+                        //    {
+                        //        for (int i = 0; i < userClaims.Count; i++)
+                        //        {
+                        //            userClaims[i].IsActive = false;
+                        //            userClaims[i].ModifiedBy = "Ranga";
+                        //            userClaims[i].ModifiedDate = dateTime;
 
-                                    db.Entry(userClaims[i]).State = EntityState.Modified;
-                                }
+                        //            db.Entry(userClaims[i]).State = EntityState.Modified;
+                        //        }
 
-                                db.SaveChanges();
-                            }
-                        }
+                        //        db.SaveChanges();
+                        //    }
+                        //}
                     }
                     else
                     {
@@ -4900,6 +4928,163 @@ namespace PMS.Controllers
                     }
                     throw raise;
                 }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        public ActionResult ManageUserCategories()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        public ActionResult GetUserCategories()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<UserCategory> userCategoryList = (from uc in db.UserCategory orderby uc.Id descending select uc).ToList();
+                return Json(new { data = userCategoryList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        [HttpGet]
+        public ActionResult AddOrEditUserCategory(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new UserCategory());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from uc in db.UserCategory where uc.Id.Equals(id) select uc).FirstOrDefault<UserCategory>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditUserCategory(UserCategory userCategory)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    UserCategory validationRecord = (from uc in db.UserCategory where uc.CategoryName.Equals(userCategory.CategoryName) select uc).FirstOrDefault<UserCategory>();
+
+                    if (userCategory.Id == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This User Category Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            userCategory.CreatedBy = "Ranga";
+                            userCategory.CreatedDate = dateTime;
+                            userCategory.ModifiedBy = "Ranga";
+                            userCategory.ModifiedDate = dateTime;
+
+                            db.UserCategory.Add(userCategory);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        UserCategory editingUserCategory = (from uc in db.UserCategory where uc.Id.Equals(userCategory.Id) select uc).FirstOrDefault<UserCategory>();
+
+                        if (editingUserCategory.CategoryName != userCategory.CategoryName || editingUserCategory.Description != userCategory.Description || editingUserCategory.IsActive != userCategory.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.Id != userCategory.Id)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This User Category Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingUserCategory.CategoryName = userCategory.CategoryName;
+                                editingUserCategory.Description = userCategory.Description;
+                                editingUserCategory.IsActive = userCategory.IsActive;
+                                editingUserCategory.ModifiedBy = "Ranga";
+                                editingUserCategory.ModifiedDate = dateTime;
+
+                                db.Entry(editingUserCategory).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        public ActionResult ManageAccessGroupClaims()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/01
+        public ActionResult GetAccessGroupClaims(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<Claim> accessGroupClaimsList = (from agc in db.AccessGroupClaims
+                                                                 join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                                                 where agc.AccessGroupId.Equals(id) orderby agc.CreatedDate descending select c).ToList();
+
+                return Json(new { data = accessGroupClaimsList }, JsonRequestBehavior.AllowGet);
             }
         }
     }
