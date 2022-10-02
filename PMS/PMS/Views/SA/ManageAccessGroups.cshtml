@@ -55,6 +55,7 @@ Developed On:- 2022/09/20*@
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
                                 + `<a class='dropdown-item btn' onclick="NavigateAccessGroupForm('@Url.Action("AddOrEditAccessGroup", "SA")/` + data + `', 'View')">View Access Group</a>`
                                 + `<a class='dropdown-item btn' onclick="NavigateAccessGroupForm('@Url.Action("AddOrEditAccessGroup", "SA")/` + data + `', 'Edit')">Edit Access Group</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateAccessGroupClaimsForm('@Url.Action("ManageAccessGroupClaims", "SA")/` + data + `')">Manage Group Calims</a>`
                                 + `<a class='dropdown-item btn' onclick="NavigateAccessGroupRolesForm('@Url.Action("ManageAccessGroupRoles", "SA")/` + data + `')">Manage Roles</a></div></div>`
                     },
                     "orderable": false,
@@ -105,6 +106,10 @@ Developed On:- 2022/09/20*@
             else {
                 window.location.href = url + "/View";
             }
+        }
+
+        function NavigateAccessGroupClaimsForm(url) {
+            window.location.href = url;
         }
 
         function NavigateAccessGroupRolesForm(url) {

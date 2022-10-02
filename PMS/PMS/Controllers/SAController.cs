@@ -4465,8 +4465,6 @@ namespace PMS.Controllers
             {
                 List<UserVM> usersList = (from u in db.AspNetUsers
                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                          join uc in db.UserCategory on u.UserCategory equals uc.Id into u_uc
-                                          from uCat in u_uc.DefaultIfEmpty()
                                           join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                           from fac in u_f.DefaultIfEmpty()
                                           orderby u.EmployeeNumber ascending
@@ -4477,7 +4475,6 @@ namespace PMS.Controllers
                                               EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                               Email = u.Email,
                                               PhoneNumber = u.PhoneNumber,
-                                              UserCategory = uCat.CategoryName,
                                               FacultyName = fac.FacultyName,
                                               IsActive = u.IsActive
                                           }).ToList();
@@ -4931,123 +4928,246 @@ namespace PMS.Controllers
             }
         }
 
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/01
-        public ActionResult ManageUserCategories()
-        {
-            return View();
-        }
+        ////Developed By:- Ranga Athapaththu
+        ////Developed On:- 2022/10/01
+        //public ActionResult ManageUserCategories()
+        //{
+        //    return View();
+        //}
+
+        ////Developed By:- Ranga Athapaththu
+        ////Developed On:- 2022/10/01
+        //public ActionResult GetUserCategories()
+        //{
+        //    using (PMSEntities db = new PMSEntities())
+        //    {
+        //        List<UserCategory> userCategoryList = (from uc in db.UserCategory orderby uc.Id descending select uc).ToList();
+        //        return Json(new { data = userCategoryList }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+        ////Developed By:- Ranga Athapaththu
+        ////Developed On:- 2022/10/01
+        //[HttpGet]
+        //public ActionResult AddOrEditUserCategory(int id = 0)
+        //{
+        //    if (id == 0)
+        //    {
+        //        return View(new UserCategory());
+        //    }
+        //    else
+        //    {
+        //        using (PMSEntities db = new PMSEntities())
+        //        {
+        //            return View((from uc in db.UserCategory where uc.Id.Equals(id) select uc).FirstOrDefault<UserCategory>());
+        //        }
+        //    }
+        //}
+
+        ////Developed By:- Ranga Athapaththu
+        ////Developed On:- 2022/10/01
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult AddOrEditUserCategory(UserCategory userCategory)
+        //{
+        //    using (PMSEntities db = new PMSEntities())
+        //    {
+        //        try
+        //        {
+        //            var dateTime = DateTime.Now;
+        //            UserCategory validationRecord = (from uc in db.UserCategory where uc.CategoryName.Equals(userCategory.CategoryName) select uc).FirstOrDefault<UserCategory>();
+
+        //            if (userCategory.Id == 0)
+        //            {
+        //                if (validationRecord != null)
+        //                {
+        //                    return Json(new
+        //                    {
+        //                        success = false,
+        //                        message = "This User Category Already Exists"
+        //                    }, JsonRequestBehavior.AllowGet);
+        //                }
+        //                else
+        //                {
+        //                    userCategory.CreatedBy = "Ranga";
+        //                    userCategory.CreatedDate = dateTime;
+        //                    userCategory.ModifiedBy = "Ranga";
+        //                    userCategory.ModifiedDate = dateTime;
+
+        //                    db.UserCategory.Add(userCategory);
+        //                    db.SaveChanges();
+
+        //                    return Json(new
+        //                    {
+        //                        success = true,
+        //                        message = "Successfully Saved"
+        //                    }, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                UserCategory editingUserCategory = (from uc in db.UserCategory where uc.Id.Equals(userCategory.Id) select uc).FirstOrDefault<UserCategory>();
+
+        //                if (editingUserCategory.CategoryName != userCategory.CategoryName || editingUserCategory.Description != userCategory.Description || editingUserCategory.IsActive != userCategory.IsActive)
+        //                {
+        //                    if (validationRecord != null && validationRecord.Id != userCategory.Id)
+        //                    {
+        //                        return Json(new
+        //                        {
+        //                            success = false,
+        //                            message = "This User Category Already Exists"
+        //                        }, JsonRequestBehavior.AllowGet);
+        //                    }
+        //                    else
+        //                    {
+        //                        editingUserCategory.CategoryName = userCategory.CategoryName;
+        //                        editingUserCategory.Description = userCategory.Description;
+        //                        editingUserCategory.IsActive = userCategory.IsActive;
+        //                        editingUserCategory.ModifiedBy = "Ranga";
+        //                        editingUserCategory.ModifiedDate = dateTime;
+
+        //                        db.Entry(editingUserCategory).State = EntityState.Modified;
+        //                        db.SaveChanges();
+
+        //                        return Json(new
+        //                        {
+        //                            success = true,
+        //                            message = "Successfully Updated"
+        //                        }, JsonRequestBehavior.AllowGet);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    return Json(new
+        //                    {
+        //                        success = false,
+        //                        message = "You didn't make any new changes"
+        //                    }, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //        }
+        //        catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+        //        {
+        //            Exception raise = dbEx;
+        //            foreach (var validationErrors in dbEx.EntityValidationErrors)
+        //            {
+        //                foreach (var validationError in validationErrors.ValidationErrors)
+        //                {
+        //                    string message = string.Format("{0}:{1}",
+        //                        validationErrors.Entry.Entity.ToString(),
+        //                        validationError.ErrorMessage);
+        //                    raise = new InvalidOperationException(message, raise);
+        //                }
+        //            }
+        //            throw raise;
+        //        }
+        //    }
+        //}
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/01
-        public ActionResult GetUserCategories()
+        public ActionResult ManageAccessGroupClaims(int id)
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<UserCategory> userCategoryList = (from uc in db.UserCategory orderby uc.Id descending select uc).ToList();
-                return Json(new { data = userCategoryList }, JsonRequestBehavior.AllowGet);
+                AccessGroupClaimCC accessGroupClaimDetails = new AccessGroupClaimCC();
+                accessGroupClaimDetails.AccessGroupId = id;
+
+                accessGroupClaimDetails.AccessGroupName = (from ag in db.AccessGroup where ag.AccessGroupId.Equals(id) select ag.AccessGroupName).FirstOrDefault<string>();
+                accessGroupClaimDetails.ClaimsList = (from c in db.Claim where c.IsActive.Equals(true) select c).ToList();
+                accessGroupClaimDetails.SelectedAccessGroupClaims = (from agc in db.AccessGroupClaims
+                                                                       join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                                                       where agc.AccessGroupId.Equals(id) && agc.IsActive.Equals(true)
+                                                                       select c).ToList();
+
+                return View(accessGroupClaimDetails);
             }
         }
 
         //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/01
-        [HttpGet]
-        public ActionResult AddOrEditUserCategory(int id = 0)
-        {
-            if (id == 0)
-            {
-                return View(new UserCategory());
-            }
-            else
-            {
-                using (PMSEntities db = new PMSEntities())
-                {
-                    return View((from uc in db.UserCategory where uc.Id.Equals(id) select uc).FirstOrDefault<UserCategory>());
-                }
-            }
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/01
+        //Developed On:- 2022/10/02
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditUserCategory(UserCategory userCategory)
+        public ActionResult AddOrEditAccessGroupClaim(AccessGroupClaimCC accessGroupClaimObj)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 try
                 {
                     var dateTime = DateTime.Now;
-                    UserCategory validationRecord = (from uc in db.UserCategory where uc.CategoryName.Equals(userCategory.CategoryName) select uc).FirstOrDefault<UserCategory>();
+                    var passingClaimList = new JavaScriptSerializer().Deserialize<List<string>>(accessGroupClaimObj.passingAccessGroupClaimIds).ToList();
+                    List<AccessGroupClaims> claimsForAccessGroup = (from agc in db.AccessGroupClaims where agc.AccessGroupId == accessGroupClaimObj.AccessGroupId select agc).ToList();
 
-                    if (userCategory.Id == 0)
+                    if (passingClaimList.Count != 0)
                     {
-                        if (validationRecord != null)
+                        for (int i = 0; i < passingClaimList.Count; i++)
                         {
-                            return Json(new
+                            if (claimsForAccessGroup.Find(agc => agc.ClaimId == int.Parse(passingClaimList[i])) == null)
                             {
-                                success = false,
-                                message = "This User Category Already Exists"
-                            }, JsonRequestBehavior.AllowGet);
+                                AccessGroupClaims accessGroupClaim = new AccessGroupClaims();
+                                accessGroupClaim.AccessGroupId = accessGroupClaimObj.AccessGroupId;
+                                accessGroupClaim.ClaimId = int.Parse(passingClaimList[i]);
+                                accessGroupClaim.CreatedBy = "Ranga";
+                                accessGroupClaim.CreatedDate = dateTime;
+                                accessGroupClaim.ModifiedBy = "Ranga";
+                                accessGroupClaim.ModifiedDate = dateTime;
+                                accessGroupClaim.IsActive = true;
+
+                                db.AccessGroupClaims.Add(accessGroupClaim);
+                            }
+                            else
+                            {
+                                int matchingIndex = claimsForAccessGroup.FindIndex(agc => agc.ClaimId == int.Parse(passingClaimList[i]));
+                                if (claimsForAccessGroup[matchingIndex].IsActive == false)
+                                {
+                                    claimsForAccessGroup[matchingIndex].IsActive = true;
+                                    claimsForAccessGroup[matchingIndex].ModifiedBy = "Ranga";
+                                    claimsForAccessGroup[matchingIndex].ModifiedDate = dateTime;
+
+                                    db.Entry(claimsForAccessGroup[matchingIndex]).State = EntityState.Modified;
+                                }
+                                claimsForAccessGroup.RemoveAt(claimsForAccessGroup.FindIndex(agc => agc.ClaimId == int.Parse(passingClaimList[i])));
+                            }
                         }
-                        else
+
+                        db.SaveChanges();
+
+                        if (claimsForAccessGroup.Count != 0)
                         {
-                            userCategory.CreatedBy = "Ranga";
-                            userCategory.CreatedDate = dateTime;
-                            userCategory.ModifiedBy = "Ranga";
-                            userCategory.ModifiedDate = dateTime;
-
-                            db.UserCategory.Add(userCategory);
-                            db.SaveChanges();
-
-                            return Json(new
+                            for (int j = 0; j < claimsForAccessGroup.Count; j++)
                             {
-                                success = true,
-                                message = "Successfully Saved"
-                            }, JsonRequestBehavior.AllowGet);
+                                claimsForAccessGroup[j].IsActive = false;
+                                claimsForAccessGroup[j].ModifiedBy = "Ranga";
+                                claimsForAccessGroup[j].ModifiedDate = dateTime;
+
+                                db.Entry(claimsForAccessGroup[j]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
                         }
                     }
                     else
                     {
-                        UserCategory editingUserCategory = (from uc in db.UserCategory where uc.Id.Equals(userCategory.Id) select uc).FirstOrDefault<UserCategory>();
-
-                        if (editingUserCategory.CategoryName != userCategory.CategoryName || editingUserCategory.Description != userCategory.Description || editingUserCategory.IsActive != userCategory.IsActive)
+                        if (claimsForAccessGroup.Count != 0)
                         {
-                            if (validationRecord != null && validationRecord.Id != userCategory.Id)
+                            for (int i = 0; i < claimsForAccessGroup.Count; i++)
                             {
-                                return Json(new
-                                {
-                                    success = false,
-                                    message = "This User Category Already Exists"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                            else
-                            {
-                                editingUserCategory.CategoryName = userCategory.CategoryName;
-                                editingUserCategory.Description = userCategory.Description;
-                                editingUserCategory.IsActive = userCategory.IsActive;
-                                editingUserCategory.ModifiedBy = "Ranga";
-                                editingUserCategory.ModifiedDate = dateTime;
+                                claimsForAccessGroup[i].IsActive = false;
+                                claimsForAccessGroup[i].ModifiedBy = "Ranga";
+                                claimsForAccessGroup[i].ModifiedDate = dateTime;
 
-                                db.Entry(editingUserCategory).State = EntityState.Modified;
-                                db.SaveChanges();
-
-                                return Json(new
-                                {
-                                    success = true,
-                                    message = "Successfully Updated"
-                                }, JsonRequestBehavior.AllowGet);
+                                db.Entry(claimsForAccessGroup[i]).State = EntityState.Modified;
                             }
-                        }
-                        else
-                        {
-                            return Json(new
-                            {
-                                success = false,
-                                message = "You didn't make any new changes"
-                            }, JsonRequestBehavior.AllowGet);
+
+                            db.SaveChanges();
                         }
                     }
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Saved"
+                    }, JsonRequestBehavior.AllowGet);
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
                 {
@@ -5064,27 +5184,6 @@ namespace PMS.Controllers
                     }
                     throw raise;
                 }
-            }
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/01
-        public ActionResult ManageAccessGroupClaims()
-        {
-            return View();
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/01
-        public ActionResult GetAccessGroupClaims(int id)
-        {
-            using (PMSEntities db = new PMSEntities())
-            {
-                List<Claim> accessGroupClaimsList = (from agc in db.AccessGroupClaims
-                                                                 join c in db.Claim on agc.ClaimId equals c.ClaimId
-                                                                 where agc.AccessGroupId.Equals(id) orderby agc.CreatedDate descending select c).ToList();
-
-                return Json(new { data = accessGroupClaimsList }, JsonRequestBehavior.AllowGet);
             }
         }
     }

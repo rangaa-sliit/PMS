@@ -1,6 +1,8 @@
 ﻿@*Developed By:- Ranga Athapaththu
 Developed On:- 2022/10/01*@
 
+@model PMS.Custom_Classes.AccessGroupClaimCC
+
 @{
     ViewBag.Title = "ManageAccessGroupClaims";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -24,142 +26,138 @@ Developed On:- 2022/10/01*@
             <h6 class="m-0 font-weight-bold text-primary">Access Group Claims</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
-            <div class="table-responsive">
-                <table id="accessGroupClaimsTbl" class="table table-bordered data-table nowrap"></table>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="accessGroupRolesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="accessGroupRolesModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="accessGroupRolesModalLabel"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            @using (Html.BeginForm("AddOrEditAccessGroupClaim", "SA", FormMethod.Post, new { onsubmit = "return SubmitAccessGroupClaimForm(this)", @id = "accessGroupClaimForm", autocomplete = "off" }))
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <label>Access Group Name: <span id="empNo" class="text-dark">@Model.AccessGroupName</span></label>
+                    </div>
                 </div>
-                <div class="modal-body" id="accessGroupRolesFormContent">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.AccessGroupId)
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <div class="card shadow mb-4" id="claimsCard">
+                            <div class="card-header py-3" id="claimsCardHeader">
+                                <h6 class="m-0 font-weight-bold text-primary">Claims</h6>
+                            </div>
+                            <div class="card-body" id="claimsCardBody">
+                                @for (int i = 0; i < Model.ClaimsList.Count; i++)
+                                {
+                                    <div class="form-check" id="groupClaims">
+                                        @if (Model.SelectedAccessGroupClaims.Count != 0)
+                                        {
+                                            if (Model.SelectedAccessGroupClaims.FindIndex(agc => agc.ClaimId == Model.ClaimsList[i].ClaimId) != -1)
+                                            {
+                                                <input class="form-check-input" type="checkbox" id="@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" checked />
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input" type="checkbox" id="ug-@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <input class="form-check-input" type="checkbox" id="ug-@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" />
+                                        }
+                                        <label class="form-check-label">@Model.ClaimsList[i].ClaimName</label>
+                                    </div>
+                                    <hr />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card shadow mb-4" id="selectedCalimsCard">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Selected Claims</h6>
+                            </div>
+                            <div class="card-body" id="selectedCalimsCardBody">
+                                @{ var selectedAccessGroupClaims = Model.SelectedAccessGroupClaims; }
 
+                                @for(int i = 0; i < selectedAccessGroupClaims.Count; i++)
+                                {
+                                    <span class="text-dark"><i class="fa fa-check" style="color: #4e73df"></i> @selectedAccessGroupClaims[i].ClaimName</span><br />
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <hr />
+                <div class="form-group float-right">
+                    <button class="btn btn-primary" type="submit" id="accessGroupClaimSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="accessGroupClaimClearBtn" onclick="clearAccessGroupClaimsForm()">Clear Changes</button>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @section scripts {
     <script>
-        var accessGroupClaimsTbl, accessGroupRolesFormOpenAction, oldRoleName, oldRoleStatus;
-
         var accessGroupId = window.location.pathname.toString().split('/')[3];
+        var claimList = [];
 
-        accessGroupClaimsTbl = $("#accessGroupClaimsTbl").DataTable({
-            "scrollY": "30vh",
-            "scroller": true,
-            "order": [],
-            "ajax": {
-                "url": "@Url.Action("GetAccessGroupClaims", "SA")/" + accessGroupId,
-                "type": "GET",
-                "dataType": "json"
-            },
-            "columns": [
-                {
-                    "title": "",
-                    "data": "Id",
-                    "render": function (data) {
-                        return `<div class='dropdown dropright'>`
-                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")/` + data + `', 'View')">View Claims</a>`
-                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupClaim", "SA")/` + data + `', 'Edit')">Edit Claims</a></div></div>`
-                    },
-                    "orderable": false,
-                    "searchable": false,
-                    "width": "20px"
-                },
-                {
-                    "title": "Claim Name",
-                    "data": "ClaimName"
-                },
-                {
-                    "title": "Status",
-                    "data": "IsActive",
-                    "render": function (data) {
-                        if (data == true) {
-                            return 'Active';
-                        }
-                        else {
-                            return 'Inactive';
-                        }
-                    }
-                }
-            ],
-            "language": {
-                "emptyTable": "No Claims Found!"
+        $(document).ready(function () {
+            //alert($("#footer").height);
+            //var footerHeight = $("#footer").height();
+            //var windowHeight = $(window).height();
+            //var uptoHeaderHeight = $("#claimsCardHeader").height();
+            //var actualUptoHeight = $("#claimsCardHeader").offset().top + uptoHeaderHeight;
+            //alert(windowHeight - actualUptoHeight);
+            document.getElementById('claimsCardBody').style.height = '250px';
+            document.getElementById('claimsCardBody').style.overflowY = 'auto';
+            document.getElementById('selectedCalimsCardBody').style.height = '250px';
+            document.getElementById('selectedCalimsCardBody').style.overflowY = 'auto';
+
+            var claimListFromModel = @Html.Raw(Json.Encode(Model.ClaimsList));
+
+            for (var i = 0; i < claimListFromModel.length; i++) {
+                claimList.push(claimListFromModel[i]);
             }
-        })
 
-        function PopupAccessGroupRolesForm(url, action) {
-            $.get(url)
-                .done(function (response) {
-                    $("#accessGroupRolesFormContent").html(response);
-                    $("#accessGroupRolesModal").modal("show");
+        });
 
-                    if (action == "Add") {
-                        accessGroupRolesFormOpenAction = "Add";
-                        $("#accessGroupRolesModalLabel").html("Add Role");
-                        $("#Id").val("");
-                        $("#AccessGroupId").val(accessGroupId);
-                        $("#roleStatusList").val("true");
-                    }
-                    else {
-                        $("#accessGroupRoleSubmitBtn").prop("disabled", true);
-                        $("#accessGroupRoleClearBtn").prop("disabled", true);
-                        if (action == "Edit") {
-                            accessGroupRolesFormOpenAction = "Edit";
-                            $("#accessGroupRolesModalLabel").html("Edit Role");
-                            oldRoleName = $("#roleName").val();
-                            oldRoleStatus = $("#roleStatusList :selected").val();
-                        }
-                        else {
-                            accessGroupRolesFormOpenAction = "View";
-                            $("#accessGroupRolesModalLabel").html("View Role");
-                            $("#roleName").prop("disabled", true);
-                            $("#roleStatusList").prop("disabled", true);
-                        }
-                    }
-                })
-        }
-
-        function SubmitAccessGroupRoleForm(form) {
+        function SubmitAccessGroupClaimForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
 
+            var checkedClaims = [];
+
+            $("input:checkbox[name=accessGroupClaim]:checked").each(function () {
+                checkedClaims.push($(this).val());
+            });
+
             if ($(form).valid()) {
                 $("#loader").show();
+                var fd = new FormData();
+
+                $.each($(form).serializeArray(), function (key, input) {
+                    fd.append(input.name, input.value);
+                });
+
+                fd.append("passingAccessGroupClaimIds", JSON.stringify(checkedClaims));
+
                 $.ajax({
                     type: "POST",
                     url: form.action,
-                    data: $(form).serialize(),
+                    data: fd,
+                    processData: false,
+                    contentType: false,
                     success: function (data) {
                         $("#loader").hide();
                         if (data.success) {
-                            $("#accessGroupRolesModal").modal("hide");
                             $.notify(data.message, {
                                 globalPosition: "top center",
                                 className: "success"
-                            });
-
-                            accessGroupRolesTbl.ajax.reload();
+                            })
                         }
                         else {
                             $.notify(data.message, {
                                 globalPosition: "top center",
                                 className: "error"
-                            });
+                            })
                         }
                     }
                 });
@@ -167,25 +165,28 @@ Developed On:- 2022/10/01*@
             return false;
         }
 
-        function clearAccessGroupRoleForm() {
-            if (accessGroupRolesFormOpenAction == "Add") {
-                $("#roleName").val("");
-                $("#roleStatusList").val("true");
-            }
-            else if (accessGroupRolesFormOpenAction == "Edit") {
-                $("#roleName").val(oldRoleName);
-                $("#roleStatusList").val(oldRoleStatus);
-            }
+        function clearAccessGroupClaimsForm() {
+            window.location.reload();
         }
 
-        function onRoleNameInput() {
-            $("#accessGroupRoleSubmitBtn").prop("disabled", false);
-            $("#accessGroupRoleClearBtn").prop("disabled", false);
-        }
+        function onAccessGroupClaimChange(newClaimId) {
+            var selectedClaims = [];
+            $("#selectedCalimsCardBody").html("");
+            var dynamicContent = ``;
 
-        function onRoleStatusChange(newStatus) {
-            $("#accessGroupRoleSubmitBtn").prop("disabled", false);
-            $("#accessGroupRoleClearBtn").prop("disabled", false);
+            $("input:checkbox[name=accessGroupClaim]:checked").each(function () {
+                selectedClaims.push($(this).val());
+            });
+
+            for (var i = 0; i < selectedClaims.length; i++) {
+                var sClaimName = claimList.find(c => c.ClaimId == selectedClaims[i]).ClaimName;
+                dynamicContent = dynamicContent + `<span class="text-dark"><i class="fa fa-check" style="color: #4e73df"></i> ` + sClaimName + `</span><br />`;
+            }
+
+            $("#selectedCalimsCardBody").html(dynamicContent);
+
+            $("#accessGroupClaimSubmitBtn").prop("disabled", false);
+            $("#accessGroupClaimClearBtn").prop("disabled", false);
         }
     </script>
 }

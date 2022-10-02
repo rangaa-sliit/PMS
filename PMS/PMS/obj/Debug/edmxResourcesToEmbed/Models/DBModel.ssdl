@@ -132,13 +132,13 @@
     <Property Name="Email" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="UserName" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
-    <Property Name="UserCategory" Type="int" />
     <Property Name="FacultyId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="IsAdmin" Type="bit" Nullable="false" />
     <Property Name="AccessFailedCount" Type="int" />
     <Property Name="ConcurrencyStamp" Type="nvarchar(max)" />
     <Property Name="EmailConfirmed" Type="bit" />
@@ -485,19 +485,6 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
-  <EntityType Name="UserCategory">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="CategoryName" Type="nvarchar" MaxLength="150" Nullable="false" />
-    <Property Name="Description" Type="nvarchar" MaxLength="256" />
-    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="IsActive" Type="bit" Nullable="false" />
-  </EntityType>
   <Association Name="FK_AccessGroupClaims_AccessGroup">
     <End Role="AccessGroup" Type="Self.AccessGroup" Multiplicity="1" />
     <End Role="AccessGroupClaims" Type="Self.AccessGroupClaims" Multiplicity="*" />
@@ -651,18 +638,6 @@
       </Principal>
       <Dependent Role="AspNetUsers">
         <PropertyRef Name="EmployeeTitle" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AspNetUsers_UserCategory">
-    <End Role="UserCategory" Type="Self.UserCategory" Multiplicity="0..1" />
-    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="UserCategory">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="AspNetUsers">
-        <PropertyRef Name="UserCategory" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1169,7 +1144,6 @@
     <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="UserCategory" EntityType="Self.UserCategory" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="Self.FK_AccessGroupClaims_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
@@ -1216,10 +1190,6 @@
     </AssociationSet>
     <AssociationSet Name="FK_AspNetUsers_Title" Association="Self.FK_AspNetUsers_Title">
       <End Role="Title" EntitySet="Title" />
-      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AspNetUsers_UserCategory" Association="Self.FK_AspNetUsers_UserCategory">
-      <End Role="UserCategory" EntitySet="UserCategory" />
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="Self.FK_ConductedLectures_ApprovalStages">

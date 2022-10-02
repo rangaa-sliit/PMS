@@ -31,7 +31,6 @@ namespace PMS.Models
         [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string SubjectName { get; set; }
         public bool IsCommon { get; set; }
-        //[Required(ErrorMessage = "Degree is required")]
         public Nullable<int> DegreeId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

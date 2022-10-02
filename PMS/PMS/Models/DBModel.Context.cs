@@ -58,6 +58,5 @@ namespace PMS.Models
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Title> Title { get; set; }
-        public virtual DbSet<UserCategory> UserCategory { get; set; }
     }
 }

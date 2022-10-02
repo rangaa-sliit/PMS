@@ -33,7 +33,6 @@
     <EntitySet Name="Subject" EntityType="PMSModel.Subject" />
     <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
     <EntitySet Name="Title" EntityType="PMSModel.Title" />
-    <EntitySet Name="UserCategory" EntityType="PMSModel.UserCategory" />
     <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="PMSModel.FK_AccessGroupClaims_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
@@ -88,10 +87,6 @@
     </AssociationSet>
     <AssociationSet Name="FK_AspNetUsers_Title" Association="PMSModel.FK_AspNetUsers_Title">
       <End Role="Title" EntitySet="Title" />
-      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AspNetUsers_UserCategory" Association="PMSModel.FK_AspNetUsers_UserCategory">
-      <End Role="UserCategory" EntitySet="UserCategory" />
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
     </AssociationSet>
     <AssociationSet Name="FK_Department_AspNetUsers" Association="PMSModel.FK_Department_AspNetUsers">
@@ -384,13 +379,13 @@
     <Property Name="Email" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="UserName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="UserCategory" Type="Int32" />
     <Property Name="FacultyId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
     <Property Name="AccessFailedCount" Type="Int32" />
     <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="EmailConfirmed" Type="Boolean" />
@@ -408,7 +403,6 @@
     <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_AspNetUsers_Faculty" FromRole="AspNetUsers" ToRole="Faculty" />
     <NavigationProperty Name="Title" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="AspNetUsers" ToRole="Title" />
-    <NavigationProperty Name="UserCategory1" Relationship="PMSModel.FK_AspNetUsers_UserCategory" FromRole="AspNetUsers" ToRole="UserCategory" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="AspNetUsers" ToRole="Department" />
     <NavigationProperty Name="Faculty1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="AspNetUsers" ToRole="Faculty" />
   </EntityType>
@@ -819,20 +813,6 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="Title" ToRole="AspNetUsers" />
   </EntityType>
-  <EntityType Name="UserCategory">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="CategoryName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_UserCategory" FromRole="UserCategory" ToRole="AspNetUsers" />
-  </EntityType>
   <Association Name="FK_AccessGroupClaims_AccessGroup">
     <End Type="PMSModel.AccessGroup" Role="AccessGroup" Multiplicity="1" />
     <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="*" />
@@ -1014,18 +994,6 @@
       </Principal>
       <Dependent Role="AspNetUsers">
         <PropertyRef Name="EmployeeTitle" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AspNetUsers_UserCategory">
-    <End Type="PMSModel.UserCategory" Role="UserCategory" Multiplicity="0..1" />
-    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="UserCategory">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="AspNetUsers">
-        <PropertyRef Name="UserCategory" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
