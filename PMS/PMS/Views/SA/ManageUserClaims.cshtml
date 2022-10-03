@@ -109,25 +109,25 @@ Developed On:- 2022/09/27*@
                             @if (Model.SelectedUserRoleIds.Count != 0)
                             {
                                 <div class="card-body" id="userClaimsCardBody">
-                                    @for (int i = 0; i < Model.Claims.Count; i++)
+                                    @for (int i = 0; i < Model.ClaimsForAccessGroups.Count; i++)
                                     {
                                         <div class="form-check" id="userClaims">
                                             @if (Model.SelectedUserClaimIds.Count != 0)
                                             {
-                                                if (Model.SelectedUserClaimIds.FindIndex(sc => sc == Model.Claims[i].ClaimId) != -1)
+                                                if (Model.SelectedUserClaimIds.FindIndex(sc => sc == Model.ClaimsForAccessGroups[i].AccessGroupClaimId) != -1)
                                                 {
-                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" checked />
+                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" checked />
                                                 }
                                                 else
                                                 {
-                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" />
+                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" />
                                                 }
                                             }
                                             else
                                             {
-                                                <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" />
+                                                <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" />
                                             }
-                                            <label class="form-check-label">@Model.Claims[i].ClaimName</label>
+                                            <label class="form-check-label">@Model.ClaimsForAccessGroups[i].ClaimName</label>
                                         </div>
                                         <hr />
                                     }
@@ -136,25 +136,25 @@ Developed On:- 2022/09/27*@
                             else
                             {
                                 <div class="card-body" id="userClaimsCardBody" hidden>
-                                    @for (int i = 0; i < Model.Claims.Count; i++)
+                                    @for (int i = 0; i < Model.ClaimsForAccessGroups.Count; i++)
                                     {
                                         <div class="form-check" id="userClaims">
                                             @if (Model.SelectedUserClaimIds.Count != 0)
                                             {
-                                                if (Model.SelectedUserClaimIds.FindIndex(sc => sc == Model.Claims[i].ClaimId) != -1)
+                                                if (Model.SelectedUserClaimIds.FindIndex(sc => sc == Model.ClaimsForAccessGroups[i].AccessGroupClaimId) != -1)
                                                 {
-                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" checked />
+                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" checked />
                                                 }
                                                 else
                                                 {
-                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" />
+                                                    <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" />
                                                 }
                                             }
                                             else
                                             {
-                                                <input class="form-check-input" type="checkbox" id="cl-@Model.Claims[i].ClaimId" name="userClaim" value="@Model.Claims[i].ClaimId" />
+                                                <input class="form-check-input" type="checkbox" id="cl-@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" name="userClaim" value="@Model.ClaimsForAccessGroups[i].AccessGroupClaimId" />
                                             }
-                                            <label class="form-check-label">@Model.Claims[i].ClaimName</label>
+                                            <label class="form-check-label">@Model.ClaimsForAccessGroups[i].ClaimName</label>
                                         </div>
                                         <hr />
                                     }
@@ -213,9 +213,29 @@ Developed On:- 2022/09/27*@
                         $("#userRolesCardBody").html(dynamicContent);
                     }
                 })
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetClaimsByAccessGroups", "SA")',
+                    data: postData,
+                    success: function (data) {
+                        $("#userClaimsCardBody").html("");
+                        var dynamicContent = ``;
+
+                        for (var i = 0; i < data.length; i++) {
+                            dynamicContent = dynamicContent + `<div class="form-check" id="userClaims">`
+                                + `<input class="form-check-input" type="checkbox" id="cl-` + data[i].AccessGroupClaimId + `" name="userClaim" value="` + data[i].AccessGroupClaimId + `" />`
+                                + `<label class="form-check-label">` + data[i].ClaimName + `</label>`
+                                + `</div><hr />`;
+                        }
+
+                        $("#userClaimsCardBody").html(dynamicContent);
+                    }
+                })
             }
             else {
-                $("#userRolesCardBody").html("");
+                $("#userClaimsCardBody").html("");
+                $("#userClaimsCardBody").html("");
             }
         }
 

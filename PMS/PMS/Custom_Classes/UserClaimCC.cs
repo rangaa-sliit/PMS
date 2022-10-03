@@ -17,6 +17,6 @@ namespace PMS.Custom_Classes
         public List<AspNetRoles> UserRoles { get; set; }
         public List<int> SelectedUserClaimIds { get; set; }
         public string passingUserClaimIds { get; set; }
-        public List<Claim> Claims { get; set; }
+        public List<AccessGroupClaim_ClaimCC> ClaimsForAccessGroups { get; set; }
     }
 }

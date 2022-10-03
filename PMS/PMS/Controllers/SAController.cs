@@ -4688,34 +4688,40 @@ namespace PMS.Controllers
                     UserId = id
                 };
 
-                List<AccessGroup> accessGroups = (from ag in db.AccessGroup where ag.IsActive.Equals(true) select ag).ToList();
-                userClaim.UserGroups = accessGroups;
-
-                List<Claim> claims = (from c in db.Claim where c.IsActive.Equals(true) select c).ToList();
-                userClaim.Claims = claims;
+                userClaim.UserGroups = (from ag in db.AccessGroup where ag.IsActive.Equals(true) select ag).ToList();
 
                 List<AspNetRoles> selectedUserRoles = (from ur in db.AspNetUserRoles
                                                        join r in db.AspNetRoles on ur.RoleId equals r.Id
                                                        where ur.UserId.Equals(id) && ur.IsActive.Equals(true)
                                                        select r).Distinct().ToList();
 
-                if(selectedUserRoles.Count != 0)
+                userClaim.SelectedUserGroupIds = new List<int>();
+                userClaim.SelectedUserRoleIds = new List<string>();
+                userClaim.UserRoles = new List<AspNetRoles>();
+                userClaim.ClaimsForAccessGroups = new List<AccessGroupClaim_ClaimCC>();
+
+                if (selectedUserRoles.Count != 0)
                 {
                     userClaim.SelectedUserGroupIds = selectedUserRoles.Select(r => r.AccessGroupId).ToList();
                     userClaim.SelectedUserRoleIds = selectedUserRoles.Select(r => r.Id).ToList();
 
-                    List<AspNetRoles> userRolesByGroups = (from r in db.AspNetRoles where userClaim.SelectedUserGroupIds.Select(sr => sr).Contains(r.AccessGroupId) select r).ToList();
-                    userClaim.UserRoles = userRolesByGroups;
-                }
-                else
-                {
-                    userClaim.SelectedUserGroupIds = new List<int>();
-                    userClaim.SelectedUserRoleIds = new List<string>();
-                    userClaim.UserRoles = new List<AspNetRoles>();
+                    userClaim.UserRoles = (from r in db.AspNetRoles where userClaim.SelectedUserGroupIds.Select(sr => sr).Contains(r.AccessGroupId) select r).ToList();
+
+                    if(userClaim.SelectedUserGroupIds.Count != 0)
+                    {
+                        userClaim.ClaimsForAccessGroups = (from agc in db.AccessGroupClaims
+                                                           join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                                           where userClaim.SelectedUserGroupIds.Contains(agc.AccessGroupId) && agc.IsActive.Equals(true)
+                                                           select new AccessGroupClaim_ClaimCC
+                                                           {
+                                                               AccessGroupClaimId = agc.Id,
+                                                               ClaimName = c.ClaimName
+                                                           }).ToList();
+                    }
                 }
 
-                //List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
-                //userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.ClaimId).ToList();
+                List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
+                userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.AccessGroupClaimId).ToList();
 
                 return View(userClaim);
             }
@@ -4739,6 +4745,30 @@ namespace PMS.Controllers
                 }
 
                 return Json(userRoles, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/03
+        [HttpPost]
+        public ActionResult GetClaimsByAccessGroups(UserClaimCC userClaimCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AccessGroupClaim_ClaimCC> claimList = new List<AccessGroupClaim_ClaimCC>();
+
+                if (userClaimCC.SelectedUserGroupIds.Count != 0)
+                {
+                    claimList = (from agc in db.AccessGroupClaims
+                                 join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                 where userClaimCC.SelectedUserGroupIds.Contains(agc.AccessGroupId) && agc.IsActive.Equals(true)
+                                 select new AccessGroupClaim_ClaimCC {
+                                     AccessGroupClaimId = agc.Id,
+                                     ClaimName = c.ClaimName
+                                 }).ToList();
+                }
+
+                return Json(claimList, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -4808,70 +4838,70 @@ namespace PMS.Controllers
                             db.SaveChanges();
                         }
 
-                        //if (passingUserClaims.Count != 0)
-                        //{
-                        //    for (int i = 0; i < passingUserClaims.Count; i++)
-                        //    {
-                        //        if (userClaims.Find(uc => uc.ClaimId == passingUserClaims[i]) == null)
-                        //        {
-                        //            AspNetUserClaims userClaimObj = new AspNetUserClaims();
-                        //            userClaimObj.UserId = userClaimCC.UserId;
-                        //            userClaimObj.ClaimId = passingUserClaims[i];
-                        //            userClaimObj.CreatedBy = "Ranga";
-                        //            userClaimObj.CreatedDate = dateTime;
-                        //            userClaimObj.ModifiedBy = "Ranga";
-                        //            userClaimObj.ModifiedDate = dateTime;
-                        //            userClaimObj.IsActive = true;
+                        if (passingUserClaims.Count != 0)
+                        {
+                            for (int i = 0; i < passingUserClaims.Count; i++)
+                            {
+                                if (userClaims.Find(uc => uc.AccessGroupClaimId == passingUserClaims[i]) == null)
+                                {
+                                    AspNetUserClaims userClaimObj = new AspNetUserClaims();
+                                    userClaimObj.UserId = userClaimCC.UserId;
+                                    userClaimObj.AccessGroupClaimId = passingUserClaims[i];
+                                    userClaimObj.CreatedBy = "Ranga";
+                                    userClaimObj.CreatedDate = dateTime;
+                                    userClaimObj.ModifiedBy = "Ranga";
+                                    userClaimObj.ModifiedDate = dateTime;
+                                    userClaimObj.IsActive = true;
 
-                        //            db.AspNetUserClaims.Add(userClaimObj);
-                        //        }
-                        //        else
-                        //        {
-                        //            int matchingIndex = userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]);
-                        //            if (userClaims[matchingIndex].IsActive == false)
-                        //            {
-                        //                userClaims[matchingIndex].IsActive = true;
-                        //                userClaims[matchingIndex].ModifiedBy = "Ranga";
-                        //                userClaims[matchingIndex].ModifiedDate = dateTime;
+                                    db.AspNetUserClaims.Add(userClaimObj);
+                                }
+                                else
+                                {
+                                    int matchingIndex = userClaims.FindIndex(uc => uc.AccessGroupClaimId == passingUserClaims[i]);
+                                    if (userClaims[matchingIndex].IsActive == false)
+                                    {
+                                        userClaims[matchingIndex].IsActive = true;
+                                        userClaims[matchingIndex].ModifiedBy = "Ranga";
+                                        userClaims[matchingIndex].ModifiedDate = dateTime;
 
-                        //                db.Entry(userClaims[matchingIndex]).State = EntityState.Modified;
-                        //            }
-                        //            userClaims.RemoveAt(userClaims.FindIndex(uc => uc.ClaimId == passingUserClaims[i]));
-                        //        }
-                        //    }
+                                        db.Entry(userClaims[matchingIndex]).State = EntityState.Modified;
+                                    }
+                                    userClaims.RemoveAt(userClaims.FindIndex(uc => uc.AccessGroupClaimId == passingUserClaims[i]));
+                                }
+                            }
 
-                        //    db.SaveChanges();
+                            db.SaveChanges();
 
-                        //    if (userClaims.Count != 0)
-                        //    {
-                        //        for (int i = 0; i < userClaims.Count; i++)
-                        //        {
-                        //            userClaims[i].IsActive = false;
-                        //            userClaims[i].ModifiedBy = "Ranga";
-                        //            userClaims[i].ModifiedDate = dateTime;
+                            if (userClaims.Count != 0)
+                            {
+                                for (int i = 0; i < userClaims.Count; i++)
+                                {
+                                    userClaims[i].IsActive = false;
+                                    userClaims[i].ModifiedBy = "Ranga";
+                                    userClaims[i].ModifiedDate = dateTime;
 
-                        //            db.Entry(userClaims[i]).State = EntityState.Modified;
-                        //        }
+                                    db.Entry(userClaims[i]).State = EntityState.Modified;
+                                }
 
-                        //        db.SaveChanges();
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    if (userClaims.Count != 0)
-                        //    {
-                        //        for (int i = 0; i < userClaims.Count; i++)
-                        //        {
-                        //            userClaims[i].IsActive = false;
-                        //            userClaims[i].ModifiedBy = "Ranga";
-                        //            userClaims[i].ModifiedDate = dateTime;
+                                db.SaveChanges();
+                            }
+                        }
+                        else
+                        {
+                            if (userClaims.Count != 0)
+                            {
+                                for (int i = 0; i < userClaims.Count; i++)
+                                {
+                                    userClaims[i].IsActive = false;
+                                    userClaims[i].ModifiedBy = "Ranga";
+                                    userClaims[i].ModifiedDate = dateTime;
 
-                        //            db.Entry(userClaims[i]).State = EntityState.Modified;
-                        //        }
+                                    db.Entry(userClaims[i]).State = EntityState.Modified;
+                                }
 
-                        //        db.SaveChanges();
-                        //    }
-                        //}
+                                db.SaveChanges();
+                            }
+                        }
                     }
                     else
                     {
