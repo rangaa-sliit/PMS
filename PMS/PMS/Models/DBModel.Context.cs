@@ -58,5 +58,7 @@ namespace PMS.Models
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Title> Title { get; set; }
+        public virtual DbSet<Workflow> Workflow { get; set; }
+        public virtual DbSet<WorkflowUser> WorkflowUser { get; set; }
     }
 }

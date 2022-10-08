@@ -24,6 +24,7 @@ namespace PMS.Models
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
             this.Department = new HashSet<Department>();
             this.Faculty1 = new HashSet<Faculty>();
+            this.WorkflowUser = new HashSet<WorkflowUser>();
         }
     
         public string Id { get; set; }
@@ -51,6 +52,7 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+        public bool IsAcademicUser { get; set; }
         public bool IsAdmin { get; set; }
         public Nullable<int> AccessFailedCount { get; set; }
         public string ConcurrencyStamp { get; set; }
@@ -78,5 +80,7 @@ namespace PMS.Models
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowUser> WorkflowUser { get; set; }
     }
 }

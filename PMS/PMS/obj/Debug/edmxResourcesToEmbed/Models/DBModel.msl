@@ -142,6 +142,7 @@
           <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
           <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
           <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+          <ScalarProperty Name="IsAcademicUser" ColumnName="IsAcademicUser" />
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -510,6 +511,34 @@
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="TitleName" ColumnName="TitleName" />
           <ScalarProperty Name="TitleId" ColumnName="TitleId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Workflow">
+      <EntityTypeMapping TypeName="PMSModel.Workflow">
+        <MappingFragment StoreEntitySet="Workflow">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
+          <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkflowUser">
+      <EntityTypeMapping TypeName="PMSModel.WorkflowUser">
+        <MappingFragment StoreEntitySet="WorkflowUser">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="WorkflowUserId" ColumnName="WorkflowUserId" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

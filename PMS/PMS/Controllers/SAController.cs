@@ -4593,7 +4593,7 @@ namespace PMS.Controllers
 
                         if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle 
                             || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName 
-                            || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber 
+                            || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber || editingUser.IsAcademicUser != user.IsAcademicUser
                             || editingUser.FacultyId != user.FacultyId || editingUser.IsActive != user.IsActive)
                         {
                             if (validationRecord != null && validationRecord.Id != user.Id)
@@ -4613,7 +4613,8 @@ namespace PMS.Controllers
                                     editingUser.FirstName = user.FirstName;
                                     editingUser.LastName = user.LastName;
                                     editingUser.Email = user.Email;
-                                    editingUser.UserName = user.Email.ToString().Substring(0, user.Email.ToString().IndexOf("@")); ;
+                                    editingUser.UserName = user.Email.ToString().Substring(0, user.Email.ToString().IndexOf("@"));
+                                    editingUser.IsAcademicUser = user.IsAcademicUser;
                                     editingUser.PhoneNumber = user.PhoneNumber;
                                     editingUser.FacultyId = user.FacultyId;
                                     editingUser.IsActive = user.IsActive;
@@ -5215,6 +5216,324 @@ namespace PMS.Controllers
                     throw raise;
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/06
+        public ActionResult ManageWorkflow()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/22
+        public ActionResult GetWorkflows()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<WorkflowVM> workflowList = (from w in db.Workflow
+                                                 join r in db.AspNetRoles on w.WorkflowRole equals r.Id
+                                                 join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                                                 select new WorkflowVM {
+                                                     Id = w.Id,
+                                                     WorkflowRole = ag.AccessGroupName + " - " + r.Name,
+                                                     WorkflowStep = w.WorkflowStep,
+                                                     IsActive = w.IsActive
+                                                 }).ToList();
+
+                return Json(new { data = workflowList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/06
+        [HttpGet]
+        public ActionResult AddOrEditWorkflow(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var roles = (from r in db.AspNetRoles
+                             join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                             where r.IsActive.Equals(true)
+                             orderby ag.AccessGroupId ascending
+                             select new
+                             {
+                                 Text = ag.AccessGroupName + " - " + r.Name,
+                                 Value = r.Id
+                             }).ToList();
+
+                List<SelectListItem> roleList = new SelectList(roles, "Value", "Text").ToList();
+                ViewBag.roleList = roleList;
+
+                var workFlows = (from w in db.Workflow where w.IsActive.Equals(true) select w.WorkflowStep).ToList();
+                ViewBag.activeWorkflowCount = workFlows.Count;
+
+                if (id == 0)
+                {
+                    return View(new WorkflowCC());
+                }
+                else
+                {
+                    WorkflowCC workflowRecord = (from w in db.Workflow
+                                                 where w.Id.Equals(id)
+                                                 select new WorkflowCC
+                                                 {
+                                                     Id = w.Id,
+                                                     WorkflowRole = w.WorkflowRole,
+                                                     CurrentPosition = w.WorkflowStep,
+                                                     IsActive = w.IsActive
+                                                 }).FirstOrDefault<WorkflowCC>();
+
+                    return View(workflowRecord);
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/07
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditWorkflow(WorkflowCC workflowCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    Workflow validationRecord = (from w in db.Workflow where w.WorkflowRole.Equals(workflowCC.WorkflowRole) select w).FirstOrDefault<Workflow>();
+
+                    if (workflowCC.Id == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Workflow Item Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            Workflow newWorkFlow = new Workflow();
+                            newWorkFlow.WorkflowRole = workflowCC.WorkflowRole;
+
+                            if (workflowCC.IsInitial == true)
+                            {
+                                newWorkFlow.WorkflowStep = 1;
+                            }
+                            else
+                            {
+                                int landingWorkflowStep = (from w in db.Workflow where w.WorkflowRole.Equals(workflowCC.LandingRole) select w.WorkflowStep).FirstOrDefault<int>();
+
+                                if (workflowCC.Prefix == "Before")
+                                {
+                                    if(landingWorkflowStep == 1)
+                                    {
+                                        newWorkFlow.WorkflowStep = 1;
+                                    }
+                                    else
+                                    {
+                                        newWorkFlow.WorkflowStep = landingWorkflowStep - 1;
+                                    }
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep >= landingWorkflowStep) select w).ToList();
+
+                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    {
+                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        tarversingWorkflows[i].ModifiedDate = dateTime;
+                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                    }
+                                }
+                                else if(workflowCC.Prefix == "On")
+                                {
+                                    newWorkFlow.WorkflowStep = landingWorkflowStep;
+                                }
+                                else
+                                {
+                                    newWorkFlow.WorkflowStep = landingWorkflowStep + 1;
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep > landingWorkflowStep) select w).ToList();
+
+                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    {
+                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        tarversingWorkflows[i].ModifiedDate = dateTime;
+                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                    }
+                                }
+                            }
+
+                            newWorkFlow.IsActive = workflowCC.IsActive;
+                            newWorkFlow.CreatedBy = "Ranga";
+                            newWorkFlow.CreatedDate = dateTime;
+                            newWorkFlow.ModifiedBy = "Ranga";
+                            newWorkFlow.ModifiedDate = dateTime;
+
+                            db.Workflow.Add(newWorkFlow);
+                            db.SaveChanges();
+
+                            this.ReArrangeWorkflow(db, dateTime);
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Workflow editingWorkflow = (from w in db.Workflow where w.Id.Equals(workflowCC.Id) select w).FirstOrDefault<Workflow>();
+
+                        if (validationRecord != null && validationRecord.Id != workflowCC.Id)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Workflow Item Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            if (workflowCC.Prefix != null && workflowCC.LandingRole != null)
+                            {
+                                int landingWorkflowStep = (from w in db.Workflow where w.WorkflowRole.Equals(workflowCC.LandingRole) select w.WorkflowStep).FirstOrDefault<int>();
+
+                                if (workflowCC.Prefix == "Before")
+                                {
+                                    if (landingWorkflowStep == 1)
+                                    {
+                                        editingWorkflow.WorkflowStep = 1;
+                                    }
+                                    else
+                                    {
+                                        editingWorkflow.WorkflowStep = landingWorkflowStep - 1;
+                                    }
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep >= landingWorkflowStep) select w).ToList();
+
+                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    {
+                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        tarversingWorkflows[i].ModifiedDate = dateTime;
+                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                    }
+                                }
+                                else if (workflowCC.Prefix == "On")
+                                {
+                                    editingWorkflow.WorkflowStep = landingWorkflowStep;
+                                }
+                                else
+                                {
+                                    editingWorkflow.WorkflowStep = landingWorkflowStep + 1;
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep > landingWorkflowStep) select w).ToList();
+
+                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    {
+                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        tarversingWorkflows[i].ModifiedDate = dateTime;
+                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                    }
+                                }
+
+                                db.Entry(editingWorkflow).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                this.ReArrangeWorkflow(db, dateTime);
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                if (editingWorkflow.WorkflowRole != workflowCC.WorkflowRole || editingWorkflow.IsActive != workflowCC.IsActive)
+                                {
+                                    editingWorkflow.WorkflowRole = workflowCC.WorkflowRole;
+                                    editingWorkflow.IsActive = workflowCC.IsActive;
+                                    editingWorkflow.ModifiedBy = "Ranga";
+                                    editingWorkflow.ModifiedDate = dateTime;
+
+                                    db.Entry(editingWorkflow).State = EntityState.Modified;
+                                    db.SaveChanges();
+
+                                    this.ReArrangeWorkflow(db, dateTime);
+
+                                    return Json(new
+                                    {
+                                        success = true,
+                                        message = "Successfully Updated"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "You didn't make any new changes"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        public void ReArrangeWorkflow(PMSEntities dbConnection, DateTime dateTime)
+        {
+            List<Workflow> allWorkFlows = (from w in dbConnection.Workflow
+                                           where w.IsActive.Equals(true)
+                                           orderby w.WorkflowStep ascending
+                                           select w).ToList();
+
+            int nextVal = 1;
+            int previousVal = 1;
+
+            for(var i = 0; i < allWorkFlows.Count; i++)
+            {
+                if(allWorkFlows[i].WorkflowStep > nextVal)
+                {
+                    nextVal += 1;
+
+                    allWorkFlows[i].WorkflowStep = nextVal;
+                    allWorkFlows[i].ModifiedBy = "Ranga";
+                    allWorkFlows[i].ModifiedDate = dateTime;
+
+                    dbConnection.Entry(allWorkFlows[i]).State = EntityState.Modified;
+                }
+
+                previousVal = allWorkFlows[i].WorkflowStep;
+            }
+
+            dbConnection.SaveChanges();
         }
     }
 }

@@ -85,16 +85,16 @@ Developed On:- 2022/09/26*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        <label>Is Academic User: </label>
+                        @Html.LabelFor(model => model.IsAcademicUser, "Is Academic User: ")
                     </div>
                     <div class="col-sm-9">
                         <div class="form-check custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="isAcademicUser" onchange="onIsCommonChange()" />
+                            @Html.EditorFor(model => model.IsAcademicUser, new { htmlAttributes = new { @class = "custom-control-input", @id = "isAcademicUser", onchange = "onIsAcademicUserChange()" } })
                             <label class="custom-control-label" for="isAcademicUser">Yes</label>
                         </div>
                     </div>
                 </div>
-                <div class="form-group row" hidden>
+                <div class="form-group row">
                     <div class="col-sm-2">
                         @Html.LabelFor(model => model.FacultyId, "Faculty: ")
                     </div>
@@ -146,6 +146,15 @@ Developed On:- 2022/09/26*@
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
+            var isAcademicUser = $("#isAcademicUser").prop("checked");
+
+            if (isAcademicUser == true) {
+                $("#facultyList").prop("disabled", false);
+            }
+            else {
+                $("#facultyList").prop("disabled", true);
+            }
+
             if (operation != undefined) {
                 $("#userSubmitBtn").prop("disabled", true);
                 $("#userClearBtn").prop("disabled", true);
@@ -164,6 +173,7 @@ Developed On:- 2022/09/26*@
                     $("#lastName").prop("disabled", true);
                     $("#userEmail").prop("disabled", true);
                     $("#contactNumber").prop("disabled", true);
+                    $("#isAcademicUser").prop("disabled", true);
                     $("#facultyList").prop("disabled", true);
                     $("#userStatusList").prop("disabled", true);
                 }
@@ -178,6 +188,7 @@ Developed On:- 2022/09/26*@
                 $("#userEmail").val("");
                 $("#contactNumber").val("");
                 $("#userStatusList").val("true");
+                $("#isAcademicUser").prop("checked", false);
                 $("#titleList").val(null).change();
                 $("#facultyList").val(null).change();
             }
@@ -205,7 +216,9 @@ Developed On:- 2022/09/26*@
                                 $("#contactNumber").val("");
                                 $("#userStatusList").val("true");
                                 $("#titleList").val(null).change();
+                                $("#isAcademicUser").prop("checked", false);
                                 $("#facultyList").val(null).change();
+                                $("#facultyList").prop("disabled", true);
                             }
 
                             $.notify(data.message, {
@@ -234,7 +247,9 @@ Developed On:- 2022/09/26*@
                 $("#contactNumber").val("");
                 $("#userStatusList").val("true");
                 $("#titleList").val(null).change();
+                $("#isAcademicUser").prop("checked", false);
                 $("#facultyList").val(null).change();
+                $("#facultyList").prop("disabled", true);
             }
             else {
                 window.location.reload();
@@ -267,6 +282,21 @@ Developed On:- 2022/09/26*@
         }
 
         function onContactNumberInput() {
+            $("#userSubmitBtn").prop("disabled", false);
+            $("#userClearBtn").prop("disabled", false);
+        }
+
+        function onIsAcademicUserChange() {
+            var newIsAcademicUser = $("#isAcademicUser").prop("checked");
+
+            if (newIsAcademicUser == true) {
+                $("#facultyList").prop("disabled", false);
+            }
+            else {
+                $("#facultyList").val(null).change();
+                $("#facultyList").prop("disabled", true);
+            }
+
             $("#userSubmitBtn").prop("disabled", false);
             $("#userClearBtn").prop("disabled", false);
         }

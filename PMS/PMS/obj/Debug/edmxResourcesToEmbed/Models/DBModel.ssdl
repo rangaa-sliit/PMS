@@ -138,6 +138,7 @@
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="IsAcademicUser" Type="bit" Nullable="false" />
     <Property Name="IsAdmin" Type="bit" Nullable="false" />
     <Property Name="AccessFailedCount" Type="int" />
     <Property Name="ConcurrencyStamp" Type="nvarchar(max)" />
@@ -479,6 +480,32 @@
     <Property Name="TitleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="TitleName" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="Description" Type="nvarchar" MaxLength="150" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Workflow">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkflowRole" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="WorkflowStep" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="WorkflowUser">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkflowId" Type="int" Nullable="false" />
+    <Property Name="WorkflowUserId" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1111,6 +1138,42 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Workflow_AspNetRoles">
+    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+    <End Role="Workflow" Type="Self.Workflow" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetRoles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Workflow">
+        <PropertyRef Name="WorkflowRole" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkflowUser_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="WorkflowUser" Type="Self.WorkflowUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkflowUser">
+        <PropertyRef Name="WorkflowUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_WorkflowUser_Workflow">
+    <End Role="Workflow" Type="Self.Workflow" Multiplicity="1" />
+    <End Role="WorkflowUser" Type="Self.WorkflowUser" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflow">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="WorkflowUser">
+        <PropertyRef Name="WorkflowId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="PMSModelStoreContainer">
     <EntitySet Name="AccessGroup" EntityType="Self.AccessGroup" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AccessGroupClaims" EntityType="Self.AccessGroupClaims" Schema="dbo" store:Type="Tables" />
@@ -1144,6 +1207,8 @@
     <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Workflow" EntityType="Self.Workflow" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WorkflowUser" EntityType="Self.WorkflowUser" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="Self.FK_AccessGroupClaims_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
@@ -1339,6 +1404,18 @@
     <AssociationSet Name="FK_Subject_Degree" Association="Self.FK_Subject_Degree">
       <End Role="Degree" EntitySet="Degree" />
       <End Role="Subject" EntitySet="Subject" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Workflow_AspNetRoles" Association="Self.FK_Workflow_AspNetRoles">
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+      <End Role="Workflow" EntitySet="Workflow" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkflowUser_AspNetUsers" Association="Self.FK_WorkflowUser_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="WorkflowUser" EntitySet="WorkflowUser" />
+    </AssociationSet>
+    <AssociationSet Name="FK_WorkflowUser_Workflow" Association="Self.FK_WorkflowUser_Workflow">
+      <End Role="Workflow" EntitySet="Workflow" />
+      <End Role="WorkflowUser" EntitySet="WorkflowUser" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

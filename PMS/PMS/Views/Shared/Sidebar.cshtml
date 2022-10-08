@@ -52,7 +52,7 @@ Developed On:- 2022/08/16*@
     <hr class="sidebar-divider" />
 
     <div class="sidebar-heading">
-        Access Control
+        Access Control &amp; Workflow
     </div>
 
     <li class="nav-item" id="accessControl-nav-item">
@@ -66,6 +66,19 @@ Developed On:- 2022/08/16*@
                 <a class="collapse-item" href="@Url.Action("ManageClaims", "SA")">Claims</a>
                 <a class="collapse-item" href="@Url.Action("ManageAccessGroups", "SA")">Access Groups</a>
                 <a class="collapse-item" href="@Url.Action("ManageUsers", "SA")">System Users</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item" id="workflow-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWorkFlow" aria-expanded="true" aria-controls="collapseWorkFlow">
+            <i class="fas fa-fw fa-road"></i>
+            <span>Workflow</span>
+        </a>
+        <div id="collapseWorkFlow" class="collapse" aria-labelledby="headingWorkflow" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Workflow:</h6>
+                <a class="collapse-item" href="@Url.Action("ManageWorkflow", "SA")">Workflow</a>
             </div>
         </div>
     </li>

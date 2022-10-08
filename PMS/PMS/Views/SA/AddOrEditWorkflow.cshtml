@@ -1,0 +1,294 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/10/06*@
+
+@model PMS.Custom_Classes.WorkflowCC
+
+@{
+    ViewBag.Title = "AddOrEditWorkflow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageWorkflow", "SA")">Manage Workflow</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeWorkflowMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeWorkflowCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditWorkflow", "SA", FormMethod.Post, new { onsubmit = "return SubmitWorkflowForm(this)", @id = "workflowForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.WorkflowRole, "Workflow Role: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.WorkflowRole, (IEnumerable<SelectListItem>)ViewBag.roleList, new { @class = "form-control", @id = "roleList", onchange = "onWorkflowRoleChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.WorkflowRole)
+                    </div>
+                </div>
+                if (ViewBag.activeWorkflowCount != 0)
+                {
+                    <div class="form-group row" id="prefixDiv">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(model => model.Prefix, "Position Prefix: ", new { id = "prefixLabel" })
+                        </div>
+                        <div class="col-sm-9">
+                            @Html.DropDownListFor(model => model.Prefix, new List<SelectListItem>
+                            {
+                                new SelectListItem{ Text = "-- Select Prefix --", Value = "" },
+                                new SelectListItem{ Text = "Before", Value = "Before" },
+                                new SelectListItem{ Text = "On", Value = "On" },
+                                new SelectListItem{ Text = "After", Value = "After" }
+                            }, new { @class = "form-control", @id = "positionPrefix", onchange = "onPrefixChange(this.value)" })
+                        </div>
+                    </div>
+                    <div class="form-group row" id="landingRoleDiv">
+                        <div class="col-sm-2">
+                            @Html.LabelFor(model => model.LandingRole, "Workflow Step / Position: ", new { id = "landingRoleLabel" })
+                        </div>
+                        <div class="col-sm-9">
+                            @Html.DropDownListFor(model => model.LandingRole, (IEnumerable<SelectListItem>)ViewBag.roleList, new { @class = "form-control", @id = "landingRoleList", onchange = "onLandingRoleChange(this.value)" })
+                            @Html.ValidationMessageFor(model => model.LandingRole)
+                        </div>
+                    </div>
+                    <div class="form-group row" id="currentPositionDiv" hidden>
+                        <div class="col-sm-2">
+                            <label>Current Position: </label>
+                        </div>
+                        <div class="col-sm-9">
+                            <span>@Model.CurrentPosition</span>
+                        </div>
+                    </div>
+                }
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "workflowStatusList", onchange = "onWorkflowStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="workflowSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="workflowClearBtn" onclick="clearWorkflowForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(function () {
+            $("#roleList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Workflow Role --"
+                }
+            });
+
+            $("#landingRoleList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Step / Position --"
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            $("#positionPrefix").val("");
+            $("#landingRoleList").val(null).change();
+
+            if (operation != undefined) {
+                $("#roleList").prop("disabled", true);
+                $("#currentPositionDiv").removeAttr('hidden');
+                $("#workflowSubmitBtn").prop("disabled", true);
+                $("#workflowClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeWorkflowMainTitle").html("Edit Workflow Item");
+                    $("#aeWorkflowCardTitle").html("Edit Workflow Item");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Workflow Item</li>`);
+                    $(`#landingRoleList option[value='` + $("#roleList").val() + `']`).remove();
+                    $("#landingRoleList").val(null).change();
+                }
+                else {
+                    $("#aeWorkflowMainTitle").html("View Workflow Item");
+                    $("#aeWorkflowCardTitle").html("View Workflow Item");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Workflow Item</li>`);
+                    $("#positionPrefix").prop("disabled", true);
+                    $("#landingRoleList").prop("disabled", true);
+                    $("#workflowStatusList").prop("disabled", true);
+                    $("#prefixDiv").attr('hidden', true);
+                    $("#landingRoleDiv").attr('hidden', true);
+                }
+            }
+            else {
+                $("#aeWorkflowMainTitle").html("Add Workflow Item");
+                $("#aeWorkflowCardTitle").html("Add Workflow Item");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Workflow Item</li>`);
+                $("#prefixLabel").addClass("required");
+                $("#landingRoleLabel").addClass("required");
+                $("#roleList").val(null).change();
+                $("#workflowStatusList").val("true");
+            }
+        })
+
+        function SubmitWorkflowForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                
+                var activeWorkflowCount = @Html.Raw(ViewBag.activeWorkflowCount);
+                var allowToSubmit = false;
+
+                var prefixval = $("#positionPrefix").val();
+                var landingRoleVal = $("#landingRoleList").val();
+
+                if (operation != undefined) {
+                    if (prefixval != "" && landingRoleVal == null) {
+                        allowToSubmit = false;
+                        alert("'Workflow Step / Position' is required");
+                    }
+                    else if (prefixval == "" && landingRoleVal != null) {
+                        allowToSubmit = false;
+                        alert("'Workflow Step / Position' is required");
+                    }
+                    else {
+                        allowToSubmit = true;
+                    }
+                }
+                else {
+                    if (activeWorkflowCount != 0) {
+                        if (prefixval == "" || landingRoleVal == null) {
+                            if (prefixval == "" && landingRoleVal == null) {
+                                allowToSubmit = false;
+                                alert("'Position Prefix' and 'Workflow Step / Position' both required");
+                            }
+                            else if (prefixval == "") {
+                                allowToSubmit = false;
+                                alert("'Position Prefix' is required")
+                            }
+                            else {
+                                allowToSubmit = false;
+                                alert("'Workflow Step / Position' is required")
+                            }
+                        }
+                        else {
+                            allowToSubmit = true;
+                        }
+                    }
+                    else {
+                        allowToSubmit = true;
+                    }
+                }
+
+                if (allowToSubmit) {
+                    var fd = new FormData();
+
+                    $.each($(form).serializeArray(), function (key, input) {
+                        fd.append(input.name, input.value);
+                    });
+
+                    if (activeWorkflowCount == 0) {
+                        fd.append("IsInitial", true);
+                    }
+                    else {
+                        fd.append("IsInitial", false);
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#roleList").val(null).change();
+                                    $("#landingRoleList").val(null).change();
+                                    $("#workflowStatusList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
+                        }
+                    });
+                }
+                else {
+                    $("#loader").hide();
+                }
+            }
+            return false;
+        }
+
+        function clearWorkflowForm() {
+            if (operation == undefined) {
+                $("#roleList").val(null).change();
+                $("#landingRoleList").val(null).change();
+                $("#workflowStatusList").val("true");
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onWorkflowRoleChange(newRole) {
+            $(`#landingRoleList option[value='` + newRole + `']`).remove();
+            $("#landingRoleList").val(null).change();
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onPrefixChange(newPrefix) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onLandingRoleChange(newLandingRole) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onWorkflowStatusChange(newStatus) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+    </script>
+}
