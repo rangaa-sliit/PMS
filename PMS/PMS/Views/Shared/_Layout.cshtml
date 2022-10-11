@@ -165,11 +165,13 @@ Developed On:- 2022/08/16*@
                 'ManageDesignations', 'AddOrEditDesignation'
             ];
 
-            var accessControlUrlArray = ['ManageUserCategories', 'AddOrEditUserCategory',
-                'ManageClaims', 'AddOrEditClaim',
+            var accessControlUrlArray = ['ManageClaims', 'AddOrEditClaim',
                 'ManageAccessGroups', 'AddOrEditAccessGroup',
+                'ManageAccessGroupClaims', 
                 'ManageAccessGroupRoles', 'AddOrEditAccessGroupRole'
             ];
+
+            var workflowUrlArray = ['ManageWorkflow', 'AddOrEditWorkflow'];
 
             var degreeDetailsUrlArray = ['ManageDegree', 'AddOrEditDegree',
                 'ManageSpecialization', 'AddOrEditSpecialization',
@@ -200,6 +202,9 @@ Developed On:- 2022/08/16*@
             }
             else if (accessControlUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#accessControl-nav-item').addClass('active');
+            }
+            else if (workflowUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#workflow-nav-item').addClass('active');
             }
             else if (degreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#degreeDetails-nav-item').addClass('active');

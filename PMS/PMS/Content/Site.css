@@ -224,11 +224,11 @@ table.dataTable tbody td {
 
 .step.active {
     border-color: #73b5e8;
-    color: #73b5e8;
+    color: black;
 }
 
 .step.active:before {
-    background: linear-gradient(to right, #58bb58 0%, #73b5e8 100%);
+    background: linear-gradient(to right, #58bb58 0%, #58bb58 100%);
 }
 
 .step.active:after {

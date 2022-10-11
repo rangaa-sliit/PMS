@@ -33,9 +33,12 @@ Developed On:- 2022/10/06*@
                     <div class="col-sm-2">
                         @Html.LabelFor(model => model.WorkflowRole, "Workflow Role: ", new { @class = "required" })
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                         @Html.DropDownListFor(model => model.WorkflowRole, (IEnumerable<SelectListItem>)ViewBag.roleList, new { @class = "form-control", @id = "roleList", onchange = "onWorkflowRoleChange(this.value)" })
                         @Html.ValidationMessageFor(model => model.WorkflowRole)
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
                     </div>
                 </div>
                 if (ViewBag.activeWorkflowCount != 0)
@@ -59,7 +62,7 @@ Developed On:- 2022/10/06*@
                             @Html.LabelFor(model => model.LandingRole, "Workflow Step / Position: ", new { id = "landingRoleLabel" })
                         </div>
                         <div class="col-sm-9">
-                            @Html.DropDownListFor(model => model.LandingRole, (IEnumerable<SelectListItem>)ViewBag.roleList, new { @class = "form-control", @id = "landingRoleList", onchange = "onLandingRoleChange(this.value)" })
+                            @Html.DropDownListFor(model => model.LandingRole, (IEnumerable<SelectListItem>)ViewBag.roleList, new { @class = "form-control", @id = "landingRoleList", onchange = "onLandingRoleChange(this.value)", disabled = "true" })
                             @Html.ValidationMessageFor(model => model.LandingRole)
                         </div>
                     </div>
@@ -72,6 +75,26 @@ Developed On:- 2022/10/06*@
                         </div>
                     </div>
                 }
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsSpecificUser, "For Specific User: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-check custom-control custom-switch">
+                            @Html.EditorFor(model => model.IsSpecificUser, new { htmlAttributes = new { @class = "custom-control-input", @id = "isSpecificUser", onchange = "onIsSpecificUserChange()" } })
+                            <label class="custom-control-label" for="isSpecificUser">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.WorkflowUser, "Workflow User: ", new { id = "workflowUserLabel" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.WorkflowUser, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "workflowUsersList", onchange = "onWorkflowUserChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.WorkflowUser)
+                    </div>
+                </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsActive, "Status: ")
@@ -92,11 +115,30 @@ Developed On:- 2022/10/06*@
             }
         </div>
     </div>
+
+    <div class="modal fade" id="workflowMapModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="workflowMapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="workflowMapModalLabel">Workflow Map</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="workflowMapModalBody">
+                    <div id="steps" class="text-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
     <script>
         var operation;
+        var initworkflowStatusVal = "true";
 
         $(function () {
             $("#roleList").select2({
@@ -114,6 +156,14 @@ Developed On:- 2022/10/06*@
                     text: "-- Select Step / Position --"
                 }
             });
+
+            $("#workflowUsersList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Workflow User --"
+                }
+            });
         });
 
         $(document).ready(function () {
@@ -122,27 +172,44 @@ Developed On:- 2022/10/06*@
             $("#positionPrefix").val("");
             $("#landingRoleList").val(null).change();
 
+            var isSpecificUser = $("#isSpecificUser").prop("checked");
+
+            if (isSpecificUser == true) {
+                $("#workflowUserLabel").addClass("required");
+                $("#workflowUsersList").prop("disabled", false);
+            }
+            else {
+                $("#workflowUsersList").val(null).change();
+                $("#workflowUserLabel").removeClass("required");
+                $("#workflowUsersList").prop("disabled", true);
+            }
+
             if (operation != undefined) {
                 $("#roleList").prop("disabled", true);
                 $("#currentPositionDiv").removeAttr('hidden');
-                $("#workflowSubmitBtn").prop("disabled", true);
-                $("#workflowClearBtn").prop("disabled", true);
+                initworkflowStatusVal = $("#workflowStatusList").val();
                 if (operation == "Edit") {
                     $("#aeWorkflowMainTitle").html("Edit Workflow Item");
                     $("#aeWorkflowCardTitle").html("Edit Workflow Item");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Workflow Item</li>`);
                     $(`#landingRoleList option[value='` + $("#roleList").val() + `']`).remove();
                     $("#landingRoleList").val(null).change();
+                    $("#workflowSubmitBtn").prop("disabled", true);
+                    $("#workflowClearBtn").prop("disabled", true);
                 }
                 else {
                     $("#aeWorkflowMainTitle").html("View Workflow Item");
                     $("#aeWorkflowCardTitle").html("View Workflow Item");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Workflow Item</li>`);
+                    $("#workflowSubmitBtn").prop("disabled", true);
+                    $("#workflowClearBtn").prop("disabled", true);
                     $("#positionPrefix").prop("disabled", true);
                     $("#landingRoleList").prop("disabled", true);
+                    $("#workflowUsersList").prop("disabled", true);
                     $("#workflowStatusList").prop("disabled", true);
                     $("#prefixDiv").attr('hidden', true);
                     $("#landingRoleDiv").attr('hidden', true);
+                    $("#isSpecificUser").prop("disabled", true);
                 }
             }
             else {
@@ -152,6 +219,9 @@ Developed On:- 2022/10/06*@
                 $("#prefixLabel").addClass("required");
                 $("#landingRoleLabel").addClass("required");
                 $("#roleList").val(null).change();
+                $("#isSpecificUser").prop("checked", false);
+                $("#workflowUsersList").val(null).change();
+                $("#workflowUsersList").prop("disabled", true);
                 $("#workflowStatusList").val("true");
             }
         })
@@ -192,16 +262,42 @@ Developed On:- 2022/10/06*@
                             }
                             else if (prefixval == "") {
                                 allowToSubmit = false;
-                                alert("'Position Prefix' is required")
+                                alert("'Position Prefix' is required");
                             }
                             else {
                                 allowToSubmit = false;
-                                alert("'Workflow Step / Position' is required")
+                                alert("'Workflow Step / Position' is required");
                             }
                         }
                         else {
                             allowToSubmit = true;
                         }
+                    }
+                    else {
+                        allowToSubmit = true;
+                    }
+                }
+
+                var isSpecificUser = $("#isSpecificUser").prop("checked");
+                var isWorkflowUserSelected = $("#workflowUsersList").val();
+
+                if (isSpecificUser == true) {
+                    if (isWorkflowUserSelected == null) {
+                        allowToSubmit = false;
+                        alert("Please select a Workflow User");
+                    }
+                    else {
+                        allowToSubmit = true;
+                    }
+                }
+                else {
+                    allowToSubmit = true;
+                }
+
+                if (operation == "Edit" && initworkflowStatusVal == "false") {
+                    if (prefixval == "" || landingRoleVal == null) {
+                        allowToSubmit = false;
+                        alert("You must choose Workflow Position to Activate this Workflow");
                     }
                     else {
                         allowToSubmit = true;
@@ -233,7 +329,12 @@ Developed On:- 2022/10/06*@
                             if (data.success) {
                                 if (operation == undefined) {
                                     $("#roleList").val(null).change();
+                                    $("#positionPrefix").val("");
                                     $("#landingRoleList").val(null).change();
+                                    $("#isSpecificUser").prop("checked", false);
+                                    $("#workflowUsersList").val(null).change();
+                                    $("#workflowUsersList").prop("disabled", true);
+                                    $("#workflowUserLabel").removeClass("required");
                                     $("#workflowStatusList").val("true");
                                 }
 
@@ -261,8 +362,14 @@ Developed On:- 2022/10/06*@
         function clearWorkflowForm() {
             if (operation == undefined) {
                 $("#roleList").val(null).change();
+                $("#positionPrefix").val("");
                 $("#landingRoleList").val(null).change();
+                $("#isSpecificUser").prop("checked", false);
+                $("#workflowUsersList").val(null).change();
+                $("#workflowUsersList").prop("disabled", true);
+                $("#workflowUserLabel").removeClass("required");
                 $("#workflowStatusList").val("true");
+                $("#landingRoleList").prop("disabled", true);
             }
             else {
                 window.location.reload();
@@ -279,6 +386,13 @@ Developed On:- 2022/10/06*@
         function onPrefixChange(newPrefix) {
             $("#workflowSubmitBtn").prop("disabled", false);
             $("#workflowClearBtn").prop("disabled", false);
+
+            if ($("#positionPrefix").val() != "") {
+                $("#landingRoleList").prop("disabled", false);
+            }
+            else {
+                $("#landingRoleList").prop("disabled", true);
+            }
         }
 
         function onLandingRoleChange(newLandingRole) {
@@ -286,9 +400,51 @@ Developed On:- 2022/10/06*@
             $("#workflowClearBtn").prop("disabled", false);
         }
 
+        function onIsSpecificUserChange() {
+            var newIsSpecificUser = $("#isSpecificUser").prop("checked");
+
+            if (newIsSpecificUser == true) {
+                $("#workflowUserLabel").addClass("required");
+                $("#workflowUsersList").prop("disabled", false);
+            }
+            else {
+                $("#workflowUsersList").val(null).change();
+                $("#workflowUserLabel").removeClass("required");
+                $("#workflowUsersList").prop("disabled", true);
+            }
+
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onWorkflowUserChange(newUser) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
         function onWorkflowStatusChange(newStatus) {
             $("#workflowSubmitBtn").prop("disabled", false);
             $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function OpenWorkflowMap(url) {
+            $.get(url)
+                .done(function (response) {
+                    $("#steps").html("");
+                    var dynamicContent = ``;
+
+                    if (response.length != 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            dynamicContent = dynamicContent + `<div class="step active" data-desc="` + response[i].WorkflowMapRoles + `">` + response[i].WorkflowStep + `</div>`;
+                        }
+                    }
+                    else {
+                        dynamicContent = dynamicContent + `<h5> -- No Workflow Items Found -- </h5>`;
+                    }
+
+                    $("#steps").html(dynamicContent);
+                    $("#workflowMapModal").modal("show");
+                });
         }
     </script>
 }

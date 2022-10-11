@@ -34,7 +34,6 @@
     <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
     <EntitySet Name="Title" EntityType="PMSModel.Title" />
     <EntitySet Name="Workflow" EntityType="PMSModel.Workflow" />
-    <EntitySet Name="WorkflowUser" EntityType="PMSModel.WorkflowUser" />
     <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="PMSModel.FK_AccessGroupClaims_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
@@ -103,9 +102,9 @@
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="Faculty" EntitySet="Faculty" />
     </AssociationSet>
-    <AssociationSet Name="FK_WorkflowUser_AspNetUsers" Association="PMSModel.FK_WorkflowUser_AspNetUsers">
+    <AssociationSet Name="FK_Workflow_AspNetUsers" Association="PMSModel.FK_Workflow_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-      <End Role="WorkflowUser" EntitySet="WorkflowUser" />
+      <End Role="Workflow" EntitySet="Workflow" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="PMSModel.FK_SemesterRegistration_CalendarPeriod">
       <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
@@ -238,10 +237,6 @@
     <AssociationSet Name="FK_SemesterSubject_Subject" Association="PMSModel.FK_SemesterSubject_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
-    </AssociationSet>
-    <AssociationSet Name="FK_WorkflowUser_Workflow" Association="PMSModel.FK_WorkflowUser_Workflow">
-      <End Role="Workflow" EntitySet="Workflow" />
-      <End Role="WorkflowUser" EntitySet="WorkflowUser" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="AccessGroup">
@@ -421,7 +416,7 @@
     <NavigationProperty Name="Title" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="AspNetUsers" ToRole="Title" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="AspNetUsers" ToRole="Department" />
     <NavigationProperty Name="Faculty1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="AspNetUsers" ToRole="Faculty" />
-    <NavigationProperty Name="WorkflowUser" Relationship="PMSModel.FK_WorkflowUser_AspNetUsers" FromRole="AspNetUsers" ToRole="WorkflowUser" />
+    <NavigationProperty Name="Workflow" Relationship="PMSModel.FK_Workflow_AspNetUsers" FromRole="AspNetUsers" ToRole="Workflow" />
   </EntityType>
   <EntityType Name="CalendarPeriod">
     <Key>
@@ -837,28 +832,15 @@
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="WorkflowRole" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
     <Property Name="WorkflowStep" Type="Int32" Nullable="false" />
+    <Property Name="IsSpecificUser" Type="Boolean" Nullable="false" />
+    <Property Name="WorkflowUser" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_Workflow_AspNetRoles" FromRole="Workflow" ToRole="AspNetRoles" />
-    <NavigationProperty Name="WorkflowUser" Relationship="PMSModel.FK_WorkflowUser_Workflow" FromRole="Workflow" ToRole="WorkflowUser" />
-  </EntityType>
-  <EntityType Name="WorkflowUser">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-    <Property Name="WorkflowUserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_WorkflowUser_AspNetUsers" FromRole="WorkflowUser" ToRole="AspNetUsers" />
-    <NavigationProperty Name="Workflow" Relationship="PMSModel.FK_WorkflowUser_Workflow" FromRole="WorkflowUser" ToRole="Workflow" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Workflow_AspNetUsers" FromRole="Workflow" ToRole="AspNetUsers" />
   </EntityType>
   <Association Name="FK_AccessGroupClaims_AccessGroup">
     <End Type="PMSModel.AccessGroup" Role="AccessGroup" Multiplicity="1" />
@@ -1082,15 +1064,15 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_WorkflowUser_AspNetUsers">
-    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
-    <End Type="PMSModel.WorkflowUser" Role="WorkflowUser" Multiplicity="*" />
+  <Association Name="FK_Workflow_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
+    <End Type="PMSModel.Workflow" Role="Workflow" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="AspNetUsers">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="WorkflowUser">
-        <PropertyRef Name="WorkflowUserId" />
+      <Dependent Role="Workflow">
+        <PropertyRef Name="WorkflowUser" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1507,18 +1489,6 @@
       </Principal>
       <Dependent Role="SemesterSubject">
         <PropertyRef Name="SubjectId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_WorkflowUser_Workflow">
-    <End Type="PMSModel.Workflow" Role="Workflow" Multiplicity="1" />
-    <End Type="PMSModel.WorkflowUser" Role="WorkflowUser" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Workflow">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="WorkflowUser">
-        <PropertyRef Name="WorkflowId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

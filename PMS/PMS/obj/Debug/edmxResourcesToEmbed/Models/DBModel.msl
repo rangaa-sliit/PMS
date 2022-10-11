@@ -522,22 +522,10 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="WorkflowUser" ColumnName="WorkflowUser" />
+          <ScalarProperty Name="IsSpecificUser" ColumnName="IsSpecificUser" />
           <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
           <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="WorkflowUser">
-      <EntityTypeMapping TypeName="PMSModel.WorkflowUser">
-        <MappingFragment StoreEntitySet="WorkflowUser">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="WorkflowUserId" ColumnName="WorkflowUserId" />
-          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

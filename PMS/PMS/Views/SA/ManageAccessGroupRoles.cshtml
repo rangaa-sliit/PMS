@@ -54,6 +54,7 @@ Developed On:- 2022/09/20*@
         var accessGroupId = window.location.pathname.toString().split('/')[3];
 
         accessGroupRolesTbl = $("#accessGroupRolesTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
             "scroller": true,
             "order": [],
@@ -129,7 +130,7 @@ Developed On:- 2022/09/20*@
                             $("#roleStatusList").prop("disabled", true);
                         }
                     }
-                })
+                });
         }
 
         function SubmitAccessGroupRoleForm(form) {

@@ -24,7 +24,7 @@ namespace PMS.Models
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
             this.Department = new HashSet<Department>();
             this.Faculty1 = new HashSet<Faculty>();
-            this.WorkflowUser = new HashSet<WorkflowUser>();
+            this.Workflow = new HashSet<Workflow>();
         }
     
         public string Id { get; set; }
@@ -81,6 +81,6 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowUser> WorkflowUser { get; set; }
+        public virtual ICollection<Workflow> Workflow { get; set; }
     }
 }

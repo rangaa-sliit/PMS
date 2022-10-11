@@ -24,6 +24,7 @@ Developed On:- 2022/10/06*@
         </div>
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
             <div class="table-responsive">
                 <table id="workflowTbl" class="table table-bordered data-table nowrap"></table>
             </div>
@@ -47,6 +48,24 @@ Developed On:- 2022/10/06*@
                 </div>*@
         </div>
     </div>
+
+    <div class="modal fade" id="workflowMapModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="workflowMapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="workflowMapModalLabel">Workflow Map</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="workflowMapModalBody">
+                    <div id="steps" class="text-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
@@ -64,6 +83,7 @@ Developed On:- 2022/10/06*@
         var workflowTbl;
 
         workflowTbl = $("#workflowTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
             "scroller": true,
             "order": [],
@@ -78,11 +98,11 @@ Developed On:- 2022/10/06*@
                     "data": "Id",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
-                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")/` + data + `', 'View')">View Workflow</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")/` + data + `', 'Edit')">Edit Workflow</a></div></div>`
+                            + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                            + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                            + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                            + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")/` + data + `', 'View')">View Workflow</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")/` + data + `', 'Edit')">Edit Workflow</a></div></div>`;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -95,6 +115,30 @@ Developed On:- 2022/10/06*@
                 {
                     "title": "Workflow Step / Position",
                     "data": "WorkflowStep"
+                },
+                {
+                    "title": "For Specific User",
+                    "data": "IsSpecificUser",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
+                },
+                {
+                    "title": "Workflow User",
+                    "data": "WorkflowUser",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
                 },
                 {
                     "title": "Status",
@@ -124,6 +168,26 @@ Developed On:- 2022/10/06*@
             else {
                 window.location.href = url + "/View";
             }
+        }
+
+        function OpenWorkflowMap(url) {
+            $.get(url)
+                .done(function (response) {
+                    $("#steps").html("");
+                    var dynamicContent = ``;
+
+                    if (response.length != 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            dynamicContent = dynamicContent + `<div class="step active" data-desc="` + response[i].WorkflowMapRoles + `">` + response[i].WorkflowStep + `</div>`;
+                        }
+                    }
+                    else {
+                        dynamicContent = dynamicContent + `<h5> -- No Workflow Items Found -- </h5>`;
+                    }
+
+                    $("#steps").html(dynamicContent);
+                    $("#workflowMapModal").modal("show");
+                });
         }
     </script>
 }

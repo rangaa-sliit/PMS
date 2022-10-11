@@ -1,4 +1,4 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs.cache
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\WebGrease.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -74,7 +74,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Deployment.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Razor.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\WebGrease.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Helpers.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Mvc.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Optimization.xml
@@ -99,6 +98,7 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Twitter.xm
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.OAuth.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs.cache
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb

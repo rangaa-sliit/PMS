@@ -6,7 +6,7 @@ Developed On:- 2022/08/16*@
         <div class="sidebar-brand-icon">
             <img src="~/Content/Images/SLIIT_Logo_Crest.png" height="50" alt="" />
         </div>
-        <div class="sidebar-brand-text mx-3">PMS</div>
+        <div class="sidebar-brand-text mx-3">WPS</div>
     </a>
 
     <hr class="sidebar-divider my-0" />
@@ -71,16 +71,10 @@ Developed On:- 2022/08/16*@
     </li>
 
     <li class="nav-item" id="workflow-nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWorkFlow" aria-expanded="true" aria-controls="collapseWorkFlow">
+        <a class="nav-link" href="@Url.Action("ManageWorkflow", "SA")">
             <i class="fas fa-fw fa-road"></i>
             <span>Workflow</span>
         </a>
-        <div id="collapseWorkFlow" class="collapse" aria-labelledby="headingWorkflow" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Workflow:</h6>
-                <a class="collapse-item" href="@Url.Action("ManageWorkflow", "SA")">Workflow</a>
-            </div>
-        </div>
     </li>
 
     <hr class="sidebar-divider" />

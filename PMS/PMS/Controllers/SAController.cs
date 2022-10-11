@@ -398,12 +398,14 @@ namespace PMS.Controllers
                 List<FacultyVM> facultiesList = (from f in db.Faculty
                                                  join u in db.AspNetUsers on f.FacultyDean equals u.Id into f_u
                                                  from usr in f_u.DefaultIfEmpty()
+                                                 join t in db.Title on usr.EmployeeTitle equals t.TitleId into u_t
+                                                 from ttl in u_t.DefaultIfEmpty()
                                                  orderby f.FacultyId descending select new FacultyVM
                                                  {
                                                      FacultyId = f.FacultyId,
                                                      FacultyCode = f.FacultyCode,
                                                      FacultyName = f.FacultyName,
-                                                     FacultyDean = usr != null ? usr.FirstName + " " + usr.LastName : null,
+                                                     FacultyDean = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
                                                      IsActive = f.IsActive
                                                  }).ToList();
 
@@ -419,10 +421,11 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
                              where u.IsActive.Equals(true)
                              select new
                              {
-                                 Text = u.FirstName + " " + u.LastName,
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                  Value = u.Id
                              }).ToList();
 
@@ -602,6 +605,8 @@ namespace PMS.Controllers
                 List<DepartmentVM> departmentsList = (from d in db.Department
                                                       join u in db.AspNetUsers on d.HOD equals u.Id into d_u
                                                       from usr in d_u.DefaultIfEmpty()
+                                                      join t in db.Title on usr.EmployeeTitle equals t.TitleId into u_t
+                                                      from ttl in u_t.DefaultIfEmpty()
                                                       join f in db.Faculty on d.FacultyId equals f.FacultyId into d_f
                                                       from fac in d_f.DefaultIfEmpty()
                                                       orderby d.DepartmentId descending
@@ -610,7 +615,7 @@ namespace PMS.Controllers
                                                           DepartmentId = d.DepartmentId,
                                                           DepartmentCode = d.DepartmentCode,
                                                           DepartmentName = d.DepartmentName,
-                                                          HODName = usr != null ? usr.FirstName + " " + usr.LastName : null,
+                                                          HODName = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
                                                           FacultyName = fac.FacultyName,
                                                           IsActive = d.IsActive
                                                       }).ToList();
@@ -627,10 +632,11 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
                              where u.IsActive.Equals(true)
                              select new
                              {
-                                 Text = u.FirstName + " " + u.LastName,
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                  Value = u.Id
                              }).ToList();
 
@@ -990,7 +996,7 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<Title> titlesList = (from t in db.Title select t).ToList();
+                List<Title> titlesList = (from t in db.Title orderby t.TitleId descending select t).ToList();
 
                 return Json(new { data = titlesList }, JsonRequestBehavior.AllowGet);
             }
@@ -1688,17 +1694,17 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 List<IntakeVM> intakesList = (from i in db.Intake
-                                            orderby i.IntakeId descending
-                                            select new IntakeVM
-                                            {
-                                                IntakeId = i.IntakeId,
-                                                IntakeYear = i.IntakeYear,
-                                                IntakeCode = i.IntakeCode,
-                                                IntakeName = i.IntakeName,
-                                                FromDate = i.FromDate.ToString().Substring(0, 10),
-                                                ToDate = i.ToDate.ToString().Substring(0, 10),
-                                                IsActive = i.IsActive
-                                            }).ToList();
+                                              orderby i.IntakeId descending
+                                              select new IntakeVM
+                                              {
+                                                  IntakeId = i.IntakeId,
+                                                  IntakeYear = i.IntakeYear,
+                                                  IntakeCode = i.IntakeCode,
+                                                  IntakeName = i.IntakeName,
+                                                  FromDate = i.FromDate.ToString().Substring(0, 10),
+                                                  ToDate = i.ToDate.ToString().Substring(0, 10),
+                                                  IsActive = i.IsActive
+                                              }).ToList();
 
                 return Json(new { data = intakesList }, JsonRequestBehavior.AllowGet);
             }
@@ -1979,13 +1985,14 @@ namespace PMS.Controllers
             {
                 List<AppointmentVM> appointmentList = (from a in db.Appointment
                                                        join u in db.AspNetUsers on a.UserId equals u.Id
+                                                       join t in db.Title on u.EmployeeTitle equals t.TitleId
                                                        join at in db.AppointmentType on a.AppointmentTypeId equals at.AppointmentTypeId
                                                        join d in db.Designation on a.DesignationId equals d.DesignationId
                                                        orderby a.AppointmentId descending
                                                        select new AppointmentVM
                                                        {
                                                            AppointmentId = a.AppointmentId,
-                                                           EmployeeName = u.FirstName + " " + u.LastName,
+                                                           EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                                            AppointmentTypeName = at.AppointmentTypeName,
                                                            DesignationName = d.DesignationName,
                                                            AppointmentFrom = a.AppointmentFrom.ToString().Substring(0, 10),
@@ -2005,10 +2012,11 @@ namespace PMS.Controllers
             using (PMSEntities db = new PMSEntities())
             {
                 var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
                              where u.IsActive.Equals(true)
                              select new
                              {
-                                 Text = u.FirstName + " " + u.LastName,
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                  Value = u.Id
                              }).ToList();
 
@@ -5234,10 +5242,17 @@ namespace PMS.Controllers
                 List<WorkflowVM> workflowList = (from w in db.Workflow
                                                  join r in db.AspNetRoles on w.WorkflowRole equals r.Id
                                                  join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                                                 join u in db.AspNetUsers on w.WorkflowUser equals u.Id into w_u
+                                                 from usr in w_u.DefaultIfEmpty()
+                                                 join t in db.Title on usr.EmployeeTitle equals t.TitleId into u_t
+                                                 from ttl in u_t.DefaultIfEmpty()
+                                                 orderby w.Id descending
                                                  select new WorkflowVM {
                                                      Id = w.Id,
                                                      WorkflowRole = ag.AccessGroupName + " - " + r.Name,
                                                      WorkflowStep = w.WorkflowStep,
+                                                     IsSpecificUser = w.IsSpecificUser,
+                                                     WorkflowUser = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
                                                      IsActive = w.IsActive
                                                  }).ToList();
 
@@ -5268,6 +5283,18 @@ namespace PMS.Controllers
                 var workFlows = (from w in db.Workflow where w.IsActive.Equals(true) select w.WorkflowStep).ToList();
                 ViewBag.activeWorkflowCount = workFlows.Count;
 
+                var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
+                             where u.IsActive.Equals(true)
+                             select new
+                             {
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                 Value = u.Id
+                             }).ToList();
+
+                List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
+                ViewBag.usersList = usersList;
+
                 if (id == 0)
                 {
                     return View(new WorkflowCC());
@@ -5281,6 +5308,7 @@ namespace PMS.Controllers
                                                      Id = w.Id,
                                                      WorkflowRole = w.WorkflowRole,
                                                      CurrentPosition = w.WorkflowStep,
+                                                     IsSpecificUser = w.IsSpecificUser,
                                                      IsActive = w.IsActive
                                                  }).FirstOrDefault<WorkflowCC>();
 
@@ -5368,6 +5396,8 @@ namespace PMS.Controllers
                                 }
                             }
 
+                            newWorkFlow.IsSpecificUser = workflowCC.IsSpecificUser;
+                            newWorkFlow.WorkflowUser = workflowCC.WorkflowUser;
                             newWorkFlow.IsActive = workflowCC.IsActive;
                             newWorkFlow.CreatedBy = "Ranga";
                             newWorkFlow.CreatedDate = dateTime;
@@ -5400,54 +5430,76 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            if (workflowCC.Prefix != null && workflowCC.LandingRole != null)
+                            if (workflowCC.Prefix != "" && workflowCC.LandingRole != null)
                             {
                                 int landingWorkflowStep = (from w in db.Workflow where w.WorkflowRole.Equals(workflowCC.LandingRole) select w.WorkflowStep).FirstOrDefault<int>();
 
                                 if (workflowCC.Prefix == "Before")
                                 {
-                                    if (landingWorkflowStep == 1)
-                                    {
-                                        editingWorkflow.WorkflowStep = 1;
-                                    }
-                                    else
-                                    {
-                                        editingWorkflow.WorkflowStep = landingWorkflowStep - 1;
-                                    }
+                                    editingWorkflow.WorkflowStep = landingWorkflowStep;
 
-                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep >= landingWorkflowStep) select w).ToList();
+                                    //editingWorkflow.ModifiedDate = dateTime;
+                                    //editingWorkflow.ModifiedBy = "Ranga";
+
+                                    //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                    //db.SaveChanges();
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.Id != workflowCC.Id) && (w.WorkflowStep >= landingWorkflowStep) select w).ToList();
 
                                     for (var i = 0; i < tarversingWorkflows.Count; i++)
                                     {
-                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        int wfStep = tarversingWorkflows[i].WorkflowStep;
+                                        tarversingWorkflows[i].WorkflowStep = wfStep + 1;
                                         tarversingWorkflows[i].ModifiedDate = dateTime;
                                         tarversingWorkflows[i].ModifiedBy = "Ranga";
 
                                         db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
                                     }
+
+                                    //db.SaveChanges();
                                 }
                                 else if (workflowCC.Prefix == "On")
                                 {
                                     editingWorkflow.WorkflowStep = landingWorkflowStep;
+                                    //editingWorkflow.ModifiedDate = dateTime;
+                                    //editingWorkflow.ModifiedBy = "Ranga";
+
+                                    //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                    //db.SaveChanges();
                                 }
                                 else
                                 {
                                     editingWorkflow.WorkflowStep = landingWorkflowStep + 1;
+                                    //editingWorkflow.ModifiedDate = dateTime;
+                                    //editingWorkflow.ModifiedBy = "Ranga";
 
-                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.WorkflowStep > landingWorkflowStep) select w).ToList();
+                                    //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                    //db.SaveChanges();
+
+                                    List<Workflow> tarversingWorkflows = (from w in db.Workflow where (w.IsActive.Equals(true)) && (w.Id != workflowCC.Id) && (w.WorkflowStep > landingWorkflowStep) select w).ToList();
 
                                     for (var i = 0; i < tarversingWorkflows.Count; i++)
                                     {
-                                        tarversingWorkflows[i].WorkflowStep = tarversingWorkflows[i].WorkflowStep + 1;
+                                        int wfStep = tarversingWorkflows[i].WorkflowStep;
+                                        tarversingWorkflows[i].WorkflowStep = wfStep + 1;
                                         tarversingWorkflows[i].ModifiedDate = dateTime;
                                         tarversingWorkflows[i].ModifiedBy = "Ranga";
 
                                         db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
                                     }
+
+                                    //db.SaveChanges();
                                 }
+
+                                editingWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
+                                editingWorkflow.WorkflowUser = workflowCC.WorkflowUser;
+                                editingWorkflow.IsActive = workflowCC.IsActive;
+                                editingWorkflow.ModifiedDate = dateTime;
+                                editingWorkflow.ModifiedBy = "Ranga";
 
                                 db.Entry(editingWorkflow).State = EntityState.Modified;
                                 db.SaveChanges();
+                                //db.Entry(editingWorkflow).State = EntityState.Modified;
 
                                 this.ReArrangeWorkflow(db, dateTime);
 
@@ -5459,9 +5511,10 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                if (editingWorkflow.WorkflowRole != workflowCC.WorkflowRole || editingWorkflow.IsActive != workflowCC.IsActive)
+                                if (editingWorkflow.IsSpecificUser != workflowCC.IsSpecificUser || editingWorkflow.WorkflowUser != workflowCC.WorkflowUser || editingWorkflow.IsActive != workflowCC.IsActive)
                                 {
-                                    editingWorkflow.WorkflowRole = workflowCC.WorkflowRole;
+                                    editingWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
+                                    editingWorkflow.WorkflowUser = workflowCC.WorkflowUser;
                                     editingWorkflow.IsActive = workflowCC.IsActive;
                                     editingWorkflow.ModifiedBy = "Ranga";
                                     editingWorkflow.ModifiedDate = dateTime;
@@ -5507,6 +5560,9 @@ namespace PMS.Controllers
             }
         }
 
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/09
+        [HttpPost]
         public void ReArrangeWorkflow(PMSEntities dbConnection, DateTime dateTime)
         {
             List<Workflow> allWorkFlows = (from w in dbConnection.Workflow
@@ -5514,26 +5570,77 @@ namespace PMS.Controllers
                                            orderby w.WorkflowStep ascending
                                            select w).ToList();
 
-            int nextVal = 1;
-            int previousVal = 1;
-
-            for(var i = 0; i < allWorkFlows.Count; i++)
+            if(allWorkFlows.Count != 0)
             {
-                if(allWorkFlows[i].WorkflowStep > nextVal)
+                var firstWorkflowItemVal = allWorkFlows[0].WorkflowStep;
+
+                if(firstWorkflowItemVal != 1)
                 {
-                    nextVal += 1;
+                    allWorkFlows[0].WorkflowStep = 1;
+                    allWorkFlows[0].ModifiedBy = "Ranga";
+                    allWorkFlows[0].ModifiedDate = dateTime;
 
-                    allWorkFlows[i].WorkflowStep = nextVal;
-                    allWorkFlows[i].ModifiedBy = "Ranga";
-                    allWorkFlows[i].ModifiedDate = dateTime;
-
-                    dbConnection.Entry(allWorkFlows[i]).State = EntityState.Modified;
+                    dbConnection.Entry(allWorkFlows[0]).State = EntityState.Modified;
                 }
 
-                previousVal = allWorkFlows[i].WorkflowStep;
-            }
+                List<Workflow> matchingWorkflows = allWorkFlows.FindAll(w => w.WorkflowStep == firstWorkflowItemVal);
 
-            dbConnection.SaveChanges();
+                for(var i = 0; i < matchingWorkflows.Count; i++)
+                {
+                    matchingWorkflows[i].WorkflowStep = 1;
+                    matchingWorkflows[i].ModifiedBy = "Ranga";
+                    matchingWorkflows[i].ModifiedDate = dateTime;
+
+                    dbConnection.Entry(matchingWorkflows[i]).State = EntityState.Modified;
+                }
+
+                //dbConnection.SaveChanges();
+
+                int nextVal = 1;
+                int previousVal = 1;
+
+                for (var i = 0; i < allWorkFlows.Count; i++)
+                {
+                    if (allWorkFlows[i].WorkflowStep > nextVal)
+                    {
+                        nextVal += 1;
+
+                        allWorkFlows[i].WorkflowStep = nextVal;
+                        allWorkFlows[i].ModifiedBy = "Ranga";
+                        allWorkFlows[i].ModifiedDate = dateTime;
+
+                        dbConnection.Entry(allWorkFlows[i]).State = EntityState.Modified;
+                    }
+
+                    previousVal = allWorkFlows[i].WorkflowStep;
+                }
+
+                dbConnection.SaveChanges();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/10
+        [HttpGet]
+        public ActionResult ViewWorkFlowMap()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<WorkflowVM> workflowList = (from w in db.Workflow
+                                                 where w.IsActive.Equals(true)
+                                                 group w by w.WorkflowStep into g
+                                                 select new WorkflowVM
+                                                 {
+                                                     WorkflowStep = g.Key,
+                                                     WorkflowMapRoles = (from wf in db.Workflow
+                                                                     join r in db.AspNetRoles on wf.WorkflowRole equals r.Id
+                                                                     join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                                                                     where wf.WorkflowStep.Equals(g.Key) && wf.IsActive.Equals(true)
+                                                                     select " " + r.Name).ToList()
+                                                 }).ToList();
+
+                return Json(workflowList, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
