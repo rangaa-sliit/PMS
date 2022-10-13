@@ -350,6 +350,22 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="LecturerAssignments">
+      <EntityTypeMapping TypeName="PMSModel.LecturerAssignments">
+        <MappingFragment StoreEntitySet="LecturerAssignments">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
+          <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
+          <ScalarProperty Name="LecturerId" ColumnName="LecturerId" />
+          <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="LectureType">
       <EntityTypeMapping TypeName="PMSModel.LectureType">
         <MappingFragment StoreEntitySet="LectureType">

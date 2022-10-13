@@ -155,9 +155,9 @@ select.input-validation-error {
     height: 35px; /*To match with Alert Height*/
 }
 
-.data-table {
+/*.data-table {
     width: 100%;
-}
+}*/
 
 table.dataTable tbody td {
     padding-top: 3px;

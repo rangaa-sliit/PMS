@@ -18,13 +18,13 @@ namespace PMS
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "SA",
                 url: "{controller}/{action}/{id}/{operation}",
-                defaults: new { controller = "SA", action = "Index", id = UrlParameter.Optional, operation = UrlParameter.Optional }
+                defaults: new { controller = "SA", action = "Index", id = UrlParameter.Optional, operation = UrlParameter.Optional, additionalId = UrlParameter.Optional }
             );
         }
     }

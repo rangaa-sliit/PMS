@@ -271,6 +271,9 @@
     <Compile Include="Models\LectureHall.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\LecturerAssignments.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\LectureType.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -313,6 +316,7 @@
     <Compile Include="ViewModels\FacultyVM.cs" />
     <Compile Include="ViewModels\IntakeVM.cs" />
     <Compile Include="ViewModels\LectureHallVM.cs" />
+    <Compile Include="ViewModels\LecturerAssignmentsVM.cs" />
     <Compile Include="ViewModels\PaymentRateVM.cs" />
     <Compile Include="ViewModels\SemesterRegistrationVM.cs" />
     <Compile Include="ViewModels\SpecializationVM.cs" />
@@ -333,6 +337,8 @@
     <Content Include="Content\fixedColumns.dataTables.min.css" />
     <Content Include="Content\font-family-nunito.css" />
     <Content Include="Content\font-awesome-5.min.css" />
+    <Content Include="Content\Images\B3.jpg" />
+    <Content Include="Content\Images\SL.png" />
     <Content Include="Content\Images\SLIIT Logo.jpg" />
     <Content Include="Content\Images\SLIIT_logo_1.png" />
     <Content Include="Content\Images\SLIIT_Logo_Crest.png" />
@@ -344,6 +350,7 @@
     <Content Include="Content\select.dataTables.min.css" />
     <Content Include="Content\select2-bootstrap4.min.css" />
     <Content Include="Content\select2.min.css" />
+    <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -520,6 +527,8 @@
     <Content Include="Views\SA\AddOrEditUserCategory.cshtml" />
     <Content Include="Views\SA\ManageWorkflow.cshtml" />
     <Content Include="Views\SA\AddOrEditWorkflow.cshtml" />
+    <Content Include="Views\SA\ManageLecturerAssignments.cshtml" />
+    <Content Include="Views\SA\AddOrEditLecturerAssignment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -6,7 +6,7 @@ Developed On:- 2022/08/16*@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMS</title>
+    <title>WPS</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/DataTable/css")
@@ -218,6 +218,10 @@ Developed On:- 2022/08/16*@
             else if (lecturerAppointmentUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#lecturerAppointment-nav-item').addClass('active');
             }
+
+            $("#sidebarToggle").on("click", function () {
+                $(".data-table").DataTable().columns.adjust();
+            });
         })
     </script>
 

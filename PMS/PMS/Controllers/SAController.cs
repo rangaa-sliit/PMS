@@ -3601,7 +3601,11 @@ namespace PMS.Controllers
                                                                 InstituteName = inst.InstituteName,
                                                                 DegreeName = dg.Name,
                                                                 SpecializationName = splz.Name != null ? splz.Name : "N/A",
-                                                                SubjectList = (from s in db.Subject where s.IsActive.Equals(true) select s).ToList(),
+                                                                SubjectList = (from su in db.Subject
+                                                                               join de in db.Degree on su.DegreeId equals de.DegreeId into su_de
+                                                                               from dgr in su_de.DefaultIfEmpty()
+                                                                               where su.IsActive.Equals(true) && (su.IsCommon.Equals(true) || dgr.FacultyId.Value == fac.FacultyId)
+                                                                               select su).ToList(),
                                                                 ViewingSemesterSubjectIdList = (from ss in db.SemesterSubject
                                                                                                 join s in db.Subject on ss.SubjectId equals s.SubjectId
                                                                                                 where ss.SemesterRegistrationId.Equals(id) && ss.IsActive.Equals(true)
@@ -5640,6 +5644,103 @@ namespace PMS.Controllers
                                                  }).ToList();
 
                 return Json(workflowList, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/12
+        public ActionResult ManageLecturerAssignments(int id)
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/12
+        public ActionResult GetLecturerAssignments(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<LecturerAssignmentsVM> lecturerAssignmentsList = (from la in db.LecturerAssignments
+                                                                       join sr in db.SemesterRegistration on la.SemesterId equals sr.SemesterId
+                                                                       join u in db.AspNetUsers on la.LecturerId equals u.Id
+                                                                       join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                                       join ss in db.SemesterSubject on la.SemesterSubjectId equals ss.Id
+                                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                                       select new LecturerAssignmentsVM {
+                                                                           Id = la.Id,
+                                                                           SemesterId = la.SemesterId,
+                                                                           LecturerName = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                                                           SubjectName = s.SubjectCode + " " + s.SubjectName,
+                                                                           StudentBatches = la.StudentBatches,
+                                                                           IsActive = la.IsActive
+                                                                       }).ToList();
+
+                return Json(new { data = lecturerAssignmentsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/13
+        [HttpGet]
+        public ActionResult AddOrEditLecturerAssignment(int id = 0, int additionalId = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
+                             where u.IsActive.Equals(true)
+                             select new
+                             {
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                 Value = u.Id
+                             }).ToList();
+
+                List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
+                ViewBag.usersList = usersList;
+
+                var subjects = (from ss in db.SemesterSubject
+                                join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                where ss.IsActive.Equals(true) && ss.SemesterRegistrationId.Equals(additionalId)
+                                select new
+                                {
+                                    Text = s.SubjectCode + " - " + s.SubjectName,
+                                    Value = ss.Id
+                                }).ToList();
+
+                List<SelectListItem> subjectsList = new SelectList(subjects, "Value", "Text").ToList();
+                ViewBag.subjectsList = subjectsList;
+
+                var studentBatches = (from sb in db.StudentBatch
+                                      join s in db.SemesterRegistration on sb.SemesterRegistrationId equals s.SemesterId
+                                      where sb.IsActive.Equals(true) && sb.SemesterRegistrationId.Equals(additionalId)
+                                      select new
+                                      {
+                                          Text = sb.BatchName,
+                                          Value = sb.BatchName
+                                      }).ToList();
+
+                List<SelectListItem> studentBatchesList = new SelectList(studentBatches, "Value", "Text").ToList();
+                ViewBag.studentBatchesList = studentBatchesList;
+
+                if (id == 0)
+                {
+                    return View(new LecturerAssignments());
+                }
+                else
+                {
+                    WorkflowCC workflowRecord = (from w in db.Workflow
+                                                 where w.Id.Equals(id)
+                                                 select new WorkflowCC
+                                                 {
+                                                     Id = w.Id,
+                                                     WorkflowRole = w.WorkflowRole,
+                                                     CurrentPosition = w.WorkflowStep,
+                                                     IsSpecificUser = w.IsSpecificUser,
+                                                     IsActive = w.IsActive
+                                                 }).FirstOrDefault<WorkflowCC>();
+
+                    return View(workflowRecord);
+                }
             }
         }
     }

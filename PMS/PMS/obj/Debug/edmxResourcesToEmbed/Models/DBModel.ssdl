@@ -330,6 +330,21 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="LecturerAssignments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SemesterId" Type="int" Nullable="false" />
+    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
+    <Property Name="StudentBatches" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="LectureType">
     <Key>
       <PropertyRef Name="LectureTypeId" />
@@ -407,8 +422,6 @@
   <EntityType Name="SemesterSubject">
     <Key>
       <PropertyRef Name="Id" />
-      <PropertyRef Name="SemesterRegistrationId" />
-      <PropertyRef Name="SubjectId" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
@@ -831,6 +844,42 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_LecturerAssignments_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterRegistration">
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
+    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterSubject">
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
+    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
@@ -1174,6 +1223,7 @@
     <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LecturerAssignments" EntityType="Self.LecturerAssignments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
@@ -1284,6 +1334,18 @@
     <AssociationSet Name="FK_LectureHall_Campus" Association="Self.FK_LectureHall_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="LectureHall" EntitySet="LectureHall" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_AspNetUsers" Association="Self.FK_LecturerAssignments_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterRegistration" Association="Self.FK_LecturerAssignments_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterSubject" Association="Self.FK_LecturerAssignments_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
       <End Role="Degree" EntitySet="Degree" />

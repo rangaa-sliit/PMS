@@ -25,7 +25,7 @@ Developed On:- 2022/09/05*@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="semesterRegistrationTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="semesterRegistrationTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -52,13 +52,14 @@ Developed On:- 2022/09/05*@
                     "data": "SemesterId",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
-                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'View')">View Semester Registration</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'Edit')">Edit Semester Registration</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateStudentBatchForm('@Url.Action("ManageStudentBatches", "SA")/` + data + `')">Manage Student Batches</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateSemesterSubjectForm('@Url.Action("ManageSemesterSubjects", "SA")/` + data + `')">Manage Semester Subjects</a></div></div>`
+                            + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                            + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                            + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                            + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'View')">View Semester Registration</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'Edit')">Edit Semester Registration</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateStudentBatchForm('@Url.Action("ManageStudentBatches", "SA")/` + data + `')">Manage Student Batches</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateSemesterSubjectForm('@Url.Action("ManageSemesterSubjects", "SA")/` + data + `')">Manage Semester Subjects</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateLecturerAssignmentsForm('@Url.Action("ManageLecturerAssignments", "SA")/` + data + `')">Manage Lecturer Assignments</a></div></div>`;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -243,6 +244,10 @@ Developed On:- 2022/09/05*@
         }
 
         function NavigateSemesterSubjectForm(url) {
+            window.location.href = url;
+        }
+
+        function NavigateLecturerAssignmentsForm(url) {
             window.location.href = url;
         }
     </script>

@@ -1,0 +1,59 @@
+﻿@*Developed By:- Ranga Athapaththu
+    Developed On:- 2022/10/13*@
+
+@model PMS.Models.LecturerAssignments
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("AddOrEditLecturerAssignment", "SA", FormMethod.Post, new { onsubmit = "return SubmitLecturerAssignmentForm(this)", @id = "lecturerAssignmentForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.SemesterId)
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.LecturerId, "Lecturer / Instructor: ", new { @class = "required" })
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.LecturerId, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onLecturerChange(this.value)" })
+            @Html.ValidationMessageFor(model => model.LecturerId)
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.SemesterSubjectId, "Subject: ", new { @class = "required" })
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.SemesterSubjectId, (IEnumerable<SelectListItem>)ViewBag.subjectsList, new { @class = "form-control", @id = "subjectsList", onchange = "onSubjectChange(this.value)" })
+            @Html.ValidationMessageFor(model => model.SemesterSubjectId)
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.StudentBatches, "Student Batch(es): ", new { @class = "required" })
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.StudentBatches, (IEnumerable<SelectListItem>)ViewBag.studentBatchesList, new { @class = "form-control", @id = "studentBatchesList", onchange = "onStudentBatchChange(this.value)" })
+            @Html.ValidationMessageFor(model => model.StudentBatches)
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.IsActive, "Status: ")
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+            {
+                new SelectListItem{ Text = "Active", Value = "true" },
+                new SelectListItem{ Text = "Inactive", Value = "false" }
+            }, new { @class = "form-control", @id = "lecturerAssignmentStatusList", onchange = "onLecturerAssignmentStatusChange(this.value)" })
+        </div>
+    </div>
+    <hr />
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit" id="lecturerAssignmentSubmitBtn">Save</button>
+        <button class="btn btn-light" type="button" id="lecturerAssignmentClearBtn" onclick="clearLecturerAssignmentForm()">Clear Changes</button>
+    </div>
+}

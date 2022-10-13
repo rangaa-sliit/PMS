@@ -23,6 +23,7 @@
     <EntitySet Name="Institute" EntityType="PMSModel.Institute" />
     <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
     <EntitySet Name="LectureHall" EntityType="PMSModel.LectureHall" />
+    <EntitySet Name="LecturerAssignments" EntityType="PMSModel.LecturerAssignments" />
     <EntitySet Name="LectureType" EntityType="PMSModel.LectureType" />
     <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
     <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
@@ -101,6 +102,10 @@
     <AssociationSet Name="FK_Faculty_AspNetUsers" Association="PMSModel.FK_Faculty_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="Faculty" EntitySet="Faculty" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_AspNetUsers" Association="PMSModel.FK_LecturerAssignments_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
     </AssociationSet>
     <AssociationSet Name="FK_Workflow_AspNetUsers" Association="PMSModel.FK_Workflow_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -201,6 +206,14 @@
     <AssociationSet Name="FK_SemesterRegistration_Intake" Association="PMSModel.FK_SemesterRegistration_Intake">
       <End Role="Intake" EntitySet="Intake" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterRegistration" Association="PMSModel.FK_LecturerAssignments_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterSubject" Association="PMSModel.FK_LecturerAssignments_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Specialization" Association="PMSModel.FK_PaymentRate_Specialization">
       <End Role="Specialization" EntitySet="Specialization" />
@@ -416,6 +429,7 @@
     <NavigationProperty Name="Title" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="AspNetUsers" ToRole="Title" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="AspNetUsers" ToRole="Department" />
     <NavigationProperty Name="Faculty1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="AspNetUsers" ToRole="Faculty" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="AspNetUsers" ToRole="LecturerAssignments" />
     <NavigationProperty Name="Workflow" Relationship="PMSModel.FK_Workflow_AspNetUsers" FromRole="AspNetUsers" ToRole="Workflow" />
   </EntityType>
   <EntityType Name="CalendarPeriod">
@@ -633,6 +647,24 @@
     <NavigationProperty Name="Campus" Relationship="PMSModel.FK_LectureHall_Campus" FromRole="LectureHall" ToRole="Campus" />
     <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="LectureHall" ToRole="ConductedLectures" />
   </EntityType>
+  <EntityType Name="LecturerAssignments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SemesterId" Type="Int32" Nullable="false" />
+    <Property Name="LecturerId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+    <Property Name="StudentBatches" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="LecturerAssignments" ToRole="AspNetUsers" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_LecturerAssignments_SemesterRegistration" FromRole="LecturerAssignments" ToRole="SemesterRegistration" />
+    <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_LecturerAssignments_SemesterSubject" FromRole="LecturerAssignments" ToRole="SemesterSubject" />
+  </EntityType>
   <EntityType Name="LectureType">
     <Key>
       <PropertyRef Name="LectureTypeId" />
@@ -724,6 +756,7 @@
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="SemesterRegistration" ToRole="Faculty" />
     <NavigationProperty Name="Institute" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="SemesterRegistration" ToRole="Institute" />
     <NavigationProperty Name="Intake" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="SemesterRegistration" ToRole="Intake" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_SemesterRegistration" FromRole="SemesterRegistration" ToRole="LecturerAssignments" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_SemesterRegistration_Specialization" FromRole="SemesterRegistration" ToRole="Specialization" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterRegistration" ToRole="SemesterSubject" />
     <NavigationProperty Name="StudentBatch" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="SemesterRegistration" ToRole="StudentBatch" />
@@ -731,8 +764,6 @@
   <EntityType Name="SemesterSubject">
     <Key>
       <PropertyRef Name="Id" />
-      <PropertyRef Name="SemesterRegistrationId" />
-      <PropertyRef Name="SubjectId" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
@@ -742,6 +773,7 @@
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_SemesterSubject" FromRole="SemesterSubject" ToRole="LecturerAssignments" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterSubject" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_SemesterSubject_Subject" FromRole="SemesterSubject" ToRole="Subject" />
   </EntityType>
@@ -1064,6 +1096,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_LecturerAssignments_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Workflow_AspNetUsers">
     <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
     <End Type="PMSModel.Workflow" Role="Workflow" Multiplicity="*" />
@@ -1377,6 +1421,30 @@
       </Principal>
       <Dependent Role="SemesterRegistration">
         <PropertyRef Name="IntakeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterSubject">
+    <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterSubjectId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

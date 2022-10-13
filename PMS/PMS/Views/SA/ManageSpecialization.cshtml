@@ -25,7 +25,7 @@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateSpecializationForm('@Url.Action("AddOrEditSpecialization", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="specializationTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="specializationTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -38,6 +38,7 @@
         specializationTbl = $("#specializationTbl").DataTable({
             "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {

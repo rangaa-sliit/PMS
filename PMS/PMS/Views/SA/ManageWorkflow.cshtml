@@ -26,7 +26,7 @@ Developed On:- 2022/10/06*@
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateWorkflowForm('@Url.Action("AddOrEditWorkflow", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
             <div class="table-responsive">
-                <table id="workflowTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="workflowTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
             @*<div id="steps">
                     <div class="step active" data-desc="Listing information">1</div>
@@ -85,6 +85,7 @@ Developed On:- 2022/10/06*@
         workflowTbl = $("#workflowTbl").DataTable({
             "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {

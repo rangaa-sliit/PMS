@@ -25,7 +25,7 @@ Developed On:- 2022/09/20*@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateAccessGroupForm('@Url.Action("AddOrEditAccessGroup", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="accessGroupTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="accessGroupTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -38,6 +38,7 @@ Developed On:- 2022/09/20*@
         accessGroupTbl = $("#accessGroupTbl").DataTable({
             "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
