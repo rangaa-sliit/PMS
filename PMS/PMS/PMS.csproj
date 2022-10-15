@@ -179,6 +179,8 @@
     <Compile Include="Custom_Classes\AccessGroupClaimCC.cs" />
     <Compile Include="Custom_Classes\AccessGroupClaim_ClaimCC.cs" />
     <Compile Include="Custom_Classes\ControllerActions.cs" />
+    <Compile Include="Custom_Classes\CustomAuthorizeAttribute.cs" />
+    <Compile Include="Custom_Classes\CustomExtensions.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\UserClaimCC.cs" />

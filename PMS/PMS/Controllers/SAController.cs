@@ -24,6 +24,7 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/08/17
+        //[CustomAuthorize("/SA/ManageInstitutes")]
         public ActionResult ManageInstitutes()
         {
             return View();
@@ -31,6 +32,7 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/08/17
+        //[CustomAuthorize("/SA/GetInstitutes")]
         public ActionResult GetInstitutes()
         {
             using (PMSEntities db = new PMSEntities())
@@ -43,6 +45,7 @@ namespace PMS.Controllers
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/08/17
         [HttpGet]
+        //[CustomAuthorize("/SA/AddOrEditInstitute/View", "/SA/AddOrEditInstitute/Add", "/SA/AddOrEditInstitute/Edit")]
         public ActionResult AddOrEditInstitute(int id = 0)
         {
             if(id == 0)

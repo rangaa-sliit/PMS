@@ -121,6 +121,9 @@ Developed On:- 2022/09/09*@
                                 <h6 class="m-0 font-weight-bold text-primary">Subject List</h6>
                             </div>
                             <div class="card-body" id="ssColumn-right">
+                                <input type="text" class="form-control" name="ssSearch" id="ssSearch" placeholder="Search Subject" oninput="onSemesterSubjectSearch(this.value)" />
+                                @*<i class="fas fa-search"></i>*@
+                                <br />
                                 @for (int i = 0; i < Model.SubjectList.Count; i++)
                                 {
                                     <div class="form-check">
@@ -213,6 +216,10 @@ Developed On:- 2022/09/09*@
 
         function clearSemesterSubjectForm() {
             window.location.reload();
+        }
+
+        function onSemesterSubjectSearch(val) {
+            //if()
         }
     </script>
 }
