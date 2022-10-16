@@ -3686,6 +3686,32 @@ namespace PMS.Controllers
             }
         }
 
-       
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/10/10
+        public ActionResult ManageEmployeePaymentHistoryReports()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/10/11
+        public ActionResult ManageDepartmentWiseReports()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/10/11
+        public ActionResult ManageCampusWiseReports()
+        {
+            return View();
+        }
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/10/11
+        public ActionResult ManageAppointmentTypeWiseReports()
+        {
+            return View();
+        }
     }
 }

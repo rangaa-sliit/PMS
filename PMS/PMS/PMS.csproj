@@ -485,6 +485,10 @@
     <Content Include="Views\SA\AddOrEditGroupClaim.cshtml" />
     <Content Include="Views\SA\ManageUsers.cshtml" />
     <Content Include="Views\SA\AddOrEditUsers.cshtml" />
+    <Content Include="Views\SA\ManageEmployeePaymentHistoryReports.cshtml" />
+    <Content Include="Views\SA\ManageDepartmentWiseReports.cshtml" />
+    <Content Include="Views\SA\ManageCampusWiseReports.cshtml" />
+    <Content Include="Views\SA\ManageAppointmentTypeWiseReports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

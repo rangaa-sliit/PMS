@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewBag.Title = "ManageAppointmentTypeWiseReports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageAppointmentTypeWiseReports", "SA")">Manage Appointment Type Wise Reports</a></li>
+        </ol>
+    </div>
+</div>
+
+<div class="card mt-2 mb-0" style="padding-top:7px">
+    <form class="container ml-2 mr-2 mt-0 mb-2">
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Appointment Type</label>
+                    <select id="campus" class="form-control" name="campus">
+                        <option value="">Choose...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" class="form-control" id="endDate">
+                </div>
+            </div>
+
+            <div class="col" style="margin-top:32px">
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+
+            </div>
+
+
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table mt-2 mb-0 table table-bordered data-table nowrap" style="padding-top:7px">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Employee</th>
+                    <th scope="col">Lecture Date</th>
+                    <th scope="col">Lecture Duration</th>
+                    <th scope="col">Payment Amount</th>
+                    <th scope="col">Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+        </div>
+    </div>
+
