@@ -102,3 +102,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

@@ -42,28 +42,34 @@ Developed On:- 2022/10/01*@
                                 <h6 class="m-0 font-weight-bold text-primary">Claims</h6>
                             </div>
                             <div class="card-body" id="claimsCardBody">
-                                @for (int i = 0; i < Model.ClaimsList.Count; i++)
-                                {
-                                    <div class="form-check" id="groupClaims">
-                                        @if (Model.SelectedAccessGroupClaims.Count != 0)
-                                        {
-                                            if (Model.SelectedAccessGroupClaims.FindIndex(agc => agc.ClaimId == Model.ClaimsList[i].ClaimId) != -1)
+                                <div class="form-group has-search">
+                                    <span class="fa fa-search form-control-feedback"></span>
+                                    <input type="search" class="form-control" name="cSearch" id="cSearch" placeholder="Search Claim" oninput="onClaimSearch(this.value)" />
+                                </div>
+                                <div id="claimsDiv">
+                                    @for (int i = 0; i < Model.ClaimsList.Count; i++)
+                                    {
+                                        <div class="form-check">
+                                            @if (Model.SelectedAccessGroupClaims.Count != 0)
                                             {
-                                                <input class="form-check-input" type="checkbox" id="@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" checked />
+                                                if (Model.SelectedAccessGroupClaims.FindIndex(agc => agc.ClaimId == Model.ClaimsList[i].ClaimId) != -1)
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this)" checked />
+                                                }
+                                                else
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this)" />
+                                                }
                                             }
                                             else
                                             {
-                                                <input class="form-check-input" type="checkbox" id="ug-@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" />
+                                                <input class="form-check-input" type="checkbox" id="@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this)" />
                                             }
-                                        }
-                                        else
-                                        {
-                                            <input class="form-check-input" type="checkbox" id="ug-@Model.ClaimsList[i].ClaimId" name="accessGroupClaim" value="@Model.ClaimsList[i].ClaimId" onchange="onAccessGroupClaimChange(this.value)" />
-                                        }
-                                        <label class="form-check-label">@Model.ClaimsList[i].ClaimName</label>
-                                    </div>
-                                    <hr />
-                                }
+                                            <label class="form-check-label">@Model.ClaimsList[i].ClaimName</label>
+                                        </div>
+                                        <hr />
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -94,28 +100,20 @@ Developed On:- 2022/10/01*@
 </div>
 
 @section scripts {
-    <script>
+<script>
         var accessGroupId = window.location.pathname.toString().split('/')[3];
-        var claimList = [];
+        var allClaimsList = [];
+        var selectedAccessGroupClaimsList = [];
 
         $(document).ready(function () {
-            //alert($("#footer").height);
-            //var footerHeight = $("#footer").height();
-            //var windowHeight = $(window).height();
-            //var uptoHeaderHeight = $("#claimsCardHeader").height();
-            //var actualUptoHeight = $("#claimsCardHeader").offset().top + uptoHeaderHeight;
-            //alert(windowHeight - actualUptoHeight);
-            document.getElementById('claimsCardBody').style.height = '250px';
-            document.getElementById('claimsCardBody').style.overflowY = 'auto';
-            document.getElementById('selectedCalimsCardBody').style.height = '250px';
+            document.getElementById('claimsCardBody').style.height = '300px';
+            document.getElementById('claimsDiv').style.height = '200px';
+            document.getElementById('claimsDiv').style.overflowY = 'auto';
+            document.getElementById('selectedCalimsCardBody').style.height = '300px';
             document.getElementById('selectedCalimsCardBody').style.overflowY = 'auto';
 
-            var claimListFromModel = @Html.Raw(Json.Encode(Model.ClaimsList));
-
-            for (var i = 0; i < claimListFromModel.length; i++) {
-                claimList.push(claimListFromModel[i]);
-            }
-
+            allClaimsList = @Html.Raw(Json.Encode(Model.ClaimsList));
+            selectedAccessGroupClaimsList = @Html.Raw(Json.Encode(Model.SelectedAccessGroupClaims));
         });
 
         function SubmitAccessGroupClaimForm(form) {
@@ -169,24 +167,73 @@ Developed On:- 2022/10/01*@
             window.location.reload();
         }
 
-        function onAccessGroupClaimChange(newClaimId) {
-            var selectedClaims = [];
+        function onAccessGroupClaimChange(chkbox) {
+            if ($(chkbox).is(":checked")) {
+                selectedAccessGroupClaimsList.push(allClaimsList.find(c => c.ClaimId == $(chkbox).val()));
+            }
+            else {
+                selectedAccessGroupClaimsList.splice(selectedAccessGroupClaimsList.findIndex(agc => agc.ClaimId == $(chkbox).val()), 1);
+            }
+
             $("#selectedCalimsCardBody").html("");
             var dynamicContent = ``;
 
-            $("input:checkbox[name=accessGroupClaim]:checked").each(function () {
-                selectedClaims.push($(this).val());
-            });
-
-            for (var i = 0; i < selectedClaims.length; i++) {
-                var sClaimName = claimList.find(c => c.ClaimId == selectedClaims[i]).ClaimName;
-                dynamicContent = dynamicContent + `<span class="text-dark"><i class="fa fa-check" style="color: #4e73df"></i> ` + sClaimName + `</span><br />`;
+            for (var i = 0; i < selectedAccessGroupClaimsList.length; i++) {
+                dynamicContent = dynamicContent + `<span class="text-dark"><i class="fa fa-check" style="color: #4e73df"></i> ` + selectedAccessGroupClaimsList[i].ClaimName + `</span><br />`;
             }
 
             $("#selectedCalimsCardBody").html(dynamicContent);
-
-            $("#accessGroupClaimSubmitBtn").prop("disabled", false);
-            $("#accessGroupClaimClearBtn").prop("disabled", false);
         }
-    </script>
+
+        function onClaimSearch(val) {
+            var dynamicContent = ``;
+            $("#claimsDiv").html("");
+
+            if (val == "" || val == null) {
+                $("#accessGroupClaimSubmitBtn").prop("disabled", false);
+                $("#accessGroupClaimClearBtn").prop("disabled", false);
+                for (var i = 0; i < allClaimsList.length; i++) {
+                    dynamicContent = dynamicContent + `<div class="form-check">`;
+
+                    if (selectedAccessGroupClaimsList.length != 0) {
+                        if (selectedAccessGroupClaimsList.findIndex(agc => agc.ClaimId == allClaimsList[i].ClaimId) != -1) {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" checked />`;
+                        }
+                        else {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" />`;
+                        }
+                    }
+                    else {
+                        dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" />`;
+                    }
+                    dynamicContent = dynamicContent + `<label class="form-check-label">` + allClaimsList[i].ClaimName + `</label></div><hr />`;
+                }
+                $("#claimsDiv").html(dynamicContent);
+            }
+            else {
+                $("#accessGroupClaimSubmitBtn").prop("disabled", true);
+                $("#accessGroupClaimClearBtn").prop("disabled", true);
+                for (var i = 0; i < allClaimsList.length; i++) {
+                    if (allClaimsList[i].ClaimName.toLowerCase().includes(val.toLowerCase())) {
+                        dynamicContent = dynamicContent + `<div class="form-check">`;
+
+                        if (selectedAccessGroupClaimsList.length != 0) {
+                            if (selectedAccessGroupClaimsList.findIndex(agc => agc.ClaimId == allClaimsList[i].ClaimId) != -1) {
+                                dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" checked />`;
+                            }
+                            else {
+                                dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" />`;
+                            }
+                        }
+                        else {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type="checkbox" id="` + allClaimsList[i].ClaimId + `" name="accessGroupClaim" value="` + allClaimsList[i].ClaimId + `" onchange="onAccessGroupClaimChange(this)" />`;
+                        }
+                        dynamicContent = dynamicContent + `<label class="form-check-label">` + allClaimsList[i].ClaimName + `</label></div><hr />`;
+                    }
+                }
+
+                $("#claimsDiv").html(dynamicContent);
+            }
+        }
+</script>
 }

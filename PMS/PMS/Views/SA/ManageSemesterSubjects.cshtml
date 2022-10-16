@@ -121,30 +121,33 @@ Developed On:- 2022/09/09*@
                                 <h6 class="m-0 font-weight-bold text-primary">Subject List</h6>
                             </div>
                             <div class="card-body" id="ssColumn-right">
-                                <input type="text" class="form-control" name="ssSearch" id="ssSearch" placeholder="Search Subject" oninput="onSemesterSubjectSearch(this.value)" />
-                                @*<i class="fas fa-search"></i>*@
-                                <br />
-                                @for (int i = 0; i < Model.SubjectList.Count; i++)
-                                {
-                                    <div class="form-check">
-                                        @if (Model.ViewingSemesterSubjectIdList.Count != 0)
-                                        {
-                                            if (Model.ViewingSemesterSubjectIdList.FindIndex(ss => ss == Model.SubjectList[i].SubjectId) != -1)
+                                <div class="form-group has-search">
+                                    <span class="fa fa-search form-control-feedback"></span>
+                                    <input type="search" class="form-control" name="ssSearch" id="ssSearch" placeholder="Search Subject" oninput="onSemesterSubjectSearch(this.value)" />
+                                </div>
+                                <div id="subjectsDiv">
+                                    @for (int i = 0; i < Model.SubjectList.Count; i++)
+                                    {
+                                        <div class="form-check">
+                                            @if (Model.ViewingSemesterSubjectIdList.Count != 0)
                                             {
-                                                <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" checked />
+                                                if (Model.ViewingSemesterSubjectIdList.FindIndex(ss => ss == Model.SubjectList[i].SubjectId) != -1)
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" onchange = "onSemesterSubjectChange(this)" checked />
+                                                }
+                                                else
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" onchange = "onSemesterSubjectChange(this)" />
+                                                }
                                             }
                                             else
                                             {
-                                                <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" />
+                                                <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" onchange = "onSemesterSubjectChange(this)" />
                                             }
-                                        }
-                                        else
-                                        {
-                                            <input class="form-check-input" type="checkbox" id="@Model.SubjectList[i].SubjectCode" name="semesterSubject" value="@Model.SubjectList[i].SubjectId" />
-                                        }
-                                        <label class="form-check-label">@Model.SubjectList[i].SubjectCode - @Model.SubjectList[i].SubjectName</label>
-                                    </div>
-                                }
+                                            <label class="form-check-label">@Model.SubjectList[i].SubjectCode - @Model.SubjectList[i].SubjectName</label>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
                         <hr />
@@ -161,10 +164,16 @@ Developed On:- 2022/09/09*@
 
 @section scripts {
     <script>
+        var allSubjects = [];
+        var allSelectedSubjectList = [];
+
         $(document).ready(function () {
             var leftHeight = $("#ssColumn-left").height();
-            document.getElementById('ssColumn-right').style.height = (leftHeight - 70) + 'px';
-            document.getElementById('ssColumn-right').style.overflowY = 'auto';
+            document.getElementById('subjectsDiv').style.height = (leftHeight - 150) + 'px';
+            document.getElementById('subjectsDiv').style.overflowY = 'auto';
+
+            allSubjects = @Html.Raw(Json.Encode(Model.SubjectList));
+            allSelectedSubjectList = @Html.Raw(Json.Encode(Model.ViewingSemesterSubjectIdList));
         });
 
         function SubmitSemesterSubjectForm(form) {
@@ -218,8 +227,69 @@ Developed On:- 2022/09/09*@
             window.location.reload();
         }
 
+        function onSemesterSubjectChange(chkbox) {
+            if ($(chkbox).is(":checked")) {
+                allSelectedSubjectList.push($(chkbox).val());
+            }
+            else {
+                allSelectedSubjectList.splice(allSelectedSubjectList.findIndex(s => s == $(chkbox).val()), 1);
+            }
+        }
+
         function onSemesterSubjectSearch(val) {
-            //if()
+            var dynamicContent = ``;
+            $("#subjectsDiv").html("");
+
+            if (val == "" || val == null) {
+                $("#semesterSubjectSubmitBtn").prop("disabled", false);
+                $("#semesterSubjectClearBtn").prop("disabled", false);
+                for (var i = 0; i < allSubjects.length; i++)
+                {
+                    dynamicContent = dynamicContent + `<div class="form-check">`;
+
+                    if (allSelectedSubjectList.length != 0)
+                    {
+                        if (allSelectedSubjectList.findIndex(ss => ss == allSubjects[i].SubjectId) != -1)
+                        {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" checked />`;
+                        }
+                        else
+                        {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" />`;
+                        }
+                    }
+                    else
+                    {
+                        dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" />`;
+                    }
+                    dynamicContent = dynamicContent + `<label class="form-check-label">` + allSubjects[i].SubjectCode + " - " + allSubjects[i].SubjectName + `</label></div>`;
+                }
+                $("#subjectsDiv").html(dynamicContent);
+            }
+            else {
+                $("#semesterSubjectSubmitBtn").prop("disabled", true);
+                $("#semesterSubjectClearBtn").prop("disabled", true);
+                for (var i = 0; i < allSubjects.length; i++) {
+                    if (allSubjects[i].SubjectCode.toLowerCase().includes(val.toLowerCase()) || allSubjects[i].SubjectName.toLowerCase().includes(val.toLowerCase())) {
+                        dynamicContent = dynamicContent + `<div class="form-check">`;
+
+                        if (allSelectedSubjectList.length != 0) {
+                            if (allSelectedSubjectList.findIndex(ss => ss == allSubjects[i].SubjectId) != -1) {
+                                dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" checked />`;
+                            }
+                            else {
+                                dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" />`;
+                            }
+                        }
+                        else {
+                            dynamicContent = dynamicContent + `<input class="form-check-input" type = "checkbox" id = "` + allSubjects[i].SubjectCode + `" name = "semesterSubject" value = "` + allSubjects[i].SubjectId + `" onchange = "onSemesterSubjectChange(this)" />`;
+                        }
+                        dynamicContent = dynamicContent + `<label class="form-check-label">` + allSubjects[i].SubjectCode + " - " + allSubjects[i].SubjectName + `</label></div>`;
+                    }
+                }
+
+                $("#subjectsDiv").html(dynamicContent);
+            }
         }
     </script>
 }
