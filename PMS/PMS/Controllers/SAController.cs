@@ -1627,7 +1627,7 @@ namespace PMS.Controllers
                     {
                         ConfigurationalSettings editingConfigurationalSettings = (from c in db.ConfigurationalSettings where c.Id.Equals(configurationalSettings.Id) select c).FirstOrDefault<ConfigurationalSettings>();
 
-                        if (editingConfigurationalSettings.ConfigurationKey != configurationalSettings.ConfigurationKey || editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
+                        if (editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
                         {
                             if (validationRecord != null && validationRecord.Id != configurationalSettings.Id)
                             {
@@ -1639,7 +1639,6 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                editingConfigurationalSettings.ConfigurationKey = configurationalSettings.ConfigurationKey;
                                 editingConfigurationalSettings.ConfigurationValue = configurationalSettings.ConfigurationValue;
                                 editingConfigurationalSettings.IsActive = configurationalSettings.IsActive;
                                 editingConfigurationalSettings.ModifiedBy = "Dulanjalee";

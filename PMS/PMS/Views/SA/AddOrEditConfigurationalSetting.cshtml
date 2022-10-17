@@ -79,6 +79,7 @@ Modified On:- 2022/08/22*@
             operation = window.location.pathname.toString().split('/')[4];
 
             if (operation != undefined) {
+                $("#configurationKey").prop("disabled", true);
                 $("#configurationalSettingsSubmitBtn").prop("disabled", true);
                 $("#configurationalSettingsClearBtn").prop("disabled", true);
                 if (operation == "Edit") {
@@ -90,7 +91,6 @@ Modified On:- 2022/08/22*@
                     $("#aeConfigurationalSettingsMainTitle").html("View Configuration");
                     $("#aeConfigurationalSettingsCardTitle").html("View Configuration");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Configuration</li>`);
-                    $("#configurationKey").prop("disabled", true);
                     $("#configurationValue").prop("disabled", true);
                     $("#configurationalSettingsStatusList").prop("disabled", true);
                 }
