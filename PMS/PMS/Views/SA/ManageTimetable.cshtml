@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "ManageTimetable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<html>
+<head>
+    
+</head>
+
+<body>
+
+
+
+    <section class="intro">
+        <div class="bg-image h-100" style="background-color: #f5f7fa;">
+            <div class="mask d-flex align-items-center h-100">
+                <div id="tab" class="container" style="padding:4rem">
+                    <h2>Lecture Time Table</h2>
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive table-scroll" data-mdb-perfect-scrollbar="true" style="position: relative;">
+                                        <table class="table table-striped mb-0">
+                                            <thead style="background-color: #003586;">
+                                                <tr>
+                                                    <th scope="col">Lecturer</th>
+                                                    <th scope="col">Subject Code</th>
+                                                    <th scope="col">Lecture Date</th>
+                                                    <th scope="col">Start Time</th>
+                                                    <th scope="col">End Time</th>
+                                                    <th scope="col">Lecture Type</th>
+                                                    <th scope="col">Location</th>
+                                                    <th scope="col">Student Batches</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>EMP1739</td>
+                                                    <td>IT1010</td>
+                                                    <td>2022-07-10</td>
+                                                    <td>10.00 am</td>
+                                                    <td>12.00 pm</td>
+                                                    <td>Lecture</td>
+                                                    <td>L01</td>
+                                                    <td>Batch A, Batch B</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>EMP1739</td>
+                                                    <td>IT1010</td>
+                                                    <td>2022-07-10</td>
+                                                    <td>10.00 am</td>
+                                                    <td>12.00 pm</td>
+                                                    <td>Lab</td>
+                                                    <td>L01</td>
+                                                    <td>Batch B</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>EMP1739</td>
+                                                    <td>IT1010</td>
+                                                    <td>2022-07-10</td>
+                                                    <td>10.00 am</td>
+                                                    <td>12.00 pm</td>
+                                                    <td>Tute</td>
+                                                    <td>L01</td>
+                                                    <td>Batch A, </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div style="margin-left:4rem">
+        <button class="btn btn-info" id="btPrint" onclick="createPDF()" value="Create PDF">Download as PDF</button>
+    </div>
+
+    <script>
+        function createPDF() {
+            var sTable = document.getElementById('tab').innerHTML;
+
+            var style = "<style>";
+            style = style + "table {width: 100%;font: 17px Calibri;}";
+            style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+            style = style + "padding: 2px 3px;text-align: center;}";
+            style = style + "</style>";
+
+            
+            var win = window.open('', '', 'height=700,width=700');
+
+            win.document.write('<html><head>');
+            win.document.write('<title>Profile</title>');   
+            win.document.write(style);          
+            win.document.write('</head>');
+            win.document.write('<body>');
+            win.document.write(sTable);         
+            win.document.write('</body></html>');
+
+            win.document.close(); 	
+
+            win.print();    
+        } 
+    </script>
+</body>
+</html>

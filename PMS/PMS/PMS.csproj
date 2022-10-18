@@ -489,6 +489,7 @@
     <Content Include="Views\SA\ManageDepartmentWiseReports.cshtml" />
     <Content Include="Views\SA\ManageCampusWiseReports.cshtml" />
     <Content Include="Views\SA\ManageAppointmentTypeWiseReports.cshtml" />
+    <Content Include="Views\SA\ManageTimetable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
