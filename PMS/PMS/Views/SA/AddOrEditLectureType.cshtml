@@ -43,6 +43,17 @@ Modified On:- 2022/08/22*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.AllowedToSeparatePayments, "Allowed for Separate Payments: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-check custom-control custom-switch">
+                            @Html.EditorFor(model => model.AllowedToSeparatePayments, new { htmlAttributes = new { @class = "custom-control-input", @id = "allowedToSeparatePayment", onchange = "onAllowedToSeparatePaymentChange()" } })
+                            <label class="custom-control-label" for="allowedToSeparatePayment">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsActive, "Status: ")
                     </div>
                     <div class="col-sm-9">
@@ -83,6 +94,7 @@ Modified On:- 2022/08/22*@
                     $("#aeLectureTypeCardTitle").html("View Lecture Type");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Lecture Type</li>`);
                     $("#lectureTypeName").prop("disabled", true);
+                    $("#allowedToSeparatePayment").prop("disabled", true);
                     $("#lectureTypeStatusList").prop("disabled", true);
                 }
             }
@@ -90,6 +102,7 @@ Modified On:- 2022/08/22*@
                 $("#aeLectureTypeMainTitle").html("Add Lecture Type");
                 $("#aeLectureTypeCardTitle").html("Add Lecture Type");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Lecture Type</li>`);
+                $("#allowedToSeparatePayment").prop("checked", false);
                 $("#lectureTypeStatusList").val("true");
             }
         })
@@ -110,6 +123,7 @@ Modified On:- 2022/08/22*@
                         if (data.success) {
                             if (operation == undefined) {
                                 $("#lectureTypeName").val("");
+                                $("#allowedToSeparatePayment").prop("checked", false);
                                 $("#lectureTypeStatusList").val("true");
                             }
 
@@ -133,6 +147,7 @@ Modified On:- 2022/08/22*@
         function clearLectureTypeForm() {
             if (operation == undefined) {
                 $("#lectureTypeName").val("");
+                $("#allowedToSeparatePayment").prop("checked", false);
                 $("#lectureTypeStatusList").val("true");
             }
             else {
@@ -141,6 +156,11 @@ Modified On:- 2022/08/22*@
         }
 
         function onLectureTypeNameInput() {
+            $("#lectureTypeSubmitBtn").prop("disabled", false);
+            $("#lectureTypeClearBtn").prop("disabled", false);
+        }
+
+        function onAllowedToSeparatePaymentChange() {
             $("#lectureTypeSubmitBtn").prop("disabled", false);
             $("#lectureTypeClearBtn").prop("disabled", false);
         }

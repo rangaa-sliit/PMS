@@ -55,20 +55,6 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
-  <EntityType Name="ApprovalStages">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="StageName" Type="nvarchar" MaxLength="250" Nullable="false" />
-    <Property Name="Description" Type="nvarchar" MaxLength="250" />
-    <Property Name="Priority" Type="int" Nullable="false" />
-    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="IsActive" Type="bit" Nullable="false" />
-  </EntityType>
   <EntityType Name="AspNetRoles">
     <Key>
       <PropertyRef Name="Id" />
@@ -198,17 +184,44 @@
       <PropertyRef Name="CLId" />
     </Key>
     <Property Name="CLId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="LectureDate" Type="date" Nullable="false" />
-    <Property Name="StartTime" Type="time" Precision="7" Nullable="false" />
-    <Property Name="EndTime" Type="time" Precision="7" Nullable="false" />
-    <Property Name="LectureTypeId" Type="int" Nullable="false" />
-    <Property Name="LectureHallId" Type="int" Nullable="false" />
-    <Property Name="Location" Type="int" Nullable="false" />
-    <Property Name="StudentBatchId" Type="int" Nullable="false" />
-    <Property Name="StudentCount" Type="int" Nullable="false" />
-    <Property Name="StudentAttendanceSheet" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ApprovalStageId" Type="int" Nullable="false" />
+    <Property Name="TimetableId" Type="int" Nullable="false" />
+    <Property Name="ActualLectureDate" Type="date" Nullable="false" />
+    <Property Name="ActualFromTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="ActualToTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="ActualLocationId" Type="int" />
+    <Property Name="CampusId" Type="int" />
+    <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="500" />
+    <Property Name="CurrentStageId" Type="int" Nullable="false" />
+    <Property Name="IsApprovedOrRejected" Type="bit" />
+    <Property Name="ApprovedOrRejectedDate" Type="datetime" />
+    <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ConductedLecturesLog">
+    <Key>
+      <PropertyRef Name="CLLogId" />
+    </Key>
+    <Property Name="CLLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CLId" Type="int" Nullable="false" />
+    <Property Name="TimetableId" Type="int" Nullable="false" />
+    <Property Name="ActualLectureDate" Type="date" Nullable="false" />
+    <Property Name="ActualFromTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="ActualToTime" Type="time" Precision="7" Nullable="false" />
+    <Property Name="ActualLocationId" Type="int" />
+    <Property Name="CampusId" Type="int" />
+    <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="500" />
+    <Property Name="CurrentStageId" Type="int" Nullable="false" />
+    <Property Name="IsApprovedOrRejected" Type="bit" />
+    <Property Name="ApprovedOrRejectedDate" Type="datetime" />
+    <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -345,12 +358,54 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="LectureTimetable">
+    <Key>
+      <PropertyRef Name="TimetableId" />
+    </Key>
+    <Property Name="TimetableId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SemesterId" Type="int" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
+    <Property Name="LectureDate" Type="date" />
+    <Property Name="FromTime" Type="time" Precision="7" />
+    <Property Name="ToTime" Type="time" Precision="7" />
+    <Property Name="LocationId" Type="int" />
+    <Property Name="LectureTypeId" Type="int" Nullable="false" />
+    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" />
+    <Property Name="StudentBatches" Type="nvarchar" MaxLength="500" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="LectureTimetableLog">
+    <Key>
+      <PropertyRef Name="TimetableLogId" />
+    </Key>
+    <Property Name="TimetableLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TimetableId" Type="int" Nullable="false" />
+    <Property Name="SemesterId" Type="int" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
+    <Property Name="LectureDate" Type="date" />
+    <Property Name="FromTime" Type="time" Precision="7" />
+    <Property Name="ToTime" Type="time" Precision="7" />
+    <Property Name="LocationId" Type="int" />
+    <Property Name="LectureTypeId" Type="int" Nullable="false" />
+    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" />
+    <Property Name="StudentBatches" Type="nvarchar" MaxLength="500" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="LectureType">
     <Key>
       <PropertyRef Name="LectureTypeId" />
     </Key>
     <Property Name="LectureTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="LectureTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="AllowedToSeparatePayments" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -670,71 +725,115 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_ApprovalStages">
-    <End Role="ApprovalStages" Type="Self.ApprovalStages" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ApprovalStages">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="ConductedLectures">
-        <PropertyRef Name="ApprovalStageId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_ConductedLectures_Campus">
-    <End Role="Campus" Type="Self.Campus" Multiplicity="1" />
+    <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Campus">
         <PropertyRef Name="CampusId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="Location" />
+        <PropertyRef Name="CampusId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_ConductedLectures_LectureHall">
-    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="LectureHall">
         <PropertyRef Name="HallId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="LectureHallId" />
+        <PropertyRef Name="ActualLocationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_LectureType">
-    <End Role="LectureType" Type="Self.LectureType" Multiplicity="1">
+  <Association Name="FK_ConductedLectures_LectureTimetable">
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="LectureType">
-        <PropertyRef Name="LectureTypeId" />
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="LectureTypeId" />
+        <PropertyRef Name="TimetableId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_StudentBatch">
-    <End Role="StudentBatch" Type="Self.StudentBatch" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+  <Association Name="FK_ConductedLectures_Workflow">
+    <End Role="Workflow" Type="Self.Workflow" Multiplicity="1" />
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="StudentBatch">
-        <PropertyRef Name="StudentBatchId" />
+      <Principal Role="Workflow">
+        <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="StudentBatchId" />
+        <PropertyRef Name="CurrentStageId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_Campus">
+    <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Campus">
+        <PropertyRef Name="CampusId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CampusId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_ConductedLectures">
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ConductedLectures">
+        <PropertyRef Name="CLId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CLId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_LectureHall">
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="ActualLocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_LectureTimetable">
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="TimetableId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_Workflow">
+    <End Role="Workflow" Type="Self.Workflow" Multiplicity="1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflow">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CurrentStageId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -880,6 +979,140 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_LectureTimetable_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_LectureHall">
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_LectureType">
+    <End Role="LectureType" Type="Self.LectureType" Multiplicity="1" />
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_SemesterRegistration">
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_SemesterSubject">
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureHall">
+    <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureTimetable">
+    <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="TimetableId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureType">
+    <End Role="LectureType" Type="Self.LectureType" Multiplicity="1" />
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_SemesterRegistration">
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_SemesterSubject">
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
+    <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
@@ -977,7 +1210,9 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRateLog_PaymentRate">
-    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1" />
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="PaymentRate">
@@ -1205,7 +1440,6 @@
     <EntitySet Name="AccessGroupClaims" EntityType="Self.AccessGroupClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="ApprovalStages" EntityType="Self.ApprovalStages" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
@@ -1215,6 +1449,7 @@
     <EntitySet Name="Campus" EntityType="Self.Campus" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Claim" EntityType="Self.Claim" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConductedLectures" EntityType="Self.ConductedLectures" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ConductedLecturesLog" EntityType="Self.ConductedLecturesLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ConfigurationalSettings" EntityType="Self.ConfigurationalSettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Degree" EntityType="Self.Degree" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
@@ -1224,6 +1459,8 @@
     <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LecturerAssignments" EntityType="Self.LecturerAssignments" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LectureTimetable" EntityType="Self.LectureTimetable" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LectureTimetableLog" EntityType="Self.LectureTimetableLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
@@ -1283,10 +1520,6 @@
       <End Role="Title" EntitySet="Title" />
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="Self.FK_ConductedLectures_ApprovalStages">
-      <End Role="ApprovalStages" EntitySet="ApprovalStages" />
-      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
-    </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_Campus" Association="Self.FK_ConductedLectures_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
@@ -1295,13 +1528,33 @@
       <End Role="LectureHall" EntitySet="LectureHall" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_LectureType" Association="Self.FK_ConductedLectures_LectureType">
-      <End Role="LectureType" EntitySet="LectureType" />
+    <AssociationSet Name="FK_ConductedLectures_LectureTimetable" Association="Self.FK_ConductedLectures_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_StudentBatch" Association="Self.FK_ConductedLectures_StudentBatch">
-      <End Role="StudentBatch" EntitySet="StudentBatch" />
+    <AssociationSet Name="FK_ConductedLectures_Workflow" Association="Self.FK_ConductedLectures_Workflow">
+      <End Role="Workflow" EntitySet="Workflow" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
+      <End Role="Campus" EntitySet="Campus" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="Self.FK_ConductedLecturesLog_ConductedLectures">
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_LectureHall" Association="Self.FK_ConductedLecturesLog_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="Self.FK_ConductedLecturesLog_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_Workflow" Association="Self.FK_ConductedLecturesLog_Workflow">
+      <End Role="Workflow" EntitySet="Workflow" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1346,6 +1599,50 @@
     <AssociationSet Name="FK_LecturerAssignments_SemesterSubject" Association="Self.FK_LecturerAssignments_SemesterSubject">
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
       <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_AspNetUsers" Association="Self.FK_LectureTimetable_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_LectureHall" Association="Self.FK_LectureTimetable_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_LectureType" Association="Self.FK_LectureTimetable_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_SemesterRegistration" Association="Self.FK_LectureTimetable_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_SemesterSubject" Association="Self.FK_LectureTimetable_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_AspNetUsers" Association="Self.FK_LectureTimetableLog_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureHall" Association="Self.FK_LectureTimetableLog_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureTimetable" Association="Self.FK_LectureTimetableLog_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureType" Association="Self.FK_LectureTimetableLog_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_SemesterRegistration" Association="Self.FK_LectureTimetableLog_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_SemesterSubject" Association="Self.FK_LectureTimetableLog_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
       <End Role="Degree" EntitySet="Degree" />

@@ -18,13 +18,15 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public LectureType()
         {
-            this.ConductedLectures = new HashSet<ConductedLectures>();
+            this.LectureTimetable = new HashSet<LectureTimetable>();
+            this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
         }
     
         public int LectureTypeId { get; set; }
         [Required(ErrorMessage = "Lecture Type is required")]
         [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string LectureTypeName { get; set; }
+        public bool AllowedToSeparatePayments { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -32,6 +34,8 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetableLog> LectureTimetableLog { get; set; }
     }
 }

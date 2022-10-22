@@ -14,6 +14,13 @@ namespace PMS.Models
     
     public partial class Workflow
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Workflow()
+        {
+            this.ConductedLectures = new HashSet<ConductedLectures>();
+            this.ConductedLecturesLog = new HashSet<ConductedLecturesLog>();
+        }
+    
         public int Id { get; set; }
         public string WorkflowRole { get; set; }
         public int WorkflowStep { get; set; }
@@ -27,5 +34,9 @@ namespace PMS.Models
     
         public virtual AspNetRoles AspNetRoles { get; set; }
         public virtual AspNetUsers AspNetUsers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
     }
 }

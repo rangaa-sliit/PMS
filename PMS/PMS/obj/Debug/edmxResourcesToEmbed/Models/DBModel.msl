@@ -60,21 +60,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="ApprovalStages">
-      <EntityTypeMapping TypeName="PMSModel.ApprovalStages">
-        <MappingFragment StoreEntitySet="ApprovalStages">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="Priority" ColumnName="Priority" />
-          <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="StageName" ColumnName="StageName" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="AspNetRoles">
       <EntityTypeMapping TypeName="PMSModel.AspNetRoles">
         <MappingFragment StoreEntitySet="AspNetRoles">
@@ -212,18 +197,46 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="ApprovalStageId" ColumnName="ApprovalStageId" />
-          <ScalarProperty Name="StudentAttendanceSheet" ColumnName="StudentAttendanceSheet" />
-          <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
-          <ScalarProperty Name="StudentBatchId" ColumnName="StudentBatchId" />
-          <ScalarProperty Name="Location" ColumnName="Location" />
-          <ScalarProperty Name="LectureHallId" ColumnName="LectureHallId" />
-          <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
-          <ScalarProperty Name="EndTime" ColumnName="EndTime" />
-          <ScalarProperty Name="StartTime" ColumnName="StartTime" />
-          <ScalarProperty Name="LectureDate" ColumnName="LectureDate" />
-          <ScalarProperty Name="LecturerId" ColumnName="LecturerId" />
+          <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
+          <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
+          <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+          <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
+          <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
+          <ScalarProperty Name="CampusId" ColumnName="CampusId" />
+          <ScalarProperty Name="ActualLocationId" ColumnName="ActualLocationId" />
+          <ScalarProperty Name="ActualToTime" ColumnName="ActualToTime" />
+          <ScalarProperty Name="ActualFromTime" ColumnName="ActualFromTime" />
+          <ScalarProperty Name="ActualLectureDate" ColumnName="ActualLectureDate" />
+          <ScalarProperty Name="TimetableId" ColumnName="TimetableId" />
           <ScalarProperty Name="CLId" ColumnName="CLId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ConductedLecturesLog">
+      <EntityTypeMapping TypeName="PMSModel.ConductedLecturesLog">
+        <MappingFragment StoreEntitySet="ConductedLecturesLog">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
+          <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
+          <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+          <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
+          <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
+          <ScalarProperty Name="CampusId" ColumnName="CampusId" />
+          <ScalarProperty Name="ActualLocationId" ColumnName="ActualLocationId" />
+          <ScalarProperty Name="ActualToTime" ColumnName="ActualToTime" />
+          <ScalarProperty Name="ActualFromTime" ColumnName="ActualFromTime" />
+          <ScalarProperty Name="ActualLectureDate" ColumnName="ActualLectureDate" />
+          <ScalarProperty Name="TimetableId" ColumnName="TimetableId" />
+          <ScalarProperty Name="CLId" ColumnName="CLId" />
+          <ScalarProperty Name="CLLogId" ColumnName="CLLogId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -366,6 +379,49 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="LectureTimetable">
+      <EntityTypeMapping TypeName="PMSModel.LectureTimetable">
+        <MappingFragment StoreEntitySet="LectureTimetable">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
+          <ScalarProperty Name="LecturerId" ColumnName="LecturerId" />
+          <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
+          <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+          <ScalarProperty Name="ToTime" ColumnName="ToTime" />
+          <ScalarProperty Name="FromTime" ColumnName="FromTime" />
+          <ScalarProperty Name="LectureDate" ColumnName="LectureDate" />
+          <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
+          <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
+          <ScalarProperty Name="TimetableId" ColumnName="TimetableId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LectureTimetableLog">
+      <EntityTypeMapping TypeName="PMSModel.LectureTimetableLog">
+        <MappingFragment StoreEntitySet="LectureTimetableLog">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
+          <ScalarProperty Name="LecturerId" ColumnName="LecturerId" />
+          <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
+          <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+          <ScalarProperty Name="ToTime" ColumnName="ToTime" />
+          <ScalarProperty Name="FromTime" ColumnName="FromTime" />
+          <ScalarProperty Name="LectureDate" ColumnName="LectureDate" />
+          <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
+          <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
+          <ScalarProperty Name="TimetableId" ColumnName="TimetableId" />
+          <ScalarProperty Name="TimetableLogId" ColumnName="TimetableLogId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="LectureType">
       <EntityTypeMapping TypeName="PMSModel.LectureType">
         <MappingFragment StoreEntitySet="LectureType">
@@ -374,6 +430,7 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="AllowedToSeparatePayments" ColumnName="AllowedToSeparatePayments" />
           <ScalarProperty Name="LectureTypeName" ColumnName="LectureTypeName" />
           <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
         </MappingFragment>

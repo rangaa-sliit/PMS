@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using OfficeOpenXml;
 using PMS.Custom_Classes;
 using PMS.Functions;
 using PMS.Models;
 using PMS.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
@@ -1488,7 +1490,7 @@ namespace PMS.Controllers
                     {
                         LectureType editingLectureType = (from lt in db.LectureType where lt.LectureTypeId.Equals(lectureType.LectureTypeId) select lt).FirstOrDefault<LectureType>();
 
-                        if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.IsActive != lectureType.IsActive)
+                        if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.AllowedToSeparatePayments != lectureType.AllowedToSeparatePayments || editingLectureType.IsActive != lectureType.IsActive)
                         {
                             if (validationRecord != null && validationRecord.LectureTypeId != lectureType.LectureTypeId)
                             {
@@ -1501,6 +1503,7 @@ namespace PMS.Controllers
                             else
                             {
                                 editingLectureType.LectureTypeName = lectureType.LectureTypeName;
+                                editingLectureType.AllowedToSeparatePayments = lectureType.AllowedToSeparatePayments;
                                 editingLectureType.IsActive = lectureType.IsActive;
                                 editingLectureType.ModifiedBy = "Dulanjalee";
                                 editingLectureType.ModifiedDate = dateTime;
@@ -5742,6 +5745,244 @@ namespace PMS.Controllers
                                                  }).FirstOrDefault<WorkflowCC>();
 
                     return View(workflowRecord);
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/18
+        public ActionResult ManageSemesterTimetable(int id)
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/18
+        public ActionResult GetSemesterTimetable(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<SemesterTimetableVM> semesterTimetableRecordsList = (from tt in db.LectureTimetable
+                                                                          join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                                          join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                                          join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                                          join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                                          join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
+                                                                          from hll in tt_lh.DefaultIfEmpty()
+                                                                          join c in db.Campus on hll.CampusId equals c.CampusId
+                                                                          join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                                          from usr in tt_u.DefaultIfEmpty()
+                                                                          join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                                          where tt.SemesterId.Equals(id)
+                                                                          orderby tt.TimetableId descending
+                                                                          select new SemesterTimetableVM
+                                                                          {
+                                                                              TimetableId = tt.TimetableId,
+                                                                              SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                                              LectureDate = tt.LectureDate.ToString().Substring(0, 10),
+                                                                              FromTime = tt.FromTime.ToString(),
+                                                                              ToTime = tt.ToTime.ToString(),
+                                                                              Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
+                                                                              LectureTypeName = lt.LectureTypeName,
+                                                                              LecturerName = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
+                                                                              StudentBatches = tt.StudentBatches,
+                                                                              IsActive = tt.IsActive
+                                                                          }).ToList();
+
+                return Json(new { data = semesterTimetableRecordsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/22
+        public void DownloadSemesterTimetableFormat(int id)
+        {
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Semester Timetable");
+            ttSheet.Cells["A1"].Value = "Subject Code";
+            ttSheet.Cells["B1"].Value = "Start Date";
+            ttSheet.Cells["C1"].Value = "Time From";
+            ttSheet.Cells["D1"].Value = "Time To";
+            ttSheet.Cells["E1"].Value = "Lecture Type";
+            ttSheet.Cells["F1"].Value = "Location";
+            ttSheet.Cells["G1"].Value = "Lecturer";
+            ttSheet.Cells["H1"].Value = "Student Batches";
+
+            var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
+            ttHeaderCells.Style.Font.Bold = true;
+
+            ttSheet.Column(1).AutoFit();
+            ttSheet.Column(2).AutoFit();
+            ttSheet.Column(3).AutoFit();
+            ttSheet.Column(4).AutoFit();
+            ttSheet.Column(5).AutoFit();
+            ttSheet.Column(6).AutoFit();
+            ttSheet.Column(7).AutoFit();
+            ttSheet.Column(8).AutoFit();
+
+            using (PMSEntities db = new PMSEntities())
+            {
+                var semesterSubjects = (from ss in db.SemesterSubject
+                                        join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                        where ss.SemesterRegistrationId.Equals(id) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                        select s).ToList();
+
+                ExcelWorksheet sSheet = ep.Workbook.Worksheets.Add("Semester Subjects");
+                sSheet.Cells["A1"].Value = "Subject Code";
+                sSheet.Cells["B1"].Value = "Subject Name";
+
+                sSheet.Cells[1, 1, 1, sSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var sRowIndex = 2;
+
+                foreach(var sub in semesterSubjects)
+                {
+                    sSheet.Cells[sRowIndex, 1].Value = sub.SubjectCode;
+                    sSheet.Cells[sRowIndex, 2].Value = sub.SubjectName;
+                    sRowIndex++;
+                }
+
+                sSheet.Column(1).AutoFit();
+                sSheet.Column(2).AutoFit();
+
+                var lectureTypes = (from lt in db.LectureType where lt.IsActive.Equals(true) select lt).ToList();
+
+                ExcelWorksheet ltSheet = ep.Workbook.Worksheets.Add("Lecture types");
+                ltSheet.Cells["A1"].Value = "Lecture Type Name";
+
+                ltSheet.Cells[1, 1, 1, ltSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var ltRowIndex = 2;
+
+                foreach (var typ in lectureTypes)
+                {
+                    ltSheet.Cells[ltRowIndex, 1].Value = typ.LectureTypeName;
+                    ltRowIndex++;
+                }
+
+                ltSheet.Column(1).AutoFit();
+
+                var lectureHalls = (from h in db.LectureHall
+                                    join c in db.Campus on h.CampusId equals c.CampusId
+                                    where h.IsActive.Equals(true) select new {
+                                        hall = h,
+                                        belongCampus = c
+                                    }).ToList();
+
+                ExcelWorksheet lhSheet = ep.Workbook.Worksheets.Add("Locations (Lecture Halls)");
+                lhSheet.Cells["A1"].Value = "Location Id";
+                lhSheet.Cells["B1"].Value = "Campus";
+                lhSheet.Cells["C1"].Value = "Building";
+                lhSheet.Cells["D1"].Value = "Floor";
+                lhSheet.Cells["E1"].Value = "Hall Name";
+
+                lhSheet.Cells[1, 1, 1, lhSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var lhRowIndex = 2;
+
+                foreach (var hllObj in lectureHalls)
+                {
+                    lhSheet.Cells[lhRowIndex, 1].Value = hllObj.hall.HallId;
+                    lhSheet.Cells[lhRowIndex, 2].Value = hllObj.belongCampus.CampusName;
+                    lhSheet.Cells[lhRowIndex, 3].Value = hllObj.hall.Building;
+                    lhSheet.Cells[lhRowIndex, 4].Value = hllObj.hall.Floor;
+                    lhSheet.Cells[lhRowIndex, 5].Value = hllObj.hall.HallName;
+                    lhRowIndex++;
+                }
+
+                lhSheet.Column(1).AutoFit();
+                lhSheet.Column(2).AutoFit();
+                lhSheet.Column(3).AutoFit();
+                lhSheet.Column(4).AutoFit();
+                lhSheet.Column(5).AutoFit();
+
+                var lecturers = (from a in db.Appointment
+                                 join u in db.AspNetUsers on a.UserId equals u.Id
+                                 join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                 where a.IsActive.Equals(true) && u.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     empNumber = u.EmployeeNumber,
+                                     name = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                 }).Distinct().OrderBy(u => u.empNumber).ToList();
+
+                ExcelWorksheet lecSheet = ep.Workbook.Worksheets.Add("Lecturers");
+                lecSheet.Cells["A1"].Value = "Employee Number";
+                lecSheet.Cells["B1"].Value = "Name";
+
+                lecSheet.Cells[1, 1, 1, lecSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var lecRowIndex = 2;
+
+                foreach (var lecturer in lecturers)
+                {
+                    lecSheet.Cells[lecRowIndex, 1].Value = lecturer.empNumber;
+                    lecSheet.Cells[lecRowIndex, 2].Value = lecturer.name;
+                    lecRowIndex++;
+                }
+
+                lecSheet.Column(1).AutoFit();
+                lecSheet.Column(2).AutoFit();
+
+                var studentBatches = (from sb in db.StudentBatch where sb.SemesterRegistrationId.Equals(id) && sb.IsActive.Equals(true) select sb).ToList();
+
+                ExcelWorksheet sbSheet = ep.Workbook.Worksheets.Add("Student Batches");
+                sbSheet.Cells["A1"].Value = "Student Batch Id";
+                sbSheet.Cells["B1"].Value = "Student Batch Name";
+
+                sbSheet.Cells[1, 1, 1, sbSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var sbRowIndex = 2;
+
+                foreach (var batch in studentBatches)
+                {
+                    sbSheet.Cells[sbRowIndex, 1].Value = batch.StudentBatchId;
+                    sbSheet.Cells[sbRowIndex, 2].Value = batch.BatchName;
+                    sbRowIndex++;
+                }
+
+                sbSheet.Column(1).AutoFit();
+                sbSheet.Column(2).AutoFit();
+            }
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment; filename=SemesterTimetable.xlsx");
+            Response.BinaryWrite(ep.GetAsByteArray());
+            Response.End();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/22
+        public ActionResult UploadSemesterTimetable(SemesterTimetableCC stCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                if(stCC.uploadedFile != null)
+                {
+                    if(stCC.uploadedFile.FileName.EndsWith(".xlsx") || stCC.uploadedFile.FileName.EndsWith(".xls"))
+                    {
+                        ExcelPackage excel = new ExcelPackage(stCC.uploadedFile.InputStream);
+                        DataTable dt = new DataTable();
+
+                        var ws = excel.Workbook.Worksheets["Semester Timetable"];
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Only Excel files are allowed"
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No file selected"
+                    }, JsonRequestBehavior.AllowGet);
                 }
             }
         }

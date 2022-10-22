@@ -59,7 +59,7 @@ Developed On:- 2022/09/05*@
                             + `<a class='dropdown-item btn' onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")/` + data + `', 'Edit')">Edit Semester Registration</a>`
                             + `<a class='dropdown-item btn' onclick="NavigateStudentBatchForm('@Url.Action("ManageStudentBatches", "SA")/` + data + `')">Manage Student Batches</a>`
                             + `<a class='dropdown-item btn' onclick="NavigateSemesterSubjectForm('@Url.Action("ManageSemesterSubjects", "SA")/` + data + `')">Manage Semester Subjects</a>`
-                            + `<a class='dropdown-item btn' onclick="NavigateLecturerAssignmentsForm('@Url.Action("ManageLecturerAssignments", "SA")/` + data + `')">Manage Lecturer Assignments</a></div></div>`;
+                            + `<a class='dropdown-item btn' onclick="NavigateSemesterTimetableForm('@Url.Action("ManageSemesterTimetable", "SA")/` + data + `')">Manage Semester Timetable</a></div></div>`;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -247,7 +247,7 @@ Developed On:- 2022/09/05*@
             window.location.href = url;
         }
 
-        function NavigateLecturerAssignmentsForm(url) {
+        function NavigateSemesterTimetableForm(url) {
             window.location.href = url;
         }
     </script>

@@ -25,6 +25,8 @@ namespace PMS.Models
             this.Department = new HashSet<Department>();
             this.Faculty1 = new HashSet<Faculty>();
             this.LecturerAssignments = new HashSet<LecturerAssignments>();
+            this.LectureTimetable = new HashSet<LectureTimetable>();
+            this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
             this.Workflow = new HashSet<Workflow>();
         }
     
@@ -83,6 +85,10 @@ namespace PMS.Models
         public virtual ICollection<Faculty> Faculty1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LecturerAssignments> LecturerAssignments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetableLog> LectureTimetableLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflow { get; set; }
     }

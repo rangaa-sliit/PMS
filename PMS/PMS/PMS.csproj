@@ -47,7 +47,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=6.0.8.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.6.0.8\lib\net35\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.Interfaces.6.0.0\lib\net452\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.System.Drawing, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2308d35469c9bac0, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.System.Drawing.6.0.0\lib\net452\EPPlus.System.Drawing.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -114,6 +125,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
@@ -183,6 +195,7 @@
     <Compile Include="Custom_Classes\CustomExtensions.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
+    <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />
     <Compile Include="Custom_Classes\UserClaimCC.cs" />
     <Compile Include="Custom_Classes\UserGroupsRolesCC.cs" />
     <Compile Include="Custom_Classes\WorkflowCC.cs" />
@@ -201,9 +214,6 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AppointmentType.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ApprovalStages.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AspNetRoles.cs">
@@ -231,6 +241,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ConductedLectures.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ConductedLecturesLog.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ConfigurationalSettings.cs">
@@ -274,6 +287,12 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\LecturerAssignments.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\LectureTimetable.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\LectureTimetableLog.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\LectureType.cs">
@@ -321,6 +340,7 @@
     <Compile Include="ViewModels\LecturerAssignmentsVM.cs" />
     <Compile Include="ViewModels\PaymentRateVM.cs" />
     <Compile Include="ViewModels\SemesterRegistrationVM.cs" />
+    <Compile Include="ViewModels\SemesterTimetableVM.cs" />
     <Compile Include="ViewModels\SpecializationVM.cs" />
     <Compile Include="ViewModels\SubjectVM.cs" />
     <Compile Include="ViewModels\UserVM.cs" />
@@ -531,6 +551,7 @@
     <Content Include="Views\SA\AddOrEditWorkflow.cshtml" />
     <Content Include="Views\SA\ManageLecturerAssignments.cshtml" />
     <Content Include="Views\SA\AddOrEditLecturerAssignment.cshtml" />
+    <Content Include="Views\SA\ManageSemesterTimetable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

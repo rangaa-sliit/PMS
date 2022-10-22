@@ -19,6 +19,8 @@ namespace PMS.Models
         public SemesterRegistration()
         {
             this.LecturerAssignments = new HashSet<LecturerAssignments>();
+            this.LectureTimetable = new HashSet<LectureTimetable>();
+            this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
             this.SemesterSubject = new HashSet<SemesterSubject>();
             this.StudentBatch = new HashSet<StudentBatch>();
         }
@@ -63,6 +65,10 @@ namespace PMS.Models
         public virtual Intake Intake { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LecturerAssignments> LecturerAssignments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetableLog> LectureTimetableLog { get; set; }
         public virtual Specialization Specialization { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SemesterSubject> SemesterSubject { get; set; }

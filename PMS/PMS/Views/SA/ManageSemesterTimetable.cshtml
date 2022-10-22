@@ -1,0 +1,182 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/10/18*@
+
+@{
+    ViewBag.Title = "ManageSemesterTimetable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageSemesterRegistrations", "SA")">Manage Semester Registrations</a></li>
+            <li class="breadcrumb-item active">Manage Semester Timetable</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Semester Timetable</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Semester Timetable</h6>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <input type="file" name="semTimetableExcel" id="semTimetableExcel" style="display: none;" onchange="onExcelUpload()" />
+            <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Timetable</button>
+            <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterTimetableFormat('@Url.Action("DownloadSemesterTimetableFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>
+            <div class="table-responsive">
+                <table id="semesterTimetableTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="studentBatchesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="studentBatchesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentBatchesModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="studentBatchFormContent">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var semesterTimetableTbl, studentBatchFormOpenAction, oldstudentBatchName, oldstudentBatchStatus;
+        var semesterRegistrationId = window.location.pathname.toString().split('/')[3];
+
+        semesterTimetableTbl = $("#semesterTimetableTbl").DataTable({
+            "responsive": true,
+            "scrollY": "30vh",
+            "scrollX": true,
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetSemesterTimetable", "SA")/" + semesterRegistrationId,
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": "TimetableId",
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'View')">View Record</a>`
+                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'Edit')">Edit Record</a></div></div>`
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
+                },
+                {
+                    "title": "Subject",
+                    "data": "SubjectName"
+                },
+                {
+                    "title": "Lecture Date",
+                    "data": "LectureDate"
+                },
+                {
+                    "title": "Lecture Start Time",
+                    "data": "FromTime"
+                },
+                {
+                    "title": "Lecture End Time",
+                    "data": "ToTime"
+                },
+                {
+                    "title": "Location",
+                    "data": "Location"
+                },
+                {
+                    "title": "Lecture Type",
+                    "data": "LectureTypeName"
+                },
+                {
+                    "title": "Lecturer",
+                    "data": "LecturerName"
+                },
+                {
+                    "title": "Student Batches",
+                    "data": "StudentBatches"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Records Found!"
+            }
+        })
+
+        function DownloadSemesterTimetableFormat(url) {
+            window.location.href = url + "/" + semesterRegistrationId;
+        }
+
+        function uploadSemesterTimetable() {
+            if (confirm("Are you sure you want to upload semester timetable?\r\n \r\nOnce you upload, semester timetable records will be updated in the 'Real Database'!")) {
+                $("#semTimetableExcel").click();
+            }
+        }
+
+        function onExcelUpload() {
+            var uploadedFile = $("#semTimetableExcel")[0].files[0];
+            var fd = new FormData();
+            fd.append("uploadedFile", uploadedFile);
+
+            $("#loader").show();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadSemesterTimetable", "SA")",
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#success-alert-content").html(data.message);
+                        $("#success-alert").show();
+                        setTimeout(function () {
+                            $("#success-alert").fadeOut("slow");
+                        }, 3000);
+                        userTbl.ajax.reload();
+                    }
+                    else {
+                        $("#error-alert-content").html(data.message);
+                        $("#error-alert").show();
+                        setTimeout(function () {
+                            $("#error-alert").fadeOut("slow");
+                        }, 3000);
+                        userTbl.ajax.reload();
+                    }
+                }
+            });
+        }
+
+    </script>
+}
