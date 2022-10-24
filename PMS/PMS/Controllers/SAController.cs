@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ExcelDataReader;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using PMS.Custom_Classes;
 using PMS.Functions;
@@ -8,8 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -4284,52 +4287,13 @@ namespace PMS.Controllers
             return Json(new { data = list }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
         public ActionResult TestMethod1()
         {
-            //var asm = Assembly.GetAssembly(typeof(PMS.MvcApplication));
-            //var controlleractionlist = asm.GetTypes()
-            //        .Where(type => typeof(System.Web.Mvc.Controller).IsAssignableFrom(type))
-            //        .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
-            //        .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
-            //        .Select(x => new {
-            //            Controller = x.DeclaringType.Name,
-            //            Action = x.Name,
-            //            ReturnType = x.ReturnType.Name,
-            //            Attributes = String.Join(",", x.GetCustomAttributes().Select(a => a.GetType().Name.Replace("Attribute", "")))
-            //        })
-            //        .OrderBy(x => x.Controller).ThenBy(x => x.Action).ToList();
-            //var list = new List<ControllerActions>();
+            //ExcelPackage ep = new ExcelPackage();
+            //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
 
-            //foreach (var item in controlleractionlist)
-            //{
-            //    list.Add(new ControllerActions()
-            //    {
-            //        Controller = item.Controller,
-            //        Action = item.Action,
-            //        Attributes = item.Attributes,
-            //        ReturnType = item.ReturnType
-            //    });
-            //}
-
-            //using (PMSEntities db = new PMSEntities())
-            //{
-            //    ClaimCC claim = (from c in db.Claim
-            //                     where c.ClaimId.Equals(6)
-            //                     select new ClaimCC
-            //                     {
-            //                         ClaimId = c.ClaimId,
-            //                         ClaimName = c.ClaimName,
-            //                         ClaimValue = c.ClaimValue,
-            //                         SubOperation = c.SubOperation,
-            //                         Description = c.Description,
-            //                         IsActive = c.IsActive
-            //                     }).FirstOrDefault<ClaimCC>();
-
-            //    claim.SelectedClaimValues = new JavaScriptSerializer().Deserialize<List<string>>(claim.ClaimValue).ToList();
-
-            //    return Json(new { data = claim }, JsonRequestBehavior.AllowGet);
-            //}
-            return Json(new { data = "" }, JsonRequestBehavior.AllowGet);
+            return File(Session["semsterTimetableErrorsExcel"] as Byte[], "application/vnd.ms-excel", "text.xlsx");
         }
 
         //Developed By:- Ranga Athapaththu
@@ -5954,6 +5918,7 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/22
+        [HttpPost]
         public ActionResult UploadSemesterTimetable(SemesterTimetableCC stCC)
         {
             using (PMSEntities db = new PMSEntities())
@@ -5962,10 +5927,116 @@ namespace PMS.Controllers
                 {
                     if(stCC.uploadedFile.FileName.EndsWith(".xlsx") || stCC.uploadedFile.FileName.EndsWith(".xls"))
                     {
-                        ExcelPackage excel = new ExcelPackage(stCC.uploadedFile.InputStream);
-                        DataTable dt = new DataTable();
+                        Stream stream = stCC.uploadedFile.InputStream;
+                        IExcelDataReader reader = null;
 
-                        var ws = excel.Workbook.Worksheets["Semester Timetable"];
+                        if (stCC.uploadedFile.FileName.EndsWith(".xls"))
+                        {
+                            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                        }
+                        else
+                        {
+                            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                        }
+
+                        int fieldCount = reader.FieldCount;
+                        int rowCount = reader.RowCount;
+
+                        DataTable dt = new DataTable();
+                        DataRow dtRow;
+
+                        DataTable dt_ = new DataTable();
+
+                        dt_ = reader.AsDataSet().Tables["Semester Timetable"];
+
+                        if(dt_ != null)
+                        {
+                            for (int i = 0; i < dt_.Columns.Count; i++)
+                            {
+                                dt.Columns.Add(dt_.Rows[0][i].ToString());
+                            }
+
+                            int rowCounter = 0;
+
+                            for (int row = 1; row < dt_.Rows.Count; row++)
+                            {
+                                dtRow = dt.NewRow();
+
+                                for (int col = 0; col < dt_.Columns.Count; col++)
+                                {
+                                    dtRow[col] = dt_.Rows[row][col].ToString();
+                                    rowCounter++;
+                                }
+                                dt.Rows.Add(dtRow);
+                            }
+
+                            if(dt.Rows.Count != 0)
+                            {
+                                //MemoryStream mStream = new MemoryStream();
+                                //stream.CopyTo(mStream);
+                                //var output = new FileContentResult(mStream.ToArray(), "application/vnd.ms-excel");
+                                //output.FileDownloadName = "download.xlsx";
+                                ExcelPackage ep = new ExcelPackage();
+                                ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Errors List");
+                                ttSheet.Cells["A1"].Value = "Subject Code";
+                                ttSheet.Cells["B1"].Value = "Start Date";
+                                ttSheet.Cells["C1"].Value = "Time From";
+                                ttSheet.Cells["D1"].Value = "Time To";
+                                ttSheet.Cells["E1"].Value = "Lecture Type";
+                                ttSheet.Cells["F1"].Value = "Location";
+                                ttSheet.Cells["G1"].Value = "Lecturer";
+                                ttSheet.Cells["H1"].Value = "Student Batches";
+
+                                var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
+                                ttHeaderCells.Style.Font.Bold = true;
+
+                                ttSheet.Column(1).AutoFit();
+                                ttSheet.Column(2).AutoFit();
+                                ttSheet.Column(3).AutoFit();
+                                ttSheet.Column(4).AutoFit();
+                                ttSheet.Column(5).AutoFit();
+                                ttSheet.Column(6).AutoFit();
+                                ttSheet.Column(7).AutoFit();
+                                ttSheet.Column(8).AutoFit();
+
+                                //Response.Clear();
+                                //Response.ContentType = "application/vnd.ms-excel";
+                                //Response.AddHeader("content-disposition", "attachment;filename=ActiveEmployees.xlsx");
+                                //Response.BinaryWrite(ep.GetAsByteArray());
+                                //Response.End();
+                                //return Json(new
+                                //{
+                                //    success = false,
+                                //    message = "No records found in the excel sheet",
+                                //    file = File(new MemoryStream(Encoding.ASCII.GetBytes("Ranga")), "text/plain", "ActiveEmployees.txt")
+                                //}, JsonRequestBehavior.AllowGet);
+
+                                //return File(ep.GetAsByteArray(), "application/vnd.ms-excel", "test.xlsx");
+                                //return Json(new { ep.GetAsByteArray() }, JsonRequestBehavior.AllowGet);
+                                Session["semsterTimetableErrorsExcel"] = ep.GetAsByteArray();
+                                return Json(new
+                                {
+                                    success = "null",
+                                    message = "Errors found in the excel sheet"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "No records found in the excel sheet"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "Semester Timetable excel sheet not found"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
                     }
                     else
                     {

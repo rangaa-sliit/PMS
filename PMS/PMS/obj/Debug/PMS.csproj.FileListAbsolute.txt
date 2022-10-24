@@ -106,3 +106,10 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.Interfaces.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.System.Drawing.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.DataSet.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.DataSet.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.DataSet.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache
