@@ -146,7 +146,8 @@ Developed On:- 2022/10/18*@
         function onExcelUpload() {
             var uploadedFile = $("#semTimetableExcel")[0].files[0];
             var fd = new FormData();
-            fd.append("uploadedFile", uploadedFile);
+            fd.append("SemesterId", semesterRegistrationId);
+            fd.append("UploadedFile", uploadedFile);
 
             $("#loader").show();
 
@@ -156,27 +157,6 @@ Developed On:- 2022/10/18*@
                 data: fd,
                 processData: false,
                 contentType: false,
-                //xhr: function () {
-
-                //    var xhr = new XMLHttpRequest();
-                //    xhr.onreadystatechange = function () {
-
-                //        if (xhr.readyState == 2) {
-
-                //            if (xhr.status == 200) {
-                //                xhr.responseType = "json";
-
-                //            } else {
-                //                xhr.responseType = "blob";
-                //            }
-
-                //        }
-
-                //    };
-
-                //    return xhr;
-
-                //},
                 success: function (data) {
                     $("#loader").hide();
                     semesterTimetableTbl.ajax.reload();
@@ -201,7 +181,7 @@ Developed On:- 2022/10/18*@
                             className: "error"
                         });
 
-                        window.location = "@Url.Action("TestMethod1", "SA")";
+                        window.location = "@Url.Action("DownloadSemesterTimetableErrors", "SA")";
                         //var blob = new Blob([data], { type: "application/ms-excel" });
 
 

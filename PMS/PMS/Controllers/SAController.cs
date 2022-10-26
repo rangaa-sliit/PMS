@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -4288,12 +4290,12 @@ namespace PMS.Controllers
         }
 
         [HttpGet]
-        public ActionResult TestMethod1()
+        public bool TestMethod1()
         {
             //ExcelPackage ep = new ExcelPackage();
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
-
-            return File(Session["semsterTimetableErrorsExcel"] as Byte[], "application/vnd.ms-excel", "text.xlsx");
+            TimeSpan t;
+            return TimeSpan.TryParse("08:10 am", out t);
         }
 
         //Developed By:- Ranga Athapaththu
@@ -5923,14 +5925,14 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                if(stCC.uploadedFile != null)
+                if(stCC.UploadedFile != null)
                 {
-                    if(stCC.uploadedFile.FileName.EndsWith(".xlsx") || stCC.uploadedFile.FileName.EndsWith(".xls"))
+                    if(stCC.UploadedFile.FileName.EndsWith(".xlsx") || stCC.UploadedFile.FileName.EndsWith(".xls"))
                     {
-                        Stream stream = stCC.uploadedFile.InputStream;
+                        Stream stream = stCC.UploadedFile.InputStream;
                         IExcelDataReader reader = null;
 
-                        if (stCC.uploadedFile.FileName.EndsWith(".xls"))
+                        if (stCC.UploadedFile.FileName.EndsWith(".xls"))
                         {
                             reader = ExcelReaderFactory.CreateBinaryReader(stream);
                         }
@@ -5972,53 +5974,362 @@ namespace PMS.Controllers
 
                             if(dt.Rows.Count != 0)
                             {
+                                DataColumnCollection columns = dt.Columns;
+
+                                if(columns.Contains("Subject Code") && columns.Contains("Start Date") && columns.Contains("Time From")
+                                    && columns.Contains("Time To") && columns.Contains("Lecture Type") && columns.Contains("Location")
+                                    && columns.Contains("Lecturer") && columns.Contains("Student Batches"))
+                                {
+                                    bool errorsFound = false;
+
+                                    List<Subject> semesterSubjectsList = (from ss in db.SemesterSubject
+                                                                          join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                                          where ss.SemesterRegistrationId.Equals(stCC.SemesterId) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                                                          select s).ToList();
+
+                                    List<LectureType> lectureTypesList = (from lt in db.LectureType where lt.IsActive.Equals(true) select lt).ToList();
+
+                                    List<LectureHall> lectureHallsList = (from lh in db.LectureHall where lh.IsActive.Equals(true) select lh).ToList();
+
+                                    List<AspNetUsers> lecturersList = (from a in db.Appointment
+                                                                       join u in db.AspNetUsers on a.UserId equals u.Id
+                                                                       where a.IsActive.Equals(true) && u.IsActive.Equals(true)
+                                                                       select u).Distinct().ToList();
+
+                                    List<string> studentBatchesList = (from sb in db.StudentBatch
+                                                                       where sb.SemesterRegistrationId.Equals(stCC.SemesterId) && sb.IsActive.Equals(true)
+                                                                       select sb.BatchName).ToList();
+
+                                    ExcelPackage ep = new ExcelPackage();
+                                    ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Semester Timetable");
+                                    ttSheet.Cells["A1"].LoadFromDataTable(dt, true);
+                                    ttSheet.Cells["I1"].Value = "Errors";
+
+                                    var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
+                                    ttHeaderCells.Style.Font.Bold = true;
+
+                                    int index = 2;
+                                    foreach (DataRow row in dt.Rows)
+                                    {
+                                        if(String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()) || String.IsNullOrEmpty(row["Start Date"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Time From"].ToString().Trim()) || String.IsNullOrEmpty(row["Time To"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Lecture Type"].ToString().Trim()) || String.IsNullOrEmpty(row["Location"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Lecturer"].ToString().Trim()) || String.IsNullOrEmpty(row["Student Batches"].ToString().Trim()))
+                                        {
+                                            errorsFound = true;
+
+                                            if(String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Start Date"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Time From"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Time To"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 4].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Lecture Type"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Location"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 6].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Lecturer"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 7].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Student Batches"].ToString().Trim()))
+                                            {
+                                                ttSheet.Cells[index, 8].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+
+                                            ttSheet.Cells["I" + index].Value = "Null or Empty Records Found";
+                                            ttSheet.Cells[index, 9].Style.Font.Color.SetColor(Color.Red);
+                                        }
+                                        else
+                                        {
+                                            var errorMessage = "";
+                                            DateTime startDate;
+                                            TimeSpan fromTime, toTime;
+                                            List<string> uploadedStudentBatches = row["Student Batches"].ToString().Split(',').Select(b => b.Trim()).ToList();
+
+                                            if (semesterSubjectsList.Find(s => s.SubjectCode == row["Subject Code"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                                errorMessage += "Subject not found for selected semester";
+                                            }
+                                            if (!DateTime.TryParseExact(row["Start Date"].ToString().Trim(), "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Start Date is not valid";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Start Date is not valid";
+                                                }
+                                            }
+                                            if (!TimeSpan.TryParse(row["Time From"].ToString().Trim(), out toTime))
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Time From is not valid";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Time From is not valid";
+                                                }
+                                            }
+                                            if (!TimeSpan.TryParse(row["Time To"].ToString().Trim(), out fromTime))
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 4].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 4].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Time To is not valid";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Time To is not valid";
+                                                }
+                                            }
+                                            if (lectureTypesList.Find(lt => lt.LectureTypeName == row["Lecture Type"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if(errorMessage == "")
+                                                {
+                                                    errorMessage += "Lecture Type not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Lecture Type not found";
+                                                }
+                                            }
+                                            if (lectureHallsList.Find(lh => lh.HallId == int.Parse(row["Location"].ToString().Trim())) == null)
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 6].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Location not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Location not found";
+                                                }
+                                            }
+                                            if (lecturersList.Find(l => l.EmployeeNumber == row["Lecturer"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 7].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Lecturer / Instructor not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Lecturer / Instructor not found";
+                                                }
+                                            }
+                                            if (!uploadedStudentBatches.All(sb => studentBatchesList.Contains(sb)))
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 8].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 8].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "One Or More Student Batch(es) not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", One Or More Student Batch(es) not found";
+                                                }
+                                            }
+
+                                            ttSheet.Cells["I" + index].Value = errorMessage;
+                                            ttSheet.Cells[index, 9].Style.Font.Color.SetColor(Color.Red);
+                                        }
+
+                                        index++;
+                                    }
+
+                                    if (errorsFound)
+                                    {
+                                        ttSheet.Column(1).AutoFit();
+                                        ttSheet.Column(2).AutoFit();
+                                        ttSheet.Column(3).AutoFit();
+                                        ttSheet.Column(4).AutoFit();
+                                        ttSheet.Column(5).AutoFit();
+                                        ttSheet.Column(6).AutoFit();
+                                        ttSheet.Column(7).AutoFit();
+                                        ttSheet.Column(8).AutoFit();
+                                        ttSheet.Column(9).AutoFit();
+
+                                        Session["semsterTimetableErrorsExcel"] = ep.GetAsByteArray();
+                                        return Json(new
+                                        {
+                                            success = "null",
+                                            message = "Errors found in the excel sheet"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMessage = "";
+                                    if(!columns.Contains("Subject Code"))
+                                    {
+                                        errorMessage += "Subject Code";
+                                    }
+                                    if (!columns.Contains("Start Date"))
+                                    {
+                                        if(errorMessage == "")
+                                        {
+                                            errorMessage += "Start Date";
+                                        }
+                                        else {
+                                            errorMessage += ", Start Date";
+                                        }
+                                    }
+                                    if (!columns.Contains("Time From"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Time From";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Time From";
+                                        }
+                                    }
+                                    if (!columns.Contains("Time To"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Time To";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Time To";
+                                        }
+                                    }
+                                    if (!columns.Contains("Lecture Type"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Lecture Type";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Lecture Type";
+                                        }
+                                    }
+                                    if (!columns.Contains("Location"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Location";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Location";
+                                        }
+                                    }
+                                    if (!columns.Contains("Lecturer"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Lecturer";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Lecturer";
+                                        }
+                                    }
+                                    if (!columns.Contains("Student Batches"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Student Batches";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Student Batches";
+                                        }
+                                    }
+
+                                    errorMessage += " column(s) missing from excel sheet";
+
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = errorMessage
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
                                 //MemoryStream mStream = new MemoryStream();
                                 //stream.CopyTo(mStream);
                                 //var output = new FileContentResult(mStream.ToArray(), "application/vnd.ms-excel");
                                 //output.FileDownloadName = "download.xlsx";
-                                ExcelPackage ep = new ExcelPackage();
-                                ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Errors List");
-                                ttSheet.Cells["A1"].Value = "Subject Code";
-                                ttSheet.Cells["B1"].Value = "Start Date";
-                                ttSheet.Cells["C1"].Value = "Time From";
-                                ttSheet.Cells["D1"].Value = "Time To";
-                                ttSheet.Cells["E1"].Value = "Lecture Type";
-                                ttSheet.Cells["F1"].Value = "Location";
-                                ttSheet.Cells["G1"].Value = "Lecturer";
-                                ttSheet.Cells["H1"].Value = "Student Batches";
+                                //ExcelPackage ep = new ExcelPackage();
+                                //ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Errors List");
+                                //ttSheet.Cells["A1"].Value = "Subject Code";
+                                //ttSheet.Cells["B1"].Value = "Start Date";
+                                //ttSheet.Cells["C1"].Value = "Time From";
+                                //ttSheet.Cells["D1"].Value = "Time To";
+                                //ttSheet.Cells["E1"].Value = "Lecture Type";
+                                //ttSheet.Cells["F1"].Value = "Location";
+                                //ttSheet.Cells["G1"].Value = "Lecturer";
+                                //ttSheet.Cells["H1"].Value = "Student Batches";
 
-                                var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
-                                ttHeaderCells.Style.Font.Bold = true;
+                                //var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
+                                //ttHeaderCells.Style.Font.Bold = true;
 
-                                ttSheet.Column(1).AutoFit();
-                                ttSheet.Column(2).AutoFit();
-                                ttSheet.Column(3).AutoFit();
-                                ttSheet.Column(4).AutoFit();
-                                ttSheet.Column(5).AutoFit();
-                                ttSheet.Column(6).AutoFit();
-                                ttSheet.Column(7).AutoFit();
-                                ttSheet.Column(8).AutoFit();
+                                //ttSheet.Column(1).AutoFit();
+                                //ttSheet.Column(2).AutoFit();
+                                //ttSheet.Column(3).AutoFit();
+                                //ttSheet.Column(4).AutoFit();
+                                //ttSheet.Column(5).AutoFit();
+                                //ttSheet.Column(6).AutoFit();
+                                //ttSheet.Column(7).AutoFit();
+                                //ttSheet.Column(8).AutoFit();
 
-                                //Response.Clear();
-                                //Response.ContentType = "application/vnd.ms-excel";
-                                //Response.AddHeader("content-disposition", "attachment;filename=ActiveEmployees.xlsx");
-                                //Response.BinaryWrite(ep.GetAsByteArray());
-                                //Response.End();
+                                //Session["semsterTimetableErrorsExcel"] = ep.GetAsByteArray();
                                 //return Json(new
                                 //{
-                                //    success = false,
-                                //    message = "No records found in the excel sheet",
-                                //    file = File(new MemoryStream(Encoding.ASCII.GetBytes("Ranga")), "text/plain", "ActiveEmployees.txt")
+                                //    success = "null",
+                                //    message = "Errors found in the excel sheet"
                                 //}, JsonRequestBehavior.AllowGet);
-
-                                //return File(ep.GetAsByteArray(), "application/vnd.ms-excel", "test.xlsx");
-                                //return Json(new { ep.GetAsByteArray() }, JsonRequestBehavior.AllowGet);
-                                Session["semsterTimetableErrorsExcel"] = ep.GetAsByteArray();
-                                return Json(new
-                                {
-                                    success = "null",
-                                    message = "Errors found in the excel sheet"
-                                }, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
@@ -6056,6 +6367,14 @@ namespace PMS.Controllers
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/26
+        [HttpGet]
+        public ActionResult DownloadSemesterTimetableErrors()
+        {
+            return File(Session["semsterTimetableErrorsExcel"] as Byte[], "application/vnd.ms-excel", "Semester_Timetable_Errors.xlsx");
         }
     }
 }

@@ -7,6 +7,7 @@ namespace PMS.Custom_Classes
 {
     public class SemesterTimetableCC
     {
-        public HttpPostedFileBase uploadedFile { get; set; }
+        public int SemesterId { get; set; }
+        public HttpPostedFileBase UploadedFile { get; set; }
     }
 }
