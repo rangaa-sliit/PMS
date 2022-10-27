@@ -46,9 +46,11 @@ namespace PMS.Models
         [Required(ErrorMessage = "Degree is required")]
         public Nullable<int> DegreeId { get; set; }
         public Nullable<int> SpecializationId { get; set; }
+        [Required(ErrorMessage = "Semester Starting Date is required")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> FromDate { get; set; }
+        [Required(ErrorMessage = "Semester End Date is required")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> ToDate { get; set; }

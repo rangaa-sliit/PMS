@@ -4290,12 +4290,22 @@ namespace PMS.Controllers
         }
 
         [HttpGet]
-        public bool TestMethod1()
+        public ActionResult TestMethod1()
         {
             //ExcelPackage ep = new ExcelPackage();
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
-            TimeSpan t;
-            return TimeSpan.TryParse("08:10 am", out t);
+            using(PMSEntities db = new PMSEntities())
+            {
+                //SemesterRegistration semReg = (from sr in db.SemesterRegistration where sr.SemesterId.Equals(1) select sr).FirstOrDefault<SemesterRegistration>();
+                TimeSpan st = TimeSpan.Parse("11:00");
+                TimeSpan et = TimeSpan.Parse("10:00");
+
+                return Json(new
+                {
+                    success = true,
+                    message = st < et
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         //Developed By:- Ranga Athapaththu
@@ -5745,9 +5755,9 @@ namespace PMS.Controllers
                                                                           {
                                                                               TimetableId = tt.TimetableId,
                                                                               SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
-                                                                              LectureDate = tt.LectureDate.ToString().Substring(0, 10),
-                                                                              FromTime = tt.FromTime.ToString(),
-                                                                              ToTime = tt.ToTime.ToString(),
+                                                                              LectureDate = tt.LectureDate.ToString(),
+                                                                              FromTime = tt.FromTime.ToString().Substring(0,5),
+                                                                              ToTime = tt.ToTime.ToString().Substring(0, 5),
                                                                               Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
                                                                               LectureTypeName = lt.LectureTypeName,
                                                                               LecturerName = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
@@ -5966,7 +5976,7 @@ namespace PMS.Controllers
 
                                 for (int col = 0; col < dt_.Columns.Count; col++)
                                 {
-                                    dtRow[col] = dt_.Rows[row][col].ToString();
+                                    dtRow[col] = dt_.Rows[row][col].ToString().Trim();
                                     rowCounter++;
                                 }
                                 dt.Rows.Add(dtRow);
@@ -5974,6 +5984,15 @@ namespace PMS.Controllers
 
                             if(dt.Rows.Count != 0)
                             {
+                                foreach(DataRow row in dt.Rows)
+                                {
+                                    row.SetField(1, row[1].ToString().Trim().Split(' ')[0]);
+                                    var st = row[2].ToString().Trim().Split(' ')[1];
+                                    row.SetField(2, st.Substring(0, st.LastIndexOf(":00")));
+                                    var et = row[3].ToString().Trim().Split(' ')[1];
+                                    row.SetField(3, et.Substring(0, et.LastIndexOf(":00")));
+                                }
+
                                 DataColumnCollection columns = dt.Columns;
 
                                 if(columns.Contains("Subject Code") && columns.Contains("Start Date") && columns.Contains("Time From")
@@ -5982,10 +6001,15 @@ namespace PMS.Controllers
                                 {
                                     bool errorsFound = false;
 
-                                    List<Subject> semesterSubjectsList = (from ss in db.SemesterSubject
-                                                                          join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                                                          where ss.SemesterRegistrationId.Equals(stCC.SemesterId) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
-                                                                          select s).ToList();
+                                    SemesterRegistration semReg = (from sr in db.SemesterRegistration where sr.SemesterId.Equals(stCC.SemesterId) select sr).FirstOrDefault<SemesterRegistration>();
+
+                                    var semesterSubjectsList = (from ss in db.SemesterSubject
+                                                                join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                                where ss.SemesterRegistrationId.Equals(stCC.SemesterId) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                                                select new {
+                                                                    semesterSubject = ss,
+                                                                    subject = s
+                                                                }).ToList();
 
                                     List<LectureType> lectureTypesList = (from lt in db.LectureType where lt.IsActive.Equals(true) select lt).ToList();
 
@@ -6011,14 +6035,14 @@ namespace PMS.Controllers
                                     int index = 2;
                                     foreach (DataRow row in dt.Rows)
                                     {
-                                        if(String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()) || String.IsNullOrEmpty(row["Start Date"].ToString().Trim())
+                                        if (String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()) || String.IsNullOrEmpty(row["Start Date"].ToString().Trim())
                                             || String.IsNullOrEmpty(row["Time From"].ToString().Trim()) || String.IsNullOrEmpty(row["Time To"].ToString().Trim())
                                             || String.IsNullOrEmpty(row["Lecture Type"].ToString().Trim()) || String.IsNullOrEmpty(row["Location"].ToString().Trim())
                                             || String.IsNullOrEmpty(row["Lecturer"].ToString().Trim()) || String.IsNullOrEmpty(row["Student Batches"].ToString().Trim()))
                                         {
                                             errorsFound = true;
 
-                                            if(String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()))
+                                            if (String.IsNullOrEmpty(row["Subject Code"].ToString().Trim()))
                                             {
                                                 ttSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
@@ -6059,16 +6083,17 @@ namespace PMS.Controllers
                                             var errorMessage = "";
                                             DateTime startDate;
                                             TimeSpan fromTime, toTime;
-                                            List<string> uploadedStudentBatches = row["Student Batches"].ToString().Split(',').Select(b => b.Trim()).ToList();
+                                            List<string> uploadedStudentBatches = row["Student Batches"].ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
 
-                                            if (semesterSubjectsList.Find(s => s.SubjectCode == row["Subject Code"].ToString().Trim()) == null)
+                                            if (semesterSubjectsList.Find(s => s.subject.SubjectCode == row["Subject Code"].ToString().Trim()) == null)
                                             {
                                                 errorsFound = true;
                                                 ttSheet.Cells[index, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 ttSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                                 errorMessage += "Subject not found for selected semester";
                                             }
-                                            if (!DateTime.TryParseExact(row["Start Date"].ToString().Trim(), "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
+
+                                            if (!DateTime.TryParseExact(row["Start Date"].ToString().Trim(), "M/d/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
                                             {
                                                 errorsFound = true;
                                                 ttSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -6083,7 +6108,43 @@ namespace PMS.Controllers
                                                     errorMessage += ", Start Date is not valid";
                                                 }
                                             }
-                                            if (!TimeSpan.TryParse(row["Time From"].ToString().Trim(), out toTime))
+                                            else
+                                            {
+                                                startDate = Convert.ToDateTime(row["Start Date"].ToString().Trim());
+
+                                                if (startDate < semReg.FromDate)
+                                                {
+                                                    errorsFound = true;
+                                                    ttSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                    ttSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                    if (errorMessage == "")
+                                                    {
+                                                        errorMessage += "Start Date is less than Semester Registration start date";
+                                                    }
+                                                    else
+                                                    {
+                                                        errorMessage += ", Start Date is less than Semester Registration start date";
+                                                    }
+                                                }
+                                                if (startDate > semReg.ToDate)
+                                                {
+                                                    errorsFound = true;
+                                                    ttSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                    ttSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                    if (errorMessage == "")
+                                                    {
+                                                        errorMessage += "Semester Registration end date has been passed";
+                                                    }
+                                                    else
+                                                    {
+                                                        errorMessage += ", Semester Registration end date has been passed";
+                                                    }
+                                                }
+                                            }
+
+                                            if (!TimeSpan.TryParse(row["Time From"].ToString().Trim(), out fromTime))
                                             {
                                                 errorsFound = true;
                                                 ttSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -6098,7 +6159,12 @@ namespace PMS.Controllers
                                                     errorMessage += ", Time From is not valid";
                                                 }
                                             }
-                                            if (!TimeSpan.TryParse(row["Time To"].ToString().Trim(), out fromTime))
+                                            else
+                                            {
+                                                fromTime = TimeSpan.Parse(row["Time From"].ToString().Trim());
+                                            }
+
+                                            if (!TimeSpan.TryParse(row["Time To"].ToString().Trim(), out toTime))
                                             {
                                                 errorsFound = true;
                                                 ttSheet.Cells[index, 4].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -6113,13 +6179,34 @@ namespace PMS.Controllers
                                                     errorMessage += ", Time To is not valid";
                                                 }
                                             }
+                                            else
+                                            {
+                                                toTime = TimeSpan.Parse(row["Time To"].ToString().Trim());
+                                            }
+
+                                            if (fromTime >= toTime)
+                                            {
+                                                errorsFound = true;
+                                                ttSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                ttSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Time From must be less than Time To";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Time From must be less than Time To";
+                                                }
+                                            }
+
                                             if (lectureTypesList.Find(lt => lt.LectureTypeName == row["Lecture Type"].ToString().Trim()) == null)
                                             {
                                                 errorsFound = true;
                                                 ttSheet.Cells[index, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 ttSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
 
-                                                if(errorMessage == "")
+                                                if (errorMessage == "")
                                                 {
                                                     errorMessage += "Lecture Type not found";
                                                 }
@@ -6202,7 +6289,78 @@ namespace PMS.Controllers
                                     }
                                     else
                                     {
+                                        var dateTime = DateTime.Now;
 
+                                        foreach (DataRow row in dt.Rows)
+                                        {
+                                            DateTime lectureStartDate = Convert.ToDateTime(row["Start Date"].ToString().Trim());
+                                            TimeSpan lectureStartTime = TimeSpan.Parse(row["Time From"].ToString().Trim());
+                                            TimeSpan lectureEndTime = TimeSpan.Parse(row["Time To"].ToString().Trim());
+
+                                            var lectureSubject = semesterSubjectsList.Find(s => s.subject.SubjectCode == row["Subject Code"].ToString().Trim());
+                                            LectureType typeOfLecture = lectureTypesList.Find(lt => lt.LectureTypeName == row["Lecture Type"].ToString().Trim());
+                                            LectureHall lectureLocation = lectureHallsList.Find(lh => lh.HallId == int.Parse(row["Location"].ToString().Trim()));
+                                            AspNetUsers lecturerDetails = lecturersList.Find(l => l.EmployeeNumber == row["Lecturer"].ToString().Trim());
+
+                                            int timetableRecordsCount = (from tt in db.LectureTimetable
+                                                                         where tt.SemesterId.Equals(stCC.SemesterId) && tt.SemesterSubjectId.Equals(lectureSubject.semesterSubject.Id)
+                                                                         && tt.LectureTypeId.Equals(typeOfLecture.LectureTypeId) && tt.IsActive.Equals(true)
+                                                                         select tt).Count();
+
+                                            
+                                            for (var i = lectureStartDate; i <= semReg.ToDate; i = i.AddDays(7))
+                                            {
+                                                if (timetableRecordsCount == 0)
+                                                {
+                                                    LectureTimetable timeTableObj = new LectureTimetable();
+
+                                                    timeTableObj.SemesterId = stCC.SemesterId;
+                                                    timeTableObj.SemesterSubjectId = lectureSubject.semesterSubject.Id;
+                                                    timeTableObj.LectureDate = i;
+                                                    timeTableObj.FromTime = lectureStartTime;
+                                                    timeTableObj.ToTime = lectureEndTime;
+                                                    timeTableObj.LocationId = lectureLocation.HallId;
+                                                    timeTableObj.LectureTypeId = typeOfLecture.LectureTypeId;
+                                                    timeTableObj.LecturerId = lecturerDetails.Id;
+                                                    timeTableObj.StudentBatches = row["Student Batches"].ToString().Trim();
+                                                    timeTableObj.CreatedDate = dateTime;
+                                                    timeTableObj.CreatedBy = "Ranga";
+                                                    timeTableObj.ModifiedDate = dateTime;
+                                                    timeTableObj.ModifiedBy = "Ranga";
+                                                    timeTableObj.IsActive = true;
+
+                                                    db.LectureTimetable.Add(timeTableObj);
+                                                    db.SaveChanges();
+
+                                                    LectureTimetableLog timeTableLogObj = new LectureTimetableLog();
+
+                                                    timeTableLogObj.TimetableId = timeTableObj.TimetableId;
+                                                    timeTableLogObj.SemesterId = stCC.SemesterId;
+                                                    timeTableLogObj.SemesterSubjectId = lectureSubject.semesterSubject.Id;
+                                                    timeTableLogObj.LectureDate = i;
+                                                    timeTableLogObj.FromTime = lectureStartTime;
+                                                    timeTableLogObj.ToTime = lectureEndTime;
+                                                    timeTableLogObj.LocationId = lectureLocation.HallId;
+                                                    timeTableLogObj.LectureTypeId = typeOfLecture.LectureTypeId;
+                                                    timeTableLogObj.LecturerId = lecturerDetails.Id;
+                                                    timeTableLogObj.StudentBatches = row["Student Batches"].ToString().Trim();
+                                                    timeTableLogObj.CreatedDate = dateTime;
+                                                    timeTableLogObj.CreatedBy = "Ranga";
+                                                    timeTableLogObj.ModifiedDate = dateTime;
+                                                    timeTableLogObj.ModifiedBy = "Ranga";
+                                                    timeTableLogObj.IsActive = true;
+
+                                                    db.LectureTimetableLog.Add(timeTableLogObj);
+                                                    db.SaveChanges();
+                                                }
+                                            }
+                                        }
+
+                                        return Json(new
+                                        {
+                                            success = true,
+                                            message = "Successfully Saved"
+                                        }, JsonRequestBehavior.AllowGet);
                                     }
                                 }
                                 else
@@ -6297,39 +6455,6 @@ namespace PMS.Controllers
                                         message = errorMessage
                                     }, JsonRequestBehavior.AllowGet);
                                 }
-                                //MemoryStream mStream = new MemoryStream();
-                                //stream.CopyTo(mStream);
-                                //var output = new FileContentResult(mStream.ToArray(), "application/vnd.ms-excel");
-                                //output.FileDownloadName = "download.xlsx";
-                                //ExcelPackage ep = new ExcelPackage();
-                                //ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Errors List");
-                                //ttSheet.Cells["A1"].Value = "Subject Code";
-                                //ttSheet.Cells["B1"].Value = "Start Date";
-                                //ttSheet.Cells["C1"].Value = "Time From";
-                                //ttSheet.Cells["D1"].Value = "Time To";
-                                //ttSheet.Cells["E1"].Value = "Lecture Type";
-                                //ttSheet.Cells["F1"].Value = "Location";
-                                //ttSheet.Cells["G1"].Value = "Lecturer";
-                                //ttSheet.Cells["H1"].Value = "Student Batches";
-
-                                //var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
-                                //ttHeaderCells.Style.Font.Bold = true;
-
-                                //ttSheet.Column(1).AutoFit();
-                                //ttSheet.Column(2).AutoFit();
-                                //ttSheet.Column(3).AutoFit();
-                                //ttSheet.Column(4).AutoFit();
-                                //ttSheet.Column(5).AutoFit();
-                                //ttSheet.Column(6).AutoFit();
-                                //ttSheet.Column(7).AutoFit();
-                                //ttSheet.Column(8).AutoFit();
-
-                                //Session["semsterTimetableErrorsExcel"] = ep.GetAsByteArray();
-                                //return Json(new
-                                //{
-                                //    success = "null",
-                                //    message = "Errors found in the excel sheet"
-                                //}, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
@@ -6375,6 +6500,24 @@ namespace PMS.Controllers
         public ActionResult DownloadSemesterTimetableErrors()
         {
             return File(Session["semsterTimetableErrorsExcel"] as Byte[], "application/vnd.ms-excel", "Semester_Timetable_Errors.xlsx");
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/26
+        [HttpGet]
+        public ActionResult AddOrEditSemesterTimetable(int id = 0)
+        {
+            if (id == 0)
+            {
+                return View(new LectureTimetable());
+            }
+            else
+            {
+                using (PMSEntities db = new PMSEntities())
+                {
+                    return View((from tt in db.LectureTimetable where tt.TimetableId.Equals(id) select tt).FirstOrDefault<LectureTimetable>());
+                }
+            }
         }
     }
 }
