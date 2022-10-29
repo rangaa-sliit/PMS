@@ -24,7 +24,7 @@ Developed On:- 2022/10/18*@
             <h6 class="m-0 font-weight-bold text-primary">Semester Timetable</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateAddSemesterTimetableForm('Add')"><i class="fa fa-plus"></i> Add New</button>
             <input type="file" name="semTimetableExcel" id="semTimetableExcel" style="display: none;" onchange="onExcelUpload()" />
             <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Timetable</button>
             <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterTimetableFormat('@Url.Action("DownloadSemesterTimetableFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>
@@ -52,7 +52,7 @@ Developed On:- 2022/10/18*@
 </div>
 
 @section scripts {
-<script>
+    <script>
         var semesterTimetableTbl, studentBatchFormOpenAction, oldstudentBatchName, oldstudentBatchStatus;
         var semesterRegistrationId = window.location.pathname.toString().split('/')[3];
 
@@ -76,8 +76,8 @@ Developed On:- 2022/10/18*@
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'View')">View Record</a>`
-                                + `<a class='dropdown-item btn' onclick="PopupStudentBatchForm('@Url.Action("AddOrEditStudentBatch", "SA")/` + data + `', 'Edit')">Edit Record</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="NavigateSemesterTimetableForm(` + data + `, 'View')">View Record</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateSemesterTimetableForm(` + data + `, 'Edit')">Edit Record</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,
@@ -182,61 +182,24 @@ Developed On:- 2022/10/18*@
                         });
 
                         window.location = "@Url.Action("DownloadSemesterTimetableErrors", "SA")";
-                        //var blob = new Blob([data], { type: "application/ms-excel" });
-
-
-                        ////Check the Browser type and download the File.
-
-                        //var isIE = false || !!document.documentMode;
-
-                        //if (isIE) {
-
-                        //    window.navigator.msSaveBlob(blob, fileName);
-
-                        //} else {
-
-                        //    var url = window.URL || window.webkitURL;
-
-                        //    link = url.createObjectURL(blob);
-
-                        //    var a = $("<a />");
-
-                        //    a.attr("download", "abcd.xlsx");
-
-                        //    a.attr("href", link);
-
-                        //    $("body").append(a);
-
-                        //    a[0].click();
-
-                        //    $("body").remove(a);
-
-                        //}
                     }
-
-
-                    //$.notify(data.file, {
-                    //        globalPosition: "top center",
-                    //        className: "success"
-                    //    })
-                    //if (data != null) {
-
-                    //}
-                    //if (data.success) {
-                    //    $.notify(data.message, {
-                    //        globalPosition: "top center",
-                    //        className: "success"
-                    //    })
-                    //}
-                    //else {
-                    //    $.notify(data.message, {
-                    //        globalPosition: "top center",
-                    //        className: "error"
-                    //    })
-                    //}
                 }
             });
         }
 
-</script>
+        function NavigateAddSemesterTimetableForm() {
+            window.location.href = "@Url.Action("AddOrEditSemesterTimetable", "SA")/" + semesterRegistrationId;
+        }
+
+        function NavigateSemesterTimetableForm(timetableId, action) {
+            var url = "@Url.Action("AddOrEditSemesterTimetable", "SA")/" + semesterRegistrationId;
+
+            if (action == "Edit") {
+                window.location.href = url + "/" + timetableId + "/Edit" ;
+            }
+            else {
+                window.location.href = url + "/" + timetableId + "/View";
+            }
+        }
+    </script>
 }

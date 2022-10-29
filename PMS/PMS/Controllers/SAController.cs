@@ -4297,14 +4297,25 @@ namespace PMS.Controllers
             using(PMSEntities db = new PMSEntities())
             {
                 //SemesterRegistration semReg = (from sr in db.SemesterRegistration where sr.SemesterId.Equals(1) select sr).FirstOrDefault<SemesterRegistration>();
-                TimeSpan st = TimeSpan.Parse("11:00");
-                TimeSpan et = TimeSpan.Parse("10:00");
+                //var degreesSpecializations = (from d in db.Degree
+                //                              join sp in db.Specialization on d.DegreeId equals sp.DegreeId into d_sp
+                //                              from spzl in d_sp.DefaultIfEmpty()
+                //                              where d.IsActive.Equals(true)
+                //                              select spzl).ToList();
 
-                return Json(new
-                {
-                    success = true,
-                    message = st < et
-                }, JsonRequestBehavior.AllowGet);
+                var degreesSpecializations = (from d in db.Degree
+                                              //join sp in db.Specialization on d.DegreeId equals sp.DegreeId into d_sp
+                                              //from spzl in d_sp.DefaultIfEmpty()
+                                              where d.IsActive.Equals(true)
+                                              select new {
+                                                  degree = d,
+                                                  specialization = (from deg in db.Degree
+                                                                    join sp in db.Specialization on d.DegreeId equals sp.DegreeId into deg_sp
+                                                                    from spzl in deg_sp.DefaultIfEmpty()
+                                                                    where spzl.DegreeId.Equals(d.DegreeId) && spzl.IsActive.Equals(true) select spzl).ToList()
+                                              }).ToList();
+
+                return Json(degreesSpecializations, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -6505,19 +6516,413 @@ namespace PMS.Controllers
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/26
         [HttpGet]
-        public ActionResult AddOrEditSemesterTimetable(int id = 0)
+        public ActionResult AddOrEditSemesterTimetable(int id = 0, int operation = 0)
         {
-            if (id == 0)
+            using (PMSEntities db = new PMSEntities())
             {
-                return View(new LectureTimetable());
-            }
-            else
-            {
-                using (PMSEntities db = new PMSEntities())
+                var semesterSubjects = (from ss in db.SemesterSubject
+                                        join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                        where ss.SemesterRegistrationId.Equals(id) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                        select new
+                                        {
+                                            Text = s.SubjectCode + " - " + s.SubjectName,
+                                            Value = ss.Id
+                                        }).ToList();
+
+                List<SelectListItem> semesterSubjectList = new SelectList(semesterSubjects, "Value", "Text").ToList();
+                ViewBag.semesterSubjectList = semesterSubjectList;
+
+                var lectureHalls = (from lh in db.LectureHall
+                                    join c in db.Campus on lh.CampusId equals c.CampusId
+                                    where lh.IsActive.Equals(true)
+                                    select new {
+                                        Text = c.CampusName + " - " + lh.Building + " - " + lh.Floor + " - " + lh.HallName,
+                                        Value = lh.HallId
+                                    }).ToList();
+
+                List<SelectListItem> lectureHallsList = new SelectList(lectureHalls, "Value", "Text").ToList();
+                ViewBag.lectureHallsList = lectureHallsList;
+
+                var lectureTypes = (from lt in db.LectureType
+                                    where lt.IsActive.Equals(true)
+                                    select new {
+                                        Text = lt.LectureTypeName,
+                                        Value = lt.LectureTypeId
+                                    }).ToList();
+
+                List<SelectListItem> lectureTypesList = new SelectList(lectureTypes, "Value", "Text").ToList();
+                ViewBag.lectureTypesList = lectureTypesList;
+
+                var lecturers = (from a in db.Appointment
+                                 join u in db.AspNetUsers on a.UserId equals u.Id
+                                 join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                 where a.IsActive.Equals(true) && u.IsActive.Equals(true)
+                                 select new {
+                                     Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                     Value = u.Id
+                                 }).Distinct().ToList();
+
+                List<SelectListItem> lecturersList = new SelectList(lecturers, "Value", "Text").ToList();
+                ViewBag.lecturersList = lecturersList;
+
+                var studentBatches = (from sb in db.StudentBatch
+                                      where sb.SemesterRegistrationId.Equals(id) && sb.IsActive.Equals(true)
+                                      select new {
+                                          Text = sb.BatchName,
+                                          Value = sb.BatchName
+                                      }).ToList();
+
+                List<SelectListItem> studentBatchesList = new SelectList(studentBatches, "Value", "Text").ToList();
+                ViewBag.studentBatchesList = studentBatchesList;
+
+                if (operation == 0)
                 {
-                    return View((from tt in db.LectureTimetable where tt.TimetableId.Equals(id) select tt).FirstOrDefault<LectureTimetable>());
+                    return View(new LectureTimetable() { SemesterId = id });
+                }
+                else
+                {
+                    return View((from tt in db.LectureTimetable where tt.TimetableId.Equals(operation) select tt).FirstOrDefault<LectureTimetable>());
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/28
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSemesterTimetable(LectureTimetable lectureTT)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    LectureTimetable validationRecord = (from tt in db.LectureTimetable
+                                                         where tt.SemesterId.Equals(lectureTT.SemesterId) && tt.SemesterSubjectId.Equals(lectureTT.SemesterSubjectId)
+                                                         && tt.LecturerId.Equals(lectureTT.LecturerId) && tt.LectureDate.Value.Equals(lectureTT.LectureDate.Value)
+                                                         && ((lectureTT.FromTime.Value <= tt.FromTime.Value && tt.FromTime.Value < lectureTT.ToTime.Value) || (lectureTT.FromTime.Value < tt.ToTime.Value && tt.ToTime.Value <= lectureTT.ToTime.Value)
+                                                         || (tt.FromTime.Value <= lectureTT.FromTime.Value && lectureTT.FromTime.Value < tt.ToTime.Value) || (tt.FromTime.Value < lectureTT.ToTime.Value && lectureTT.ToTime.Value <= tt.ToTime.Value))
+                                                         select tt).FirstOrDefault<LectureTimetable>();
+
+                    if (lectureTT.TimetableId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "Lecture Session Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            lectureTT.CreatedBy = "Ranga";
+                            lectureTT.CreatedDate = dateTime;
+                            lectureTT.ModifiedBy = "Ranga";
+                            lectureTT.ModifiedDate = dateTime;
+
+                            db.LectureTimetable.Add(lectureTT);
+                            db.SaveChanges();
+
+                            LectureTimetableLog timeTableLogObj = new LectureTimetableLog();
+
+                            timeTableLogObj.TimetableId = lectureTT.TimetableId;
+                            timeTableLogObj.SemesterId = lectureTT.SemesterId;
+                            timeTableLogObj.SemesterSubjectId = lectureTT.SemesterSubjectId;
+                            timeTableLogObj.LectureDate = lectureTT.LectureDate.Value;
+                            timeTableLogObj.FromTime = lectureTT.FromTime.Value;
+                            timeTableLogObj.ToTime = lectureTT.ToTime.Value;
+                            timeTableLogObj.LocationId = lectureTT.LocationId.Value;
+                            timeTableLogObj.LectureTypeId = lectureTT.LectureTypeId;
+                            timeTableLogObj.LecturerId = lectureTT.LecturerId;
+                            timeTableLogObj.StudentBatches = lectureTT.StudentBatches;
+                            timeTableLogObj.CreatedDate = dateTime;
+                            timeTableLogObj.CreatedBy = "Ranga";
+                            timeTableLogObj.ModifiedDate = dateTime;
+                            timeTableLogObj.ModifiedBy = "Ranga";
+                            timeTableLogObj.IsActive = lectureTT.IsActive;
+
+                            db.LectureTimetableLog.Add(timeTableLogObj);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        LectureTimetable editingLectureTimetable = (from tt in db.LectureTimetable where tt.TimetableId.Equals(lectureTT.TimetableId) select tt).FirstOrDefault<LectureTimetable>();
+
+                        if (editingLectureTimetable.SemesterSubjectId != lectureTT.SemesterSubjectId || editingLectureTimetable.LectureDate.Value != lectureTT.LectureDate.Value
+                            || editingLectureTimetable.FromTime.Value != lectureTT.FromTime.Value || editingLectureTimetable.ToTime.Value != lectureTT.ToTime.Value
+                            || editingLectureTimetable.LocationId.Value != lectureTT.LocationId.Value || editingLectureTimetable.LectureTypeId != lectureTT.LectureTypeId
+                            || editingLectureTimetable.LecturerId != lectureTT.LecturerId || editingLectureTimetable.StudentBatches != lectureTT.StudentBatches
+                            || editingLectureTimetable.IsActive != lectureTT.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.TimetableId != lectureTT.TimetableId)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "Lecture Session Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingLectureTimetable.SemesterSubjectId = lectureTT.SemesterSubjectId;
+                                editingLectureTimetable.LectureDate = lectureTT.LectureDate.Value;
+                                editingLectureTimetable.FromTime = lectureTT.FromTime.Value;
+                                editingLectureTimetable.ToTime = lectureTT.ToTime.Value;
+                                editingLectureTimetable.LocationId = lectureTT.LocationId.Value;
+                                editingLectureTimetable.LectureTypeId = lectureTT.LectureTypeId;
+                                editingLectureTimetable.LecturerId = lectureTT.LecturerId;
+                                editingLectureTimetable.StudentBatches = lectureTT.StudentBatches;
+                                editingLectureTimetable.IsActive = lectureTT.IsActive;
+                                editingLectureTimetable.ModifiedBy = "Ranga";
+                                editingLectureTimetable.ModifiedDate = dateTime;
+
+                                db.Entry(editingLectureTimetable).State = EntityState.Modified;
+
+                                LectureTimetableLog timeTableLogObj = new LectureTimetableLog();
+
+                                timeTableLogObj.TimetableId = editingLectureTimetable.TimetableId;
+                                timeTableLogObj.SemesterId = editingLectureTimetable.SemesterId;
+                                timeTableLogObj.SemesterSubjectId = lectureTT.SemesterSubjectId;
+                                timeTableLogObj.LectureDate = lectureTT.LectureDate.Value;
+                                timeTableLogObj.FromTime = lectureTT.FromTime.Value;
+                                timeTableLogObj.ToTime = lectureTT.ToTime.Value;
+                                timeTableLogObj.LocationId = lectureTT.LocationId.Value;
+                                timeTableLogObj.LectureTypeId = lectureTT.LectureTypeId;
+                                timeTableLogObj.LecturerId = lectureTT.LecturerId;
+                                timeTableLogObj.StudentBatches = lectureTT.StudentBatches;
+                                timeTableLogObj.CreatedDate = dateTime;
+                                timeTableLogObj.CreatedBy = "Ranga";
+                                timeTableLogObj.ModifiedDate = dateTime;
+                                timeTableLogObj.ModifiedBy = "Ranga";
+                                timeTableLogObj.IsActive = lectureTT.IsActive;
+
+                                db.LectureTimetableLog.Add(timeTableLogObj);
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/29
+        public void DownloadSemesterRegistrationFormat()
+        {
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet ttSheet = ep.Workbook.Worksheets.Add("Semester Registration");
+            ttSheet.Cells["A1"].Value = "Calendar Year";
+            ttSheet.Cells["B1"].Value = "Calendar Period";
+            ttSheet.Cells["C1"].Value = "Intake Year";
+            ttSheet.Cells["D1"].Value = "Intake Name";
+            ttSheet.Cells["E1"].Value = "Academic Year";
+            ttSheet.Cells["F1"].Value = "Academic Semester";
+            ttSheet.Cells["G1"].Value = "Faculty";
+            ttSheet.Cells["H1"].Value = "Institute";
+            ttSheet.Cells["I1"].Value = "Degree";
+            ttSheet.Cells["J1"].Value = "Specialization";
+            ttSheet.Cells["K1"].Value = "From Date";
+            ttSheet.Cells["L1"].Value = "To Date";
+            ttSheet.Cells["M1"].Value = "Student Batches";
+            ttSheet.Cells["N1"].Value = "Semester Subjects";
+
+            var ttHeaderCells = ttSheet.Cells[1, 1, 1, ttSheet.Dimension.Columns];
+            ttHeaderCells.Style.Font.Bold = true;
+
+            ttSheet.Column(1).AutoFit();
+            ttSheet.Column(2).AutoFit();
+            ttSheet.Column(3).AutoFit();
+            ttSheet.Column(4).AutoFit();
+            ttSheet.Column(5).AutoFit();
+            ttSheet.Column(6).AutoFit();
+            ttSheet.Column(7).AutoFit();
+            ttSheet.Column(8).AutoFit();
+            ttSheet.Column(9).AutoFit();
+            ttSheet.Column(10).AutoFit();
+            ttSheet.Column(11).AutoFit();
+            ttSheet.Column(12).AutoFit();
+            ttSheet.Column(13).AutoFit();
+            ttSheet.Column(14).AutoFit();
+
+            using (PMSEntities db = new PMSEntities())
+            {
+                var calendarPeriods = (from cp in db.CalendarPeriod where cp.IsActive.Equals(true) select cp).ToList();
+
+                ExcelWorksheet cpSheet = ep.Workbook.Worksheets.Add("Calendar Periods");
+                cpSheet.Cells["A1"].Value = "Calendar Period Id";
+                cpSheet.Cells["B1"].Value = "Calendar Period Name";
+
+                cpSheet.Cells[1, 1, 1, cpSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var cpRowIndex = 2;
+
+                foreach (var calP in calendarPeriods)
+                {
+                    cpSheet.Cells[cpRowIndex, 1].Value = calP.Id;
+                    cpSheet.Cells[cpRowIndex, 2].Value = calP.PeriodName;
+                    cpRowIndex++;
+                }
+
+                cpSheet.Column(1).AutoFit();
+                cpSheet.Column(2).AutoFit();
+
+                var intakes = (from i in db.Intake where i.IsActive.Equals(true) orderby i.IntakeId descending select i).ToList();
+
+                ExcelWorksheet intkSheet = ep.Workbook.Worksheets.Add("Intakes");
+                intkSheet.Cells["A1"].Value = "Intake Year";
+                intkSheet.Cells["B1"].Value = "Intake Name";
+
+                intkSheet.Cells[1, 1, 1, intkSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var intkRowIndex = 2;
+
+                foreach (var intk in intakes)
+                {
+                    intkSheet.Cells[intkRowIndex, 1].Value = intk.IntakeYear;
+                    intkSheet.Cells[intkRowIndex, 2].Value = intk.IntakeName;
+                    intkRowIndex++;
+                }
+
+                intkSheet.Column(1).AutoFit();
+                intkSheet.Column(2).AutoFit();
+
+                var faculties = (from f in db.Faculty where f.IsActive.Equals(true) select f).ToList();
+
+                ExcelWorksheet facSheet = ep.Workbook.Worksheets.Add("Faculties");
+                facSheet.Cells["A1"].Value = "Faculty Code";
+                facSheet.Cells["B1"].Value = "Faculty Name";
+
+                facSheet.Cells[1, 1, 1, facSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var facRowIndex = 2;
+
+                foreach (var fac in faculties)
+                {
+                    facSheet.Cells[facRowIndex, 1].Value = fac.FacultyCode;
+                    facSheet.Cells[facRowIndex, 2].Value = fac.FacultyName;
+                    facRowIndex++;
+                }
+
+                facSheet.Column(1).AutoFit();
+                facSheet.Column(2).AutoFit();
+
+                var institutes = (from i in db.Institute where i.IsActive.Equals(true) select i).ToList();
+
+                ExcelWorksheet insSheet = ep.Workbook.Worksheets.Add("Institutes");
+                insSheet.Cells["A1"].Value = "Institute Code";
+                insSheet.Cells["B1"].Value = "Institute Name";
+
+                insSheet.Cells[1, 1, 1, insSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var insRowIndex = 2;
+
+                foreach (var inst in institutes)
+                {
+                    insSheet.Cells[insRowIndex, 1].Value = inst.InstituteCode;
+                    insSheet.Cells[insRowIndex, 2].Value = inst.InstituteName;
+                    insRowIndex++;
+                }
+
+                insSheet.Column(1).AutoFit();
+                insSheet.Column(2).AutoFit();
+
+                var degreesSpecializations = (from d in db.Degree
+                                              where d.IsActive.Equals(true) select new {
+                                                  degree = d,
+                                                  specializations = (from sp in db.Specialization where sp.DegreeId.Equals(d.DegreeId) select sp).ToList()
+                                              }).ToList();
+
+                ExcelWorksheet dspSheet = ep.Workbook.Worksheets.Add("Degrees & Specializations");
+                dspSheet.Cells["A1"].Value = "Degree Code";
+                dspSheet.Cells["B1"].Value = "Degree Name";
+                dspSheet.Cells["C1"].Value = "Specialization Code";
+                dspSheet.Cells["D1"].Value = "Specialization Name";
+
+                dspSheet.Cells[1, 1, 1, dspSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var dspRowIndex = 2;
+
+                foreach (var dsp in degreesSpecializations)
+                {
+                    dspSheet.Cells[dspRowIndex, 1].Value = dsp.degree.Code;
+                    dspSheet.Cells[dspRowIndex, 2].Value = dsp.degree.Name;
+
+                    //foreach(var sp in dsp.specializations)
+                    //{
+                    //    dspSheet.Cells[dspRowIndex, 3].Value = sp.Code;
+                    //    dspSheet.Cells[dspRowIndex, 4].Value = sp.Name;
+                    //    dspRowIndex++;
+                    //}
+                }
+
+                dspSheet.Column(1).AutoFit();
+                dspSheet.Column(2).AutoFit();
+                dspSheet.Column(3).AutoFit();
+                dspSheet.Column(4).AutoFit();
+
+                var subjects = (from s in db.Subject where s.IsActive.Equals(true) select s).ToList();
+
+                ExcelWorksheet subSheet = ep.Workbook.Worksheets.Add("Subjects");
+                subSheet.Cells["A1"].Value = "Subject Code";
+                subSheet.Cells["B1"].Value = "Subject Name";
+
+                subSheet.Cells[1, 1, 1, subSheet.Dimension.Columns].Style.Font.Bold = true;
+
+                var subRowIndex = 2;
+
+                foreach (var sub in subjects)
+                {
+                    subSheet.Cells[subRowIndex, 1].Value = sub.SubjectCode;
+                    subSheet.Cells[subRowIndex, 2].Value = sub.SubjectName;
+                    subRowIndex++;
+                }
+
+                subSheet.Column(1).AutoFit();
+                subSheet.Column(2).AutoFit();
+            }
+
+            Response.Clear();
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment; filename=SemesterRegistration.xlsx");
+            Response.BinaryWrite(ep.GetAsByteArray());
+            Response.End();
         }
     }
 }

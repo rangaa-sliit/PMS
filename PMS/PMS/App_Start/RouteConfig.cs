@@ -23,7 +23,7 @@ namespace PMS
 
             routes.MapRoute(
                 name: "SA",
-                url: "{controller}/{action}/{id}/{operation}",
+                url: "{controller}/{action}/{id}/{operation}/{additionalId}",
                 defaults: new { controller = "SA", action = "Index", id = UrlParameter.Optional, operation = UrlParameter.Optional, additionalId = UrlParameter.Optional }
             );
         }

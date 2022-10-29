@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class LectureTimetable
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -24,13 +25,23 @@ namespace PMS.Models
     
         public int TimetableId { get; set; }
         public int SemesterId { get; set; }
+        [Required(ErrorMessage = "Subject is required")]
         public int SemesterSubjectId { get; set; }
+        [Required(ErrorMessage = "Lecture Date is required")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public Nullable<System.DateTime> LectureDate { get; set; }
+        [Required(ErrorMessage = "Lecture Start Time is required")]
         public Nullable<System.TimeSpan> FromTime { get; set; }
+        [Required(ErrorMessage = "Lecture End Time is required")]
         public Nullable<System.TimeSpan> ToTime { get; set; }
+        [Required(ErrorMessage = "Location is required")]
         public Nullable<int> LocationId { get; set; }
+        [Required(ErrorMessage = "Lecture Type is required")]
         public int LectureTypeId { get; set; }
+        [Required(ErrorMessage = "Lecturer is required")]
         public string LecturerId { get; set; }
+        [Required(ErrorMessage = "Student Batch is required")]
         public string StudentBatches { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }

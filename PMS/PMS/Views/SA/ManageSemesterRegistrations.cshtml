@@ -24,6 +24,9 @@ Developed On:- 2022/09/05*@
         </div>
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <input type="file" name="semRegistrationsExcel" id="semRegistrationsExcel" style="display: none;" onchange="onExcelUpload()" />
+            <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Semester Registrations</button>
+            <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterRegistrationFormat('@Url.Action("DownloadSemesterRegistrationFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>
             <div class="table-responsive">
                 <table id="semesterRegistrationTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -248,6 +251,10 @@ Developed On:- 2022/09/05*@
         }
 
         function NavigateSemesterTimetableForm(url) {
+            window.location.href = url;
+        }
+
+        function DownloadSemesterRegistrationFormat(url) {
             window.location.href = url;
         }
     </script>
