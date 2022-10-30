@@ -4304,15 +4304,14 @@ namespace PMS.Controllers
                 //                              select spzl).ToList();
 
                 var degreesSpecializations = (from d in db.Degree
-                                              //join sp in db.Specialization on d.DegreeId equals sp.DegreeId into d_sp
-                                              //from spzl in d_sp.DefaultIfEmpty()
-                                              where d.IsActive.Equals(true)
                                               select new {
                                                   degree = d,
-                                                  specialization = (from deg in db.Degree
-                                                                    join sp in db.Specialization on d.DegreeId equals sp.DegreeId into deg_sp
-                                                                    from spzl in deg_sp.DefaultIfEmpty()
-                                                                    where spzl.DegreeId.Equals(d.DegreeId) && spzl.IsActive.Equals(true) select spzl).ToList()
+                                                  specialization = (from sp in db.Specialization
+                                                                    where sp.DegreeId.Value.Equals(d.DegreeId)
+                                                                    select new {
+                                                                        spCode = sp.Code,
+                                                                        spName = sp.Name
+                                                                    }).ToList()
                                               }).ToList();
 
                 return Json(degreesSpecializations, JsonRequestBehavior.AllowGet);
@@ -6864,9 +6863,18 @@ namespace PMS.Controllers
                 insSheet.Column(2).AutoFit();
 
                 var degreesSpecializations = (from d in db.Degree
-                                              where d.IsActive.Equals(true) select new {
-                                                  degree = d,
-                                                  specializations = (from sp in db.Specialization where sp.DegreeId.Equals(d.DegreeId) select sp).ToList()
+                                              where d.IsActive.Equals(true)
+                                              select new
+                                              {
+                                                  degreeCode = d.Code,
+                                                  degreeName = d.Name,
+                                                  specializations = (from sp in db.Specialization
+                                                                     where sp.DegreeId.Value.Equals(d.DegreeId) && sp.IsActive.Equals(true)
+                                                                     select new
+                                                                     {
+                                                                         spCode = sp.Code,
+                                                                         spName = sp.Name
+                                                                     }).ToList()
                                               }).ToList();
 
                 ExcelWorksheet dspSheet = ep.Workbook.Worksheets.Add("Degrees & Specializations");
@@ -6881,15 +6889,15 @@ namespace PMS.Controllers
 
                 foreach (var dsp in degreesSpecializations)
                 {
-                    dspSheet.Cells[dspRowIndex, 1].Value = dsp.degree.Code;
-                    dspSheet.Cells[dspRowIndex, 2].Value = dsp.degree.Name;
+                    dspSheet.Cells[dspRowIndex, 1].Value = dsp.degreeCode;
+                    dspSheet.Cells[dspRowIndex, 2].Value = dsp.degreeName;
 
-                    //foreach(var sp in dsp.specializations)
-                    //{
-                    //    dspSheet.Cells[dspRowIndex, 3].Value = sp.Code;
-                    //    dspSheet.Cells[dspRowIndex, 4].Value = sp.Name;
-                    //    dspRowIndex++;
-                    //}
+                    foreach (var sp in dsp.specializations)
+                    {
+                        dspSheet.Cells[dspRowIndex, 3].Value = sp.spCode;
+                        dspSheet.Cells[dspRowIndex, 4].Value = sp.spName;
+                        dspRowIndex++;
+                    }
                 }
 
                 dspSheet.Column(1).AutoFit();
@@ -6923,6 +6931,764 @@ namespace PMS.Controllers
             Response.AddHeader("content-disposition", "attachment; filename=SemesterRegistration.xlsx");
             Response.BinaryWrite(ep.GetAsByteArray());
             Response.End();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/30
+        [HttpPost]
+        public ActionResult UploadSemesterRegistration(SemesterRegistrationCC srCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                if (srCC.UploadedFile != null)
+                {
+                    if (srCC.UploadedFile.FileName.EndsWith(".xlsx") || srCC.UploadedFile.FileName.EndsWith(".xls"))
+                    {
+                        Stream stream = srCC.UploadedFile.InputStream;
+                        IExcelDataReader reader = null;
+
+                        if (srCC.UploadedFile.FileName.EndsWith(".xls"))
+                        {
+                            reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                        }
+                        else
+                        {
+                            reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                        }
+
+                        int fieldCount = reader.FieldCount;
+                        int rowCount = reader.RowCount;
+
+                        DataTable dt = new DataTable();
+                        DataRow dtRow;
+
+                        DataTable dt_ = new DataTable();
+
+                        dt_ = reader.AsDataSet().Tables["Semester Registration"];
+
+                        if (dt_ != null)
+                        {
+                            for (int i = 0; i < dt_.Columns.Count; i++)
+                            {
+                                dt.Columns.Add(dt_.Rows[0][i].ToString());
+                            }
+
+                            int rowCounter = 0;
+
+                            for (int row = 1; row < dt_.Rows.Count; row++)
+                            {
+                                dtRow = dt.NewRow();
+
+                                for (int col = 0; col < dt_.Columns.Count; col++)
+                                {
+                                    dtRow[col] = dt_.Rows[row][col].ToString().Trim();
+                                    rowCounter++;
+                                }
+                                dt.Rows.Add(dtRow);
+                            }
+
+                            if (dt.Rows.Count != 0)
+                            {
+                                foreach (DataRow row in dt.Rows)
+                                {
+                                    row.SetField(10, row[10].ToString().Trim().Split(' ')[0]);
+                                    row.SetField(11, row[11].ToString().Trim().Split(' ')[0]);
+                                }
+
+                                DataColumnCollection columns = dt.Columns;
+
+                                if (columns.Contains("Calendar Year") && columns.Contains("Calendar Period") && columns.Contains("Intake Year")
+                                    && columns.Contains("Intake Name") && columns.Contains("Academic Year") && columns.Contains("Academic Semester")
+                                    && columns.Contains("Faculty") && columns.Contains("Institute") && columns.Contains("Degree")
+                                    && columns.Contains("From Date") && columns.Contains("To Date")
+                                    && columns.Contains("Student Batches") && columns.Contains("Semester Subjects"))
+                                {
+                                    bool errorsFound = false;
+
+                                    List<CalendarPeriod> calendarPeriodsList = (from cp in db.CalendarPeriod where cp.IsActive.Equals(true) select cp).ToList();
+
+                                    List<Intake> intakesList = (from i in db.Intake where i.IsActive.Equals(true) select i).ToList();
+
+                                    List<Faculty> facultiesList = (from f in db.Faculty where f.IsActive.Equals(true) select f).ToList();
+
+                                    List<Institute> institutesList = (from i in db.Institute where i.IsActive.Equals(true) select i).ToList();
+
+                                    var degreesSpecializations = (from d in db.Degree
+                                                                  where d.IsActive.Equals(true)
+                                                                  select new
+                                                                  {
+                                                                      degreeId = d.DegreeId,
+                                                                      degreeCode = d.Code,
+                                                                      degreeName = d.Name,
+                                                                      specializations = (from sp in db.Specialization
+                                                                                         where sp.DegreeId.Value.Equals(d.DegreeId) && sp.IsActive.Equals(true)
+                                                                                         select new
+                                                                                         {
+                                                                                             spId = sp.SpecializationId,
+                                                                                             spCode = sp.Code,
+                                                                                             spName = sp.Name
+                                                                                         }).ToList()
+                                                                  }).ToList();
+
+                                    List<string> subjectsList = (from s in db.Subject where s.IsActive.Equals(true) select s.SubjectCode).ToList();
+
+                                    ExcelPackage ep = new ExcelPackage();
+                                    ExcelWorksheet srSheet = ep.Workbook.Worksheets.Add("Semester Registration");
+                                    srSheet.Cells["A1"].LoadFromDataTable(dt, true);
+                                    srSheet.Cells["O1"].Value = "Errors";
+
+                                    var srHeaderCells = srSheet.Cells[1, 1, 1, srSheet.Dimension.Columns];
+                                    srHeaderCells.Style.Font.Bold = true;
+
+                                    int index = 2;
+                                    foreach (DataRow row in dt.Rows)
+                                    {
+                                        if (String.IsNullOrEmpty(row["Calendar Year"].ToString().Trim()) || String.IsNullOrEmpty(row["Calendar Period"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Intake Year"].ToString().Trim()) || String.IsNullOrEmpty(row["Intake Name"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Academic Year"].ToString().Trim()) || String.IsNullOrEmpty(row["Academic Semester"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Faculty"].ToString().Trim()) || String.IsNullOrEmpty(row["Institute"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Degree"].ToString().Trim()) || String.IsNullOrEmpty(row["From Date"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["To Date"].ToString().Trim()) || String.IsNullOrEmpty(row["Student Batches"].ToString().Trim())
+                                            || String.IsNullOrEmpty(row["Semester Subjects"].ToString().Trim()))
+                                        {
+                                            errorsFound = true;
+
+                                            if (String.IsNullOrEmpty(row["Calendar Year"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Calendar Period"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Intake Year"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Intake Name"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 4].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Academic Year"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Academic Semester"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 6].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Faculty"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 7].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Institute"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 8].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Degree"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 9].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["From Date"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 11].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["To Date"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 12].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Student Batches"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 13].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+                                            if (String.IsNullOrEmpty(row["Semester Subjects"].ToString().Trim()))
+                                            {
+                                                srSheet.Cells[index, 14].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                            }
+
+                                            srSheet.Cells["O" + index].Value = "Null or Empty Records Found";
+                                            srSheet.Cells[index, 15].Style.Font.Color.SetColor(Color.Red);
+                                        }
+                                        else
+                                        {
+                                            var errorMessage = "";
+                                            int calendarYear, intakeYear, academicYear, academicSemester;
+                                            DateTime fromDate, toDate;
+                                            List<string> uploadedSemesterSubjects = row["Semester Subjects"].ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
+
+                                            if (!int.TryParse(row["Calendar Year"].ToString().Trim(), out calendarYear))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                                errorMessage += "Calendar Year is not a number";
+                                            }
+                                            if (calendarPeriodsList.Find(cp => cp.PeriodName == row["Calendar Period"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Calendar Period not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Calendar Period not found";
+                                                }
+                                            }
+                                            if (!int.TryParse(row["Intake Year"].ToString().Trim(), out intakeYear))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Intake Year is not a number";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Intake Year is not a number";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (intakesList.Find(i => i.IntakeYear == int.Parse(row["Intake Year"].ToString().Trim()) && i.IntakeName == row["Intake Name"].ToString().Trim()) == null)
+                                                {
+                                                    errorsFound = true;
+                                                    srSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                    srSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+                                                    srSheet.Cells[index, 4].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                    srSheet.Cells[index, 4].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                    if (errorMessage == "")
+                                                    {
+                                                        errorMessage += "Intake not found";
+                                                    }
+                                                    else
+                                                    {
+                                                        errorMessage += ", Intake not found";
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if (!int.TryParse(row["Academic Year"].ToString().Trim(), out academicYear))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Academic Year is not a number";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Academic Year is not a number";
+                                                }
+                                            }
+                                            if (!int.TryParse(row["Academic Semester"].ToString().Trim(), out academicSemester))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 6].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Academic Semester is not a number";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Academic Semester is not a number";
+                                                }
+                                            }
+                                            if (facultiesList.Find(f => f.FacultyCode == row["Faculty"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 7].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Faculty not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Faculty not found";
+                                                }
+                                            }
+                                            if (institutesList.Find(i => i.InstituteCode == row["Institute"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 8].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 8].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Institute not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Institute not found";
+                                                }
+                                            }
+                                            if (degreesSpecializations.Find(dsp => dsp.degreeCode == row["Degree"].ToString().Trim()) == null)
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 9].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "Degree not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", Degree not found";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (!String.IsNullOrEmpty(row["Specialization"].ToString().Trim()))
+                                                {
+                                                    var dspRecord = degreesSpecializations.Find(dsp => dsp.degreeCode == row["Degree"].ToString().Trim());
+
+                                                    if (dspRecord.specializations.Find(sp => sp.spCode == row["Specialization"].ToString().Trim()) == null)
+                                                    {
+                                                        errorsFound = true;
+                                                        srSheet.Cells[index, 10].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                        srSheet.Cells[index, 10].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                        if (errorMessage == "")
+                                                        {
+                                                            errorMessage += "Specialization not found for given Degree";
+                                                        }
+                                                        else
+                                                        {
+                                                            errorMessage += ", Specialization not found for given Degree";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if (!DateTime.TryParseExact(row["From Date"].ToString().Trim(), "M/d/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out fromDate))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 11].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 11].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "From Date is not valid";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", From Date is not valid";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                fromDate = DateTime.Parse(row["From Date"].ToString().Trim());
+                                            }
+
+                                            if (!DateTime.TryParseExact(row["To Date"].ToString().Trim(), "M/d/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out toDate))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 12].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 12].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "To Date is not valid";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", To Date is not valid";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                toDate = DateTime.Parse(row["To Date"].ToString().Trim());
+                                            }
+
+                                            if (fromDate >= toDate)
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 11].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 11].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "From Date must be less than To Date";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", From Date must be less than To Date";
+                                                }
+                                            }
+                                            if (!uploadedSemesterSubjects.All(ss => subjectsList.Contains(ss)))
+                                            {
+                                                errorsFound = true;
+                                                srSheet.Cells[index, 14].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                                srSheet.Cells[index, 14].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+
+                                                if (errorMessage == "")
+                                                {
+                                                    errorMessage += "One Or More Semester Subject(s) not found";
+                                                }
+                                                else
+                                                {
+                                                    errorMessage += ", One Or More Semester Subject(s) not found";
+                                                }
+                                            }
+
+                                            srSheet.Cells["O" + index].Value = errorMessage;
+                                            srSheet.Cells[index, 15].Style.Font.Color.SetColor(Color.Red);
+                                        }
+
+                                        index++;
+                                    }
+
+                                    if (errorsFound)
+                                    {
+                                        srSheet.Column(1).AutoFit();
+                                        srSheet.Column(2).AutoFit();
+                                        srSheet.Column(3).AutoFit();
+                                        srSheet.Column(4).AutoFit();
+                                        srSheet.Column(5).AutoFit();
+                                        srSheet.Column(6).AutoFit();
+                                        srSheet.Column(7).AutoFit();
+                                        srSheet.Column(8).AutoFit();
+                                        srSheet.Column(9).AutoFit();
+                                        srSheet.Column(10).AutoFit();
+                                        srSheet.Column(11).AutoFit();
+                                        srSheet.Column(12).AutoFit();
+                                        srSheet.Column(13).AutoFit();
+                                        srSheet.Column(14).AutoFit();
+                                        srSheet.Column(15).AutoFit();
+
+                                        Session["semsterRegistrationErrorsExcel"] = ep.GetAsByteArray();
+                                        return Json(new
+                                        {
+                                            success = "null",
+                                            message = "Errors found in the excel sheet"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        var dateTime = DateTime.Now;
+
+                                        List<Subject> allSubjectsList = (from s in db.Subject where s.IsActive.Equals(true) select s).ToList();
+
+                                        foreach (DataRow row in dt.Rows)
+                                        {
+                                            DateTime srFromDate = Convert.ToDateTime(row["From Date"].ToString().Trim());
+                                            DateTime srToDate = Convert.ToDateTime(row["To Date"].ToString().Trim());
+
+                                            CalendarPeriod calPeriod = calendarPeriodsList.Find(cp => cp.PeriodName == row["Calendar Period"].ToString().Trim());
+                                            Intake intake = intakesList.Find(i => i.IntakeYear == int.Parse(row["Intake Year"].ToString().Trim()) && i.IntakeName == row["Intake Name"].ToString().Trim());
+                                            Faculty faculty = facultiesList.Find(f => f.FacultyCode == row["Faculty"].ToString().Trim());
+                                            Institute institute = institutesList.Find(i => i.InstituteCode == row["Institute"].ToString().Trim());
+                                            var degreeSpecialization = degreesSpecializations.Find(dsp => dsp.degreeCode == row["Degree"].ToString().Trim());
+
+                                            int calendarYear = int.Parse(row["Calendar Year"].ToString().Trim());
+                                            int intakeYear = int.Parse(row["Intake Year"].ToString().Trim());
+                                            int academicYear = int.Parse(row["Academic Year"].ToString().Trim());
+                                            int academicSemester = int.Parse(row["Academic Semester"].ToString().Trim());
+
+                                            SemesterRegistration srRecord = null;
+
+                                            if (String.IsNullOrEmpty(row["Specialization"].ToString().Trim()))
+                                            {
+                                                srRecord = (from sr in db.SemesterRegistration
+                                                                  where sr.CalendarYear.Value.Equals(calendarYear) && sr.CalendarPeriodId.Value.Equals(calPeriod.Id)
+                                                                  && sr.IntakeYear.Value.Equals(intakeYear) && sr.IntakeId.Value.Equals(intake.IntakeId)
+                                                                  && sr.AcademicYear.Value.Equals(academicYear) && sr.AcademicSemester.Value.Equals(academicSemester)
+                                                                  && sr.FacultyId.Value.Equals(faculty.FacultyId) && sr.InstituteId.Value.Equals(institute.InstituteId)
+                                                                  && sr.DegreeId.Value.Equals(degreeSpecialization.degreeId)
+                                                                  select sr).FirstOrDefault<SemesterRegistration>();
+                                            }
+                                            else
+                                            {
+                                                var specializationRecord = degreeSpecialization.specializations.Find(sp => sp.spCode == row["Specialization"].ToString().Trim());
+
+                                                srRecord = (from sr in db.SemesterRegistration
+                                                                  where sr.CalendarYear.Value.Equals(calendarYear) && sr.CalendarPeriodId.Value.Equals(calPeriod.Id)
+                                                                  && sr.IntakeYear.Value.Equals(intakeYear) && sr.IntakeId.Value.Equals(intake.IntakeId)
+                                                                  && sr.AcademicYear.Value.Equals(academicYear) && sr.AcademicSemester.Value.Equals(academicSemester)
+                                                                  && sr.FacultyId.Value.Equals(faculty.FacultyId) && sr.InstituteId.Value.Equals(institute.InstituteId)
+                                                                  && sr.DegreeId.Value.Equals(degreeSpecialization.degreeId) && sr.SpecializationId.Value.Equals(specializationRecord.spId)
+                                                                  select sr).FirstOrDefault<SemesterRegistration>();
+                                            }
+
+                                            if (srRecord == null)
+                                            {
+                                                List<string> uploadedStudentBatches = row["Student Batches"].ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
+                                                List<string> uploadedSemesterSubjects = row["Semester Subjects"].ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
+
+                                                SemesterRegistration semRegObj = new SemesterRegistration();
+
+                                                semRegObj.CalendarYear = int.Parse(row["Calendar Year"].ToString().Trim());
+                                                semRegObj.CalendarPeriodId = calPeriod.Id;
+                                                semRegObj.IntakeYear = int.Parse(row["Intake Year"].ToString().Trim());
+                                                semRegObj.IntakeId = intake.IntakeId;
+                                                semRegObj.AcademicYear = int.Parse(row["Academic Year"].ToString().Trim());
+                                                semRegObj.AcademicSemester = int.Parse(row["Academic Semester"].ToString().Trim());
+                                                semRegObj.FacultyId = faculty.FacultyId;
+                                                semRegObj.InstituteId = institute.InstituteId;
+                                                semRegObj.DegreeId = degreeSpecialization.degreeId;
+
+                                                if (!String.IsNullOrEmpty(row["Specialization"].ToString().Trim()))
+                                                {
+                                                    semRegObj.SpecializationId = degreeSpecialization.specializations.Find(sp => sp.spCode == row["Specialization"].ToString().Trim()).spId;
+                                                }
+
+                                                semRegObj.FromDate = srFromDate;
+                                                semRegObj.ToDate = srToDate;
+                                                semRegObj.CreatedDate = dateTime;
+                                                semRegObj.CreatedBy = "Ranga";
+                                                semRegObj.ModifiedDate = dateTime;
+                                                semRegObj.ModifiedBy = "Ranga";
+                                                semRegObj.IsActive = true;
+
+                                                db.SemesterRegistration.Add(semRegObj);
+                                                db.SaveChanges();
+
+                                                foreach (var sb in uploadedStudentBatches)
+                                                {
+                                                    StudentBatch sbObj = new StudentBatch();
+
+                                                    sbObj.SemesterRegistrationId = semRegObj.SemesterId;
+                                                    sbObj.BatchName = sb;
+                                                    sbObj.CreatedDate = dateTime;
+                                                    sbObj.CreatedBy = "Ranga";
+                                                    sbObj.ModifiedDate = dateTime;
+                                                    sbObj.ModifiedBy = "Ranga";
+                                                    sbObj.IsActive = true;
+
+                                                    db.StudentBatch.Add(sbObj);
+                                                }
+
+                                                foreach (var ss in uploadedSemesterSubjects)
+                                                {
+                                                    SemesterSubject ssObj = new SemesterSubject();
+
+                                                    ssObj.SemesterRegistrationId = semRegObj.SemesterId;
+                                                    ssObj.SubjectId = allSubjectsList.Find(s => s.SubjectCode == ss).SubjectId;
+                                                    ssObj.CreatedDate = dateTime;
+                                                    ssObj.CreatedBy = "Ranga";
+                                                    ssObj.ModifiedDate = dateTime;
+                                                    ssObj.ModifiedBy = "Ranga";
+                                                    ssObj.IsActive = true;
+
+                                                    db.SemesterSubject.Add(ssObj);
+                                                }
+
+                                                db.SaveChanges();
+                                            }
+                                        }
+
+                                        return Json(new
+                                        {
+                                            success = true,
+                                            message = "Successfully Saved"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                                else
+                                {
+                                    var errorMessage = "";
+                                    if (!columns.Contains("Calendar Year"))
+                                    {
+                                        errorMessage += "Calendar Year";
+                                    }
+                                    if (!columns.Contains("Calendar Period"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Calendar Period";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Calendar Period";
+                                        }
+                                    }
+                                    if (!columns.Contains("Intake Year"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Intake Year";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Intake Year";
+                                        }
+                                    }
+                                    if (!columns.Contains("Intake Name"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Intake Name";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Intake Name";
+                                        }
+                                    }
+                                    if (!columns.Contains("Academic Year"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Academic Year";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Academic Year";
+                                        }
+                                    }
+                                    if (!columns.Contains("Academic Semester"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Academic Semester";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Academic Semester";
+                                        }
+                                    }
+                                    if (!columns.Contains("Faculty"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Faculty";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Faculty";
+                                        }
+                                    }
+                                    if (!columns.Contains("Institute"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Institute";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Institute";
+                                        }
+                                    }
+                                    if (!columns.Contains("Degree"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Degree";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Degree";
+                                        }
+                                    }
+                                    if (!columns.Contains("From Date"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "From Date";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", From Date";
+                                        }
+                                    }
+                                    if (!columns.Contains("To Date"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "To Date";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", To Date";
+                                        }
+                                    }
+                                    if (!columns.Contains("Student Batches"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Student Batches";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Student Batches";
+                                        }
+                                    }
+                                    if (!columns.Contains("Semester Subjects"))
+                                    {
+                                        if (errorMessage == "")
+                                        {
+                                            errorMessage += "Semester Subjects";
+                                        }
+                                        else
+                                        {
+                                            errorMessage += ", Semester Subjects";
+                                        }
+                                    }
+
+                                    errorMessage += " column(s) missing from excel sheet";
+
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = errorMessage
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+                            else
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "No records found in the excel sheet"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "Semester Registration excel sheet not found"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Only Excel files are allowed"
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No file selected"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/30
+        [HttpGet]
+        public ActionResult DownloadSemesterRegistrationErrors()
+        {
+            return File(Session["semsterRegistrationErrorsExcel"] as Byte[], "application/vnd.ms-excel", "Semester_Registration_Errors.xlsx");
         }
     }
 }

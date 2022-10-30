@@ -25,7 +25,7 @@ Developed On:- 2022/09/05*@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateSemesterRegistrationForm('@Url.Action("AddOrEditSemesterRegistration", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <input type="file" name="semRegistrationsExcel" id="semRegistrationsExcel" style="display: none;" onchange="onExcelUpload()" />
-            <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Semester Registrations</button>
+            <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterRegistration()"><i class="fa fa-upload"></i> Upload Semester Registrations</button>
             <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterRegistrationFormat('@Url.Action("DownloadSemesterRegistrationFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>
             <div class="table-responsive">
                 <table id="semesterRegistrationTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
@@ -256,6 +256,55 @@ Developed On:- 2022/09/05*@
 
         function DownloadSemesterRegistrationFormat(url) {
             window.location.href = url;
+        }
+
+        function uploadSemesterRegistration() {
+            if (confirm("Are you sure you want to upload semester registration?\r\n \r\nOnce you upload, semester registration records will be updated in the 'Real Database'!")) {
+                $("#semRegistrationsExcel").click();
+            }
+        }
+
+        function onExcelUpload() {
+            var uploadedFile = $("#semRegistrationsExcel")[0].files[0];
+            var fd = new FormData();
+            fd.append("UploadedFile", uploadedFile);
+
+            $("#loader").show();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadSemesterRegistration", "SA")",
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $("#loader").hide();
+                    semesterRegistrationTbl.ajax.reload();
+
+                    if (data.success != "null") {
+                        if (data.success) {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        });
+
+                        window.location = "@Url.Action("DownloadSemesterRegistrationErrors", "SA")";
+                    }
+                }
+            });
         }
     </script>
 }
