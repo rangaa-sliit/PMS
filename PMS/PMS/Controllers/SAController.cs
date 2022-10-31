@@ -7690,5 +7690,94 @@ namespace PMS.Controllers
         {
             return File(Session["semsterRegistrationErrorsExcel"] as Byte[], "application/vnd.ms-excel", "Semester_Registration_Errors.xlsx");
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/31
+        public ActionResult ManageLectureSessions()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/31
+        public ActionResult GetLectureSessions()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                AspNetUsers lecturer = (from u in db.AspNetUsers where u.UserName.Equals("ranga.a") select u).FirstOrDefault<AspNetUsers>();
+
+                List<SemesterTimetableVM> semesterTimetableRecordsList = (from tt in db.LectureTimetable
+                                                                          join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                                          join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                                          join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                                          join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                                          join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
+                                                                          from hll in tt_lh.DefaultIfEmpty()
+                                                                          join c in db.Campus on hll.CampusId equals c.CampusId
+                                                                          join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                                          from usr in tt_u.DefaultIfEmpty()
+                                                                          join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                                          where tt.LecturerId.Equals(lecturer.Id)
+                                                                          orderby tt.TimetableId descending
+                                                                          select new SemesterTimetableVM
+                                                                          {
+                                                                              TimetableId = tt.TimetableId,
+                                                                              SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                                              LectureDate = tt.LectureDate.ToString(),
+                                                                              FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                                              ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                                              Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
+                                                                              LectureTypeName = lt.LectureTypeName,
+                                                                              StudentBatches = tt.StudentBatches,
+                                                                              IsActive = tt.IsActive,
+                                                                              IsLectureRecordAdded = (from cl in db.ConductedLectures
+                                                                                                      where cl.TimetableId.Equals(tt.TimetableId)
+                                                                                                      select cl).FirstOrDefault<ConductedLectures>() != null ? true : false
+                                                                          }).ToList();
+
+                return Json(new { data = semesterTimetableRecordsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/10/31
+        [HttpGet]
+        public ActionResult AddOrEditConductedLecture(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var lectureHalls = (from lh in db.LectureHall
+                                    join c in db.Campus on lh.CampusId equals c.CampusId
+                                    where lh.IsActive.Equals(true)
+                                    select new
+                                    {
+                                        Text = c.CampusName + " - " + lh.Building + " - " + lh.Floor + " - " + lh.HallName,
+                                        Value = lh.HallId
+                                    }).ToList();
+
+                List<SelectListItem> lectureHallsList = new SelectList(lectureHalls, "Value", "Text").ToList();
+                ViewBag.lectureHallsList = lectureHallsList;
+
+                var campuses = (from c in db.Campus
+                                where c.IsActive.Equals(true)
+                                select new
+                                {
+                                    Text = c.CampusName,
+                                    Value = c.CampusId
+                                }).ToList();
+
+                List<SelectListItem> campusList = new SelectList(campuses, "Value", "Text").ToList();
+                ViewBag.campusList = campusList;
+
+                if (id == 0)
+                {
+                    return View(new ConductedLectures());
+                }
+                else
+                {
+                    return View((from d in db.Degree where d.DegreeId.Equals(id) select d).FirstOrDefault<Degree>());
+                }
+            }
+        }
     }
 }

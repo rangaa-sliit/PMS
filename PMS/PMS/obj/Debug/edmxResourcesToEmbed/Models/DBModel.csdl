@@ -545,6 +545,8 @@
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="PaymentAmount" Type="Double" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -575,6 +577,8 @@
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="PaymentAmount" Type="Double" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />

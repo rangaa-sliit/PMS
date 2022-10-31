@@ -202,6 +202,8 @@
           <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+          <Property Name="PaymentAmount" Type="float" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -227,6 +229,8 @@
           <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+          <Property Name="PaymentAmount" Type="float" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -2303,6 +2307,8 @@
           <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+          <Property Name="PaymentAmount" Type="Double" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2333,6 +2339,8 @@
           <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+          <Property Name="PaymentAmount" Type="Double" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -3847,6 +3855,8 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
@@ -3872,6 +3882,8 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />

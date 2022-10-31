@@ -197,6 +197,8 @@
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+    <Property Name="PaymentAmount" Type="float" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -222,6 +224,8 @@
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+    <Property Name="PaymentAmount" Type="float" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
