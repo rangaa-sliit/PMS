@@ -34,6 +34,38 @@ Developed On:- 2022/10/31*@
     <script>
         var lectureSessionsTbl;
 
+        var deadlineDate = @Html.Raw(Json.Encode(ViewBag.deadlineDate));
+
+        var currentDate = new Date();
+        var startDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        var consideringMonthStartDate;
+        var consideringMonthEndDate;
+        var consideringLastDate;
+        var isAllowedtoSubmit = false;
+
+        if (parseInt(deadlineDate) != 0) {
+            consideringMonthStartDate = new Date(startDayOfMonth.getFullYear(), startDayOfMonth.getMonth() - 1, 1);
+            consideringMonthEndDate = new Date(consideringMonthStartDate.getFullYear(), consideringMonthStartDate.getMonth() + 1, 0);
+            consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + parseInt(deadlineDate) + 1));
+        }
+        else {
+            consideringMonthStartDate = new Date(startDayOfMonth.getFullYear(), startDayOfMonth.getMonth(), 1);
+            consideringMonthEndDate = new Date(consideringMonthStartDate.getFullYear(), consideringMonthStartDate.getMonth() + 1, 0);
+            consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + 1));
+        }
+
+        if (currentDate > consideringLastDate) {
+            consideringMonthStartDate = startDayOfMonth;
+            consideringMonthEndDate = new Date(consideringMonthStartDate.getFullYear(), consideringMonthStartDate.getMonth() + 1, 0);
+
+            if (parseInt(deadlineDate) != 0) {
+                consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + parseInt(deadlineDate) + 1));
+            }
+            else {
+                consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + 1));
+            }
+        }
+
         lectureSessionsTbl = $("#lectureSessionsTbl").DataTable({
             "responsive": true,
             "scrollY": "30vh",
@@ -51,12 +83,17 @@ Developed On:- 2022/10/31*@
                     "data": null,
                     "render": function (data) {
                         var dynamicContent = ``;
+
+                        var lectureEndDateTime = new Date(data.LectureDate + " " + data.ToTime);
+
                         if (data.IsLectureRecordAdded == false) {
-                            dynamicContent = dynamicContent + `<div class='dropdown dropright'>`
-                                + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                                + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                                + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateConductedLectureForm(` + data.TimetableId + `)">Add Lecture Record</a></div></div>`;
+                            if (consideringMonthStartDate <= lectureEndDateTime && lectureEndDateTime <= consideringLastDate && currentDate >= lectureEndDateTime) {
+                                dynamicContent = dynamicContent + `<div class='dropdown dropright'>`
+                                    + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                                    + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                                    + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                                    + `<a class='dropdown-item btn' onclick="NavigateConductedLectureForm(` + data.TimetableId + `)">Add Lecture Record</a></div></div>`;
+                            }
                         }
 
                         return dynamicContent;

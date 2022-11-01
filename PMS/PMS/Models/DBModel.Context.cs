@@ -58,9 +58,11 @@ namespace PMS.Models
         public virtual DbSet<SemesterSubject> SemesterSubject { get; set; }
         public virtual DbSet<Specialization> Specialization { get; set; }
         public virtual DbSet<StudentBatch> StudentBatch { get; set; }
+        public virtual DbSet<SubConfigurationalSettings> SubConfigurationalSettings { get; set; }
         public virtual DbSet<Subject> Subject { get; set; }
+        public virtual DbSet<SubWorkflows> SubWorkflows { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Title> Title { get; set; }
-        public virtual DbSet<Workflow> Workflow { get; set; }
+        public virtual DbSet<Workflows> Workflows { get; set; }
     }
 }

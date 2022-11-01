@@ -8,7 +8,8 @@ namespace PMS.Custom_Classes
 {
     public class WorkflowCC
     {
-        public int Id { get; set; }
+        public int SubWorkflowId { get; set; }
+        public int WorkflowId { get; set; }
         [Required(ErrorMessage = "Workflow Role is required")]
         public string WorkflowRole { get; set; }
         public string Prefix { get; set; }

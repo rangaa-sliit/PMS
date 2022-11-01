@@ -190,6 +190,8 @@
     <Property Name="ActualToTime" Type="time" Precision="7" Nullable="false" />
     <Property Name="ActualLocationId" Type="int" />
     <Property Name="CampusId" Type="int" />
+    <Property Name="StudentBatches" Type="nvarchar" MaxLength="500" />
+    <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
     <Property Name="CurrentStageId" Type="int" Nullable="false" />
@@ -217,6 +219,8 @@
     <Property Name="ActualToTime" Type="time" Precision="7" Nullable="false" />
     <Property Name="ActualLocationId" Type="int" />
     <Property Name="CampusId" Type="int" />
+    <Property Name="StudentBatches" Type="nvarchar" MaxLength="500" />
+    <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
     <Property Name="CurrentStageId" Type="int" Nullable="false" />
@@ -238,7 +242,8 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ConfigurationKey" Type="nvarchar" MaxLength="250" Nullable="false" />
-    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="150" />
+    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="250" />
+    <Property Name="IsFacultyWise" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -520,6 +525,20 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="SubConfigurationalSettings">
+    <Key>
+      <PropertyRef Name="SubCSId" />
+    </Key>
+    <Property Name="SubCSId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CSId" Type="int" Nullable="false" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="150" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="Subject">
     <Key>
       <PropertyRef Name="SubjectId" />
@@ -529,6 +548,22 @@
     <Property Name="SubjectName" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsCommon" Type="bit" Nullable="false" />
     <Property Name="DegreeId" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SubWorkflows">
+    <Key>
+      <PropertyRef Name="SubWorkflowId" />
+    </Key>
+    <Property Name="SubWorkflowId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkflowId" Type="int" Nullable="false" />
+    <Property Name="WorkflowRole" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="WorkflowStep" Type="int" Nullable="false" />
+    <Property Name="IsSpecificUser" Type="bit" Nullable="false" />
+    <Property Name="WorkflowUser" Type="nvarchar" MaxLength="256" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -558,15 +593,14 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
-  <EntityType Name="Workflow">
+  <EntityType Name="Workflows">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="WorkflowRole" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="WorkflowStep" Type="int" Nullable="false" />
-    <Property Name="IsSpecificUser" Type="bit" Nullable="false" />
-    <Property Name="WorkflowUser" Type="nvarchar" MaxLength="256" />
+    <Property Name="WorkflowName" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="256" />
+    <Property Name="FacultyId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -767,12 +801,12 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_Workflow">
-    <End Role="Workflow" Type="Self.Workflow" Multiplicity="1" />
+  <Association Name="FK_ConductedLectures_SubWorkflows">
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Workflow">
-        <PropertyRef Name="Id" />
+      <Principal Role="SubWorkflows">
+        <PropertyRef Name="SubWorkflowId" />
       </Principal>
       <Dependent Role="ConductedLectures">
         <PropertyRef Name="CurrentStageId" />
@@ -829,12 +863,12 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLecturesLog_Workflow">
-    <End Role="Workflow" Type="Self.Workflow" Multiplicity="1" />
+  <Association Name="FK_ConductedLecturesLog_SubWorkflows">
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
     <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Workflow">
-        <PropertyRef Name="Id" />
+      <Principal Role="SubWorkflows">
+        <PropertyRef Name="SubWorkflowId" />
       </Principal>
       <Dependent Role="ConductedLecturesLog">
         <PropertyRef Name="CurrentStageId" />
@@ -1403,6 +1437,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_SubConfigurationalSettings_ConfigurationalSettings">
+    <End Role="ConfigurationalSettings" Type="Self.ConfigurationalSettings" Multiplicity="1" />
+    <End Role="SubConfigurationalSettings" Type="Self.SubConfigurationalSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ConfigurationalSettings">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SubConfigurationalSettings">
+        <PropertyRef Name="CSId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SubConfigurationalSettings_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="SubConfigurationalSettings" Type="Self.SubConfigurationalSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="SubConfigurationalSettings">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Subject_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="Subject" Type="Self.Subject" Multiplicity="*" />
@@ -1415,27 +1473,51 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Workflow_AspNetRoles">
+  <Association Name="FK_SubWorkflows_AspNetRoles">
     <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
-    <End Role="Workflow" Type="Self.Workflow" Multiplicity="*" />
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="AspNetRoles">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="Workflow">
+      <Dependent Role="SubWorkflows">
         <PropertyRef Name="WorkflowRole" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Workflow_AspNetUsers">
+  <Association Name="FK_SubWorkflows_AspNetUsers">
     <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
-    <End Role="Workflow" Type="Self.Workflow" Multiplicity="*" />
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="AspNetUsers">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="Workflow">
+      <Dependent Role="SubWorkflows">
         <PropertyRef Name="WorkflowUser" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SubWorkflows_Workflows">
+    <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflows">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SubWorkflows">
+        <PropertyRef Name="WorkflowId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Workflows_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="Workflows">
+        <PropertyRef Name="FacultyId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1472,10 +1554,12 @@
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="StudentBatch" EntityType="Self.StudentBatch" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SubConfigurationalSettings" EntityType="Self.SubConfigurationalSettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SubWorkflows" EntityType="Self.SubWorkflows" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Workflow" EntityType="Self.Workflow" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="Self.FK_AccessGroupClaims_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
@@ -1536,8 +1620,8 @@
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_Workflow" Association="Self.FK_ConductedLectures_Workflow">
-      <End Role="Workflow" EntitySet="Workflow" />
+    <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="Self.FK_ConductedLectures_SubWorkflows">
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
@@ -1556,8 +1640,8 @@
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLecturesLog_Workflow" Association="Self.FK_ConductedLecturesLog_Workflow">
-      <End Role="Workflow" EntitySet="Workflow" />
+    <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
@@ -1740,17 +1824,33 @@
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
       <End Role="StudentBatch" EntitySet="StudentBatch" />
     </AssociationSet>
+    <AssociationSet Name="FK_SubConfigurationalSettings_ConfigurationalSettings" Association="Self.FK_SubConfigurationalSettings_ConfigurationalSettings">
+      <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
+      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SubConfigurationalSettings_Faculty" Association="Self.FK_SubConfigurationalSettings_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
+    </AssociationSet>
     <AssociationSet Name="FK_Subject_Degree" Association="Self.FK_Subject_Degree">
       <End Role="Degree" EntitySet="Degree" />
       <End Role="Subject" EntitySet="Subject" />
     </AssociationSet>
-    <AssociationSet Name="FK_Workflow_AspNetRoles" Association="Self.FK_Workflow_AspNetRoles">
+    <AssociationSet Name="FK_SubWorkflows_AspNetRoles" Association="Self.FK_SubWorkflows_AspNetRoles">
       <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-      <End Role="Workflow" EntitySet="Workflow" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
     </AssociationSet>
-    <AssociationSet Name="FK_Workflow_AspNetUsers" Association="Self.FK_Workflow_AspNetUsers">
+    <AssociationSet Name="FK_SubWorkflows_AspNetUsers" Association="Self.FK_SubWorkflows_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-      <End Role="Workflow" EntitySet="Workflow" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SubWorkflows_Workflows" Association="Self.FK_SubWorkflows_Workflows">
+      <End Role="Workflows" EntitySet="Workflows" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Workflows_Faculty" Association="Self.FK_Workflows_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Workflows" EntitySet="Workflows" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

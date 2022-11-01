@@ -325,7 +325,13 @@
     <Compile Include="Models\StudentBatch.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SubConfigurationalSettings.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Subject.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SubWorkflows.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">
@@ -334,7 +340,7 @@
     <Compile Include="Models\Title.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Workflow.cs">
+    <Compile Include="Models\Workflows.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -563,9 +569,12 @@
     <Content Include="Views\SA\AddOrEditSemesterTimetable.cshtml" />
     <Content Include="Views\SA\ManageLectureSessions.cshtml" />
     <Content Include="Views\SA\AddOrEditConductedLecture.cshtml" />
+    <Content Include="Views\SA\ManageSubWorkflow.cshtml" />
+    <Content Include="Views\SA\AddOrEditSubWorkflow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="UploadedFiles\AttendanceSheets\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

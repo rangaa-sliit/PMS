@@ -22,6 +22,8 @@ namespace PMS.Models
         public System.TimeSpan ActualToTime { get; set; }
         public Nullable<int> ActualLocationId { get; set; }
         public Nullable<int> CampusId { get; set; }
+        public string StudentBatches { get; set; }
+        public Nullable<int> StudentCount { get; set; }
         public string StudentAttendanceSheetLocation { get; set; }
         public string Comment { get; set; }
         public int CurrentStageId { get; set; }
@@ -41,6 +43,6 @@ namespace PMS.Models
         public virtual ConductedLectures ConductedLectures { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }
-        public virtual Workflow Workflow { get; set; }
+        public virtual SubWorkflows SubWorkflows { get; set; }
     }
 }

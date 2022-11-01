@@ -206,6 +206,8 @@
           <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
+          <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
+          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
           <ScalarProperty Name="CampusId" ColumnName="CampusId" />
           <ScalarProperty Name="ActualLocationId" ColumnName="ActualLocationId" />
           <ScalarProperty Name="ActualToTime" ColumnName="ActualToTime" />
@@ -233,6 +235,8 @@
           <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
+          <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
+          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
           <ScalarProperty Name="CampusId" ColumnName="CampusId" />
           <ScalarProperty Name="ActualLocationId" ColumnName="ActualLocationId" />
           <ScalarProperty Name="ActualToTime" ColumnName="ActualToTime" />
@@ -252,6 +256,7 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsFacultyWise" ColumnName="IsFacultyWise" />
           <ScalarProperty Name="ConfigurationValue" ColumnName="ConfigurationValue" />
           <ScalarProperty Name="ConfigurationKey" ColumnName="ConfigurationKey" />
           <ScalarProperty Name="Id" ColumnName="Id" />
@@ -550,6 +555,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="SubConfigurationalSettings">
+      <EntityTypeMapping TypeName="PMSModel.SubConfigurationalSettings">
+        <MappingFragment StoreEntitySet="SubConfigurationalSettings">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ConfigurationValue" ColumnName="ConfigurationValue" />
+          <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+          <ScalarProperty Name="CSId" ColumnName="CSId" />
+          <ScalarProperty Name="SubCSId" ColumnName="SubCSId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Subject">
       <EntityTypeMapping TypeName="PMSModel.Subject">
         <MappingFragment StoreEntitySet="Subject">
@@ -563,6 +583,23 @@
           <ScalarProperty Name="SubjectName" ColumnName="SubjectName" />
           <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SubWorkflows">
+      <EntityTypeMapping TypeName="PMSModel.SubWorkflows">
+        <MappingFragment StoreEntitySet="SubWorkflows">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="WorkflowUser" ColumnName="WorkflowUser" />
+          <ScalarProperty Name="IsSpecificUser" ColumnName="IsSpecificUser" />
+          <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
+          <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+          <ScalarProperty Name="SubWorkflowId" ColumnName="SubWorkflowId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -591,18 +628,17 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Workflow">
-      <EntityTypeMapping TypeName="PMSModel.Workflow">
-        <MappingFragment StoreEntitySet="Workflow">
+    <EntitySetMapping Name="Workflows">
+      <EntityTypeMapping TypeName="PMSModel.Workflows">
+        <MappingFragment StoreEntitySet="Workflows">
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="WorkflowUser" ColumnName="WorkflowUser" />
-          <ScalarProperty Name="IsSpecificUser" ColumnName="IsSpecificUser" />
-          <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
-          <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
+          <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="WorkflowName" ColumnName="WorkflowName" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

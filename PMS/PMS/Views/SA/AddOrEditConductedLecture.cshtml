@@ -26,88 +26,157 @@ Developed On:- 2022/10/27*@
         <div class="card-body">
             @using (Html.BeginForm("AddOrEditConductedLecture", "SA", FormMethod.Post, new { onsubmit = "return SubmitConductedLectureForm(this)", @id = "conductedLectureForm", autocomplete = "off" }))
             {
-                @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.CLId)
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.ActualLectureDate, "Lecture Date: ", new { @class = "required" })
+                <div class="row">
+                    <div class="col-6">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.CLId)
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.ActualLectureDate, "Lecture Date: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => model.ActualLectureDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "actualLectureDate", oninput = "onLectureDateInput()" } })
+                                @Html.ValidationMessageFor(model => model.ActualLectureDate)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.ActualFromTime, "Lecture Started Time: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => model.ActualFromTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "actualLectureStartedTime", oninput = "onLectureStartTimeInput()" } })
+                                @Html.ValidationMessageFor(model => model.ActualFromTime)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.ActualToTime, "Lecture Ended Time: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => model.ActualToTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "actualLectureEndedTime", oninput = "onLectureEndTimeInput()" } })
+                                @Html.ValidationMessageFor(model => model.ActualToTime)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.ActualLocationId, "Location: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.ActualLocationId, (IEnumerable<SelectListItem>)ViewBag.lectureHallsList, new { @class = "form-control", @id = "lectureHallsList", onchange = "onLectureHallChange(this.value)" })
+                                @Html.ValidationMessageFor(model => model.ActualLocationId)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.CampusId, "Campus: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList", onchange = "onCampusChange(this.value)" })
+                                @Html.ValidationMessageFor(model => model.CampusId)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.StudentAttendanceSheetLocation, "Student Attendance Sheet: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-5 form-inline">
+                                <input type="file" name="postedFile" id="studentAttendanceSheet" oninput="onStudentAttendanceSheetInput()">
+                                <a href="javascript:viewUploadedFile('@ViewBag.uploadedFileName')">@ViewBag.uploadedFileName</a>
+                                <small class="form-text text-danger">-- Only Images & PDF Files are supported --</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.Comment, "Comment: ")
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control", @id = "comment", oninput = "onCommentInput()" } })
+                                @Html.ValidationMessageFor(model => model.Comment)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.IsActive, "Status: ")
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                                {
+                                    new SelectListItem{ Text = "Active", Value = "true" },
+                                    new SelectListItem{ Text = "Inactive", Value = "false" }
+                                }, new { @class = "form-control", @id = "conductedLectureStatusList", onchange = "onConductedLectureStatusChange(this.value)" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit" id="conductedLectureSubmitBtn">Save</button>
+                            <button class="btn btn-light" type="button" id="conductedLectureClearBtn" onclick="clearConductedLectureForm()">Clear Changes</button>
+                        </div>
                     </div>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => model.ActualLectureDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "actualLectureDate", oninput = "onLectureDateInput()" } })
-                        @Html.ValidationMessageFor(model => model.ActualLectureDate)
+                    <div class="col-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-primary">Timetable Record Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Subject: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.SubjectName</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Lecture Date: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.LectureDate</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Lecture Start Time: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.FromTime</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Lecture End Time: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.ToTime</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Location: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.Location</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Lecture Type: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.LectureTypeName</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+                                        <label>Student Batches: </label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label class="text-dark">@ViewBag.semesterTimetableRecord.StudentBatches</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.ActualFromTime, "Lecture Started Time: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => model.ActualFromTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "actualLectureStartedTime", oninput = "onLectureStartTimeInput()" } })
-                        @Html.ValidationMessageFor(model => model.ActualFromTime)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.ActualToTime, "Lecture Ended Time: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => model.ActualToTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "actualLectureEndedTime", oninput = "onLectureEndTimeInput()" } })
-                        @Html.ValidationMessageFor(model => model.ActualToTime)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.ActualLocationId, "Location: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.ActualLocationId, (IEnumerable<SelectListItem>)ViewBag.lectureHallsList, new { @class = "form-control", @id = "lectureHallsList", onchange = "onLectureHallChange(this.value)" })
-                        @Html.ValidationMessageFor(model => model.ActualLocationId)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.CampusId, "Campus: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList", onchange = "onCampusChange(this.value)" })
-                        @Html.ValidationMessageFor(model => model.CampusId)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.StudentAttendanceSheetLocation, "Student Attendance Sheet: ", new { @class = "required" })
-                    </div>
-                    <div class="col-sm-5 form-inline">
-                        <input type="file" name="postedFile" id="studentAttendanceSheet" oninput="onStudentAttendanceSheetInput()">
-                        <a href="javascript:viewUploadedFile('@ViewBag.uploadedFileName')">@ViewBag.uploadedFileName</a>
-                        <small class="form-text text-danger">-- Only Images & PDF Files are supported --</small>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Comment, "Comment: ")
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control", @id = "comment", oninput = "onCommentInput()" } })
-                        @Html.ValidationMessageFor(model => model.Comment)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-2">
-                        @Html.LabelFor(model => model.IsActive, "Status: ")
-                    </div>
-                    <div class="col-sm-9">
-                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
-                        {
-                            new SelectListItem{ Text = "Active", Value = "true" },
-                            new SelectListItem{ Text = "Inactive", Value = "false" }
-                        }, new { @class = "form-control", @id = "conductedLectureStatusList", onchange = "onConductedLectureStatusChange(this.value)" })
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    <button class="btn btn-primary" type="submit" id="conductedLectureSubmitBtn">Save</button>
-                    <button class="btn btn-light" type="button" id="conductedLectureClearBtn" onclick="clearConductedLectureForm()">Clear Changes</button>
                 </div>
             }
         </div>
@@ -117,8 +186,8 @@ Developed On:- 2022/10/27*@
 @section scripts {
     <script>
         var operation;
-        var semesterRegistrationId;
-        var semesterTimetableRecordId;
+        var timetableId;
+        var conductedLectureId;
         var breadcumText = ``;
 
         $(function () {
@@ -140,13 +209,15 @@ Developed On:- 2022/10/27*@
         });
 
         $(document).ready(function () {
-            semesterRegistrationId = window.location.pathname.toString().split('/')[3];
-            operation = window.location.pathname.toString().split('/')[4];
+            timetableId = window.location.pathname.toString().split('/')[3];
+            conductedLectureId = window.location.pathname.toString().split('/')[4];
+            operation = window.location.pathname.toString().split('/')[5];
 
-            $("#conductedLectureSubmitBtn").prop("disabled", true);
-            $("#conductedLectureClearBtn").prop("disabled", true);
-
+            
             if (operation != undefined) {
+                $("#conductedLectureSubmitBtn").prop("disabled", true);
+                $("#conductedLectureClearBtn").prop("disabled", true);
+
                 if (operation == "Edit") {
                     $("#aeConductedLectureMainTitle").html("Edit Conducted Lecture Record");
                     $("#aeConductedLectureCardTitle").html("Edit Conducted Lecture Record");
@@ -187,43 +258,44 @@ Developed On:- 2022/10/27*@
             }
         })
 
-        function SubmitSemesterTimetableForm(form) {
+        function SubmitConductedLectureForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
 
             if ($(form).valid()) {
-                var startTime = new Date($("#lectureDate").val() + " " + $("#lectureStartTime").val());
-                var endTime = new Date($("#lectureDate").val() + " " + $("#lectureEndTime").val());
+                var startTime = new Date($("#actualLectureDate").val() + " " + $("#actualLectureStartedTime").val());
+                var endTime = new Date($("#actualLectureDate").val() + " " + $("#actualLectureEndedTime").val());
 
                 if (startTime >= endTime) {
-                    alert("Lecture Start Time should be less than Lecture End Time");
+                    alert("Lecture Started Time should be less than Lecture Ended Time");
                 }
                 else {
-                    AddOrEditLT(form);
+                    if ($("#studentAttendanceSheet").val() != "") {
+                        AddOrEditCL(form);
+                    }
+                    else {
+                        alert("Student Attendance Sheet is required");
+                    }
                 }
             }
             return false;
         }
 
-        function AddOrEditLT(form) {
+        function AddOrEditCL(form) {
             $("#loader").show();
 
-            var studentBatches = [];
-
-            $("#studentBatches :selected").each(function () {
-                studentBatches.push($(this).val());
-            });
-
             var fd = new FormData();
+            var postedFile = $("#studentAttendanceSheet")[0].files[0];
 
             $.each($(form).serializeArray(), function (key, input) {
                 fd.append(input.name, input.value);
             });
 
-            fd.delete("StudentBatches");
+            fd.delete("TimetableId");
 
-            fd.append("StudentBatches", studentBatches);
+            fd.append("postedFile", postedFile);
+            fd.append("TimetableId", parseInt(timetableId));
 
             $.ajax({
                 type: "POST",
@@ -235,15 +307,14 @@ Developed On:- 2022/10/27*@
                     $("#loader").hide();
                     if (data.success) {
                         if (operation == undefined) {
-                            $("#lectureDate").val("");
-                            $("#lectureStartTime").val("");
-                            $("#lectureEndTime").val("");
-                            $("#semesterTimetableStatusList").val("true");
-                            $("#semesterSubjectList").val(null).change();
+                            $("#actualLectureDate").val("");
+                            $("#actualLectureStartedTime").val("");
+                            $("#actualLectureEndedTime").val("");
+                            $("#studentAttendanceSheet").val("");
+                            $("#comment").val("");
+                            $("#conductedLectureStatusList").val("true");
                             $("#lectureHallsList").val(null).change();
-                            $("#lectureTypesList").val(null).change();
-                            $("#lecturersList").val(null).change();
-                            $("#studentBatches").val(null).change();
+                            $("#campusList").val(null).change();
                         }
 
                         $.notify(data.message, {
@@ -263,64 +334,58 @@ Developed On:- 2022/10/27*@
 
         function clearSemesterTimetableForm() {
             if (operation == undefined) {
-                $("#lectureDate").val("");
-                $("#lectureStartTime").val("");
-                $("#lectureEndTime").val("");
-                $("#semesterTimetableStatusList").val("true");
-                $("#semesterSubjectList").val(null).change();
+                $("#actualLectureDate").val("");
+                $("#actualLectureStartedTime").val("");
+                $("#actualLectureEndedTime").val("");
+                $("#studentAttendanceSheet").val("");
+                $("#comment").val("");
+                $("#conductedLectureStatusList").val("true");
                 $("#lectureHallsList").val(null).change();
-                $("#lectureTypesList").val(null).change();
-                $("#lecturersList").val(null).change();
-                $("#studentBatches").val(null).change();
+                $("#campusList").val(null).change();
             }
             else {
                 window.location.reload();
             }
         }
 
-        function onSubjectChange(newSubject) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
-        }
-
         function onLectureDateInput() {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
         function onLectureStartTimeInput() {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
         function onLectureEndTimeInput() {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
         function onLectureHallChange(newHall) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
-        function onLectureTypeChange(newLectureType) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+        function onCampusChange(newCampus) {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
-        function onLecturerChange(newLecturer) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+        function onStudentAttendanceSheetInput() {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
-        function onStudentBatchChange(newStudentBatch) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+        function onCommentInput() {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
 
-        function onSemesterTimetableStatusChange(newStatus) {
-            $("#semesterTimetableSubmitBtn").prop("disabled", false);
-            $("#semesterTimetableClearBtn").prop("disabled", false);
+        function onConductedLectureStatusChange(newStatus) {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
         }
     </script>
 }
