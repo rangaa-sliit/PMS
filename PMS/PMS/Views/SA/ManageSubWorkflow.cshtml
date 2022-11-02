@@ -10,42 +10,25 @@
     <div class="col-12">
         <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
-            <li class="breadcrumb-item active">Manage Workflow</li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageWorkflows", "SA")">Manage Workflows</a></li>
+            <li class="breadcrumb-item active">Manage Sub Workflow</li>
         </ol>
     </div>
 </div>
 <hr class="ml-2 mr-2 mt-0 mb-2" />
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Manage Workflow</h1>
+    <h1 class="h3 mb-2 text-gray-800">Manage Sub Workflow</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Workflow</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Sub Workflow</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateWorkflowForm('@Url.Action("AddOrEditSubWorkflow", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
-            <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateAddSubWorkflowForm()"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewSubWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
             <div class="table-responsive">
-                <table id="workflowTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                <table id="subWorkflowTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
-            @*<div id="steps">
-                    <div class="step active" data-desc="Listing information">1</div>
-                    <div class="step active" data-desc="Photos & Details">2000</div>
-                    <div class="step active" data-desc="Review & Post">3</div>
-                    <div class="step active" data-desc="Your order">4</div>
-                    <div class="step active" data-desc="Listing information">1</div>
-                    <div class="step active" data-desc="Photos & Details">2</div>
-                    <div class="step active" data-desc="Review & Post">3</div>
-                    <div class="step active" data-desc="Your order">4</div>
-                    <div class="step active" data-desc="Listing information">1</div>
-                    <div class="step active" data-desc="Photos & Details">2</div>
-                    <div class="step active" data-desc="Review & Post">3</div>
-                    <div class="step active" data-desc="Your order">4</div>
-                    <div class="step active" data-desc="Listing information">1</div>
-                    <div class="step active" data-desc="Photos & Details">2</div>
-                    <div class="step active" data-desc="Review & Post">3</div>
-                    <div class="step active" data-desc="Your order">4</div>
-                </div>*@
         </div>
     </div>
 
@@ -70,40 +53,31 @@
 
 @section scripts {
     <script>
-        //$(document).ready( function() {
-        //  $('.step').each(function(index, element) {
-        //    // element == this
-        //    $(element).not('.active').addClass('done');
-        //    $('.done').html('<i class="icon-ok"></i>');
-        //    if($(this).is('.active')) {
-        //      return false;
-        //    }
-        //  });
-        //});
-        var workflowTbl;
+        var subWorkflowTbl;
+        var WorkflowId = window.location.pathname.toString().split('/')[3];
 
-        workflowTbl = $("#workflowTbl").DataTable({
+        subWorkflowTbl = $("#subWorkflowTbl").DataTable({
             "responsive": true,
             "scrollY": "30vh",
             "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
-                "url": "@Url.Action("GetSubWorkflows", "SA")",
+                "url": "@Url.Action("GetSubWorkflows", "SA")/" + WorkflowId,
                 "type": "GET",
                 "dataType": "json"
             },
             "columns": [
                 {
                     "title": "",
-                    "data": "Id",
+                    "data": "SubWorkflowId",
                     "render": function (data) {
                         return `<div class='dropdown dropright'>`
                             + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                             + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                             + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditSubWorkflow", "SA")/` + data + `', 'View')">View Workflow</a>`
-                            + `<a class='dropdown-item btn' onclick="NavigateWorkflowForm('@Url.Action("AddOrEditSubWorkflow", "SA")/` + data + `', 'Edit')">Edit Workflow</a></div></div>`;
+                            + `<a class='dropdown-item btn' onclick="NavigateSubWorkflowForm(` + data + `, 'View')">View Workflow</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateSubWorkflowForm(` + data + `, 'Edit')">Edit Workflow</a></div></div>`;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -159,20 +133,23 @@
             }
         })
 
-        function NavigateWorkflowForm(url, action) {
-            if (action == "Add") {
-                window.location.href = url;
-            }
-            else if (action == "Edit") {
-                window.location.href = url + "/Edit";
+        function NavigateAddSubWorkflowForm() {
+            window.location.href = "@Url.Action("AddOrEditSubWorkflow", "SA")/" + WorkflowId;
+        }
+
+        function NavigateSubWorkflowForm(SubWorkflowId, action) {
+            var url = "@Url.Action("AddOrEditSubWorkflow", "SA")/" + WorkflowId;
+
+            if (action == "Edit") {
+                window.location.href = url + "/" + SubWorkflowId + "/Edit";
             }
             else {
-                window.location.href = url + "/View";
+                window.location.href = url + "/" + SubWorkflowId + "/View";
             }
         }
 
         function OpenWorkflowMap(url) {
-            $.get(url)
+            $.get(url + "/" + WorkflowId)
                 .done(function (response) {
                     $("#steps").html("");
                     var dynamicContent = ``;

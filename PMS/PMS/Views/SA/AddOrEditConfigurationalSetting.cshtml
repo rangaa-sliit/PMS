@@ -42,6 +42,25 @@ Modified On:- 2022/08/22*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsFacultyWise, "Is For Specific Faculty: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-check custom-control custom-switch">
+                            @Html.EditorFor(model => model.IsFacultyWise, new { htmlAttributes = new { @class = "custom-control-input", @id = "isFacultyWise", onchange = "onIsFacultyWiseChange()" } })
+                            <label class="custom-control-label" for="isFacultyWise">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ", new { id = "facultyLabel" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "facultyList", onchange = "onFacultyChange(this.value)" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.ConfigurationValue, "Configuration Value: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
@@ -72,14 +91,36 @@ Modified On:- 2022/08/22*@
 </div>
 @section scripts {
     <script>
-        $("#loader").hide();
+        //$("#loader").hide();
         var operation;
+
+        $(function () {
+            $("#facultyList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty --"
+                }
+            });
+        });
 
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
+            var isFacultyWise = $("#isFacultyWise").prop("checked");
+
+            if (isFacultyWise == true) {
+                $("#facultyLabel").addClass("required");
+                $("#facultyList").prop("disabled", false);
+            }
+            else {
+                $("#facultyList").val(null).change();
+                $("#facultyLabel").removeClass("required");
+                $("#facultyList").prop("disabled", true);
+            }
+
             if (operation != undefined) {
-                $("#configurationKey").prop("disabled", true);
+                $("#configurationKey").prop("readonly", true);
                 $("#configurationalSettingsSubmitBtn").prop("disabled", true);
                 $("#configurationalSettingsClearBtn").prop("disabled", true);
                 if (operation == "Edit") {
@@ -92,6 +133,8 @@ Modified On:- 2022/08/22*@
                     $("#aeConfigurationalSettingsCardTitle").html("View Configuration");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Configuration</li>`);
                     $("#configurationValue").prop("disabled", true);
+                    $("#isFacultyWise").prop("disabled", true);
+                    $("#facultyList").prop("disabled", true);
                     $("#configurationalSettingsStatusList").prop("disabled", true);
                 }
             }
@@ -99,6 +142,8 @@ Modified On:- 2022/08/22*@
                 $("#aeConfigurationalSettingsMainTitle").html("Add Configuration");
                 $("#aeConfigurationalSettingsCardTitle").html("Add Configuration");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Configuration</li>`);
+                $("#isFacultyWise").prop("checked", false);
+                $("#facultyList").val(null).change();
                 $("#configurationalSettingsStatusList").val("true");
             }
         })
@@ -109,33 +154,58 @@ Modified On:- 2022/08/22*@
             $.validator.unobtrusive.parse(form);
 
             if ($(form).valid()) {
-                $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    url: form.action,
-                    data: $(form).serialize(),
-                    success: function (data) {
-                        $("#loader").hide();
-                        if (data.success) {
-                            if (operation == undefined) {
-                                $("#configurationKey").val("");
-                                $("#configurationValue").val("");
-                                $("#configurationalSettingsList").val("true");
-                            }
+                var isValidtoSubmit = false;
+                var isFacultyWise = $("#isFacultyWise").prop("checked");
+                var isFacultySelected = $("#facultyList").val();
 
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "success"
-                            })
-                        }
-                        else {
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "error"
-                            })
-                        }
+                if (isFacultyWise == false) {
+                    isValidtoSubmit = true;
+                }
+                else {
+                    if (isFacultySelected == null) {
+                        isValidtoSubmit = false;
                     }
-                });
+                    else {
+                        isValidtoSubmit = true;
+                    }
+                }
+
+                if (isValidtoSubmit == true) {
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: $(form).serialize(),
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#configurationKey").val("");
+                                    $("#isFacultyWise").prop("checked", false);
+                                    $("#facultyList").val(null).change();
+                                    $("#facultyLabel").removeClass("required");
+                                    $("#facultyList").prop("disabled", true);
+                                    $("#configurationValue").val("");
+                                    $("#configurationalSettingsList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
+                        }
+                    });
+                }
+                else {
+                    alert("Please select a Faculty");
+                }
             }
             return false;
         }
@@ -143,6 +213,11 @@ Modified On:- 2022/08/22*@
         function clearConfigurationalSettingsForm() {
             if (operation == undefined) {
                 $("#configurationKey").val("");
+                $("#isFacultyWise").prop("checked", false);
+                $("#facultyList").val(null).change();
+                $("#facultyLabel").removeClass("required");
+                $("#facultyList").prop("disabled", true);
+                $("#configurationValue").val("");
                 $("#configurationValue").val("");
                 $("#configurationalSettingsStatusList").val("true");
             }
@@ -152,6 +227,28 @@ Modified On:- 2022/08/22*@
         }
 
         function onConfigurationKeyInput() {
+            $("#configurationalSettingsSubmitBtn").prop("disabled", false);
+            $("#configurationalSettingsClearBtn").prop("disabled", false);
+        }
+
+        function onIsFacultyWiseChange() {
+            var newIsFacultyWise = $("#isFacultyWise").prop("checked");
+
+            if (newIsFacultyWise == true) {
+                $("#facultyLabel").addClass("required");
+                $("#facultyList").prop("disabled", false);
+            }
+            else {
+                $("#facultyList").val(null).change();
+                $("#facultyLabel").removeClass("required");
+                $("#facultyList").prop("disabled", true);
+            }
+
+            $("#configurationalSettingsSubmitBtn").prop("disabled", false);
+            $("#configurationalSettingsClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(newFaculty) {
             $("#configurationalSettingsSubmitBtn").prop("disabled", false);
             $("#configurationalSettingsClearBtn").prop("disabled", false);
         }

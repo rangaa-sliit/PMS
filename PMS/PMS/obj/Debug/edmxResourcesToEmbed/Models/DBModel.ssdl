@@ -242,8 +242,9 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ConfigurationKey" Type="nvarchar" MaxLength="250" Nullable="false" />
-    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="250" />
     <Property Name="IsFacultyWise" Type="bit" Nullable="false" />
+    <Property Name="FacultyId" Type="int" />
+    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="250" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -519,20 +520,6 @@
     <Property Name="StudentBatchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
     <Property Name="BatchName" Type="nvarchar" MaxLength="100" Nullable="false" />
-    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="IsActive" Type="bit" Nullable="false" />
-  </EntityType>
-  <EntityType Name="SubConfigurationalSettings">
-    <Key>
-      <PropertyRef Name="SubCSId" />
-    </Key>
-    <Property Name="SubCSId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="CSId" Type="int" Nullable="false" />
-    <Property Name="FacultyId" Type="int" />
-    <Property Name="ConfigurationValue" Type="nvarchar" MaxLength="150" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -872,6 +859,18 @@
       </Principal>
       <Dependent Role="ConductedLecturesLog">
         <PropertyRef Name="CurrentStageId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConfigurationalSettings_Faculty">
+    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
+    <End Role="ConfigurationalSettings" Type="Self.ConfigurationalSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="ConfigurationalSettings">
+        <PropertyRef Name="FacultyId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1437,30 +1436,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_SubConfigurationalSettings_ConfigurationalSettings">
-    <End Role="ConfigurationalSettings" Type="Self.ConfigurationalSettings" Multiplicity="1" />
-    <End Role="SubConfigurationalSettings" Type="Self.SubConfigurationalSettings" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ConfigurationalSettings">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="SubConfigurationalSettings">
-        <PropertyRef Name="CSId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_SubConfigurationalSettings_Faculty">
-    <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
-    <End Role="SubConfigurationalSettings" Type="Self.SubConfigurationalSettings" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Faculty">
-        <PropertyRef Name="FacultyId" />
-      </Principal>
-      <Dependent Role="SubConfigurationalSettings">
-        <PropertyRef Name="FacultyId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_Subject_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="Subject" Type="Self.Subject" Multiplicity="*" />
@@ -1554,7 +1529,6 @@
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="StudentBatch" EntityType="Self.StudentBatch" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="SubConfigurationalSettings" EntityType="Self.SubConfigurationalSettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SubWorkflows" EntityType="Self.SubWorkflows" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
@@ -1643,6 +1617,10 @@
     <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
       <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
     </AssociationSet>
     <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1823,14 +1801,6 @@
     <AssociationSet Name="FK_StudentBatch_SemesterRegistration" Association="Self.FK_StudentBatch_SemesterRegistration">
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
       <End Role="StudentBatch" EntitySet="StudentBatch" />
-    </AssociationSet>
-    <AssociationSet Name="FK_SubConfigurationalSettings_ConfigurationalSettings" Association="Self.FK_SubConfigurationalSettings_ConfigurationalSettings">
-      <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
-      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
-    </AssociationSet>
-    <AssociationSet Name="FK_SubConfigurationalSettings_Faculty" Association="Self.FK_SubConfigurationalSettings_Faculty">
-      <End Role="Faculty" EntitySet="Faculty" />
-      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
     </AssociationSet>
     <AssociationSet Name="FK_Subject_Degree" Association="Self.FK_Subject_Degree">
       <End Role="Degree" EntitySet="Degree" />

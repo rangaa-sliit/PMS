@@ -33,7 +33,6 @@
     <EntitySet Name="SemesterSubject" EntityType="PMSModel.SemesterSubject" />
     <EntitySet Name="Specialization" EntityType="PMSModel.Specialization" />
     <EntitySet Name="StudentBatch" EntityType="PMSModel.StudentBatch" />
-    <EntitySet Name="SubConfigurationalSettings" EntityType="PMSModel.SubConfigurationalSettings" />
     <EntitySet Name="Subject" EntityType="PMSModel.Subject" />
     <EntitySet Name="SubWorkflows" EntityType="PMSModel.SubWorkflows" />
     <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
@@ -163,9 +162,9 @@
       <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
-    <AssociationSet Name="FK_SubConfigurationalSettings_ConfigurationalSettings" Association="PMSModel.FK_SubConfigurationalSettings_ConfigurationalSettings">
+    <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="PMSModel.FK_ConfigurationalSettings_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
       <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
-      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
     </AssociationSet>
     <AssociationSet Name="FK_Degree_Department" Association="PMSModel.FK_Degree_Department">
       <End Role="Department" EntitySet="Department" />
@@ -226,10 +225,6 @@
     <AssociationSet Name="FK_SemesterRegistration_Faculty" Association="PMSModel.FK_SemesterRegistration_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
-    </AssociationSet>
-    <AssociationSet Name="FK_SubConfigurationalSettings_Faculty" Association="PMSModel.FK_SubConfigurationalSettings_Faculty">
-      <End Role="Faculty" EntitySet="Faculty" />
-      <End Role="SubConfigurationalSettings" EntitySet="SubConfigurationalSettings" />
     </AssociationSet>
     <AssociationSet Name="FK_Workflows_Faculty" Association="PMSModel.FK_Workflows_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
@@ -618,14 +613,15 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="ConfigurationKey" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="ConfigurationValue" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="IsFacultyWise" Type="Boolean" Nullable="false" />
+    <Property Name="FacultyId" Type="Int32" />
+    <Property Name="ConfigurationValue" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="SubConfigurationalSettings" Relationship="PMSModel.FK_SubConfigurationalSettings_ConfigurationalSettings" FromRole="ConfigurationalSettings" ToRole="SubConfigurationalSettings" />
+    <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_ConfigurationalSettings_Faculty" FromRole="ConfigurationalSettings" ToRole="Faculty" />
   </EntityType>
   <EntityType Name="Degree">
     <Key>
@@ -701,12 +697,12 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Faculty" FromRole="Faculty" ToRole="AspNetUsers" />
     <NavigationProperty Name="AspNetUsers1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="Faculty" ToRole="AspNetUsers" />
+    <NavigationProperty Name="ConfigurationalSettings" Relationship="PMSModel.FK_ConfigurationalSettings_Faculty" FromRole="Faculty" ToRole="ConfigurationalSettings" />
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Faculty" FromRole="Faculty" ToRole="Degree" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_Faculty" FromRole="Faculty" ToRole="Department" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="Faculty" ToRole="PaymentRate" />
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="Faculty" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="Faculty" ToRole="SemesterRegistration" />
-    <NavigationProperty Name="SubConfigurationalSettings" Relationship="PMSModel.FK_SubConfigurationalSettings_Faculty" FromRole="Faculty" ToRole="SubConfigurationalSettings" />
     <NavigationProperty Name="Workflows" Relationship="PMSModel.FK_Workflows_Faculty" FromRole="Faculty" ToRole="Workflows" />
   </EntityType>
   <EntityType Name="Institute">
@@ -988,22 +984,6 @@
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="StudentBatch" ToRole="SemesterRegistration" />
-  </EntityType>
-  <EntityType Name="SubConfigurationalSettings">
-    <Key>
-      <PropertyRef Name="SubCSId" />
-    </Key>
-    <Property Name="SubCSId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="CSId" Type="Int32" Nullable="false" />
-    <Property Name="FacultyId" Type="Int32" />
-    <Property Name="ConfigurationValue" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="ConfigurationalSettings" Relationship="PMSModel.FK_SubConfigurationalSettings_ConfigurationalSettings" FromRole="SubConfigurationalSettings" ToRole="ConfigurationalSettings" />
-    <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_SubConfigurationalSettings_Faculty" FromRole="SubConfigurationalSettings" ToRole="Faculty" />
   </EntityType>
   <EntityType Name="Subject">
     <Key>
@@ -1479,15 +1459,15 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_SubConfigurationalSettings_ConfigurationalSettings">
-    <End Type="PMSModel.ConfigurationalSettings" Role="ConfigurationalSettings" Multiplicity="1" />
-    <End Type="PMSModel.SubConfigurationalSettings" Role="SubConfigurationalSettings" Multiplicity="*" />
+  <Association Name="FK_ConfigurationalSettings_Faculty">
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
+    <End Type="PMSModel.ConfigurationalSettings" Role="ConfigurationalSettings" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="ConfigurationalSettings">
-        <PropertyRef Name="Id" />
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
       </Principal>
-      <Dependent Role="SubConfigurationalSettings">
-        <PropertyRef Name="CSId" />
+      <Dependent Role="ConfigurationalSettings">
+        <PropertyRef Name="FacultyId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1673,18 +1653,6 @@
         <PropertyRef Name="FacultyId" />
       </Principal>
       <Dependent Role="SemesterRegistration">
-        <PropertyRef Name="FacultyId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_SubConfigurationalSettings_Faculty">
-    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
-    <End Type="PMSModel.SubConfigurationalSettings" Role="SubConfigurationalSettings" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Faculty">
-        <PropertyRef Name="FacultyId" />
-      </Principal>
-      <Dependent Role="SubConfigurationalSettings">
         <PropertyRef Name="FacultyId" />
       </Dependent>
     </ReferentialConstraint>

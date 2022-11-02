@@ -1560,11 +1560,24 @@ namespace PMS.Controllers
 
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/19
+        //Modified By:- Ranga Athapaththu
+        //Modified On:- 2022/11/02
         public ActionResult GetConfigurationalSettings()
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<ConfigurationalSettings> ConfigurationalSettingsList = (from c in db.ConfigurationalSettings orderby c.Id descending select c).ToList();
+                List<ConfigurationalSettingsVM> ConfigurationalSettingsList = (from c in db.ConfigurationalSettings
+                                                                               join f in db.Faculty on c.FacultyId.Value equals f.FacultyId into c_f
+                                                                               from fac in c_f.DefaultIfEmpty()
+                                                                               orderby c.Id descending
+                                                                               select new ConfigurationalSettingsVM {
+                                                                                   Id = c.Id,
+                                                                                   ConfigurationKey = c.ConfigurationKey,
+                                                                                   IsFacultyWise = c.IsFacultyWise,
+                                                                                   FacultyName = fac != null ? fac.FacultyName : null,
+                                                                                   ConfigurationValue = c.ConfigurationValue,
+                                                                                   IsActive = c.IsActive
+                                                                               }).ToList();
                 return Json(new { data = ConfigurationalSettingsList }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -1572,17 +1585,28 @@ namespace PMS.Controllers
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/19
         //Modified By:- Ranga Athapaththu
-        //Modified On:- 2022/08/22
+        //Modified On:- 2022/11/02
         [HttpGet]
         public ActionResult AddOrEditConfigurationalSetting(int id = 0)
         {
-            if (id == 0)
+            using (PMSEntities db = new PMSEntities())
             {
-                return View(new ConfigurationalSettings());
-            }
-            else
-            {
-                using (PMSEntities db = new PMSEntities())
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                ViewBag.facultyList = facultyList;
+
+                if (id == 0)
+                {
+                    return View(new ConfigurationalSettings());
+                }
+                else
                 {
                     return View((from c in db.ConfigurationalSettings where c.Id.Equals(id) select c).FirstOrDefault<ConfigurationalSettings>());
                 }
@@ -1592,7 +1616,7 @@ namespace PMS.Controllers
         //Developed By:- Dulanjalee Wickremasinghe
         //Developed On:- 2022/08/19
         //Modified By:- Ranga Athapaththu
-        //Modified On:- 2022/08/22
+        //Modified On:- 2022/11/02
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddOrEditConfigurationalSetting(ConfigurationalSettings configurationalSettings)
@@ -1602,7 +1626,9 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
-                    ConfigurationalSettings validationRecord = (from c in db.ConfigurationalSettings where c.ConfigurationKey.Equals(configurationalSettings.ConfigurationKey) select c).FirstOrDefault<ConfigurationalSettings>();
+                    ConfigurationalSettings validationRecord = (from c in db.ConfigurationalSettings
+                                                                where c.ConfigurationKey.Equals(configurationalSettings.ConfigurationKey) && c.FacultyId.Value.Equals(configurationalSettings.FacultyId.Value)
+                                                                select c).FirstOrDefault<ConfigurationalSettings>();
 
                     if (configurationalSettings.Id == 0)
                     {
@@ -1635,7 +1661,8 @@ namespace PMS.Controllers
                     {
                         ConfigurationalSettings editingConfigurationalSettings = (from c in db.ConfigurationalSettings where c.Id.Equals(configurationalSettings.Id) select c).FirstOrDefault<ConfigurationalSettings>();
 
-                        if (editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive)
+                        if (editingConfigurationalSettings.ConfigurationValue != configurationalSettings.ConfigurationValue || editingConfigurationalSettings.IsActive != configurationalSettings.IsActive
+                            || editingConfigurationalSettings.IsFacultyWise != configurationalSettings.IsFacultyWise || editingConfigurationalSettings.FacultyId.Value != configurationalSettings.FacultyId.Value)
                         {
                             if (validationRecord != null && validationRecord.Id != configurationalSettings.Id)
                             {
@@ -1647,6 +1674,8 @@ namespace PMS.Controllers
                             }
                             else
                             {
+                                editingConfigurationalSettings.IsFacultyWise = configurationalSettings.IsFacultyWise;
+                                editingConfigurationalSettings.FacultyId = configurationalSettings.FacultyId.Value;
                                 editingConfigurationalSettings.ConfigurationValue = configurationalSettings.ConfigurationValue;
                                 editingConfigurationalSettings.IsActive = configurationalSettings.IsActive;
                                 editingConfigurationalSettings.ModifiedBy = "Dulanjalee";
@@ -5222,48 +5251,44 @@ namespace PMS.Controllers
         }
 
         //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/06
-        //Modified By:- Ranga Athapaththu
-        //Modified On:- 2022/11/01
+        //Developed On:- 2022/11/01
         public ActionResult ManageSubWorkflow()
         {
             return View();
         }
 
         //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/08/22
-        //Modified By:- Ranga Athapaththu
-        //Modified On:- 2022/11/01
+        //Developed On:-2022/11/01
         public ActionResult GetSubWorkflows(int id)
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<WorkflowVM> workflowList = (from sw in db.SubWorkflows
-                                                 join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
-                                                 join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
-                                                 join u in db.AspNetUsers on sw.WorkflowUser equals u.Id into w_u
-                                                 from usr in w_u.DefaultIfEmpty()
-                                                 join t in db.Title on usr.EmployeeTitle equals t.TitleId into u_t
-                                                 from ttl in u_t.DefaultIfEmpty()
-                                                 where sw.WorkflowId.Equals(id)
-                                                 orderby sw.SubWorkflowId descending
-                                                 select new WorkflowVM {
-                                                     Id = sw.SubWorkflowId,
-                                                     WorkflowRole = ag.AccessGroupName + " - " + r.Name,
-                                                     WorkflowStep = sw.WorkflowStep,
-                                                     IsSpecificUser = sw.IsSpecificUser,
-                                                     WorkflowUser = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
-                                                     IsActive = sw.IsActive
-                                                 }).ToList();
+                List<SubWorkflowVM> subWorkflowsList = (from sw in db.SubWorkflows
+                                                        join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                                        join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                                                        join u in db.AspNetUsers on sw.WorkflowUser equals u.Id into w_u
+                                                        from usr in w_u.DefaultIfEmpty()
+                                                        join t in db.Title on usr.EmployeeTitle equals t.TitleId into u_t
+                                                        from ttl in u_t.DefaultIfEmpty()
+                                                        where sw.WorkflowId.Equals(id)
+                                                        orderby sw.SubWorkflowId descending
+                                                        select new SubWorkflowVM
+                                                        {
+                                                            SubWorkflowId = sw.SubWorkflowId,
+                                                            WorkflowId = sw.WorkflowId,
+                                                            WorkflowRole = ag.AccessGroupName + " - " + r.Name,
+                                                            WorkflowStep = sw.WorkflowStep,
+                                                            IsSpecificUser = sw.IsSpecificUser,
+                                                            WorkflowUser = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
+                                                            IsActive = sw.IsActive
+                                                        }).ToList();
 
-                return Json(new { data = workflowList }, JsonRequestBehavior.AllowGet);
+                return Json(new { data = subWorkflowsList }, JsonRequestBehavior.AllowGet);
             }
         }
 
         //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/06
-        //Modified By:- Ranga Athapaththu
-        //Modified On:- 2022/11/01
+        //Developed On:- 2022/11/01
         [HttpGet]
         public ActionResult AddOrEditSubWorkflow(int id = 0, int operation = 0)
         {
@@ -5282,7 +5307,7 @@ namespace PMS.Controllers
                 List<SelectListItem> roleList = new SelectList(roles, "Value", "Text").ToList();
                 ViewBag.roleList = roleList;
 
-                var workFlows = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(operation) && sw.IsActive.Equals(true) select sw.WorkflowStep).ToList();
+                var workFlows = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(id) && sw.IsActive.Equals(true) select sw.WorkflowStep).ToList();
                 ViewBag.activeWorkflowCount = workFlows.Count;
 
                 var users = (from u in db.AspNetUsers
@@ -5297,41 +5322,41 @@ namespace PMS.Controllers
                 List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
                 ViewBag.usersList = usersList;
 
-                if (id == 0)
+                if (operation == 0)
                 {
-                    return View(new WorkflowCC());
+                    return View(new SubWorkflowCC() { WorkflowId = id });
                 }
                 else
                 {
-                    WorkflowCC workflowRecord = (from sw in db.SubWorkflows
-                                                 where sw.SubWorkflowId.Equals(id)
-                                                 select new WorkflowCC
-                                                 {
-                                                     SubWorkflowId = sw.SubWorkflowId,
-                                                     WorkflowId = sw.WorkflowId,
-                                                     WorkflowRole = sw.WorkflowRole,
-                                                     CurrentPosition = sw.WorkflowStep,
-                                                     IsSpecificUser = sw.IsSpecificUser,
-                                                     IsActive = sw.IsActive
-                                                 }).FirstOrDefault<WorkflowCC>();
+                    SubWorkflowCC subWorkflowRecord = (from sw in db.SubWorkflows
+                                                       where sw.SubWorkflowId.Equals(operation)
+                                                       select new SubWorkflowCC
+                                                       {
+                                                           SubWorkflowId = sw.SubWorkflowId,
+                                                           WorkflowId = sw.WorkflowId,
+                                                           WorkflowRole = sw.WorkflowRole,
+                                                           CurrentPosition = sw.WorkflowStep,
+                                                           IsSpecificUser = sw.IsSpecificUser,
+                                                           IsActive = sw.IsActive
+                                                       }).FirstOrDefault<SubWorkflowCC>();
 
-                    return View(workflowRecord);
+                    return View(subWorkflowRecord);
                 }
             }
         }
 
         //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/10/07
+        //Developed On:- 2022/11/01
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditSubWorkflow(WorkflowCC workflowCC)
+        public ActionResult AddOrEditSubWorkflow(SubWorkflowCC workflowCC)
         {
             using (PMSEntities db = new PMSEntities())
             {
                 try
                 {
                     var dateTime = DateTime.Now;
-                    SubWorkflows validationRecord = (from sw in db.SubWorkflows where sw.WorkflowRole.Equals(workflowCC.WorkflowRole) select sw).FirstOrDefault<SubWorkflows>();
+                    SubWorkflows validationRecord = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(workflowCC.WorkflowId) && sw.WorkflowRole.Equals(workflowCC.WorkflowRole) select sw).FirstOrDefault<SubWorkflows>();
 
                     if (workflowCC.SubWorkflowId == 0)
                     {
@@ -5346,6 +5371,7 @@ namespace PMS.Controllers
                         else
                         {
                             SubWorkflows newSubWorkFlow = new SubWorkflows();
+                            newSubWorkFlow.WorkflowId = workflowCC.WorkflowId;
                             newSubWorkFlow.WorkflowRole = workflowCC.WorkflowRole;
 
                             if (workflowCC.IsInitial == true)
@@ -5625,24 +5651,24 @@ namespace PMS.Controllers
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/10
         [HttpGet]
-        public ActionResult ViewWorkFlowMap(int id)
+        public ActionResult ViewSubWorkFlowMap(int id)
         {
             using (PMSEntities db = new PMSEntities())
             {
-                List<WorkflowVM> workflowList = (from sw in db.SubWorkflows
-                                                 where sw.WorkflowId.Equals(id) && sw.IsActive.Equals(true)
-                                                 group sw by sw.WorkflowStep into g
-                                                 select new WorkflowVM
-                                                 {
-                                                     WorkflowStep = g.Key,
-                                                     WorkflowMapRoles = (from wf in db.SubWorkflows
+                List<SubWorkflowVM> subWorkflowList = (from sw in db.SubWorkflows
+                                                       where sw.WorkflowId.Equals(id) && sw.IsActive.Equals(true)
+                                                       group sw by sw.WorkflowStep into g
+                                                       select new SubWorkflowVM
+                                                       {
+                                                           WorkflowStep = g.Key,
+                                                           WorkflowMapRoles = (from wf in db.SubWorkflows
                                                                      join r in db.AspNetRoles on wf.WorkflowRole equals r.Id
                                                                      join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
                                                                      where wf.WorkflowId.Equals(id) && wf.WorkflowStep.Equals(g.Key) && wf.IsActive.Equals(true)
                                                                      select " " + r.Name).ToList()
-                                                 }).ToList();
+                                                       }).ToList();
 
-                return Json(workflowList, JsonRequestBehavior.AllowGet);
+                return Json(subWorkflowList, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -7911,6 +7937,168 @@ namespace PMS.Controllers
                             success = true,
                             message = "Successfully Updated"
                         }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        public ActionResult ManageWorkflows()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        public ActionResult GetWorkflows()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<WorkflowVM> workflowList = (from w in db.Workflows
+                                                 join f in db.Faculty on w.FacultyId.Value equals f.FacultyId into w_f
+                                                 from fac in w_f.DefaultIfEmpty()
+                                                 select new WorkflowVM
+                                                 {
+                                                     Id = w.Id,
+                                                     WorkflowName = w.WorkflowName,
+                                                     Description = w.Description,
+                                                     FacultyName = fac != null ? fac.FacultyName : null,
+                                                     IsActive = w.IsActive
+                                                 }).ToList();
+
+                return Json(new { data = workflowList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        [HttpGet]
+        public ActionResult AddOrEditWorkflow(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                ViewBag.facultyList = facultyList;
+
+                if (id == 0)
+                {
+                    return View(new Workflows());
+                }
+                else
+                {
+                    return View((from w in db.Workflows where w.Id.Equals(id) select w).FirstOrDefault<Workflows>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditWorkflow(Workflows workflowObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    Workflows validationRecord = (from w in db.Workflows
+                                                  where w.WorkflowName.Equals(workflowObj.WorkflowName) && w.FacultyId.Value.Equals(workflowObj.FacultyId.Value)
+                                                  select w).FirstOrDefault<Workflows>();
+
+                    if (workflowObj.Id == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Workflow Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            workflowObj.CreatedBy = "Ranga";
+                            workflowObj.CreatedDate = dateTime;
+                            workflowObj.ModifiedBy = "Ranga";
+                            workflowObj.ModifiedDate = dateTime;
+
+                            db.Workflows.Add(workflowObj);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Workflows editingWorkflow = (from w in db.Workflows where w.Id.Equals(workflowObj.Id) select w).FirstOrDefault<Workflows>();
+
+                        if (editingWorkflow.WorkflowName != workflowObj.WorkflowName || editingWorkflow.Description != workflowObj.Description 
+                            || editingWorkflow.FacultyId.Value != workflowObj.FacultyId.Value || editingWorkflow.IsActive != workflowObj.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.Id != workflowObj.Id)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Workflow Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingWorkflow.WorkflowName = workflowObj.WorkflowName;
+                                editingWorkflow.Description = workflowObj.Description;
+                                editingWorkflow.FacultyId = workflowObj.FacultyId.Value;
+                                editingWorkflow.IsActive = workflowObj.IsActive;
+                                editingWorkflow.ModifiedBy = "Dulanjalee";
+                                editingWorkflow.ModifiedDate = dateTime;
+
+                                db.Entry(editingWorkflow).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
                     }
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)

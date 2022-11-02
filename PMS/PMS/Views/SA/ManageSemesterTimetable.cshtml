@@ -24,7 +24,7 @@ Developed On:- 2022/10/18*@
             <h6 class="m-0 font-weight-bold text-primary">Semester Timetable</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateAddSemesterTimetableForm('Add')"><i class="fa fa-plus"></i> Add New</button>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateAddSemesterTimetableForm()"><i class="fa fa-plus"></i> Add New</button>
             <input type="file" name="semTimetableExcel" id="semTimetableExcel" style="display: none;" onchange="onExcelUpload()" />
             <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Timetable</button>
             <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterTimetableFormat('@Url.Action("DownloadSemesterTimetableFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>

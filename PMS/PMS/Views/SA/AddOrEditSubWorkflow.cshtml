@@ -1,7 +1,7 @@
 ﻿@*Developed By:- Ranga Athapaththu
     Developed On:- 2022/10/06*@
 
-@model PMS.Custom_Classes.WorkflowCC
+@model PMS.Custom_Classes.SubWorkflowCC
 
 @{
     ViewBag.Title = "AddOrEditSubWorkflow";
@@ -12,23 +12,24 @@
     <div class="col-12">
         <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("ManageSubWorkflow", "SA")">Manage Workflow</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageWorkflows", "SA")">Manage Workflows</a></li>
         </ol>
     </div>
 </div>
 <hr class="ml-2 mr-2 mt-0 mb-2" />
 <div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800" id="aeWorkflowMainTitle"></h1>
+    <h1 class="h3 mb-2 text-gray-800" id="aeSubWorkflowMainTitle"></h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary" id="aeWorkflowCardTitle"></h6>
+            <h6 class="m-0 font-weight-bold text-primary" id="aeSubWorkflowCardTitle"></h6>
         </div>
         <div class="card-body">
-            @using (Html.BeginForm("AddOrEditSubWorkflow", "SA", FormMethod.Post, new { onsubmit = "return SubmitWorkflowForm(this)", @id = "workflowForm", autocomplete = "off" }))
+            @using (Html.BeginForm("AddOrEditSubWorkflow", "SA", FormMethod.Post, new { onsubmit = "return SubmitSubWorkflowForm(this)", @id = "subWorkflowForm", autocomplete = "off" }))
             {
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.SubWorkflowId)
+                @Html.HiddenFor(model => model.WorkflowId)
                 <div class="form-group row">
                     <div class="col-sm-2">
                         @Html.LabelFor(model => model.WorkflowRole, "Workflow Role: ", new { @class = "required" })
@@ -38,7 +39,7 @@
                         @Html.ValidationMessageFor(model => model.WorkflowRole)
                     </div>
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="OpenWorkflowMap('@Url.Action("ViewSubWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> View Workflow Map</button>
                     </div>
                 </div>
                 if (ViewBag.activeWorkflowCount != 0)
@@ -137,7 +138,9 @@
 
 @section scripts {
     <script>
+        var workflowId;
         var operation;
+        var breadcumText = ``;
         var initworkflowStatusVal = "true";
 
         $(function () {
@@ -167,7 +170,10 @@
         });
 
         $(document).ready(function () {
-            operation = window.location.pathname.toString().split('/')[4];
+            workflowId = window.location.pathname.toString().split('/')[3];
+            operation = window.location.pathname.toString().split('/')[5];
+
+            breadcumText = `<li class="breadcrumb-item"><a href="@Url.Action("ManageSubWorkflow", "SA")/` + workflowId + `">Manage Sub Workflow</a></li>`;
 
             $("#positionPrefix").val("");
             $("#landingRoleList").val(null).change();
@@ -189,18 +195,20 @@
                 $("#currentPositionDiv").removeAttr('hidden');
                 initworkflowStatusVal = $("#workflowStatusList").val();
                 if (operation == "Edit") {
-                    $("#aeWorkflowMainTitle").html("Edit Workflow Item");
-                    $("#aeWorkflowCardTitle").html("Edit Workflow Item");
-                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Workflow Item</li>`);
+                    $("#aeSubWorkflowMainTitle").html("Edit Sub Workflow Item");
+                    $("#aeSubWorkflowCardTitle").html("Edit Sub Workflow Item");
+                    breadcumText += `<li class="breadcrumb-item active">Edit Sub Workflow Item</li>`;
+                    $("#breadCrumbWrapper").append(breadcumText);
                     $(`#landingRoleList option[value='` + $("#roleList").val() + `']`).remove();
                     $("#landingRoleList").val(null).change();
                     $("#workflowSubmitBtn").prop("disabled", true);
                     $("#workflowClearBtn").prop("disabled", true);
                 }
                 else {
-                    $("#aeWorkflowMainTitle").html("View Workflow Item");
-                    $("#aeWorkflowCardTitle").html("View Workflow Item");
-                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Workflow Item</li>`);
+                    $("#aeSubWorkflowMainTitle").html("View Sub Workflow Item");
+                    $("#aeSubWorkflowCardTitle").html("View Sub Workflow Item");
+                    breadcumText += `<li class="breadcrumb-item active">View Sub Workflow Item</li>`;
+                    $("#breadCrumbWrapper").append(breadcumText);
                     $("#workflowSubmitBtn").prop("disabled", true);
                     $("#workflowClearBtn").prop("disabled", true);
                     $("#positionPrefix").prop("disabled", true);
@@ -213,9 +221,10 @@
                 }
             }
             else {
-                $("#aeWorkflowMainTitle").html("Add Workflow Item");
-                $("#aeWorkflowCardTitle").html("Add Workflow Item");
-                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Workflow Item</li>`);
+                $("#aeSubWorkflowMainTitle").html("Add Sub Workflow Item");
+                $("#aeSubWorkflowCardTitle").html("Add Sub Workflow Item");
+                breadcumText += `<li class="breadcrumb-item active">Add Sub Workflow Item</li>`;
+                $("#breadCrumbWrapper").append(breadcumText);
                 $("#prefixLabel").addClass("required");
                 $("#landingRoleLabel").addClass("required");
                 $("#roleList").val(null).change();
@@ -328,14 +337,14 @@
                             $("#loader").hide();
                             if (data.success) {
                                 if (operation == undefined) {
-                                    $("#roleList").val(null).change();
-                                    $("#positionPrefix").val("");
-                                    $("#landingRoleList").val(null).change();
-                                    $("#isSpecificUser").prop("checked", false);
-                                    $("#workflowUsersList").val(null).change();
-                                    $("#workflowUsersList").prop("disabled", true);
-                                    $("#workflowUserLabel").removeClass("required");
-                                    $("#workflowStatusList").val("true");
+                                    //$("#roleList").val(null).change();
+                                    //$("#positionPrefix").val("");
+                                    //$("#landingRoleList").val(null).change();
+                                    //$("#isSpecificUser").prop("checked", false);
+                                    //$("#workflowUsersList").val(null).change();
+                                    //$("#workflowUsersList").prop("disabled", true);
+                                    //$("#workflowUserLabel").removeClass("required");
+                                    //$("#workflowStatusList").val("true");
                                 }
 
                                 $.notify(data.message, {
@@ -428,7 +437,7 @@
         }
 
         function OpenWorkflowMap(url) {
-            $.get(url)
+            $.get(url + "/" + workflowId)
                 .done(function (response) {
                     $("#steps").html("");
                     var dynamicContent = ``;

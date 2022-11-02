@@ -256,8 +256,9 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="IsFacultyWise" ColumnName="IsFacultyWise" />
           <ScalarProperty Name="ConfigurationValue" ColumnName="ConfigurationValue" />
+          <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+          <ScalarProperty Name="IsFacultyWise" ColumnName="IsFacultyWise" />
           <ScalarProperty Name="ConfigurationKey" ColumnName="ConfigurationKey" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
@@ -552,21 +553,6 @@
           <ScalarProperty Name="BatchName" ColumnName="BatchName" />
           <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
           <ScalarProperty Name="StudentBatchId" ColumnName="StudentBatchId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="SubConfigurationalSettings">
-      <EntityTypeMapping TypeName="PMSModel.SubConfigurationalSettings">
-        <MappingFragment StoreEntitySet="SubConfigurationalSettings">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="ConfigurationValue" ColumnName="ConfigurationValue" />
-          <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
-          <ScalarProperty Name="CSId" ColumnName="CSId" />
-          <ScalarProperty Name="SubCSId" ColumnName="SubCSId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -15,25 +15,21 @@ namespace PMS.Models
 
     public partial class ConfigurationalSettings
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ConfigurationalSettings()
-        {
-            this.SubConfigurationalSettings = new HashSet<SubConfigurationalSettings>();
-        }
-    
         public int Id { get; set; }
         [Required(ErrorMessage = "Configuration Key is required")]
         [MaxLength(250, ErrorMessage = "Maximum 250 characters exceeded")]
         public string ConfigurationKey { get; set; }
-        public string ConfigurationValue { get; set; }
         public bool IsFacultyWise { get; set; }
+        public Nullable<int> FacultyId { get; set; }
+        [Required(ErrorMessage = "Configuration Value is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
+        public string ConfigurationValue { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SubConfigurationalSettings> SubConfigurationalSettings { get; set; }
+        public virtual Faculty Faculty { get; set; }
     }
 }
