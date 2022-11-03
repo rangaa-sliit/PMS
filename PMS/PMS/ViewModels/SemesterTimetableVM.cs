@@ -18,5 +18,6 @@ namespace PMS.ViewModels
         public string StudentBatches { get; set; }
         public bool IsActive { get; set; }
         public bool IsLectureRecordAdded { get; set; }
+        public string Comment { get; set; }
     }
 }

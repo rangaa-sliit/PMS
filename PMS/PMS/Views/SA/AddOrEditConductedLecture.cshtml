@@ -37,6 +37,7 @@ Developed On:- 2022/10/27*@
                             <div class="col-sm-9">
                                 @Html.EditorFor(model => model.ActualLectureDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "actualLectureDate", oninput = "onLectureDateInput()" } })
                                 @Html.ValidationMessageFor(model => model.ActualLectureDate)
+                                <span>@ViewBag.ActualLectureDate</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -68,21 +69,51 @@ Developed On:- 2022/10/27*@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-3">
-                                @Html.LabelFor(model => model.CampusId, "Campus: ", new { @class = "required" })
+                                @Html.LabelFor(model => model.StudentBatches, "Student Batch(es): ", new { @class = "required" })
                             </div>
-                            <div class="col-sm-9">
-                                @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList", onchange = "onCampusChange(this.value)" })
-                                @Html.ValidationMessageFor(model => model.CampusId)
+                            <div class="col-sm-9" id="studentBatchesDiv">
+                                @if (Model.StudentBatches != null)
+                                {
+                                    List<string> studentBatches = Model.StudentBatches.ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
+                                    <select class="form-control" id="studentBatches" onchange="onStudentBatchChange()">
+                                        @foreach (var sb in studentBatches)
+                                        {
+                                            <option value="@sb">@sb</option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+                                    <select class="form-control" id="studentBatches" onchange="onStudentBatchChange()"></select>
+                                }
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-3">
-                                @Html.LabelFor(model => model.StudentAttendanceSheetLocation, "Student Attendance Sheet: ", new { @class = "required" })
+                                @Html.LabelFor(model => model.StudentCount, "Student Count: ")
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => model.StudentCount, new { htmlAttributes = new { @class = "form-control", @type = "number", @id = "studentCount", oninput = "onStudentCountInput()" } })
+                                @Html.ValidationMessageFor(model => model.StudentCount)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.StudentAttendanceSheetLocation, "Student Attendance Sheet: ")
                             </div>
                             <div class="col-sm-5 form-inline">
                                 <input type="file" name="postedFile" id="studentAttendanceSheet" oninput="onStudentAttendanceSheetInput()">
                                 <a href="javascript:viewUploadedFile('@ViewBag.uploadedFileName')">@ViewBag.uploadedFileName</a>
                                 <small class="form-text text-danger">-- Only Images & PDF Files are supported --</small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(model => model.CampusId, "Campus: ", new { @class = "required" })
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList", onchange = "onCampusChange(this.value)" })
+                                @Html.ValidationMessageFor(model => model.CampusId)
                             </div>
                         </div>
                         <div class="form-group row">
@@ -106,8 +137,8 @@ Developed On:- 2022/10/27*@
                                 }, new { @class = "form-control", @id = "conductedLectureStatusList", onchange = "onConductedLectureStatusChange(this.value)" })
                             </div>
                         </div>
-                        <hr />
-                        <div class="form-group">
+                        <hr id="clFormSeparator" />
+                        <div class="form-group" id="clBtnDiv">
                             <button class="btn btn-primary" type="submit" id="conductedLectureSubmitBtn">Save</button>
                             <button class="btn btn-light" type="button" id="conductedLectureClearBtn" onclick="clearConductedLectureForm()">Clear Changes</button>
                         </div>
@@ -206,6 +237,16 @@ Developed On:- 2022/10/27*@
                     text: "-- Select Campus --"
                 }
             });
+
+            $("#studentBatches").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Student Batch(es) --"
+                },
+                allowClear: false,
+                multiple: true
+            });
         });
 
         $(document).ready(function () {
@@ -213,7 +254,9 @@ Developed On:- 2022/10/27*@
             conductedLectureId = window.location.pathname.toString().split('/')[4];
             operation = window.location.pathname.toString().split('/')[5];
 
-            
+            var timetableData = @Html.Raw(Json.Encode(ViewBag.semesterTimetableRecord));
+            var hallList = @Html.Raw(Json.Encode(ViewBag.lectureHallsList));
+
             if (operation != undefined) {
                 $("#conductedLectureSubmitBtn").prop("disabled", true);
                 $("#conductedLectureClearBtn").prop("disabled", true);
@@ -248,12 +291,20 @@ Developed On:- 2022/10/27*@
                     + `<li class="breadcrumb-item active">Add Conducted Lecture Record</li>`;
 
                 $("#breadCrumbWrapper").append(breadcumText);
-                $("#actualLectureDate").val("");
-                $("#actualLectureStartedTime").val("");
-                $("#actualLectureEndedTime").val("");
+                $("#actualLectureDate").val(timetableData.LectureDate);
+                $("#actualLectureStartedTime").val(timetableData.FromTime);
+                $("#actualLectureEndedTime").val(timetableData.ToTime);
                 $("#comment").val("");
                 $("#conductedLectureStatusList").val("true");
-                $("#lectureHallsList").val(null).change();
+
+                if (timetableData.Location != null) {
+                    var hallId = hallList.find(h => h.Text == timetableData.Location).Value;
+                    $("#lectureHallsList").val(hallId).change();
+                }
+                else {
+                    $("#lectureHallsList").val(null).change();
+                }
+
                 $("#campusList").val(null).change();
             }
         })
@@ -271,12 +322,13 @@ Developed On:- 2022/10/27*@
                     alert("Lecture Started Time should be less than Lecture Ended Time");
                 }
                 else {
-                    if ($("#studentAttendanceSheet").val() != "") {
-                        AddOrEditCL(form);
-                    }
-                    else {
-                        alert("Student Attendance Sheet is required");
-                    }
+                    AddOrEditCL(form);
+                    //if ($("#studentAttendanceSheet").val() != "") {
+                    //    AddOrEditCL(form);
+                    //}
+                    //else {
+                    //    alert("Student Attendance Sheet is required");
+                    //}
                 }
             }
             return false;
@@ -285,6 +337,12 @@ Developed On:- 2022/10/27*@
         function AddOrEditCL(form) {
             $("#loader").show();
 
+            var studentBatches = [];
+
+            $("#studentBatches :selected").each(function () {
+                studentBatches.push($(this).val());
+            });
+
             var fd = new FormData();
             var postedFile = $("#studentAttendanceSheet")[0].files[0];
 
@@ -292,10 +350,13 @@ Developed On:- 2022/10/27*@
                 fd.append(input.name, input.value);
             });
 
+            fd.delete("postedFile");
             fd.delete("TimetableId");
+            fd.delete("StudentBatches");
 
             fd.append("postedFile", postedFile);
             fd.append("TimetableId", parseInt(timetableId));
+            fd.append("StudentBatches", studentBatches);
 
             $.ajax({
                 type: "POST",
@@ -306,17 +367,8 @@ Developed On:- 2022/10/27*@
                 success: function (data) {
                     $("#loader").hide();
                     if (data.success) {
-                        if (operation == undefined) {
-                            $("#actualLectureDate").val("");
-                            $("#actualLectureStartedTime").val("");
-                            $("#actualLectureEndedTime").val("");
-                            $("#studentAttendanceSheet").val("");
-                            $("#comment").val("");
-                            $("#conductedLectureStatusList").val("true");
-                            $("#lectureHallsList").val(null).change();
-                            $("#campusList").val(null).change();
-                        }
-
+                        document.getElementById("clFormSeparator").remove();
+                        $("#clBtnDiv").html("");
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
@@ -364,6 +416,16 @@ Developed On:- 2022/10/27*@
         }
 
         function onLectureHallChange(newHall) {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
+        }
+
+        function onStudentBatchChange() {
+            $("#conductedLectureSubmitBtn").prop("disabled", false);
+            $("#conductedLectureClearBtn").prop("disabled", false);
+        }
+
+        function onStudentCountInput() {
             $("#conductedLectureSubmitBtn").prop("disabled", false);
             $("#conductedLectureClearBtn").prop("disabled", false);
         }

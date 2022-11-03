@@ -31,7 +31,7 @@ Developed On:- 2022/10/31*@
 </div>
 
 @section scripts {
-    <script>
+<script>
         var lectureSessionsTbl;
 
         var deadlineDate = @Html.Raw(Json.Encode(ViewBag.deadlineDate));
@@ -151,5 +151,5 @@ Developed On:- 2022/10/31*@
         function NavigateConductedLectureForm(timetableId) {
             window.location.href = "@Url.Action("AddOrEditConductedLecture", "SA")/" + timetableId;
         }
-    </script>
+</script>
 }

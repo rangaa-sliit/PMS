@@ -11,7 +11,9 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+    using System.Web;
+
     public partial class ConductedLectures
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,10 +24,17 @@ namespace PMS.Models
     
         public int CLId { get; set; }
         public int TimetableId { get; set; }
+        [Required(ErrorMessage = "Lecture Date is required")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime ActualLectureDate { get; set; }
+        [Required(ErrorMessage = "Lecture Start Time is required")]
         public System.TimeSpan ActualFromTime { get; set; }
+        [Required(ErrorMessage = "Lecture End Time is required")]
         public System.TimeSpan ActualToTime { get; set; }
+        [Required(ErrorMessage = "Location is required")]
         public Nullable<int> ActualLocationId { get; set; }
+        [Required(ErrorMessage = "Campus is required")]
         public Nullable<int> CampusId { get; set; }
         public string StudentBatches { get; set; }
         public Nullable<int> StudentCount { get; set; }
@@ -43,7 +52,9 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
-    
+
+        public HttpPostedFileBase postedFile { get; set; }
+
         public virtual Campus Campus { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }

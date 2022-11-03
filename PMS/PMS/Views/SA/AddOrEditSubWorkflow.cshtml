@@ -1,5 +1,5 @@
 ﻿@*Developed By:- Ranga Athapaththu
-    Developed On:- 2022/10/06*@
+    Developed On:- 2022/11/03*@
 
 @model PMS.Custom_Classes.SubWorkflowCC
 
@@ -235,7 +235,7 @@
             }
         })
 
-        function SubmitWorkflowForm(form) {
+        function SubmitSubWorkflowForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
@@ -337,14 +337,15 @@
                             $("#loader").hide();
                             if (data.success) {
                                 if (operation == undefined) {
-                                    //$("#roleList").val(null).change();
-                                    //$("#positionPrefix").val("");
-                                    //$("#landingRoleList").val(null).change();
-                                    //$("#isSpecificUser").prop("checked", false);
-                                    //$("#workflowUsersList").val(null).change();
-                                    //$("#workflowUsersList").prop("disabled", true);
-                                    //$("#workflowUserLabel").removeClass("required");
-                                    //$("#workflowStatusList").val("true");
+                                    $("#roleList").val(null).change();
+                                    $("#positionPrefix").val("");
+                                    $("#landingRoleList").val(null).change();
+                                    $("#isSpecificUser").prop("checked", false);
+                                    $("#workflowUsersList").val(null).change();
+                                    $("#workflowUsersList").prop("disabled", true);
+                                    $("#workflowUserLabel").removeClass("required");
+                                    $("#workflowStatusList").val("true");
+                                    $("#landingRoleList").prop("disabled", true);
                                 }
 
                                 $.notify(data.message, {

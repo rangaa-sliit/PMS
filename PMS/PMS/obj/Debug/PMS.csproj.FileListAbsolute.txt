@@ -1,3 +1,6 @@
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Owin.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Cookies.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Google.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -96,14 +99,11 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Antlr3.Runtime.pdb
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.SqlServer.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Core.xml
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Owin.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.EntityFramework.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Host.SystemWeb.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Facebook.xml
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Cookies.xml
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Google.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Twitter.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.OAuth.xml
@@ -112,3 +112,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

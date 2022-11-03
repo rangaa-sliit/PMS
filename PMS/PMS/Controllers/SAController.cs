@@ -5251,6 +5251,168 @@ namespace PMS.Controllers
         }
 
         //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        public ActionResult ManageWorkflows()
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        public ActionResult GetWorkflows()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<WorkflowVM> workflowList = (from w in db.Workflows
+                                                 join f in db.Faculty on w.FacultyId.Value equals f.FacultyId into w_f
+                                                 from fac in w_f.DefaultIfEmpty()
+                                                 select new WorkflowVM
+                                                 {
+                                                     Id = w.Id,
+                                                     WorkflowName = w.WorkflowName,
+                                                     Description = w.Description,
+                                                     FacultyName = fac != null ? fac.FacultyName : null,
+                                                     IsActive = w.IsActive
+                                                 }).ToList();
+
+                return Json(new { data = workflowList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        [HttpGet]
+        public ActionResult AddOrEditWorkflow(int id = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                ViewBag.facultyList = facultyList;
+
+                if (id == 0)
+                {
+                    return View(new Workflows());
+                }
+                else
+                {
+                    return View((from w in db.Workflows where w.Id.Equals(id) select w).FirstOrDefault<Workflows>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/02
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditWorkflow(Workflows workflowObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    Workflows validationRecord = (from w in db.Workflows
+                                                  where w.WorkflowName.Equals(workflowObj.WorkflowName) && w.FacultyId.Value.Equals(workflowObj.FacultyId.Value)
+                                                  select w).FirstOrDefault<Workflows>();
+
+                    if (workflowObj.Id == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Workflow Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            workflowObj.CreatedBy = "Ranga";
+                            workflowObj.CreatedDate = dateTime;
+                            workflowObj.ModifiedBy = "Ranga";
+                            workflowObj.ModifiedDate = dateTime;
+
+                            db.Workflows.Add(workflowObj);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        Workflows editingWorkflow = (from w in db.Workflows where w.Id.Equals(workflowObj.Id) select w).FirstOrDefault<Workflows>();
+
+                        if (editingWorkflow.WorkflowName != workflowObj.WorkflowName || editingWorkflow.Description != workflowObj.Description
+                            || editingWorkflow.FacultyId.Value != workflowObj.FacultyId.Value || editingWorkflow.IsActive != workflowObj.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.Id != workflowObj.Id)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This Workflow Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingWorkflow.WorkflowName = workflowObj.WorkflowName;
+                                editingWorkflow.Description = workflowObj.Description;
+                                editingWorkflow.FacultyId = workflowObj.FacultyId.Value;
+                                editingWorkflow.IsActive = workflowObj.IsActive;
+                                editingWorkflow.ModifiedBy = "Dulanjalee";
+                                editingWorkflow.ModifiedDate = dateTime;
+
+                                db.Entry(editingWorkflow).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/01
         public ActionResult ManageSubWorkflow()
         {
@@ -7731,7 +7893,7 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                var deadlineDate = (from cs in db.ConfigurationalSettings where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") select cs.ConfigurationValue).FirstOrDefault();
+                var deadlineDate = (from cs in db.ConfigurationalSettings where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") && cs.FacultyId.Value.Equals(1) select cs.ConfigurationValue).FirstOrDefault();
 
                 ViewBag.deadlineDate = deadlineDate;
 
@@ -7808,7 +7970,10 @@ namespace PMS.Controllers
                                                                    ToTime = tt.ToTime.ToString().Substring(0, 5),
                                                                    Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
                                                                    LectureTypeName = lt.LectureTypeName,
-                                                                   StudentBatches = tt.StudentBatches
+                                                                   StudentBatches = tt.StudentBatches,
+                                                                   IsLectureRecordAdded = (from cl in db.ConductedLectures
+                                                                                           where cl.TimetableId.Equals(tt.TimetableId)
+                                                                                           select cl).FirstOrDefault<ConductedLectures>() != null ? true : false
                                                                }).FirstOrDefault<SemesterTimetableVM>();
 
                 ViewBag.semesterTimetableRecord = semesterTimetableRecord;
@@ -7838,7 +8003,7 @@ namespace PMS.Controllers
 
                 if (operation == 0)
                 {
-                    return View(new ConductedLectures());
+                    return View(new ConductedLectures() { StudentBatches = semesterTimetableRecord.StudentBatches });
                 }
                 else
                 {
@@ -7861,37 +8026,86 @@ namespace PMS.Controllers
 
                     if (clObj.CLId == 0)
                     {
-                        //if (clObj.postedFile != null)
-                        //{
-                        //    if (clObj.postedFile.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
-                        //    {
-                        //        string path = "../UploadedFiles/AttendanceSheets/" + clObj.postedFile.FileName;
-                        //        clObj.postedFile.SaveAs(Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", clObj.postedFile.FileName)));
-                        //        clObj.StudentAttendanceSheetLocation = path;
-                        //    }
-                        //    else
-                        //    {
-                        //        return Json(new
-                        //        {
-                        //            success = false,
-                        //            message = "Only PDF & Image files supported"
-                        //        }, JsonRequestBehavior.AllowGet);
-                        //    }
-                        //}
+                        ConductedLectures validationRecord = (from cl in db.ConductedLectures where cl.TimetableId.Equals(clObj.TimetableId) select cl).FirstOrDefault<ConductedLectures>();
 
-                        //clObj.CreatedBy = "Ranga";
-                        //clObj.CreatedDate = dateTime;
-                        //clObj.ModifiedBy = "Ranga";
-                        //clObj.ModifiedDate = dateTime;
-
-                        //db.ConductedLectures.Add(clObj);
-                        //db.SaveChanges();
-
-                        return Json(new
+                        if(validationRecord != null)
                         {
-                            success = true,
-                            message = "Successfully Saved"
-                        }, JsonRequestBehavior.AllowGet);
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This Lecture Record Already Submitted"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            LectureTimetable timetableRecord = (from tt in db.LectureTimetable where tt.TimetableId.Equals(clObj.TimetableId) select tt).FirstOrDefault<LectureTimetable>();
+
+                            TimeSpan duration = DateTime.Parse(timetableRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.FromTime.ToString()));
+
+                            int numbeofHours = duration.Hours;
+                            int numbeofMinutes = duration.Minutes;
+
+                            int paymentRate = 1000;
+                            int paymentAmount = 0;
+
+                            if (clObj.postedFile != null)
+                            {
+                                List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
+                                var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
+                                if (allowedFileTypes.Contains(uploadedFileExtension))
+                                {
+                                    if (clObj.postedFile.ContentLength > 1000000)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "File size should be less than 1 MB"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                        string path = "../UploadedFiles/AttendanceSheets/" + renamedFileName;
+                                        clObj.postedFile.SaveAs(Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName)));
+                                        clObj.StudentAttendanceSheetLocation = path;
+                                    }
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "Only PDF & Image files supported"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                            }
+
+                            if(numbeofHours != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                            }
+
+                            if(numbeofMinutes != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                            }
+
+                            clObj.CurrentStageId = 1006;
+                            clObj.PaymentAmount = paymentAmount;
+                            clObj.CreatedBy = "Ranga";
+                            clObj.CreatedDate = dateTime;
+                            clObj.ModifiedBy = "Ranga";
+                            clObj.ModifiedDate = dateTime;
+
+                            db.ConductedLectures.Add(clObj);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
                     }
                     else
                     {
@@ -7937,168 +8151,6 @@ namespace PMS.Controllers
                             success = true,
                             message = "Successfully Updated"
                         }, JsonRequestBehavior.AllowGet);
-                    }
-                }
-                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
-                {
-                    Exception raise = dbEx;
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            string message = string.Format("{0}:{1}",
-                                validationErrors.Entry.Entity.ToString(),
-                                validationError.ErrorMessage);
-                            raise = new InvalidOperationException(message, raise);
-                        }
-                    }
-                    throw raise;
-                }
-            }
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/11/02
-        public ActionResult ManageWorkflows()
-        {
-            return View();
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/11/02
-        public ActionResult GetWorkflows()
-        {
-            using (PMSEntities db = new PMSEntities())
-            {
-                List<WorkflowVM> workflowList = (from w in db.Workflows
-                                                 join f in db.Faculty on w.FacultyId.Value equals f.FacultyId into w_f
-                                                 from fac in w_f.DefaultIfEmpty()
-                                                 select new WorkflowVM
-                                                 {
-                                                     Id = w.Id,
-                                                     WorkflowName = w.WorkflowName,
-                                                     Description = w.Description,
-                                                     FacultyName = fac != null ? fac.FacultyName : null,
-                                                     IsActive = w.IsActive
-                                                 }).ToList();
-
-                return Json(new { data = workflowList }, JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/11/02
-        [HttpGet]
-        public ActionResult AddOrEditWorkflow(int id = 0)
-        {
-            using (PMSEntities db = new PMSEntities())
-            {
-                var faculties = (from f in db.Faculty
-                                 where f.IsActive.Equals(true)
-                                 select new
-                                 {
-                                     Text = f.FacultyName,
-                                     Value = f.FacultyId
-                                 }).ToList();
-
-                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
-                ViewBag.facultyList = facultyList;
-
-                if (id == 0)
-                {
-                    return View(new Workflows());
-                }
-                else
-                {
-                    return View((from w in db.Workflows where w.Id.Equals(id) select w).FirstOrDefault<Workflows>());
-                }
-            }
-        }
-
-        //Developed By:- Ranga Athapaththu
-        //Developed On:- 2022/11/02
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult AddOrEditWorkflow(Workflows workflowObj)
-        {
-            using (PMSEntities db = new PMSEntities())
-            {
-                try
-                {
-                    var dateTime = DateTime.Now;
-                    Workflows validationRecord = (from w in db.Workflows
-                                                  where w.WorkflowName.Equals(workflowObj.WorkflowName) && w.FacultyId.Value.Equals(workflowObj.FacultyId.Value)
-                                                  select w).FirstOrDefault<Workflows>();
-
-                    if (workflowObj.Id == 0)
-                    {
-                        if (validationRecord != null)
-                        {
-                            return Json(new
-                            {
-                                success = false,
-                                message = "This Workflow Already Exists"
-                            }, JsonRequestBehavior.AllowGet);
-                        }
-                        else
-                        {
-                            workflowObj.CreatedBy = "Ranga";
-                            workflowObj.CreatedDate = dateTime;
-                            workflowObj.ModifiedBy = "Ranga";
-                            workflowObj.ModifiedDate = dateTime;
-
-                            db.Workflows.Add(workflowObj);
-                            db.SaveChanges();
-
-                            return Json(new
-                            {
-                                success = true,
-                                message = "Successfully Saved"
-                            }, JsonRequestBehavior.AllowGet);
-                        }
-                    }
-                    else
-                    {
-                        Workflows editingWorkflow = (from w in db.Workflows where w.Id.Equals(workflowObj.Id) select w).FirstOrDefault<Workflows>();
-
-                        if (editingWorkflow.WorkflowName != workflowObj.WorkflowName || editingWorkflow.Description != workflowObj.Description 
-                            || editingWorkflow.FacultyId.Value != workflowObj.FacultyId.Value || editingWorkflow.IsActive != workflowObj.IsActive)
-                        {
-                            if (validationRecord != null && validationRecord.Id != workflowObj.Id)
-                            {
-                                return Json(new
-                                {
-                                    success = false,
-                                    message = "This Workflow Already Exists"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                            else
-                            {
-                                editingWorkflow.WorkflowName = workflowObj.WorkflowName;
-                                editingWorkflow.Description = workflowObj.Description;
-                                editingWorkflow.FacultyId = workflowObj.FacultyId.Value;
-                                editingWorkflow.IsActive = workflowObj.IsActive;
-                                editingWorkflow.ModifiedBy = "Dulanjalee";
-                                editingWorkflow.ModifiedDate = dateTime;
-
-                                db.Entry(editingWorkflow).State = EntityState.Modified;
-                                db.SaveChanges();
-
-                                return Json(new
-                                {
-                                    success = true,
-                                    message = "Successfully Updated"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                        }
-                        else
-                        {
-                            return Json(new
-                            {
-                                success = false,
-                                message = "You didn't make any new changes"
-                            }, JsonRequestBehavior.AllowGet);
-                        }
                     }
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
