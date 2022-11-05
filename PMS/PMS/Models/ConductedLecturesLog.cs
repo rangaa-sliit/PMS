@@ -26,13 +26,15 @@ namespace PMS.Models
         public Nullable<int> StudentCount { get; set; }
         public string StudentAttendanceSheetLocation { get; set; }
         public string Comment { get; set; }
-        public int CurrentStageId { get; set; }
+        public int CurrentStage { get; set; }
+        public string CurrentStageDisplayName { get; set; }
         public Nullable<bool> IsApprovedOrRejected { get; set; }
         public Nullable<System.DateTime> ApprovedOrRejectedDate { get; set; }
         public string ApprovedOrRejectedBy { get; set; }
         public string ApprovedOrRejectedRemark { get; set; }
         public bool IsOpenForModerations { get; set; }
         public Nullable<double> PaymentAmount { get; set; }
+        public bool IsFinalApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -43,6 +45,5 @@ namespace PMS.Models
         public virtual ConductedLectures ConductedLectures { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }
-        public virtual SubWorkflows SubWorkflows { get; set; }
     }
 }

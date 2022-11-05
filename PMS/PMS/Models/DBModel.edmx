@@ -199,13 +199,15 @@
           <Property Name="StudentCount" Type="int" />
           <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
           <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-          <Property Name="CurrentStageId" Type="int" Nullable="false" />
+          <Property Name="CurrentStage" Type="int" Nullable="false" />
+          <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
           <Property Name="IsApprovedOrRejected" Type="bit" />
           <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
           <Property Name="PaymentAmount" Type="float" />
+          <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -228,13 +230,15 @@
           <Property Name="StudentCount" Type="int" />
           <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
           <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-          <Property Name="CurrentStageId" Type="int" Nullable="false" />
+          <Property Name="CurrentStage" Type="int" Nullable="false" />
+          <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
           <Property Name="IsApprovedOrRejected" Type="bit" />
           <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
           <Property Name="PaymentAmount" Type="float" />
+          <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -496,6 +500,19 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
           <Property Name="SubjectId" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SemesterSubjectLIC">
+          <Key>
+            <PropertyRef Name="SSLICId" />
+          </Key>
+          <Property Name="SSLICId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
+          <Property Name="LICId" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -793,18 +810,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ConductedLectures_SubWorkflows">
-          <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
-          <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubWorkflows">
-              <PropertyRef Name="SubWorkflowId" />
-            </Principal>
-            <Dependent Role="ConductedLectures">
-              <PropertyRef Name="CurrentStageId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ConductedLecturesLog_Campus">
           <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
           <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
@@ -852,18 +857,6 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="TimetableId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ConductedLecturesLog_SubWorkflows">
-          <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
-          <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubWorkflows">
-              <PropertyRef Name="SubWorkflowId" />
-            </Principal>
-            <Dependent Role="ConductedLecturesLog">
-              <PropertyRef Name="CurrentStageId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1389,6 +1382,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SemesterSubjectLIC_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="SemesterSubjectLIC" Type="Self.SemesterSubjectLIC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SemesterSubjectLIC">
+              <PropertyRef Name="LICId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SemesterSubjectLIC_SemesterSubject">
+          <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
+          <End Role="SemesterSubjectLIC" Type="Self.SemesterSubjectLIC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SemesterSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SemesterSubjectLIC">
+              <PropertyRef Name="SemesterSubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Specialization_Degree">
           <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -1532,6 +1549,7 @@
           <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SemesterSubjectLIC" EntityType="Self.SemesterSubjectLIC" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StudentBatch" EntityType="Self.StudentBatch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
@@ -1599,10 +1617,6 @@
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
-          <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="Self.FK_ConductedLectures_SubWorkflows">
-            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
-            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
-          </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
             <End Role="Campus" EntitySet="Campus" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -1617,10 +1631,6 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="Self.FK_ConductedLecturesLog_LectureTimetable">
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
-            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
-            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
@@ -1791,6 +1801,14 @@
             <End Role="Subject" EntitySet="Subject" />
             <End Role="SemesterSubject" EntitySet="SemesterSubject" />
           </AssociationSet>
+          <AssociationSet Name="FK_SemesterSubjectLIC_AspNetUsers" Association="Self.FK_SemesterSubjectLIC_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SemesterSubjectLIC_SemesterSubject" Association="Self.FK_SemesterSubjectLIC_SemesterSubject">
+            <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+            <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+          </AssociationSet>
           <AssociationSet Name="FK_Specialization_Degree" Association="Self.FK_Specialization_Degree">
             <End Role="Degree" EntitySet="Degree" />
             <End Role="Specialization" EntitySet="Specialization" />
@@ -1863,6 +1881,7 @@
           <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
           <EntitySet Name="SemesterRegistration" EntityType="PMSModel.SemesterRegistration" />
           <EntitySet Name="SemesterSubject" EntityType="PMSModel.SemesterSubject" />
+          <EntitySet Name="SemesterSubjectLIC" EntityType="PMSModel.SemesterSubjectLIC" />
           <EntitySet Name="Specialization" EntityType="PMSModel.Specialization" />
           <EntitySet Name="StudentBatch" EntityType="PMSModel.StudentBatch" />
           <EntitySet Name="Subject" EntityType="PMSModel.Subject" />
@@ -1946,6 +1965,10 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
           </AssociationSet>
+          <AssociationSet Name="FK_SemesterSubjectLIC_AspNetUsers" Association="PMSModel.FK_SemesterSubjectLIC_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+          </AssociationSet>
           <AssociationSet Name="FK_SubWorkflows_AspNetUsers" Association="PMSModel.FK_SubWorkflows_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="SubWorkflows" EntitySet="SubWorkflows" />
@@ -1974,10 +1997,6 @@
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
-          <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="PMSModel.FK_ConductedLectures_SubWorkflows">
-            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
-            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
-          </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="PMSModel.FK_ConductedLecturesLog_ConductedLectures">
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -1988,10 +2007,6 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="PMSModel.FK_ConductedLecturesLog_LectureTimetable">
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
-            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="PMSModel.FK_ConductedLecturesLog_SubWorkflows">
-            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="PMSModel.FK_ConfigurationalSettings_Faculty">
@@ -2153,6 +2168,10 @@
           <AssociationSet Name="FK_SemesterSubject_Subject" Association="PMSModel.FK_SemesterSubject_Subject">
             <End Role="Subject" EntitySet="Subject" />
             <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SemesterSubjectLIC_SemesterSubject" Association="PMSModel.FK_SemesterSubjectLIC_SemesterSubject">
+            <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+            <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
           </AssociationSet>
           <AssociationSet Name="FK_SubWorkflows_Workflows" Association="PMSModel.FK_SubWorkflows_Workflows">
             <End Role="Workflows" EntitySet="Workflows" />
@@ -2324,6 +2343,7 @@
           <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="AspNetUsers" ToRole="LecturerAssignments" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetable" />
           <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetableLog" />
+          <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="AspNetUsers" ToRole="SemesterSubjectLIC" />
           <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="AspNetUsers" ToRole="SubWorkflows" />
         </EntityType>
         <EntityType Name="CalendarPeriod">
@@ -2387,13 +2407,15 @@
           <Property Name="StudentCount" Type="Int32" />
           <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CurrentStageId" Type="Int32" Nullable="false" />
+          <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+          <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsApprovedOrRejected" Type="Boolean" />
           <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
           <Property Name="PaymentAmount" Type="Double" />
+          <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2402,7 +2424,6 @@
           <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="ConductedLectures" ToRole="Campus" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="ConductedLectures" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLectures_LectureTimetable" FromRole="ConductedLectures" ToRole="LectureTimetable" />
-          <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLectures_SubWorkflows" FromRole="ConductedLectures" ToRole="SubWorkflows" />
           <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLectures" ToRole="ConductedLecturesLog" />
         </EntityType>
         <EntityType Name="ConductedLecturesLog">
@@ -2421,13 +2442,15 @@
           <Property Name="StudentCount" Type="Int32" />
           <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="CurrentStageId" Type="Int32" Nullable="false" />
+          <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+          <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsApprovedOrRejected" Type="Boolean" />
           <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
           <Property Name="PaymentAmount" Type="Double" />
+          <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2437,7 +2460,6 @@
           <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLecturesLog" ToRole="ConductedLectures" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLecturesLog_LectureHall" FromRole="ConductedLecturesLog" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLecturesLog_LectureTimetable" FromRole="ConductedLecturesLog" ToRole="LectureTimetable" />
-          <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLecturesLog_SubWorkflows" FromRole="ConductedLecturesLog" ToRole="SubWorkflows" />
         </EntityType>
         <EntityType Name="ConfigurationalSettings">
           <Key>
@@ -2780,6 +2802,22 @@
           <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_SemesterSubject" FromRole="SemesterSubject" ToRole="LectureTimetableLog" />
           <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterSubject" ToRole="SemesterRegistration" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_SemesterSubject_Subject" FromRole="SemesterSubject" ToRole="Subject" />
+          <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_SemesterSubject" FromRole="SemesterSubject" ToRole="SemesterSubjectLIC" />
+        </EntityType>
+        <EntityType Name="SemesterSubjectLIC">
+          <Key>
+            <PropertyRef Name="SSLICId" />
+          </Key>
+          <Property Name="SSLICId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+          <Property Name="LICId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="SemesterSubjectLIC" ToRole="AspNetUsers" />
+          <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubjectLIC_SemesterSubject" FromRole="SemesterSubjectLIC" ToRole="SemesterSubject" />
         </EntityType>
         <EntityType Name="Specialization">
           <Key>
@@ -2853,8 +2891,6 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_SubWorkflows_AspNetRoles" FromRole="SubWorkflows" ToRole="AspNetRoles" />
           <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="SubWorkflows" ToRole="AspNetUsers" />
-          <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_SubWorkflows" FromRole="SubWorkflows" ToRole="ConductedLectures" />
-          <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_SubWorkflows" FromRole="SubWorkflows" ToRole="ConductedLecturesLog" />
           <NavigationProperty Name="Workflows" Relationship="PMSModel.FK_SubWorkflows_Workflows" FromRole="SubWorkflows" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="sysdiagrams">
@@ -3141,6 +3177,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SemesterSubjectLIC_AspNetUsers">
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+          <End Type="PMSModel.SemesterSubjectLIC" Role="SemesterSubjectLIC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SemesterSubjectLIC">
+              <PropertyRef Name="LICId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubWorkflows_AspNetUsers">
           <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
           <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="*" />
@@ -3229,18 +3277,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ConductedLectures_SubWorkflows">
-          <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="1" />
-          <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubWorkflows">
-              <PropertyRef Name="SubWorkflowId" />
-            </Principal>
-            <Dependent Role="ConductedLectures">
-              <PropertyRef Name="CurrentStageId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ConductedLecturesLog_ConductedLectures">
           <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3276,18 +3312,6 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="TimetableId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ConductedLecturesLog_SubWorkflows">
-          <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="1" />
-          <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SubWorkflows">
-              <PropertyRef Name="SubWorkflowId" />
-            </Principal>
-            <Dependent Role="ConductedLecturesLog">
-              <PropertyRef Name="CurrentStageId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3787,6 +3811,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SemesterSubjectLIC_SemesterSubject">
+          <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+          <End Type="PMSModel.SemesterSubjectLIC" Role="SemesterSubjectLIC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SemesterSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SemesterSubjectLIC">
+              <PropertyRef Name="SemesterSubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubWorkflows_Workflows">
           <End Type="PMSModel.Workflows" Role="Workflows" Multiplicity="1" />
           <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="*" />
@@ -4001,13 +4037,15 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
                 <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
                 <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
-                <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+                <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
+                <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
                 <ScalarProperty Name="Comment" ColumnName="Comment" />
                 <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
                 <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
@@ -4030,13 +4068,15 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
                 <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
                 <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
-                <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+                <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
+                <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
                 <ScalarProperty Name="Comment" ColumnName="Comment" />
                 <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
                 <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
@@ -4326,6 +4366,20 @@
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
                 <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SemesterSubjectLIC">
+            <EntityTypeMapping TypeName="PMSModel.SemesterSubjectLIC">
+              <MappingFragment StoreEntitySet="SemesterSubjectLIC">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="LICId" ColumnName="LICId" />
+                <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
+                <ScalarProperty Name="SSLICId" ColumnName="SSLICId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

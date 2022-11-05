@@ -261,6 +261,8 @@ Developed On:- 2022/10/27*@
                 $("#conductedLectureSubmitBtn").prop("disabled", true);
                 $("#conductedLectureClearBtn").prop("disabled", true);
 
+                breadcumText = `<li class="breadcrumb-item"><a href="@Url.Action("ManageConductedLectures", "SA")">Manage Conducted Lectures</a></li>`;
+
                 if (operation == "Edit") {
                     $("#aeConductedLectureMainTitle").html("Edit Conducted Lecture Record");
                     $("#aeConductedLectureCardTitle").html("Edit Conducted Lecture Record");
@@ -273,14 +275,16 @@ Developed On:- 2022/10/27*@
                     breadcumText += `<li class="breadcrumb-item active">View Conducted Lecture Record</li>`;
                     $("#breadCrumbWrapper").append(breadcumText);
                     $("#semesterSubjectList").prop("disabled", true);
-                    $("#lectureDate").prop("disabled", true);
-                    $("#lectureStartTime").prop("disabled", true);
-                    $("#lectureEndTime").prop("disabled", true);
+                    $("#actualLectureDate").prop("disabled", true);
+                    $("#actualLectureStartedTime").prop("disabled", true);
+                    $("#actualLectureEndedTime").prop("disabled", true);
                     $("#lectureHallsList").prop("disabled", true);
-                    $("#lectureTypesList").prop("disabled", true);
-                    $("#lecturersList").prop("disabled", true);
                     $("#studentBatches").prop("disabled", true);
-                    $("#semesterTimetableStatusList").prop("disabled", true);
+                    $("#studentCount").prop("disabled", true);
+                    $("#studentAttendanceSheet").prop("disabled", true);
+                    $("#campusList").prop("disabled", true);
+                    $("#comment").prop("disabled", true);
+                    $("#conductedLectureStatusList").prop("disabled", true);
                 }
             }
             else {
@@ -384,20 +388,8 @@ Developed On:- 2022/10/27*@
             });
         }
 
-        function clearSemesterTimetableForm() {
-            if (operation == undefined) {
-                $("#actualLectureDate").val("");
-                $("#actualLectureStartedTime").val("");
-                $("#actualLectureEndedTime").val("");
-                $("#studentAttendanceSheet").val("");
-                $("#comment").val("");
-                $("#conductedLectureStatusList").val("true");
-                $("#lectureHallsList").val(null).change();
-                $("#campusList").val(null).change();
-            }
-            else {
-                window.location.reload();
-            }
+        function clearConductedLectureForm() {
+            window.location.reload();
         }
 
         function onLectureDateInput() {
@@ -449,5 +441,10 @@ Developed On:- 2022/10/27*@
             $("#conductedLectureSubmitBtn").prop("disabled", false);
             $("#conductedLectureClearBtn").prop("disabled", false);
         }
+
+        function viewUploadedFile(studentAttendanceSheetName) {
+            window.open("/UploadedFiles/AttendanceSheets/" + studentAttendanceSheetName);
+        }
+
     </script>
 }

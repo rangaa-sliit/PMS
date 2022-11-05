@@ -5371,7 +5371,7 @@ namespace PMS.Controllers
                                 editingWorkflow.Description = workflowObj.Description;
                                 editingWorkflow.FacultyId = workflowObj.FacultyId.Value;
                                 editingWorkflow.IsActive = workflowObj.IsActive;
-                                editingWorkflow.ModifiedBy = "Dulanjalee";
+                                editingWorkflow.ModifiedBy = "Ranga";
                                 editingWorkflow.ModifiedDate = dateTime;
 
                                 db.Entry(editingWorkflow).State = EntityState.Modified;
@@ -8007,7 +8007,15 @@ namespace PMS.Controllers
                 }
                 else
                 {
-                    return View((from d in db.Degree where d.DegreeId.Equals(operation) select d).FirstOrDefault<Degree>());
+                    ConductedLectures conductedLectureRecord = (from cl in db.ConductedLectures where cl.CLId.Equals(operation) select cl).FirstOrDefault<ConductedLectures>();
+
+                    if (conductedLectureRecord.StudentAttendanceSheetLocation != null)
+                    {
+                        var splittedUploadedFileName = conductedLectureRecord.StudentAttendanceSheetLocation.Split('/');
+                        ViewBag.uploadedFileName = splittedUploadedFileName[3];
+                    }
+
+                    return View(conductedLectureRecord);
                 }
             }
         }
@@ -8048,6 +8056,8 @@ namespace PMS.Controllers
                             int paymentRate = 1000;
                             int paymentAmount = 0;
 
+                            ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
                             if (clObj.postedFile != null)
                             {
                                 List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
@@ -8068,6 +8078,7 @@ namespace PMS.Controllers
                                         string path = "../UploadedFiles/AttendanceSheets/" + renamedFileName;
                                         clObj.postedFile.SaveAs(Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName)));
                                         clObj.StudentAttendanceSheetLocation = path;
+                                        clLogObj.StudentAttendanceSheetLocation = path;
                                     }
                                 }
                                 else
@@ -8090,7 +8101,8 @@ namespace PMS.Controllers
                                 paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
                             }
 
-                            clObj.CurrentStageId = 1006;
+                            clObj.CurrentStage = 1;
+                            clObj.CurrentStageDisplayName = "Saved";
                             clObj.PaymentAmount = paymentAmount;
                             clObj.CreatedBy = "Ranga";
                             clObj.CreatedDate = dateTime;
@@ -8098,6 +8110,28 @@ namespace PMS.Controllers
                             clObj.ModifiedDate = dateTime;
 
                             db.ConductedLectures.Add(clObj);
+                            db.SaveChanges();
+
+                            clLogObj.CLId = clObj.CLId;
+                            clLogObj.TimetableId = clObj.TimetableId;
+                            clLogObj.ActualLectureDate = clObj.ActualLectureDate;
+                            clLogObj.ActualFromTime = clObj.ActualFromTime;
+                            clLogObj.ActualToTime = clObj.ActualToTime;
+                            clLogObj.ActualLocationId = clObj.ActualLocationId;
+                            clLogObj.CampusId = clObj.CampusId;
+                            clLogObj.StudentBatches = clObj.StudentBatches;
+                            clLogObj.StudentCount = clObj.StudentCount;
+                            clLogObj.Comment = clObj.Comment;
+                            clLogObj.CurrentStage = clObj.CurrentStage;
+                            clLogObj.CurrentStageDisplayName = clObj.CurrentStageDisplayName;
+                            clLogObj.PaymentAmount = clObj.PaymentAmount;
+                            clLogObj.CreatedDate = clObj.CreatedDate;
+                            clLogObj.CreatedBy = clObj.CreatedBy;
+                            clLogObj.ModifiedDate = clObj.ModifiedDate;
+                            clLogObj.ModifiedBy = clObj.ModifiedBy;
+                            clLogObj.IsActive = clObj.IsActive;
+
+                            db.ConductedLecturesLog.Add(clLogObj);
                             db.SaveChanges();
 
                             return Json(new
@@ -8109,43 +8143,107 @@ namespace PMS.Controllers
                     }
                     else
                     {
-                        //AspNetRoles editingAccessGroupRole = (from agr in db.AspNetRoles where agr.Id.Equals(accessGroupRole.Id) select agr).FirstOrDefault<AspNetRoles>();
+                        ConductedLectures editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
 
-                        //if (editingAccessGroupRole.Name != accessGroupRole.Name || editingAccessGroupRole.IsActive != accessGroupRole.IsActive)
-                        //{
-                        //    if (validationRecord != null && validationRecord.Id != accessGroupRole.Id)
-                        //    {
-                        //        return Json(new
-                        //        {
-                        //            success = false,
-                        //            message = "This Role Already Exists For Selected Access Group"
-                        //        }, JsonRequestBehavior.AllowGet);
-                        //    }
-                        //    else
-                        //    {
-                        //        editingAccessGroupRole.Name = accessGroupRole.Name;
-                        //        editingAccessGroupRole.IsActive = accessGroupRole.IsActive;
-                        //        editingAccessGroupRole.ModifiedBy = "Ranga";
-                        //        editingAccessGroupRole.ModifiedDate = dateTime;
+                        LectureTimetable timetableRecord = (from tt in db.LectureTimetable where tt.TimetableId.Equals(clObj.TimetableId) select tt).FirstOrDefault<LectureTimetable>();
 
-                        //        db.Entry(editingAccessGroupRole).State = EntityState.Modified;
-                        //        db.SaveChanges();
+                        TimeSpan duration = DateTime.Parse(timetableRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.FromTime.ToString()));
 
-                        //        return Json(new
-                        //        {
-                        //            success = true,
-                        //            message = "Successfully Updated"
-                        //        }, JsonRequestBehavior.AllowGet);
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    return Json(new
-                        //    {
-                        //        success = false,
-                        //        message = "You didn't make any new changes"
-                        //    }, JsonRequestBehavior.AllowGet);
-                        //}
+                        int numbeofHours = duration.Hours;
+                        int numbeofMinutes = duration.Minutes;
+
+                        int paymentRate = 1000;
+                        int paymentAmount = 0;
+
+                        ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
+                        if (clObj.postedFile != null)
+                        {
+                            List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
+                            var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
+                            if (allowedFileTypes.Contains(uploadedFileExtension))
+                            {
+                                if (clObj.postedFile.ContentLength > 1000000)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "File size should be less than 1 MB"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                    string path = "../UploadedFiles/AttendanceSheets/" + renamedFileName;
+                                    string absolutePath = Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName));
+
+                                    if (System.IO.File.Exists(absolutePath))
+                                    {
+                                        System.IO.File.Delete(absolutePath);
+                                    }
+
+                                    clObj.postedFile.SaveAs(absolutePath);
+                                    editingConductedLecture.StudentAttendanceSheetLocation = path;
+                                    clLogObj.StudentAttendanceSheetLocation = path;
+                                }
+                            }
+                            else
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "Only PDF & Image files supported"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+
+                        if (numbeofHours != 0)
+                        {
+                            paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                        }
+
+                        if (numbeofMinutes != 0)
+                        {
+                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                        }
+
+                        editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
+                        editingConductedLecture.ActualFromTime = clObj.ActualFromTime;
+                        editingConductedLecture.ActualToTime = clObj.ActualToTime;
+                        editingConductedLecture.ActualLocationId = clObj.ActualLocationId;
+                        editingConductedLecture.CampusId = clObj.CampusId;
+                        editingConductedLecture.StudentBatches = clObj.StudentBatches;
+                        editingConductedLecture.StudentCount = clObj.StudentCount;
+                        editingConductedLecture.Comment = clObj.Comment;
+                        editingConductedLecture.PaymentAmount = paymentAmount;
+                        editingConductedLecture.ModifiedBy = "Ranga";
+                        editingConductedLecture.ModifiedDate = dateTime;
+                        editingConductedLecture.IsActive = clObj.IsActive;
+
+                        db.Entry(editingConductedLecture).State = EntityState.Modified;
+
+                        clLogObj.CLId = editingConductedLecture.CLId;
+                        clLogObj.TimetableId = editingConductedLecture.TimetableId;
+                        clLogObj.ActualLectureDate = clObj.ActualLectureDate;
+                        clLogObj.ActualFromTime = clObj.ActualFromTime;
+                        clLogObj.ActualToTime = clObj.ActualToTime;
+                        clLogObj.ActualLocationId = clObj.ActualLocationId;
+                        clLogObj.CampusId = clObj.CampusId;
+                        clLogObj.StudentBatches = clObj.StudentBatches;
+                        clLogObj.StudentCount = clObj.StudentCount;
+                        clLogObj.Comment = clObj.Comment;
+                        clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
+                        clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
+                        clLogObj.PaymentAmount = paymentAmount;
+                        clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
+                        clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
+                        clLogObj.ModifiedDate = dateTime;
+                        clLogObj.ModifiedBy = "Ranga";
+                        clLogObj.IsActive = clObj.IsActive;
+
+                        db.ConductedLecturesLog.Add(clLogObj);
+                        db.SaveChanges();
+
                         return Json(new
                         {
                             success = true,
@@ -8168,6 +8266,252 @@ namespace PMS.Controllers
                     }
                     throw raise;
                 }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/04
+        public ActionResult ManageSemesterSubjectLICs(int id)
+        {
+            return View();
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/04
+        public ActionResult GetSemesterSubjectLICs()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<SemesterSubjectLICVM> ssLICList = (from ssl in db.SemesterSubjectLIC
+                                                        join ss in db.SemesterSubject on ssl.SemesterSubjectId equals ss.Id
+                                                        join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                        join u in db.AspNetUsers on ssl.LICId equals u.Id
+                                                        join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                        select new SemesterSubjectLICVM
+                                                        {
+                                                            SSLICId = ssl.SSLICId,
+                                                            SemesterSubjectName = s.SubjectCode + " - " + s.SubjectName,
+                                                            LICName = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                                            IsActive = ssl.IsActive
+                                                        }).ToList();
+
+                return Json(new { data = ssLICList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/04
+        [HttpGet]
+        public ActionResult AddOrEditSemesterSubjectLIC(int id = 0, int operation = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var semesterSubjects = (from ss in db.SemesterSubject
+                                        join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                        where ss.SemesterRegistrationId.Equals(id) && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                        select new
+                                        {
+                                            Text = s.SubjectCode + " - " + s.SubjectName,
+                                            Value = ss.Id
+                                        }).ToList();
+
+                List<SelectListItem> semesterSubjectList = new SelectList(semesterSubjects, "Value", "Text").ToList();
+                ViewBag.semesterSubjectList = semesterSubjectList;
+
+                var users = (from u in db.AspNetUsers
+                             join t in db.Title on u.EmployeeTitle equals t.TitleId
+                             where u.IsActive.Equals(true)
+                             select new
+                             {
+                                 Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                 Value = u.Id
+                             }).ToList();
+
+                List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
+                ViewBag.usersList = usersList;
+
+                if (operation == 0)
+                {
+                    return View(new SemesterSubjectLIC());
+                }
+                else
+                {
+                    return View((from ssl in db.SemesterSubjectLIC where ssl.SSLICId.Equals(operation) select ssl).FirstOrDefault<SemesterSubjectLIC>());
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/04
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditSemesterSubjectLIC(SemesterSubjectLIC ssLICObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    SemesterSubjectLIC validationRecord = (from ssl in db.SemesterSubjectLIC
+                                                           where ssl.SemesterSubjectId.Equals(ssLICObj.SemesterSubjectId) && ssl.LICId.Equals(ssLICObj.LICId)
+                                                           select ssl).FirstOrDefault<SemesterSubjectLIC>();
+
+                    if (ssLICObj.SSLICId == 0)
+                    {
+                        if (validationRecord != null)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This LIC Already Exists For Selected Semester Subject"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            ssLICObj.CreatedBy = "Ranga";
+                            ssLICObj.CreatedDate = dateTime;
+                            ssLICObj.ModifiedBy = "Ranga";
+                            ssLICObj.ModifiedDate = dateTime;
+
+                            db.SemesterSubjectLIC.Add(ssLICObj);
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Saved"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        SemesterSubjectLIC editingSSLIC = (from ssl in db.SemesterSubjectLIC where ssl.SSLICId.Equals(ssLICObj.SSLICId) select ssl).FirstOrDefault<SemesterSubjectLIC>();
+
+                        if (editingSSLIC.SemesterSubjectId != ssLICObj.SemesterSubjectId || editingSSLIC.LICId != ssLICObj.LICId || editingSSLIC.IsActive != ssLICObj.IsActive)
+                        {
+                            if (validationRecord != null && validationRecord.SSLICId != ssLICObj.SSLICId)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "This LIC Already Exists For Selected Semester Subject"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                editingSSLIC.SemesterSubjectId = ssLICObj.SemesterSubjectId;
+                                editingSSLIC.LICId = ssLICObj.LICId;
+                                editingSSLIC.IsActive = ssLICObj.IsActive;
+                                editingSSLIC.ModifiedBy = "Ranga";
+                                editingSSLIC.ModifiedDate = dateTime;
+
+                                db.Entry(editingSSLIC).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                return Json(new
+                                {
+                                    success = true,
+                                    message = "Successfully Updated"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                        else
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "You didn't make any new changes"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/05
+        public ActionResult ManageConductedLectures()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                return View();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/05
+        public ActionResult GetConductedLectures()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                AspNetUsers lecturer = (from u in db.AspNetUsers where u.UserName.Equals("ranga.a") select u).FirstOrDefault<AspNetUsers>();
+
+                List<ConductedLecturesVM> conductedLecturesList = (from cl in db.ConductedLectures
+                                                                   join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                                   join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                                   join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                                   join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                                   join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                                   join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
+                                                                   from hll in tt_lh.DefaultIfEmpty()
+                                                                   join c in db.Campus on hll.CampusId equals c.CampusId
+                                                                   join aLh in db.LectureHall on cl.ActualLocationId equals aLh.HallId into cl_aLh
+                                                                   from aHll in cl_aLh.DefaultIfEmpty()
+                                                                   join aCmps in db.Campus on aHll.CampusId equals aCmps.CampusId
+                                                                   join ac in db.Campus on cl.CampusId equals ac.CampusId into cl_ac
+                                                                   from aCam in cl_ac.DefaultIfEmpty()
+                                                                   join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                                   from usr in tt_u.DefaultIfEmpty()
+                                                                   join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                                   where tt.LecturerId.Equals(lecturer.Id)
+                                                                   orderby cl.CLId descending
+                                                                   select new ConductedLecturesVM
+                                                                   {
+                                                                       CLId = cl.CLId,
+                                                                       TimetableId = cl.TimetableId,
+                                                                       ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                                       ActualFromTime = cl.ActualFromTime.ToString().Substring(0,5),
+                                                                       ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                                       ActualLocation = aHll != null ? aCmps.CampusName + " - " + aHll.Building + " - " + aHll.Floor + " - " + aHll.HallName : null,
+                                                                       CampusName = aCam != null ? aCam.CampusName : null,
+                                                                       StudentBatches = cl.StudentBatches,
+                                                                       StudentCount = cl.StudentCount,
+                                                                       StudentAttendanceSheetLocation = cl.StudentAttendanceSheetLocation,
+                                                                       Comment = cl.Comment,
+                                                                       CurrentStage = cl.CurrentStage,
+                                                                       CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                                       PaymentAmount = cl.PaymentAmount,
+                                                                       IsActive = cl.IsActive,
+                                                                       timetableRecords = new SemesterTimetableVM()
+                                                                       {
+                                                                           TimetableId = tt.TimetableId,
+                                                                           SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                                           LectureDate = tt.LectureDate.ToString(),
+                                                                           FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                                           ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                                           Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
+                                                                           LectureTypeName = lt.LectureTypeName,
+                                                                           StudentBatches = tt.StudentBatches,
+                                                                           IsActive = tt.IsActive,
+                                                                       }
+                                                                   }).ToList();
+
+                return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
             }
         }
     }

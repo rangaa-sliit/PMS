@@ -197,13 +197,15 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
           <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
           <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
           <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
-          <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+          <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
+          <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
           <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
@@ -226,13 +228,15 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
           <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
           <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
           <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
-          <ScalarProperty Name="CurrentStageId" ColumnName="CurrentStageId" />
+          <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
+          <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="StudentAttendanceSheetLocation" ColumnName="StudentAttendanceSheetLocation" />
           <ScalarProperty Name="StudentCount" ColumnName="StudentCount" />
@@ -522,6 +526,20 @@
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
           <ScalarProperty Name="SemesterRegistrationId" ColumnName="SemesterRegistrationId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SemesterSubjectLIC">
+      <EntityTypeMapping TypeName="PMSModel.SemesterSubjectLIC">
+        <MappingFragment StoreEntitySet="SemesterSubjectLIC">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="LICId" ColumnName="LICId" />
+          <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
+          <ScalarProperty Name="SSLICId" ColumnName="SSLICId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

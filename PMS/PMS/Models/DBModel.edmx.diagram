@@ -8,40 +8,41 @@
         <EntityTypeShape EntityType="PMSModel.AccessGroup" Width="1.5" PointX="0.75" PointY="27" />
         <EntityTypeShape EntityType="PMSModel.AccessGroupClaims" Width="1.5" PointX="3" PointY="40.875" />
         <EntityTypeShape EntityType="PMSModel.Appointment" Width="1.5" PointX="8.25" PointY="33.5" />
-        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="6" PointY="26.375" />
+        <EntityTypeShape EntityType="PMSModel.AppointmentType" Width="1.5" PointX="6" PointY="23.125" />
         <EntityTypeShape EntityType="PMSModel.AspNetRoles" Width="1.5" PointX="3" PointY="26.75" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="5.25" PointY="37" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="5.25" PointY="34.375" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserClaims" Width="1.5" PointX="5.25" PointY="34" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUserLogins" Width="1.5" PointX="5.25" PointY="47" />
         <EntityTypeShape EntityType="PMSModel.AspNetUserRoles" Width="1.5" PointX="5.25" PointY="30.125" />
-        <EntityTypeShape EntityType="PMSModel.AspNetUsers" Width="1.5" PointX="3" PointY="31.25" />
-        <EntityTypeShape EntityType="PMSModel.CalendarPeriod" Width="1.5" PointX="12" PointY="53.25" />
-        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="12" PointY="38.625" />
+        <EntityTypeShape EntityType="PMSModel.AspNetUsers" Width="1.5" PointX="3" PointY="31.125" />
+        <EntityTypeShape EntityType="PMSModel.CalendarPeriod" Width="1.5" PointX="12" PointY="54.5" />
+        <EntityTypeShape EntityType="PMSModel.Campus" Width="1.5" PointX="15" PointY="35.75" />
         <EntityTypeShape EntityType="PMSModel.Claim" Width="1.5" PointX="0.75" PointY="40.875" />
-        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="21.75" PointY="38.875" />
-        <EntityTypeShape EntityType="PMSModel.ConductedLecturesLog" Width="1.5" PointX="24" PointY="38.75" />
-        <EntityTypeShape EntityType="PMSModel.ConfigurationalSettings" Width="1.5" PointX="7.5" PointY="53.5" />
-        <EntityTypeShape EntityType="PMSModel.Degree" Width="1.5" PointX="9.75" PointY="46" />
+        <EntityTypeShape EntityType="PMSModel.ConductedLectures" Width="1.5" PointX="24.75" PointY="38.875" />
+        <EntityTypeShape EntityType="PMSModel.ConductedLecturesLog" Width="1.5" PointX="27" PointY="38.75" />
+        <EntityTypeShape EntityType="PMSModel.ConfigurationalSettings" Width="1.5" PointX="7.5" PointY="49.625" />
+        <EntityTypeShape EntityType="PMSModel.Degree" Width="1.5" PointX="9.75" PointY="46.875" />
         <EntityTypeShape EntityType="PMSModel.Department" Width="1.5" PointX="7.5" PointY="41.375" />
-        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="6" PointY="22.625" />
+        <EntityTypeShape EntityType="PMSModel.Designation" Width="1.5" PointX="6" PointY="26.375" />
         <EntityTypeShape EntityType="PMSModel.Faculty" Width="1.5" PointX="5.25" PointY="50.875" />
         <EntityTypeShape EntityType="PMSModel.Institute" Width="1.5" PointX="7.5" PointY="57.75" />
-        <EntityTypeShape EntityType="PMSModel.Intake" Width="1.5" PointX="12" PointY="49.25" />
-        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="14.25" PointY="38.25" />
-        <EntityTypeShape EntityType="PMSModel.LecturerAssignments" Width="1.5" PointX="19.5" PointY="40.375" />
-        <EntityTypeShape EntityType="PMSModel.LectureTimetable" Width="1.5" PointX="16.5" PointY="39.375" />
-        <EntityTypeShape EntityType="PMSModel.LectureTimetableLog" Width="1.5" PointX="18.75" PointY="45.5" />
-        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="14.25" PointY="34" />
-        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="14.25" PointY="53.625" />
-        <EntityTypeShape EntityType="PMSModel.PaymentRateLog" Width="1.5" PointX="19.5" PointY="52.625" />
-        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="14.25" PointY="46.375" />
-        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="16.5" PointY="55.5" />
-        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="12" PointY="44" />
-        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="16.5" PointY="63" />
-        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="12" PointY="64.5" />
-        <EntityTypeShape EntityType="PMSModel.SubWorkflows" Width="1.5" PointX="9.75" PointY="39.875" />
+        <EntityTypeShape EntityType="PMSModel.Intake" Width="1.5" PointX="12" PointY="50.5" />
+        <EntityTypeShape EntityType="PMSModel.LectureHall" Width="1.5" PointX="17.25" PointY="35.375" />
+        <EntityTypeShape EntityType="PMSModel.LecturerAssignments" Width="1.5" PointX="16.5" PointY="40.375" />
+        <EntityTypeShape EntityType="PMSModel.LectureTimetable" Width="1.5" PointX="19.5" PointY="39.5" />
+        <EntityTypeShape EntityType="PMSModel.LectureTimetableLog" Width="1.5" PointX="21.75" PointY="41.875" />
+        <EntityTypeShape EntityType="PMSModel.LectureType" Width="1.5" PointX="17.25" PointY="50" />
+        <EntityTypeShape EntityType="PMSModel.PaymentRate" Width="1.5" PointX="14.25" PointY="54.375" />
+        <EntityTypeShape EntityType="PMSModel.PaymentRateLog" Width="1.5" PointX="19.5" PointY="53.25" />
+        <EntityTypeShape EntityType="PMSModel.SemesterRegistration" Width="1.5" PointX="14.25" PointY="46.625" />
+        <EntityTypeShape EntityType="PMSModel.SemesterSubject" Width="1.5" PointX="16.5" PointY="54" />
+        <EntityTypeShape EntityType="PMSModel.SemesterSubjectLIC" Width="1.5" PointX="18.75" PointY="46" />
+        <EntityTypeShape EntityType="PMSModel.Specialization" Width="1.5" PointX="12" PointY="44.375" />
+        <EntityTypeShape EntityType="PMSModel.StudentBatch" Width="1.5" PointX="16.5" PointY="59" />
+        <EntityTypeShape EntityType="PMSModel.Subject" Width="1.5" PointX="12" PointY="65.5" />
+        <EntityTypeShape EntityType="PMSModel.SubWorkflows" Width="1.5" PointX="9.75" PointY="42" />
         <EntityTypeShape EntityType="PMSModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="PMSModel.Title" Width="1.5" PointX="0.75" PointY="34.125" />
-        <EntityTypeShape EntityType="PMSModel.Workflows" Width="1.5" PointX="7.5" PointY="49.625" />
+        <EntityTypeShape EntityType="PMSModel.Workflows" Width="1.5" PointX="7.5" PointY="53.5" />
         <AssociationConnector Association="PMSModel.FK_AccessGroupClaims_AccessGroup" />
         <AssociationConnector Association="PMSModel.FK_AspNetRoles_AccessGroup" />
         <AssociationConnector Association="PMSModel.FK_AccessGroupClaims_Claim" />
@@ -61,6 +62,7 @@
         <AssociationConnector Association="PMSModel.FK_LecturerAssignments_AspNetUsers" />
         <AssociationConnector Association="PMSModel.FK_LectureTimetable_AspNetUsers" />
         <AssociationConnector Association="PMSModel.FK_LectureTimetableLog_AspNetUsers" />
+        <AssociationConnector Association="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" />
         <AssociationConnector Association="PMSModel.FK_SubWorkflows_AspNetUsers" />
         <AssociationConnector Association="PMSModel.FK_SemesterRegistration_CalendarPeriod" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_Campus" />
@@ -68,11 +70,9 @@
         <AssociationConnector Association="PMSModel.FK_LectureHall_Campus" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_LectureHall" />
         <AssociationConnector Association="PMSModel.FK_ConductedLectures_LectureTimetable" />
-        <AssociationConnector Association="PMSModel.FK_ConductedLectures_SubWorkflows" />
         <AssociationConnector Association="PMSModel.FK_ConductedLecturesLog_ConductedLectures" />
         <AssociationConnector Association="PMSModel.FK_ConductedLecturesLog_LectureHall" />
         <AssociationConnector Association="PMSModel.FK_ConductedLecturesLog_LectureTimetable" />
-        <AssociationConnector Association="PMSModel.FK_ConductedLecturesLog_SubWorkflows" />
         <AssociationConnector Association="PMSModel.FK_ConfigurationalSettings_Faculty" />
         <AssociationConnector Association="PMSModel.FK_Degree_Department" />
         <AssociationConnector Association="PMSModel.FK_Degree_Faculty" />
@@ -113,6 +113,7 @@
         <AssociationConnector Association="PMSModel.FK_SemesterSubject_SemesterRegistration" />
         <AssociationConnector Association="PMSModel.FK_StudentBatch_SemesterRegistration" />
         <AssociationConnector Association="PMSModel.FK_SemesterSubject_Subject" />
+        <AssociationConnector Association="PMSModel.FK_SemesterSubjectLIC_SemesterSubject" />
         <AssociationConnector Association="PMSModel.FK_SubWorkflows_Workflows" />
       </Diagram>
     </edmx:Diagrams>

@@ -194,13 +194,15 @@
     <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-    <Property Name="CurrentStageId" Type="int" Nullable="false" />
+    <Property Name="CurrentStage" Type="int" Nullable="false" />
+    <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
     <Property Name="PaymentAmount" Type="float" />
+    <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -223,13 +225,15 @@
     <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-    <Property Name="CurrentStageId" Type="int" Nullable="false" />
+    <Property Name="CurrentStage" Type="int" Nullable="false" />
+    <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
     <Property Name="PaymentAmount" Type="float" />
+    <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -491,6 +495,19 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="SemesterRegistrationId" Type="int" Nullable="false" />
     <Property Name="SubjectId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SemesterSubjectLIC">
+    <Key>
+      <PropertyRef Name="SSLICId" />
+    </Key>
+    <Property Name="SSLICId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
+    <Property Name="LICId" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -788,18 +805,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_SubWorkflows">
-    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
-    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="SubWorkflows">
-        <PropertyRef Name="SubWorkflowId" />
-      </Principal>
-      <Dependent Role="ConductedLectures">
-        <PropertyRef Name="CurrentStageId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_ConductedLecturesLog_Campus">
     <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
     <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
@@ -847,18 +852,6 @@
       </Principal>
       <Dependent Role="ConductedLecturesLog">
         <PropertyRef Name="TimetableId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_ConductedLecturesLog_SubWorkflows">
-    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="1" />
-    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="SubWorkflows">
-        <PropertyRef Name="SubWorkflowId" />
-      </Principal>
-      <Dependent Role="ConductedLecturesLog">
-        <PropertyRef Name="CurrentStageId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1384,6 +1377,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_SemesterSubjectLIC_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="SemesterSubjectLIC" Type="Self.SemesterSubjectLIC" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterSubjectLIC">
+        <PropertyRef Name="LICId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterSubjectLIC_SemesterSubject">
+    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
+    <End Role="SemesterSubjectLIC" Type="Self.SemesterSubjectLIC" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterSubjectLIC">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Specialization_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
@@ -1527,6 +1544,7 @@
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SemesterSubjectLIC" EntityType="Self.SemesterSubjectLIC" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Specialization" EntityType="Self.Specialization" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="StudentBatch" EntityType="Self.StudentBatch" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Subject" EntityType="Self.Subject" Schema="dbo" store:Type="Tables" />
@@ -1594,10 +1612,6 @@
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="Self.FK_ConductedLectures_SubWorkflows">
-      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
-      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
-    </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -1612,10 +1626,6 @@
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="Self.FK_ConductedLecturesLog_LectureTimetable">
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
-      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
-    </AssociationSet>
-    <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
-      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
@@ -1785,6 +1795,14 @@
     <AssociationSet Name="FK_SemesterSubject_Subject" Association="Self.FK_SemesterSubject_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubjectLIC_AspNetUsers" Association="Self.FK_SemesterSubjectLIC_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubjectLIC_SemesterSubject" Association="Self.FK_SemesterSubjectLIC_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
     </AssociationSet>
     <AssociationSet Name="FK_Specialization_Degree" Association="Self.FK_Specialization_Degree">
       <End Role="Degree" EntitySet="Degree" />

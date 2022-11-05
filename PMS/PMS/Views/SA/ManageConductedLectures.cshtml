@@ -1,0 +1,152 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/11/05*@
+
+@{
+    ViewBag.Title = "ManageConductedLectures";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item active">Manage Conducted Lectures</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Manage Conducted Lectures</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Conducted Lectures</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="conductedLecturesTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var conductedLecturesTbl;
+
+        conductedLecturesTbl = $("#conductedLecturesTbl").DataTable({
+            "responsive": true,
+            "scrollY": "30vh",
+            "scrollX": true,
+            "scroller": true,
+            "order": [],
+            "ajax": {
+                "url": "@Url.Action("GetConductedLectures", "SA")",
+                "type": "GET",
+                "dataType": "json"
+            },
+            "columns": [
+                {
+                    "title": "",
+                    "data": null,
+                    "render": function (data) {
+                        return `<div class='dropdown dropright'>`
+                            + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                            + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                            + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`
+                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
+                    },
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "20px"
+                },
+                {
+                    "title": "Subject Name",
+                    "data": null,
+                    "render": function (data) {
+                        return data.timetableRecords.SubjectName;
+                    }
+                },
+                {
+                    "title": "Lecture Conducted Date",
+                    "data": "ActualLectureDate"
+                },
+                {
+                    "title": "Lecture Started Time",
+                    "data": "ActualFromTime"
+                },
+                {
+                    "title": "Lecture Ended Time",
+                    "data": "ActualToTime"
+                },
+                {
+                    "title": "Student Count",
+                    "data": "StudentCount",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Student Batches",
+                    "data": "StudentBatches"
+                },
+                {
+                    "title": "Student Attendance Sheet",
+                    "data": "StudentAttendanceSheetLocation",
+                    "render": function (data) {
+                        if (data != null) {
+                            return `<a href='javascript:OpenStudentAttendanceSheet(` + JSON.stringify(data) + `); '>View</a>`;
+                        }
+                        else {
+                            return "N/A";
+                        }
+                    }
+                },
+                {
+                    "title": "Payment Amount",
+                    "data": "PaymentAmount"
+                },
+                {
+                    "title": "Current Stage",
+                    "data": "CurrentStageDisplayName"
+                },
+                {
+                    "title": "Status",
+                    "data": "IsActive",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Active';
+                        }
+                        else {
+                            return 'Inactive';
+                        }
+                    }
+                }
+            ],
+            "language": {
+                "emptyTable": "No Records Found!"
+            }
+        });
+
+        function NavigateConductedLecturesForm(timetableId, clId, action) {
+            var url = "@Url.Action("AddOrEditConductedLecture", "SA")/" + timetableId + "/" + clId;
+
+            if (action == "Edit") {
+                window.location.href = url + "/Edit" ;
+            }
+            else {
+                window.location.href = url + "/View";
+            }
+        }
+
+        function OpenStudentAttendanceSheet(data) {
+            window.open(data);
+        }
+    </script>
+}
