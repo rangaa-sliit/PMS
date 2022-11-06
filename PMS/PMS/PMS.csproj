@@ -578,6 +578,7 @@
     <Content Include="Views\SA\ManageSemesterSubjectLICs.cshtml" />
     <Content Include="Views\SA\AddOrEditSemesterSubjectLIC.cshtml" />
     <Content Include="Views\SA\ManageConductedLectures.cshtml" />
+    <Content Include="Views\SA\ManageLectureApprovals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

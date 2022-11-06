@@ -26,7 +26,7 @@ namespace PMS.Models
         [Required(ErrorMessage = "Lecture Type is required")]
         [MaxLength(100, ErrorMessage = "Maximum 100 characters exceeded")]
         public string LectureTypeName { get; set; }
-        public bool AllowedToSeparatePayments { get; set; }
+        public bool ConsiderMinimumStudentCount { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }

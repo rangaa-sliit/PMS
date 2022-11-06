@@ -105,6 +105,15 @@ Developed On:- 2022/09/26*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DepartmentId, "Department: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DepartmentId, (IEnumerable<SelectListItem>)ViewBag.departmentList, new { @class = "form-control", @id = "departmentList", onchange = "onDepartmentChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.DepartmentId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsActive, "Status: ")
                     </div>
                     <div class="col-sm-9">
@@ -141,6 +150,10 @@ Developed On:- 2022/09/26*@
             $("#facultyList").select2({
                 theme: "bootstrap4"
             });
+
+            $("#departmentList").select2({
+                theme: "bootstrap4"
+            });
         });
 
         $(document).ready(function () {
@@ -150,9 +163,11 @@ Developed On:- 2022/09/26*@
 
             if (isAcademicUser == true) {
                 $("#facultyList").prop("disabled", false);
+                $("#departmentList").prop("disabled", false);
             }
             else {
                 $("#facultyList").prop("disabled", true);
+                $("#departmentList").prop("disabled", true);
             }
 
             if (operation != undefined) {
@@ -175,6 +190,7 @@ Developed On:- 2022/09/26*@
                     $("#contactNumber").prop("disabled", true);
                     $("#isAcademicUser").prop("disabled", true);
                     $("#facultyList").prop("disabled", true);
+                    $("#departmentList").prop("disabled", true);
                     $("#userStatusList").prop("disabled", true);
                 }
             }
@@ -191,6 +207,7 @@ Developed On:- 2022/09/26*@
                 $("#isAcademicUser").prop("checked", false);
                 $("#titleList").val(null).change();
                 $("#facultyList").val(null).change();
+                $("#departmentList").val(null).change();
             }
         })
 
@@ -218,7 +235,9 @@ Developed On:- 2022/09/26*@
                                 $("#titleList").val(null).change();
                                 $("#isAcademicUser").prop("checked", false);
                                 $("#facultyList").val(null).change();
+                                $("#departmentList").val(null).change();
                                 $("#facultyList").prop("disabled", true);
+                                $("#departmentList").prop("disabled", true);
                             }
 
                             $.notify(data.message, {
@@ -249,7 +268,9 @@ Developed On:- 2022/09/26*@
                 $("#titleList").val(null).change();
                 $("#isAcademicUser").prop("checked", false);
                 $("#facultyList").val(null).change();
+                $("#departmentList").val(null).change();
                 $("#facultyList").prop("disabled", true);
+                $("#departmentList").prop("disabled", true);
             }
             else {
                 window.location.reload();
@@ -291,10 +312,13 @@ Developed On:- 2022/09/26*@
 
             if (newIsAcademicUser == true) {
                 $("#facultyList").prop("disabled", false);
+                $("#departmentList").prop("disabled", false);
             }
             else {
                 $("#facultyList").val(null).change();
+                $("#departmentList").val(null).change();
                 $("#facultyList").prop("disabled", true);
+                $("#departmentList").prop("disabled", true);
             }
 
             $("#userSubmitBtn").prop("disabled", false);
@@ -302,6 +326,11 @@ Developed On:- 2022/09/26*@
         }
 
         function onFacultyChange(newFaculty) {
+            $("#userSubmitBtn").prop("disabled", false);
+            $("#userClearBtn").prop("disabled", false);
+        }
+
+        function onDepartmentChange(newDepartment) {
             $("#userSubmitBtn").prop("disabled", false);
             $("#userClearBtn").prop("disabled", false);
         }

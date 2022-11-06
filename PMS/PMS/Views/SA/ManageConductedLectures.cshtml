@@ -23,8 +23,30 @@ Developed On:- 2022/11/05*@
             <h6 class="m-0 font-weight-bold text-primary">Conducted Lectures</h6>
         </div>
         <div class="card-body">
+            <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
             <div class="table-responsive">
                 <table id="conductedLecturesTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sendToApprovalModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send To Approval Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to your lecture records to approval?</p>
+                    <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="SendToApprovalConfirm()">Yes, Send</button>
+                </div>
             </div>
         </div>
     </div>
@@ -50,12 +72,20 @@ Developed On:- 2022/11/05*@
                     "title": "",
                     "data": null,
                     "render": function (data) {
-                        return `<div class='dropdown dropright'>`
+                        var dynamicContent = `<div class='dropdown dropright'>`
                             + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                             + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                             + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`
-                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
+                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`;
+
+                        if (data.CurrentStage == 1) {
+                            dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
+                        }
+                        else {
+                            dynamicContent += `</div></div>`;
+                        }
+
+                        return dynamicContent;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -148,5 +178,35 @@ Developed On:- 2022/11/05*@
         function OpenStudentAttendanceSheet(data) {
             window.open(data);
         }
+
+        function onSendToApprovalClick() {
+            $("#sendToApprovalModal").modal("show");
+        }
+
+        function SendToApprovalConfirm() {
+            $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ConductedLectureSendToApproval", "SA")',
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            $("#sendToApprovalModal").modal("hide");
+                            conductedLecturesTbl.ajax.reload();
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+        }
+
     </script>
 }

@@ -51,6 +51,7 @@ namespace PMS.Models
         [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string PhoneNumber { get; set; }
         public Nullable<int> FacultyId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }

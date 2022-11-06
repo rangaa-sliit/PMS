@@ -11,6 +11,7 @@ namespace PMS.ViewModels
         public int WorkflowId { get; set; }
         public string WorkflowRole { get; set; }
         public int WorkflowStep { get; set; }
+        public string ConsideringArea { get; set; }
         public bool IsSpecificUser { get; set; }
         public string WorkflowUser { get; set; }
         public bool IsActive { get; set; }

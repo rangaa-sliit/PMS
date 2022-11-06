@@ -33,6 +33,9 @@ namespace PMS.Models
         public string ApprovedOrRejectedBy { get; set; }
         public string ApprovedOrRejectedRemark { get; set; }
         public bool IsOpenForModerations { get; set; }
+        public Nullable<System.DateTime> ModerationOpenedDate { get; set; }
+        public string ModerationOpenedBy { get; set; }
+        public string ModerationOpenedRemark { get; set; }
         public Nullable<double> PaymentAmount { get; set; }
         public bool IsFinalApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }

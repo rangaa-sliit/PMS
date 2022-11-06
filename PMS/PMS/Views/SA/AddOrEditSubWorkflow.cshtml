@@ -78,6 +78,19 @@
                 }
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ConsideringArea, "Considering Area: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.ConsideringArea, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "All", Value = "All" },
+                            new SelectListItem{ Text = "Faculty Only", Value = "Faculty Only" },
+                            new SelectListItem{ Text = "Department Only", Value = "Department Only" }
+                        }, new { @class = "form-control", @id = "consideringAreaList", onchange = "onConsideringAreaChange(this.value)" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsSpecificUser, "For Specific User: ")
                     </div>
                     <div class="col-sm-9">
@@ -217,6 +230,7 @@
                     $("#workflowStatusList").prop("disabled", true);
                     $("#prefixDiv").attr('hidden', true);
                     $("#landingRoleDiv").attr('hidden', true);
+                    $("#consideringAreaList").prop("disabled", true);
                     $("#isSpecificUser").prop("disabled", true);
                 }
             }
@@ -228,6 +242,7 @@
                 $("#prefixLabel").addClass("required");
                 $("#landingRoleLabel").addClass("required");
                 $("#roleList").val(null).change();
+                $("#consideringAreaList").val("All");
                 $("#isSpecificUser").prop("checked", false);
                 $("#workflowUsersList").val(null).change();
                 $("#workflowUsersList").prop("disabled", true);
@@ -340,6 +355,7 @@
                                     $("#roleList").val(null).change();
                                     $("#positionPrefix").val("");
                                     $("#landingRoleList").val(null).change();
+                                    $("#consideringAreaList").val("All");
                                     $("#isSpecificUser").prop("checked", false);
                                     $("#workflowUsersList").val(null).change();
                                     $("#workflowUsersList").prop("disabled", true);
@@ -374,6 +390,7 @@
                 $("#roleList").val(null).change();
                 $("#positionPrefix").val("");
                 $("#landingRoleList").val(null).change();
+                $("#consideringAreaList").val("All");
                 $("#isSpecificUser").prop("checked", false);
                 $("#workflowUsersList").val(null).change();
                 $("#workflowUsersList").prop("disabled", true);
@@ -406,6 +423,11 @@
         }
 
         function onLandingRoleChange(newLandingRole) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onConsideringAreaChange(newConsideringArea) {
             $("#workflowSubmitBtn").prop("disabled", false);
             $("#workflowClearBtn").prop("disabled", false);
         }

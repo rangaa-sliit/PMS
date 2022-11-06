@@ -133,6 +133,7 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
           <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
           <ScalarProperty Name="UserName" ColumnName="UserName" />
@@ -199,6 +200,9 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+          <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
+          <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
+          <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
           <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
           <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
@@ -230,6 +234,9 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+          <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
+          <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
+          <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
           <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
           <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
@@ -444,7 +451,7 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="AllowedToSeparatePayments" ColumnName="AllowedToSeparatePayments" />
+          <ScalarProperty Name="ConsiderMinimumStudentCount" ColumnName="ConsiderMinimumStudentCount" />
           <ScalarProperty Name="LectureTypeName" ColumnName="LectureTypeName" />
           <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
         </MappingFragment>
@@ -600,6 +607,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="WorkflowUser" ColumnName="WorkflowUser" />
           <ScalarProperty Name="IsSpecificUser" ColumnName="IsSpecificUser" />
+          <ScalarProperty Name="ConsideringArea" ColumnName="ConsideringArea" />
           <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
           <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
           <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />

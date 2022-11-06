@@ -124,6 +124,7 @@
           <Property Name="UserName" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="FacultyId" Type="int" />
+          <Property Name="DepartmentId" Type="int" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -206,6 +207,9 @@
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+          <Property Name="ModerationOpenedDate" Type="datetime" />
+          <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="PaymentAmount" Type="float" />
           <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -237,6 +241,9 @@
           <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+          <Property Name="ModerationOpenedDate" Type="datetime" />
+          <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
           <Property Name="PaymentAmount" Type="float" />
           <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -424,7 +431,7 @@
           </Key>
           <Property Name="LectureTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LectureTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="AllowedToSeparatePayments" Type="bit" Nullable="false" />
+          <Property Name="ConsiderMinimumStudentCount" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -571,6 +578,7 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="WorkflowRole" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="WorkflowStep" Type="int" Nullable="false" />
+          <Property Name="ConsideringArea" Type="nvarchar" MaxLength="150" />
           <Property Name="IsSpecificUser" Type="bit" Nullable="false" />
           <Property Name="WorkflowUser" Type="nvarchar" MaxLength="256" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -2314,6 +2322,7 @@
           <Property Name="UserName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FacultyId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2414,6 +2423,9 @@
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+          <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="PaymentAmount" Type="Double" />
           <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2449,6 +2461,9 @@
           <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+          <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+          <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="PaymentAmount" Type="Double" />
           <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2691,7 +2706,7 @@
           </Key>
           <Property Name="LectureTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LectureTypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="AllowedToSeparatePayments" Type="Boolean" Nullable="false" />
+          <Property Name="ConsiderMinimumStudentCount" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2882,6 +2897,7 @@
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowRole" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="WorkflowStep" Type="Int32" Nullable="false" />
+          <Property Name="ConsideringArea" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="IsSpecificUser" Type="Boolean" Nullable="false" />
           <Property Name="WorkflowUser" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -3973,6 +3989,7 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
@@ -4039,6 +4056,9 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
+                <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
+                <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
                 <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
@@ -4070,6 +4090,9 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
+                <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
+                <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
                 <ScalarProperty Name="IsOpenForModerations" ColumnName="IsOpenForModerations" />
                 <ScalarProperty Name="ApprovedOrRejectedRemark" ColumnName="ApprovedOrRejectedRemark" />
                 <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
@@ -4284,7 +4307,7 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="AllowedToSeparatePayments" ColumnName="AllowedToSeparatePayments" />
+                <ScalarProperty Name="ConsiderMinimumStudentCount" ColumnName="ConsiderMinimumStudentCount" />
                 <ScalarProperty Name="LectureTypeName" ColumnName="LectureTypeName" />
                 <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
               </MappingFragment>
@@ -4440,6 +4463,7 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="WorkflowUser" ColumnName="WorkflowUser" />
                 <ScalarProperty Name="IsSpecificUser" ColumnName="IsSpecificUser" />
+                <ScalarProperty Name="ConsideringArea" ColumnName="ConsideringArea" />
                 <ScalarProperty Name="WorkflowStep" ColumnName="WorkflowStep" />
                 <ScalarProperty Name="WorkflowRole" ColumnName="WorkflowRole" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />

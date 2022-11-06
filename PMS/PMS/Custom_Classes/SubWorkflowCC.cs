@@ -16,6 +16,8 @@ namespace PMS.Custom_Classes
         public string LandingRole { get; set; }
         public bool IsInitial { get; set; }
         public int CurrentPosition { get; set; }
+        [Required(ErrorMessage = "Considering Area is required")]
+        public string ConsideringArea { get; set; }
         public bool IsSpecificUser { get; set; }
         public string WorkflowUser { get; set; }
         public bool IsActive { get; set; }

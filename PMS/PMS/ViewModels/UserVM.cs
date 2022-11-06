@@ -13,6 +13,7 @@ namespace PMS.ViewModels
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string FacultyName { get; set; }
+        public string DepartmentName { get; set; }
         public bool IsActive { get; set; }
     }
 }

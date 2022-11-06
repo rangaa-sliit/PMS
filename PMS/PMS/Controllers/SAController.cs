@@ -1495,7 +1495,7 @@ namespace PMS.Controllers
                     {
                         LectureType editingLectureType = (from lt in db.LectureType where lt.LectureTypeId.Equals(lectureType.LectureTypeId) select lt).FirstOrDefault<LectureType>();
 
-                        if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.AllowedToSeparatePayments != lectureType.AllowedToSeparatePayments || editingLectureType.IsActive != lectureType.IsActive)
+                        if (editingLectureType.LectureTypeName != lectureType.LectureTypeName || editingLectureType.ConsiderMinimumStudentCount != lectureType.ConsiderMinimumStudentCount || editingLectureType.IsActive != lectureType.IsActive)
                         {
                             if (validationRecord != null && validationRecord.LectureTypeId != lectureType.LectureTypeId)
                             {
@@ -1508,7 +1508,7 @@ namespace PMS.Controllers
                             else
                             {
                                 editingLectureType.LectureTypeName = lectureType.LectureTypeName;
-                                editingLectureType.AllowedToSeparatePayments = lectureType.AllowedToSeparatePayments;
+                                editingLectureType.ConsiderMinimumStudentCount = lectureType.ConsiderMinimumStudentCount;
                                 editingLectureType.IsActive = lectureType.IsActive;
                                 editingLectureType.ModifiedBy = "Dulanjalee";
                                 editingLectureType.ModifiedDate = dateTime;
@@ -4499,6 +4499,8 @@ namespace PMS.Controllers
                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
                                           join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                           from fac in u_f.DefaultIfEmpty()
+                                          join d in db.Department on u.DepartmentId equals d.DepartmentId into u_d
+                                          from dep in u_d.DefaultIfEmpty()
                                           orderby u.EmployeeNumber ascending
                                           select new UserVM
                                           {
@@ -4507,7 +4509,8 @@ namespace PMS.Controllers
                                               EmployeeName = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                               Email = u.Email,
                                               PhoneNumber = u.PhoneNumber,
-                                              FacultyName = fac.FacultyName,
+                                              FacultyName = fac != null ? fac.FacultyName : null,
+                                              DepartmentName = dep != null ? dep.DepartmentName : null,
                                               IsActive = u.IsActive
                                           }).ToList();
                 return Json(new { data = usersList }, JsonRequestBehavior.AllowGet);
@@ -4543,6 +4546,18 @@ namespace PMS.Controllers
                 List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
                 facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.facultyList = facultyList;
+
+                var departments = (from d in db.Department
+                                   where d.IsActive.Equals(true)
+                                   select new
+                                   {
+                                       Text = d.DepartmentName,
+                                       Value = d.DepartmentId
+                                   }).ToList();
+
+                List<SelectListItem> departmentList = new SelectList(departments, "Value", "Text").ToList();
+                departmentList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                ViewBag.departmentList = departmentList;
 
                 if (id == null)
                 {
@@ -4626,7 +4641,7 @@ namespace PMS.Controllers
                         if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle 
                             || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName 
                             || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber || editingUser.IsAcademicUser != user.IsAcademicUser
-                            || editingUser.FacultyId != user.FacultyId || editingUser.IsActive != user.IsActive)
+                            || editingUser.FacultyId != user.FacultyId || editingUser.DepartmentId != user.DepartmentId || editingUser.IsActive != user.IsActive)
                         {
                             if (validationRecord != null && validationRecord.Id != user.Id)
                             {
@@ -4649,6 +4664,7 @@ namespace PMS.Controllers
                                     editingUser.IsAcademicUser = user.IsAcademicUser;
                                     editingUser.PhoneNumber = user.PhoneNumber;
                                     editingUser.FacultyId = user.FacultyId;
+                                    editingUser.DepartmentId = user.DepartmentId;
                                     editingUser.IsActive = user.IsActive;
                                     editingUser.ModifiedBy = "Ranga";
                                     editingUser.ModifiedDate = dateTime;
@@ -5440,6 +5456,7 @@ namespace PMS.Controllers
                                                             WorkflowId = sw.WorkflowId,
                                                             WorkflowRole = ag.AccessGroupName + " - " + r.Name,
                                                             WorkflowStep = sw.WorkflowStep,
+                                                            ConsideringArea = sw.ConsideringArea,
                                                             IsSpecificUser = sw.IsSpecificUser,
                                                             WorkflowUser = usr != null ? ttl.TitleName + " " + usr.FirstName + " " + usr.LastName : null,
                                                             IsActive = sw.IsActive
@@ -5498,6 +5515,7 @@ namespace PMS.Controllers
                                                            WorkflowId = sw.WorkflowId,
                                                            WorkflowRole = sw.WorkflowRole,
                                                            CurrentPosition = sw.WorkflowStep,
+                                                           ConsideringArea = sw.ConsideringArea,
                                                            IsSpecificUser = sw.IsSpecificUser,
                                                            IsActive = sw.IsActive
                                                        }).FirstOrDefault<SubWorkflowCC>();
@@ -5587,6 +5605,7 @@ namespace PMS.Controllers
                                 }
                             }
 
+                            newSubWorkFlow.ConsideringArea = workflowCC.ConsideringArea;
                             newSubWorkFlow.IsSpecificUser = workflowCC.IsSpecificUser;
                             newSubWorkFlow.WorkflowUser = workflowCC.WorkflowUser;
                             newSubWorkFlow.IsActive = workflowCC.IsActive;
@@ -5682,6 +5701,7 @@ namespace PMS.Controllers
                                     //db.SaveChanges();
                                 }
 
+                                editingSubWorkflow.ConsideringArea = workflowCC.ConsideringArea;
                                 editingSubWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
                                 editingSubWorkflow.WorkflowUser = workflowCC.WorkflowUser;
                                 editingSubWorkflow.IsActive = workflowCC.IsActive;
@@ -5702,8 +5722,9 @@ namespace PMS.Controllers
                             }
                             else
                             {
-                                if (editingSubWorkflow.IsSpecificUser != workflowCC.IsSpecificUser || editingSubWorkflow.WorkflowUser != workflowCC.WorkflowUser || editingSubWorkflow.IsActive != workflowCC.IsActive)
+                                if (editingSubWorkflow.ConsideringArea != workflowCC.ConsideringArea || editingSubWorkflow.IsSpecificUser != workflowCC.IsSpecificUser || editingSubWorkflow.WorkflowUser != workflowCC.WorkflowUser || editingSubWorkflow.IsActive != workflowCC.IsActive)
                                 {
+                                    editingSubWorkflow.ConsideringArea = workflowCC.ConsideringArea;
                                     editingSubWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
                                     editingSubWorkflow.WorkflowUser = workflowCC.WorkflowUser;
                                     editingSubWorkflow.IsActive = workflowCC.IsActive;
@@ -8514,5 +8535,175 @@ namespace PMS.Controllers
                 return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/06
+        [HttpPost]
+        public ActionResult ConductedLectureSendToApproval()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+                    var username = "ranga.a";
+                    int deadlineDays = 0;
+                    var paymentConsideringMonth = 0;
+
+                    List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
+                    AspNetRoles nextWorkflowRole = new AspNetRoles();
+
+                    var userRecord = (from u in db.AspNetUsers
+                                      join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
+                                      from fac in u_f.DefaultIfEmpty()
+                                      where u.UserName.Equals(username)
+                                      select new {
+                                          user = u,
+                                          faculty = fac != null ? fac : null
+                                      }).FirstOrDefault();
+
+                    if(userRecord.faculty != null)
+                    {
+                        deadlineDays = int.Parse((from c in db.ConfigurationalSettings
+                                                  where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
+                                                  select c.ConfigurationValue).FirstOrDefault());
+
+                        nextWorkflowRole = (from sw in db.SubWorkflows
+                                            join w in db.Workflows on sw.WorkflowId equals w.Id
+                                            join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                            where sw.WorkflowStep.Equals(2) && w.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
+                                            select r).FirstOrDefault();
+                    }                    
+
+                    if(deadlineDays != 0)
+                    {
+                        var deadlineDate = monthStartDate.AddDays(deadlineDays);
+                        
+                        if (currentDateTime <= deadlineDate)
+                        {
+                            paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
+                        }
+                        else
+                        {
+                            paymentConsideringMonth = currentDateTime.Month;
+                        }
+                    }
+                    else
+                    {
+                        paymentConsideringMonth = currentDateTime.Month;
+                    }
+
+                    conductedLectureRecords = (from cl in db.ConductedLectures
+                                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                               where tt.LecturerId.Equals(userRecord.user.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                               && cl.CurrentStage.Equals(1) && cl.ActualLectureDate.Month == paymentConsideringMonth
+                                               select cl).ToList();
+
+                    for (var i = 0; i < conductedLectureRecords.Count; i++)
+                    {
+                        conductedLectureRecords[i].CurrentStage = 2;
+                        conductedLectureRecords[i].CurrentStageDisplayName = "Submitted to " + nextWorkflowRole.Name;
+                        conductedLectureRecords[i].ModifiedDate = currentDateTime;
+                        conductedLectureRecords[i].ModifiedBy = "Ranga";
+
+                        db.Entry(conductedLectureRecords[i]).State = EntityState.Modified;
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Sent for Approval"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/06
+        public ActionResult ManageLectureApprovals()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                return View();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/06
+        //public ActionResult GetConductedLecturesForApproval()
+        //{
+        //    using (PMSEntities db = new PMSEntities())
+        //    {
+        //        List<ConductedLecturesVM> conductedLecturesList = (from cl in db.ConductedLectures
+        //                                                           join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+        //                                                           join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+        //                                                           join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+        //                                                           join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+        //                                                           join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+        //                                                           join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
+        //                                                           from hll in tt_lh.DefaultIfEmpty()
+        //                                                           join c in db.Campus on hll.CampusId equals c.CampusId
+        //                                                           join aLh in db.LectureHall on cl.ActualLocationId equals aLh.HallId into cl_aLh
+        //                                                           from aHll in cl_aLh.DefaultIfEmpty()
+        //                                                           join aCmps in db.Campus on aHll.CampusId equals aCmps.CampusId
+        //                                                           join ac in db.Campus on cl.CampusId equals ac.CampusId into cl_ac
+        //                                                           from aCam in cl_ac.DefaultIfEmpty()
+        //                                                           join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+        //                                                           from usr in tt_u.DefaultIfEmpty()
+        //                                                           join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+        //                                                           where tt.LecturerId.Equals(lecturer.Id)
+        //                                                           orderby cl.CLId descending
+        //                                                           select new ConductedLecturesVM
+        //                                                           {
+        //                                                               CLId = cl.CLId,
+        //                                                               TimetableId = cl.TimetableId,
+        //                                                               ActualLectureDate = cl.ActualLectureDate.ToString(),
+        //                                                               ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+        //                                                               ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+        //                                                               ActualLocation = aHll != null ? aCmps.CampusName + " - " + aHll.Building + " - " + aHll.Floor + " - " + aHll.HallName : null,
+        //                                                               CampusName = aCam != null ? aCam.CampusName : null,
+        //                                                               StudentBatches = cl.StudentBatches,
+        //                                                               StudentCount = cl.StudentCount,
+        //                                                               StudentAttendanceSheetLocation = cl.StudentAttendanceSheetLocation,
+        //                                                               Comment = cl.Comment,
+        //                                                               CurrentStage = cl.CurrentStage,
+        //                                                               CurrentStageDisplayName = cl.CurrentStageDisplayName,
+        //                                                               PaymentAmount = cl.PaymentAmount,
+        //                                                               IsActive = cl.IsActive,
+        //                                                               timetableRecords = new SemesterTimetableVM()
+        //                                                               {
+        //                                                                   TimetableId = tt.TimetableId,
+        //                                                                   SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+        //                                                                   LectureDate = tt.LectureDate.ToString(),
+        //                                                                   FromTime = tt.FromTime.ToString().Substring(0, 5),
+        //                                                                   ToTime = tt.ToTime.ToString().Substring(0, 5),
+        //                                                                   Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
+        //                                                                   LectureTypeName = lt.LectureTypeName,
+        //                                                                   StudentBatches = tt.StudentBatches,
+        //                                                                   IsActive = tt.IsActive,
+        //                                                               }
+        //                                                           }).ToList();
+
+        //        return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
     }
 }

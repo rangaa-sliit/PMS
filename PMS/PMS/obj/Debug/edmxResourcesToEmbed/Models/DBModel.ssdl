@@ -119,6 +119,7 @@
     <Property Name="UserName" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
     <Property Name="FacultyId" Type="int" />
+    <Property Name="DepartmentId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -201,6 +202,9 @@
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="datetime" />
+    <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="PaymentAmount" Type="float" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -232,6 +236,9 @@
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ApprovedOrRejectedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="IsOpenForModerations" Type="bit" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="datetime" />
+    <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
     <Property Name="PaymentAmount" Type="float" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -419,7 +426,7 @@
     </Key>
     <Property Name="LectureTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="LectureTypeName" Type="nvarchar" MaxLength="100" Nullable="false" />
-    <Property Name="AllowedToSeparatePayments" Type="bit" Nullable="false" />
+    <Property Name="ConsiderMinimumStudentCount" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -566,6 +573,7 @@
     <Property Name="WorkflowId" Type="int" Nullable="false" />
     <Property Name="WorkflowRole" Type="nvarchar" MaxLength="128" Nullable="false" />
     <Property Name="WorkflowStep" Type="int" Nullable="false" />
+    <Property Name="ConsideringArea" Type="nvarchar" MaxLength="150" />
     <Property Name="IsSpecificUser" Type="bit" Nullable="false" />
     <Property Name="WorkflowUser" Type="nvarchar" MaxLength="256" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />

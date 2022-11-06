@@ -464,6 +464,7 @@
     <Property Name="UserName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="FacultyId" Type="Int32" />
+    <Property Name="DepartmentId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -564,6 +565,9 @@
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+    <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="PaymentAmount" Type="Double" />
     <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -599,6 +603,9 @@
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+    <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="PaymentAmount" Type="Double" />
     <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -841,7 +848,7 @@
     </Key>
     <Property Name="LectureTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="LectureTypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="AllowedToSeparatePayments" Type="Boolean" Nullable="false" />
+    <Property Name="ConsiderMinimumStudentCount" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -1032,6 +1039,7 @@
     <Property Name="WorkflowId" Type="Int32" Nullable="false" />
     <Property Name="WorkflowRole" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
     <Property Name="WorkflowStep" Type="Int32" Nullable="false" />
+    <Property Name="ConsideringArea" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="IsSpecificUser" Type="Boolean" Nullable="false" />
     <Property Name="WorkflowUser" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
