@@ -72,91 +72,32 @@ Developed On:- 2022/11/06*@
                     "title": "",
                     "data": null,
                     "render": function (data) {
-                        var dynamicContent = `<div class='dropdown dropright'>`
-                            + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                            + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                            + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`;
+                        //var dynamicContent = `<div class='dropdown dropright'>`
+                        //    + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                        //    + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                        //    + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                        //    + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`;
 
-                        if (data.CurrentStage == 1) {
-                            dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
-                        }
-                        else {
-                            dynamicContent += `</div></div>`;
-                        }
+                        //if (data.CurrentStage == 1) {
+                        //    dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
+                        //}
+                        //else {
+                        //    dynamicContent += `</div></div>`;
+                        //}
 
-                        return dynamicContent;
+                        return "";
                     },
                     "orderable": false,
                     "searchable": false,
                     "width": "20px"
                 },
                 {
-                    "title": "Subject Name",
-                    "data": null,
-                    "render": function (data) {
-                        return data.timetableRecords.SubjectName;
-                    }
+                    "title": "Lecturer / Instructor Name",
+                    "data": "LecturerName",
                 },
                 {
-                    "title": "Lecture Conducted Date",
-                    "data": "ActualLectureDate"
-                },
-                {
-                    "title": "Lecture Started Time",
-                    "data": "ActualFromTime"
-                },
-                {
-                    "title": "Lecture Ended Time",
-                    "data": "ActualToTime"
-                },
-                {
-                    "title": "Student Count",
-                    "data": "StudentCount",
-                    "render": function (data) {
-                        if (data == null) {
-                            return "N/A";
-                        }
-                        else {
-                            return data;
-                        }
-                    }
-                },
-                {
-                    "title": "Student Batches",
-                    "data": "StudentBatches"
-                },
-                {
-                    "title": "Student Attendance Sheet",
-                    "data": "StudentAttendanceSheetLocation",
-                    "render": function (data) {
-                        if (data != null) {
-                            return `<a href='javascript:OpenStudentAttendanceSheet(` + JSON.stringify(data) + `); '>View</a>`;
-                        }
-                        else {
-                            return "N/A";
-                        }
-                    }
-                },
-                {
-                    "title": "Payment Amount",
-                    "data": "PaymentAmount"
-                },
-                {
-                    "title": "Current Stage",
-                    "data": "CurrentStageDisplayName"
-                },
-                {
-                    "title": "Status",
-                    "data": "IsActive",
-                    "render": function (data) {
-                        if (data == true) {
-                            return 'Active';
-                        }
-                        else {
-                            return 'Inactive';
-                        }
-                    }
+                    "title": "Lecture Record Month",
+                    "data": "RecordMonth"
                 }
             ],
             "language": {
