@@ -467,6 +467,7 @@
     <Content Include="Scripts\umd\popper-utils.min.js" />
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="UploadedFiles\AttendanceSheets\3100.jpg" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -580,10 +581,10 @@
     <Content Include="Views\SA\AddOrEditSemesterSubjectLIC.cshtml" />
     <Content Include="Views\SA\ManageConductedLectures.cshtml" />
     <Content Include="Views\SA\ManageLectureApprovals.cshtml" />
+    <Content Include="Views\SA\ManageLecturerMonthlyApprovals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="UploadedFiles\AttendanceSheets\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

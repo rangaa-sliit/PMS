@@ -76,10 +76,10 @@ Developed On:- 2022/11/05*@
                             + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                             + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                             + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`;
+                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View Conducted Lecture</a>`;
 
                         if (data.CurrentStage == 1) {
-                            dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
+                            dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit Conducted Lecture</a></div></div>`;
                         }
                         else {
                             dynamicContent += `</div></div>`;

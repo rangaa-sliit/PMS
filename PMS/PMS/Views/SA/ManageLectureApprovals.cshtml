@@ -23,7 +23,7 @@ Developed On:- 2022/11/06*@
             <h6 class="m-0 font-weight-bold text-primary">Lecture Approvals</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
+            @*<button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>*@
             <div class="table-responsive">
                 <table id="lectureApprovalTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -72,11 +72,11 @@ Developed On:- 2022/11/06*@
                     "title": "",
                     "data": null,
                     "render": function (data) {
-                        //var dynamicContent = `<div class='dropdown dropright'>`
-                        //    + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
-                        //    + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
-                        //    + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                        //    + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View LIC</a>`;
+                        var dynamicContent = `<div class='dropdown dropright'>`
+                            + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
+                            + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
+                            + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
+                            + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesApprovalForm('` + data.LecturerId + `', '` + data.RecordMonth + `')">Manage Approval</a></div></div>`;
 
                         //if (data.CurrentStage == 1) {
                         //    dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit LIC</a></div></div>`;
@@ -85,7 +85,7 @@ Developed On:- 2022/11/06*@
                         //    dynamicContent += `</div></div>`;
                         //}
 
-                        return "";
+                        return dynamicContent;
                     },
                     "orderable": false,
                     "searchable": false,
@@ -98,6 +98,18 @@ Developed On:- 2022/11/06*@
                 {
                     "title": "Lecture Record Month",
                     "data": "RecordMonth"
+                },
+                {
+                    "title": "Pending Records Count",
+                    "data": "PendingRecordsCount",
+                },
+                {
+                    "title": "Approved Records Count",
+                    "data": "ApprovedRecordsCount"
+                },
+                {
+                    "title": "Rejected Records Count",
+                    "data": "RejectedRecordsCount",
                 }
             ],
             "language": {
@@ -105,48 +117,8 @@ Developed On:- 2022/11/06*@
             }
         });
 
-        function NavigateConductedLecturesForm(timetableId, clId, action) {
-            var url = "@Url.Action("AddOrEditConductedLecture", "SA")/" + timetableId + "/" + clId;
-
-            if (action == "Edit") {
-                window.location.href = url + "/Edit" ;
-            }
-            else {
-                window.location.href = url + "/View";
-            }
-        }
-
-        function OpenStudentAttendanceSheet(data) {
-            window.open(data);
-        }
-
-        function onSendToApprovalClick() {
-            $("#sendToApprovalModal").modal("show");
-        }
-
-        function SendToApprovalConfirm() {
-            $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("ConductedLectureSendToApproval", "SA")',
-                    success: function (data) {
-                        $("#loader").hide();
-                        if (data.success) {
-                            $("#sendToApprovalModal").modal("hide");
-                            conductedLecturesTbl.ajax.reload();
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "success"
-                            })
-                        }
-                        else {
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "error"
-                            })
-                        }
-                    }
-                });
+        function NavigateConductedLecturesApprovalForm(lecturerId, recordMonth) {
+            window.location.href = "@Url.Action("ManageLecturerMonthlyApprovals", "SA")/" + lecturerId + "/" + recordMonth;
         }
 
     </script>
