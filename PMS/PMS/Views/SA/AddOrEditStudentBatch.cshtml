@@ -1,0 +1,42 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/09/23*@
+
+@model PMS.Models.StudentBatch
+
+@{
+    ViewBag.Title = "AddOrEditStudentBatch";
+    Layout = null;
+}
+
+@using (Html.BeginForm("AddOrEditStudentBatch", "SA", FormMethod.Post, new { onsubmit = "return SubmitStudentBatchForm(this)", @id = "studentBatchForm", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.StudentBatchId)
+    @Html.HiddenFor(model => model.SemesterRegistrationId)
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.BatchName, "Batch Name: ", new { @class = "required" })
+        </div>
+        <div class="col-sm-9">
+            @Html.EditorFor(model => model.BatchName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Batch Name", @id = "batchName", oninput = "onBatchNameInput()" } })
+            @Html.ValidationMessageFor(model => model.BatchName)
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            @Html.LabelFor(model => model.IsActive, "Status: ")
+        </div>
+        <div class="col-sm-9">
+            @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+            {
+                new SelectListItem{ Text = "Active", Value = "true" },
+                new SelectListItem{ Text = "Inactive", Value = "false" }
+            }, new { @class = "form-control", @id = "studentBatchStatusList", onchange = "onStudentBatchStatusChange(this.value)" })
+        </div>
+    </div>
+    <hr />
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit" id="studentBatchSubmitBtn">Save</button>
+        <button class="btn btn-light" type="button" id="studentBatchClearBtn" onclick="clearStudentBatchForm()">Clear Changes</button>
+    </div>
+}

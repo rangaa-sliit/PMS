@@ -26,7 +26,7 @@
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigatePaymentRateForm('@Url.Action("AddOrEditPaymentRate", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <button type="button" class="btn btn-sm btn-outline-primary float-right"><i class="fa fa-arrow-right"></i> Send To Approval</button>
             <div class="table-responsive">
-                <table id="paymentRateTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="paymentRateTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -37,7 +37,9 @@
         var paymentRateTbl;
 
         paymentRateTbl = $("#paymentRateTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {

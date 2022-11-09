@@ -11,7 +11,8 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class AspNetUsers
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -23,22 +24,41 @@ namespace PMS.Models
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
             this.Department = new HashSet<Department>();
             this.Faculty1 = new HashSet<Faculty>();
+            this.LecturerAssignments = new HashSet<LecturerAssignments>();
+            this.LectureTimetable = new HashSet<LectureTimetable>();
+            this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
+            this.SemesterSubjectLIC = new HashSet<SemesterSubjectLIC>();
+            this.SubWorkflows = new HashSet<SubWorkflows>();
         }
     
         public string Id { get; set; }
+        [Required(ErrorMessage = "Employee Number is required")]
+        [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string EmployeeNumber { get; set; }
+        [Required(ErrorMessage = "Employee Title is required")]
         public int EmployeeTitle { get; set; }
+        [Required(ErrorMessage = "First Name is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string FirstName { get; set; }
+        [Required(ErrorMessage = "Last Name is required")]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string LastName { get; set; }
+        [Required(ErrorMessage = "Employee Email is required")]
+        [DataType(DataType.EmailAddress)]
+        [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string Email { get; set; }
         public string UserName { get; set; }
+        [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string PhoneNumber { get; set; }
         public Nullable<int> FacultyId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+        public bool IsAcademicUser { get; set; }
+        public bool IsAdmin { get; set; }
         public Nullable<int> AccessFailedCount { get; set; }
         public string ConcurrencyStamp { get; set; }
         public Nullable<bool> EmailConfirmed { get; set; }
@@ -65,5 +85,15 @@ namespace PMS.Models
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LecturerAssignments> LecturerAssignments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LectureTimetableLog> LectureTimetableLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SemesterSubjectLIC> SemesterSubjectLIC { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SubWorkflows> SubWorkflows { get; set; }
     }
 }

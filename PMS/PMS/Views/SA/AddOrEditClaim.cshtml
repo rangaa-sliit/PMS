@@ -1,0 +1,268 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/09/21*@
+
+@model PMS.Models.Claim
+
+@{
+    ViewBag.Title = "AddOrEditClaim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageClaims", "SA")">Manage Claims</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeClaimsMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeClaimsCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditClaim", "SA", FormMethod.Post, new { onsubmit = "return SubmitClaimForm(this)", @id = "claimForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ClaimId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ClaimName, "Claim Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ClaimName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Claim Name", @id = "claimName", oninput = "onClaimNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.ClaimName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ClaimValue, "Claim Value: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.ClaimValue, (IEnumerable<SelectListItem>)ViewBag.claimValueList, new { @class = "form-control", @id = "claimValue", onchange = "onClaimValueChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.ClaimValue)
+
+                        @*<select id="claimValue" name="ClaimValue" class="form-control" onchange="onClaimValueChange(this.value)">
+                            @for (int i = 0; i < ViewBag.claimValueList.Count; i++)
+                            {
+                                if (Model.SelectedClaimValues.Count != 0)
+                                {
+                                    if (Model.SelectedClaimValues.FindIndex(c => c == ViewBag.claimValueList[i].Value) != -1)
+                                    {
+                                        <option value="@ViewBag.claimValueList[i].Value" selected>@ViewBag.claimValueList[i].Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@ViewBag.claimValueList[i].Value">@ViewBag.claimValueList[i].Text</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="@ViewBag.claimValueList[i].Value">@ViewBag.claimValueList[i].Text</option>
+                                }
+                            }
+                        </select>*@
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.SubOperation, "Sub Operation: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.SubOperation, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "-- N/A --", Value = "" },
+                            new SelectListItem{ Text = "View", Value = "View" },
+                            new SelectListItem{ Text = "Add", Value = "Add" },
+                            new SelectListItem{ Text = "Edit", Value = "Edit" }
+                        }, new { @class = "form-control", @id = "subOperationsList", onchange = "onSubOperationChange(this.value)" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Description, "Description: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @placeholder = "Description", @id = "claimDescription", oninput = "onClaimDescriptionInput()" } })
+                        @Html.ValidationMessageFor(model => model.Description)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "claimStatusList", onchange = "onClaimStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="claimSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="claimClearBtn" onclick="clearClaimForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(function () {
+            $("#claimValue").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Claim Value --"
+                },
+                allowClear: false,
+                multiple: true,
+                maximumSelectionLength: 5
+            });
+        });
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                var modelData = JSON.parse(@Html.Raw(Json.Encode(Model.ClaimValue)));
+
+                $("#claimValue").val(modelData).change();
+
+                $("#claimSubmitBtn").prop("disabled", true);
+                $("#claimClearBtn").prop("disabled", true);
+
+                if (operation == "Edit") {
+                    $("#aeClaimsMainTitle").html("Edit Claim");
+                    $("#aeClaimsCardTitle").html("Edit Claim");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Claim</li>`);
+                }
+                else {
+                    $("#aeClaimsMainTitle").html("View Claim");
+                    $("#aeClaimsCardTitle").html("View Claim");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Claim</li>`);
+                    $("#claimName").prop("disabled", true);
+                    $("#claimValue").prop("disabled", true);
+                    $("#subOperationsList").prop("disabled", true);
+                    $("#claimDescription").prop("disabled", true);
+                    $("#claimStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeClaimsMainTitle").html("Add Claim");
+                $("#aeClaimsCardTitle").html("Add Claim");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Claim</li>`);
+                $("#subOperationsList").val("");
+                $("#claimStatusList").val("true");
+                $("#claimValue").val(null).change();
+            }
+        })
+
+        function SubmitClaimForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var claimValues = [];
+
+            $("#claimValue :selected").each(function () {
+                claimValues.push($(this).val());
+            });
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                var fd = new FormData();
+
+                $.each($(form).serializeArray(), function (key, input) {
+                    fd.append(input.name, input.value);
+                });
+
+                fd.delete("ClaimValue");
+
+                fd.append("ClaimValue", JSON.stringify(claimValues));
+
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#claimName").val("");
+                                //$("#claimValue").val("");
+                                $("#subOperationsList").val("");
+                                $("#claimDescription").val("");
+                                $("#claimStatusList").val("true");
+                                $("#claimValue").val(null).change();
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearClaimForm() {
+            if (operation == undefined) {
+                $("#claimName").val("");
+                //$("#claimValue").val("");
+                $("#subOperationsList").val("");
+                $("#claimDescription").val("");
+                $("#claimStatusList").val("true");
+                $("#claimValue").val(null).change();
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onClaimNameInput() {
+            $("#claimSubmitBtn").prop("disabled", false);
+            $("#claimClearBtn").prop("disabled", false);
+        }
+
+        function onClaimValueChange(newValue) {
+            //$("#claimValue >option[value='']").remove();
+            $("#claimSubmitBtn").prop("disabled", false);
+            $("#claimClearBtn").prop("disabled", false);
+        }
+
+        function onSubOperationChange(newOperation) {
+            $("#claimSubmitBtn").prop("disabled", false);
+            $("#claimClearBtn").prop("disabled", false);
+        }
+
+        function onClaimDescriptionInput() {
+            $("#claimSubmitBtn").prop("disabled", false);
+            $("#claimClearBtn").prop("disabled", false);
+        }
+
+        function onClaimStatusChange(newStatus) {
+            $("#claimSubmitBtn").prop("disabled", false);
+            $("#claimClearBtn").prop("disabled", false);
+        }
+    </script>
+}

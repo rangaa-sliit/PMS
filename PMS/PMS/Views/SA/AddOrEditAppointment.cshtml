@@ -100,6 +100,32 @@ Developed On:- 2022/08/26*@
     <script>
         var operation;
 
+        $(function () {
+            $("#employeeList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Employee --"
+                }
+            });
+
+            $("#designationList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Designation --"
+                }
+            });
+
+            $("#appointmentTypeList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Appointment Type --"
+                }
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -127,10 +153,13 @@ Developed On:- 2022/08/26*@
                 $("#aeAppointmentMainTitle").html("Add Appointment");
                 $("#aeAppointmentCardTitle").html("Add Appointment");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Appointment</li>`);
-                $("#employeeList").val("");
-                $("#designationList").val("");
-                $("#appointmentTypeList").val("");
+                //$("#employeeList").val("");
+                //$("#designationList").val("");
+                //$("#appointmentTypeList").val("");
                 $("#appointmentStatusList").val("true");
+                $("#employeeList").val(null).change();
+                $("#designationList").val(null).change();
+                $("#appointmentTypeList").val(null).change();
             }
         })
 
@@ -156,12 +185,15 @@ Developed On:- 2022/08/26*@
                             $("#loader").hide();
                             if (data.success) {
                                 if (operation == undefined) {
-                                    $("#employeeList").val("");
-                                    $("#designationList").val("");
-                                    $("#appointmentTypeList").val("");
+                                    //$("#employeeList").val("");
+                                    //$("#designationList").val("");
+                                    //$("#appointmentTypeList").val("");
                                     $("#appointmentFrom").val("");
                                     $("#appointmentTo").val("");
                                     $("#appointmentStatusList").val("true");
+                                    $("#employeeList").val(null).change();
+                                    $("#designationList").val(null).change();
+                                    $("#appointmentTypeList").val(null).change();
                                 }
 
                                 $.notify(data.message, {
@@ -184,12 +216,15 @@ Developed On:- 2022/08/26*@
 
         function clearAppointmentForm() {
             if (operation == undefined) {
-                $("#employeeList").val("");
-                $("#designationList").val("");
-                $("#appointmentTypeList").val("");
+                //$("#employeeList").val("");
+                //$("#designationList").val("");
+                //$("#appointmentTypeList").val("");
                 $("#appointmentFrom").val("");
                 $("#appointmentTo").val("");
                 $("#appointmentStatusList").val("true");
+                $("#employeeList").val(null).change();
+                $("#designationList").val(null).change();
+                $("#appointmentTypeList").val(null).change();
             }
             else {
                 window.location.reload();

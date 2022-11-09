@@ -89,6 +89,16 @@ Developed On:- 2022/08/19*@
     <script>
         var operation;
 
+        $(function () {
+            $("#usersList").select2({
+                theme: "bootstrap4"
+            });
+
+            $("#facultyList").select2({
+                theme: "bootstrap4"
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -115,9 +125,9 @@ Developed On:- 2022/08/19*@
                 $("#aeDepartmentMainTitle").html("Add Department");
                 $("#aeDepartmentCardTitle").html("Add Department");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Department</li>`);
-                $("#usersList").val("");
-                $("#facultyList").val("");
                 $("#departmentStatusList").val("true");
+                $("#usersList").val(null).change();
+                $("#facultyList").val(null).change();
             }
         })
 
@@ -138,9 +148,9 @@ Developed On:- 2022/08/19*@
                             if (operation == undefined) {
                                 $("#departmentCode").val("");
                                 $("#departmentName").val("");
-                                $("#usersList").val("");
-                                $("#facultyList").val("");
                                 $("#departmentStatusList").val("true");
+                                $("#usersList").val(null).change();
+                                $("#facultyList").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -164,9 +174,9 @@ Developed On:- 2022/08/19*@
             if (operation == undefined) {
                 $("#departmentCode").val("");
                 $("#departmentName").val("");
-                $("#usersList").val("");
-                $("#facultyList").val("");
                 $("#departmentStatusList").val("true");
+                $("#usersList").val(null).change();
+                $("#facultyList").val(null).change();
             }
             else {
                 window.location.reload();

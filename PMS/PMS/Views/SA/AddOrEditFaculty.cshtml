@@ -81,6 +81,12 @@ Developed On:- 2022/08/18*@
     <script>
         var operation;
 
+        $(function () {
+            $("#usersList").select2({
+                theme: "bootstrap4"
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -106,8 +112,8 @@ Developed On:- 2022/08/18*@
                 $("#aeFacultyMainTitle").html("Add Faculty");
                 $("#aeFacultyCardTitle").html("Add Faculty");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Faculty</li>`);
-                $("#usersList").val("");
                 $("#facultyStatusList").val("true");
+                $("#usersList").val(null).change();
             }
         })
 
@@ -128,8 +134,8 @@ Developed On:- 2022/08/18*@
                             if (operation == undefined) {
                                 $("#facultyCode").val("");
                                 $("#facultyName").val("");
-                                $("#usersList").val("");
                                 $("#facultyStatusList").val("true");
+                                $("#usersList").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -153,8 +159,8 @@ Developed On:- 2022/08/18*@
             if (operation == undefined) {
                 $("#facultyCode").val("");
                 $("#facultyName").val("");
-                $("#usersList").val("");
                 $("#facultyStatusList").val("true");
+                $("#usersList").val(null).change();
             }
             else {
                 window.location.reload();
