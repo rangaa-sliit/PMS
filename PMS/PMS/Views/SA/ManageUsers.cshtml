@@ -1,5 +1,5 @@
-﻿@*Developed By:- Dulanjalee Wickremasinghe
-    Developed On:- 2022/09/19*@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/09/26*@
 
 @{
     ViewBag.Title = "ManageUsers";
@@ -20,12 +20,12 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Users</h6>
+            <h6 class="m-0 font-weight-bold text-primary">System Users</h6>
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateUsersForm('@Url.Action("AddOrEditUsers", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
-           <div class="table-responsive">
-                <table id="usersTbl" class="table table-bordered data-table nowrap"></table>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateUserForm('@Url.Action("AddOrEditUser", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
+            <div class="table-responsive">
+                <table id="userTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -33,10 +33,12 @@
 
 @section scripts {
     <script>
-        var usersTbl;
+        var userTbl;
 
-        usersTbl = $("#usersTbl").DataTable({
+        userTbl = $("#userTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
@@ -45,7 +47,6 @@
                 "dataType": "json"
             },
             "columns": [
-               
                 {
                     "title": "",
                     "data": "Id",
@@ -54,21 +55,20 @@
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick="NavigateUsersForm('@Url.Action("AddOrEditUsers", "SA")/` + data + `', 'View')">View Users</a>`
-                            + `<a class='dropdown-item btn' onclick="NavigateUsersForm('@Url.Action("AddOrEditUsers", "SA")/` + data + `', 'Edit')">Edit Users</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="NavigateUserForm('@Url.Action("AddOrEditUser", "SA")/` + data + `', 'View')">View User</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateUserForm('@Url.Action("AddOrEditUser", "SA")/` + data + `', 'Edit')">Edit User</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateUserClaimForm('@Url.Action("ManageUserClaims", "SA")/` + data + `')">Manage User Claims</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,
                     "width": "20px"
                 },
-
-
                 {
-                    "title": "Title",
-                    "data": "TitleName",
+                    "title": "Employee Number",
+                    "data": "EmployeeNumber",
                     "render": function (data) {
                         if (data == null) {
-                            return "N/A";
+                            return 'N/A';
                         }
                         else {
                             return data;
@@ -76,31 +76,71 @@
                     }
                 },
                 {
-                    "title": "Employee Number",
-                    "data": "EmployeeNumber"
-                },
-                {
-                    "title": "First Name",
-                    "data": "FirstName"
-                },
-                {
-                    "title": "Last Name",
-                    "data": "LastName"
+                    "title": "Employee Name",
+                    "data": "EmployeeName",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
                 },
                 {
                     "title": "Email",
-                    "data": "Email"
+                    "data": "Email",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
                 },
                 {
                     "title": "Contact Number",
-                    "data": "ContactNumber"
+                    "data": "PhoneNumber",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "User Category",
+                    "data": "UserCategory",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
                 },
                 {
                     "title": "Faculty",
                     "data": "FacultyName",
                     "render": function (data) {
                         if (data == null) {
-                            return "N/A";
+                            return 'N/A';
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Department",
+                    "data": "DepartmentName",
+                    "render": function (data) {
+                        if (data == null) {
+                            return 'N/A';
                         }
                         else {
                             return data;
@@ -120,23 +160,12 @@
                     }
                 }
             ],
-            "columnDefs": [
-                {
-                    "orderable": false,
-                    "className": 'select-checkbox',
-                    "targets": 0,
-                }
-            ],
-            "select": {
-                "style": 'multi',
-                "selector": 'td:first-child'
-            },
             "language": {
-                "emptyTable": "No Users Found!"
+                "emptyTable": "No System Users Found!"
             }
         })
 
-        function NavigateUsersForm(url, action) {
+        function NavigateUserForm(url, action) {
             if (action == "Add") {
                 window.location.href = url;
             }
@@ -147,6 +176,9 @@
                 window.location.href = url + "/View";
             }
         }
+
+        function NavigateUserClaimForm(url) {
+            window.location.href = url;
+        }
     </script>
 }
-

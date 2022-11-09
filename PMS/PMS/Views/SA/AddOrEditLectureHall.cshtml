@@ -92,6 +92,16 @@ Developed On:- 2022/08/19*@
     <script>
         var operation;
 
+        $(function () {
+            $("#campusList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Campus --"
+                },
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -118,8 +128,9 @@ Developed On:- 2022/08/19*@
                 $("#aeLectureHallMainTitle").html("Add Lecture Hall");
                 $("#aeLectureHallCardTitle").html("Add Lecture Hall");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Lecture Hall</li>`);
-                $("#campusList").val("");
+                //$("#campusList").val("");
                 $("#lectureHallStatusList").val("true");
+                $("#campusList").val(null).change();
             }
         })
 
@@ -138,11 +149,12 @@ Developed On:- 2022/08/19*@
                         $("#loader").hide();
                         if (data.success) {
                             if (operation == undefined) {
-                                $("#campusList").val("");
+                                //$("#campusList").val("");
                                 $("#building").val("");
                                 $("#floor").val("");
                                 $("#hallName").val("");
                                 $("#lectureHallStatusList").val("true");
+                                $("#campusList").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -164,11 +176,12 @@ Developed On:- 2022/08/19*@
 
         function clearLectureHallForm() {
             if (operation == undefined) {
-                $("#campusList").val("");
+                //$("#campusList").val("");
                 $("#building").val("");
                 $("#floor").val("");
                 $("#hallName").val("");
                 $("#lectureHallStatusList").val("true");
+                $("#campusList").val(null).change();
             }
             else {
                 window.location.reload();

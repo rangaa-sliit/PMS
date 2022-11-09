@@ -6,7 +6,7 @@ Developed On:- 2022/08/16*@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMS</title>
+    <title>WPS</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/DataTable/css")
@@ -39,11 +39,119 @@ Developed On:- 2022/08/16*@
     <script>
         $("#loader").hide();
 
+        //(function ($) {
+
+        //    var Defaults = $.fn.select2.amd.require('select2/defaults');
+
+        //    $.extend(Defaults.defaults, {
+        //        dropdownPosition: 'auto'
+        //    });
+
+        //    var AttachBody = $.fn.select2.amd.require('select2/dropdown/attachBody');
+
+        //    var _positionDropdown = AttachBody.prototype._positionDropdown;
+
+        //    AttachBody.prototype._positionDropdown = function () {
+
+        //        var $window = $(window);
+
+        //        var isCurrentlyAbove = this.$dropdown.hasClass('select2-dropdown--above');
+        //        var isCurrentlyBelow = this.$dropdown.hasClass('select2-dropdown--below');
+
+        //        var newDirection = null;
+
+        //        var offset = this.$container.offset();
+
+        //        offset.bottom = offset.top + this.$container.outerHeight(false);
+
+        //        var container = {
+        //            height: this.$container.outerHeight(false)
+        //        };
+
+        //        container.top = offset.top;
+        //        container.bottom = offset.top + container.height;
+
+        //        var dropdown = {
+        //            height: this.$dropdown.outerHeight(false)
+        //        };
+
+        //        var viewport = {
+        //            top: $window.scrollTop(),
+        //            bottom: $window.scrollTop() + $window.height()
+        //        };
+
+        //        var enoughRoomAbove = viewport.top < (offset.top - dropdown.height);
+        //        var enoughRoomBelow = viewport.bottom > (offset.bottom + dropdown.height);
+
+        //        var css = {
+        //            left: offset.left,
+        //            top: container.bottom
+        //        };
+
+        //        // Determine what the parent element is to use for calciulating the offset
+        //        var $offsetParent = this.$dropdownParent;
+
+        //        // For statically positoned elements, we need to get the element
+        //        // that is determining the offset
+        //        if ($offsetParent.css('position') === 'static') {
+        //            $offsetParent = $offsetParent.offsetParent();
+        //        }
+
+        //        var parentOffset = $offsetParent.offset();
+
+        //        css.top -= parentOffset.top
+        //        css.left -= parentOffset.left;
+
+        //        var dropdownPositionOption = this.options.get('dropdownPosition');
+
+        //        if (dropdownPositionOption === 'above' || dropdownPositionOption === 'below') {
+
+        //            newDirection = dropdownPositionOption;
+
+        //        } else {
+
+        //            if (!isCurrentlyAbove && !isCurrentlyBelow) {
+        //                newDirection = 'below';
+        //            }
+
+        //            if (!enoughRoomBelow && enoughRoomAbove && !isCurrentlyAbove) {
+        //                newDirection = 'above';
+        //            } else if (!enoughRoomAbove && enoughRoomBelow && isCurrentlyAbove) {
+        //                newDirection = 'below';
+        //            }
+
+        //        }
+
+        //        if (newDirection == 'above' ||
+        //            (isCurrentlyAbove && newDirection !== 'below')) {
+        //            css.top = container.top - parentOffset.top - dropdown.height;
+        //        }
+
+        //        if (newDirection != null) {
+        //            this.$dropdown
+        //                .removeClass('select2-dropdown--below select2-dropdown--above')
+        //                .addClass('select2-dropdown--' + newDirection);
+        //            this.$container
+        //                .removeClass('select2-container--below select2-container--above')
+        //                .addClass('select2-container--' + newDirection);
+        //        }
+
+        //        this.$dropdownContainer.css(css);
+
+        //    };
+
+        //})(window.jQuery);
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-container--open .select2-search__field').focus();
+        });
+
         $(document).ready(function () {
             $('#accordionSidebar').find('li.active').removeClass('active');
 
             var cPath = window.location.pathname;
             var splittedPath = cPath.split("/");
+
             var masterDataUrlArray = ['ManageInstitutes', 'AddOrEditInstitute',
                 'ManageCampuses', 'AddOrEditCampus',
                 'ManageFaculties', 'AddOrEditFaculty',
@@ -57,7 +165,31 @@ Developed On:- 2022/08/16*@
                 'ManageDesignations', 'AddOrEditDesignation'
             ];
 
-            var DegreeDetailsUrlArray = ['ManageIntakes', 'AddOrEditIntake'];
+            var accessControlUrlArray = ['ManageClaims', 'AddOrEditClaim',
+                'ManageAccessGroups', 'AddOrEditAccessGroup',
+                'ManageAccessGroupClaims', 
+                'ManageAccessGroupRoles', 'AddOrEditAccessGroupRole',
+                'ManageUsers', 'AddOrEditUser', 'ManageUserClaims'
+            ];
+
+            var workflowUrlArray = ['ManageWorkflows', 'AddOrEditWorkflow',
+                'ManageSubWorkflow', 'AddOrEditSubWorkflow'
+            ];
+
+            var degreeDetailsUrlArray = ['ManageDegree', 'AddOrEditDegree',
+                'ManageSpecialization', 'AddOrEditSpecialization',
+                'ManageSubject', 'AddOrEditSubject',
+                'ManageIntakes', 'AddOrEditIntake'
+            ];
+
+            var semesterRegistrationUrlArray = ['ManageSemesterRegistrations', 'AddOrEditSemesterRegistration',
+                'ManageStudentBatches', 'AddOrEditStudentBatch',
+                'ManageSemesterSubjects', 'AddOrEditSemesterSubject'
+            ];
+
+            var paymentRateUrlArray = ['ManagePaymentRate', 'AddOrEditPaymentRate'];
+
+            var lecturerAppointmentUrlArray = ['ManageAppointments', 'AddOrEditAppointment'];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -71,9 +203,28 @@ Developed On:- 2022/08/16*@
             else if (masterDataUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#masterData-nav-item').addClass('active');
             }
-            else if (DegreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
+            else if (accessControlUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#accessControl-nav-item').addClass('active');
+            }
+            else if (workflowUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#workflow-nav-item').addClass('active');
+            }
+            else if (degreeDetailsUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#degreeDetails-nav-item').addClass('active');
             }
+            else if (semesterRegistrationUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#semesterRegistration-nav-item').addClass('active');
+            }
+            else if (paymentRateUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#paymentRate-nav-item').addClass('active');
+            }
+            else if (lecturerAppointmentUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#lecturerAppointment-nav-item').addClass('active');
+            }
+
+            $("#sidebarToggle").on("click", function () {
+                $(".data-table").DataTable().columns.adjust();
+            });
         })
     </script>
 

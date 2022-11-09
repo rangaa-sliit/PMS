@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="PMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="PMSEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="AccessGroup" EntityType="PMSModel.AccessGroup" />
+    <EntitySet Name="AccessGroupClaims" EntityType="PMSModel.AccessGroupClaims" />
     <EntitySet Name="Appointment" EntityType="PMSModel.Appointment" />
     <EntitySet Name="AppointmentType" EntityType="PMSModel.AppointmentType" />
-    <EntitySet Name="ApprovalStages" EntityType="PMSModel.ApprovalStages" />
     <EntitySet Name="AspNetRoles" EntityType="PMSModel.AspNetRoles" />
     <EntitySet Name="AspNetUserClaims" EntityType="PMSModel.AspNetUserClaims" />
     <EntitySet Name="AspNetUserLogins" EntityType="PMSModel.AspNetUserLogins" />
@@ -11,7 +12,9 @@
     <EntitySet Name="AspNetUsers" EntityType="PMSModel.AspNetUsers" />
     <EntitySet Name="CalendarPeriod" EntityType="PMSModel.CalendarPeriod" />
     <EntitySet Name="Campus" EntityType="PMSModel.Campus" />
+    <EntitySet Name="Claim" EntityType="PMSModel.Claim" />
     <EntitySet Name="ConductedLectures" EntityType="PMSModel.ConductedLectures" />
+    <EntitySet Name="ConductedLecturesLog" EntityType="PMSModel.ConductedLecturesLog" />
     <EntitySet Name="ConfigurationalSettings" EntityType="PMSModel.ConfigurationalSettings" />
     <EntitySet Name="Degree" EntityType="PMSModel.Degree" />
     <EntitySet Name="Department" EntityType="PMSModel.Department" />
@@ -20,16 +23,38 @@
     <EntitySet Name="Institute" EntityType="PMSModel.Institute" />
     <EntitySet Name="Intake" EntityType="PMSModel.Intake" />
     <EntitySet Name="LectureHall" EntityType="PMSModel.LectureHall" />
+    <EntitySet Name="LecturerAssignments" EntityType="PMSModel.LecturerAssignments" />
+    <EntitySet Name="LectureTimetable" EntityType="PMSModel.LectureTimetable" />
+    <EntitySet Name="LectureTimetableLog" EntityType="PMSModel.LectureTimetableLog" />
     <EntitySet Name="LectureType" EntityType="PMSModel.LectureType" />
     <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
     <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
     <EntitySet Name="SemesterRegistration" EntityType="PMSModel.SemesterRegistration" />
     <EntitySet Name="SemesterSubject" EntityType="PMSModel.SemesterSubject" />
+    <EntitySet Name="SemesterSubjectLIC" EntityType="PMSModel.SemesterSubjectLIC" />
     <EntitySet Name="Specialization" EntityType="PMSModel.Specialization" />
     <EntitySet Name="StudentBatch" EntityType="PMSModel.StudentBatch" />
     <EntitySet Name="Subject" EntityType="PMSModel.Subject" />
+    <EntitySet Name="SubWorkflows" EntityType="PMSModel.SubWorkflows" />
     <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
     <EntitySet Name="Title" EntityType="PMSModel.Title" />
+    <EntitySet Name="Workflows" EntityType="PMSModel.Workflows" />
+    <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="PMSModel.FK_AccessGroupClaims_AccessGroup">
+      <End Role="AccessGroup" EntitySet="AccessGroup" />
+      <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetRoles_AccessGroup" Association="PMSModel.FK_AspNetRoles_AccessGroup">
+      <End Role="AccessGroup" EntitySet="AccessGroup" />
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AccessGroupClaims_Claim" Association="PMSModel.FK_AccessGroupClaims_Claim">
+      <End Role="Claim" EntitySet="Claim" />
+      <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetUserClaims_AccessGroupClaims" Association="PMSModel.FK_AspNetUserClaims_AccessGroupClaims">
+      <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+      <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+    </AssociationSet>
     <AssociationSet Name="FK_Appointment_AppointmentType" Association="PMSModel.FK_Appointment_AppointmentType">
       <End Role="AppointmentType" EntitySet="AppointmentType" />
       <End Role="Appointment" EntitySet="Appointment" />
@@ -42,15 +67,15 @@
       <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_ApprovalStages" Association="PMSModel.FK_ConductedLectures_ApprovalStages">
-      <End Role="ApprovalStages" EntitySet="ApprovalStages" />
-      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
-    </AssociationSet>
     <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId">
       <End Role="AspNetRoles" EntitySet="AspNetRoles" />
       <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
     </AssociationSet>
-    <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+    <AssociationSet Name="FK_SubWorkflows_AspNetRoles" Association="PMSModel.FK_SubWorkflows_AspNetRoles">
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AspNetUserClaims_AspNetUsers" Association="PMSModel.FK_AspNetUserClaims_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
     </AssociationSet>
@@ -78,6 +103,26 @@
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="Faculty" EntitySet="Faculty" />
     </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_AspNetUsers" Association="PMSModel.FK_LecturerAssignments_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_AspNetUsers" Association="PMSModel.FK_LectureTimetable_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_AspNetUsers" Association="PMSModel.FK_LectureTimetableLog_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubjectLIC_AspNetUsers" Association="PMSModel.FK_SemesterSubjectLIC_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SubWorkflows_AspNetUsers" Association="PMSModel.FK_SubWorkflows_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+    </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="PMSModel.FK_SemesterRegistration_CalendarPeriod">
       <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
@@ -85,6 +130,10 @@
     <AssociationSet Name="FK_ConductedLectures_Campus" Association="PMSModel.FK_ConductedLectures_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="PMSModel.FK_ConductedLecturesLog_Campus">
+      <End Role="Campus" EntitySet="Campus" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_LectureHall_Campus" Association="PMSModel.FK_LectureHall_Campus">
       <End Role="Campus" EntitySet="Campus" />
@@ -94,13 +143,25 @@
       <End Role="LectureHall" EntitySet="LectureHall" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_LectureType" Association="PMSModel.FK_ConductedLectures_LectureType">
-      <End Role="LectureType" EntitySet="LectureType" />
+    <AssociationSet Name="FK_ConductedLectures_LectureTimetable" Association="PMSModel.FK_ConductedLectures_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
-    <AssociationSet Name="FK_ConductedLectures_StudentBatch" Association="PMSModel.FK_ConductedLectures_StudentBatch">
-      <End Role="StudentBatch" EntitySet="StudentBatch" />
+    <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="PMSModel.FK_ConductedLecturesLog_ConductedLectures">
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_LectureHall" Association="PMSModel.FK_ConductedLecturesLog_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="PMSModel.FK_ConductedLecturesLog_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="PMSModel.FK_ConfigurationalSettings_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
     </AssociationSet>
     <AssociationSet Name="FK_Degree_Department" Association="PMSModel.FK_Degree_Department">
       <End Role="Department" EntitySet="Department" />
@@ -130,6 +191,10 @@
       <End Role="Degree" EntitySet="Degree" />
       <End Role="Specialization" EntitySet="Specialization" />
     </AssociationSet>
+    <AssociationSet Name="FK_Subject_Degree" Association="PMSModel.FK_Subject_Degree">
+      <End Role="Degree" EntitySet="Degree" />
+      <End Role="Subject" EntitySet="Subject" />
+    </AssociationSet>
     <AssociationSet Name="FK_Department_Faculty" Association="PMSModel.FK_Department_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="Department" EntitySet="Department" />
@@ -158,6 +223,10 @@
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
     </AssociationSet>
+    <AssociationSet Name="FK_Workflows_Faculty" Association="PMSModel.FK_Workflows_Faculty">
+      <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="Workflows" EntitySet="Workflows" />
+    </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Institute" Association="PMSModel.FK_SemesterRegistration_Institute">
       <End Role="Institute" EntitySet="Institute" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
@@ -169,6 +238,50 @@
     <AssociationSet Name="FK_SemesterRegistration_Intake" Association="PMSModel.FK_SemesterRegistration_Intake">
       <End Role="Intake" EntitySet="Intake" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_LectureHall" Association="PMSModel.FK_LectureTimetable_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureHall" Association="PMSModel.FK_LectureTimetableLog_LectureHall">
+      <End Role="LectureHall" EntitySet="LectureHall" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterRegistration" Association="PMSModel.FK_LecturerAssignments_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LecturerAssignments_SemesterSubject" Association="PMSModel.FK_LecturerAssignments_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_LectureType" Association="PMSModel.FK_LectureTimetable_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_SemesterRegistration" Association="PMSModel.FK_LectureTimetable_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetable_SemesterSubject" Association="PMSModel.FK_LectureTimetable_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureTimetable" Association="PMSModel.FK_LectureTimetableLog_LectureTimetable">
+      <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_LectureType" Association="PMSModel.FK_LectureTimetableLog_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_SemesterRegistration" Association="PMSModel.FK_LectureTimetableLog_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LectureTimetableLog_SemesterSubject" Association="PMSModel.FK_LectureTimetableLog_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Specialization" Association="PMSModel.FK_PaymentRate_Specialization">
       <End Role="Specialization" EntitySet="Specialization" />
@@ -198,11 +311,54 @@
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
     </AssociationSet>
+    <AssociationSet Name="FK_StudentBatch_SemesterRegistration" Association="PMSModel.FK_StudentBatch_SemesterRegistration">
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+      <End Role="StudentBatch" EntitySet="StudentBatch" />
+    </AssociationSet>
     <AssociationSet Name="FK_SemesterSubject_Subject" Association="PMSModel.FK_SemesterSubject_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
     </AssociationSet>
+    <AssociationSet Name="FK_SemesterSubjectLIC_SemesterSubject" Association="PMSModel.FK_SemesterSubjectLIC_SemesterSubject">
+      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
+      <End Role="SemesterSubjectLIC" EntitySet="SemesterSubjectLIC" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SubWorkflows_Workflows" Association="PMSModel.FK_SubWorkflows_Workflows">
+      <End Role="Workflows" EntitySet="Workflows" />
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="AccessGroup">
+    <Key>
+      <PropertyRef Name="AccessGroupId" />
+    </Key>
+    <Property Name="AccessGroupId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AccessGroupName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AccessGroupClaims_AccessGroup" FromRole="AccessGroup" ToRole="AccessGroupClaims" />
+    <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_AspNetRoles_AccessGroup" FromRole="AccessGroup" ToRole="AspNetRoles" />
+  </EntityType>
+  <EntityType Name="AccessGroupClaims">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AccessGroupId" Type="Int32" Nullable="false" />
+    <Property Name="ClaimId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AccessGroupClaims_AccessGroup" FromRole="AccessGroupClaims" ToRole="AccessGroup" />
+    <NavigationProperty Name="Claim" Relationship="PMSModel.FK_AccessGroupClaims_Claim" FromRole="AccessGroupClaims" ToRole="Claim" />
+    <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_AspNetUserClaims_AccessGroupClaims" FromRole="AccessGroupClaims" ToRole="AspNetUserClaims" />
+  </EntityType>
   <EntityType Name="Appointment">
     <Key>
       <PropertyRef Name="AppointmentId" />
@@ -236,21 +392,6 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_AppointmentType" FromRole="AppointmentType" ToRole="Appointment" />
   </EntityType>
-  <EntityType Name="ApprovalStages">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="StageName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="Priority" Type="Int32" Nullable="false" />
-    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_ApprovalStages" FromRole="ApprovalStages" ToRole="ConductedLectures" />
-  </EntityType>
   <EntityType Name="AspNetRoles">
     <Key>
       <PropertyRef Name="Id" />
@@ -264,7 +405,10 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="NormalizedName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="AccessGroupId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AspNetRoles_AccessGroup" FromRole="AspNetRoles" ToRole="AccessGroup" />
     <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId" FromRole="AspNetRoles" ToRole="AspNetUserRoles" />
+    <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetRoles" FromRole="AspNetRoles" ToRole="SubWorkflows" />
   </EntityType>
   <EntityType Name="AspNetUserClaims">
     <Key>
@@ -272,9 +416,14 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+    <Property Name="AccessGroupClaimId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AspNetUserClaims_AccessGroupClaims" FromRole="AspNetUserClaims" ToRole="AccessGroupClaims" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUserClaims_AspNetUsers" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
   </EntityType>
   <EntityType Name="AspNetUserLogins">
     <Key>
@@ -315,11 +464,14 @@
     <Property Name="UserName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="FacultyId" Type="Int32" />
+    <Property Name="DepartmentId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="IsAcademicUser" Type="Boolean" Nullable="false" />
+    <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
     <Property Name="AccessFailedCount" Type="Int32" />
     <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="EmailConfirmed" Type="Boolean" />
@@ -332,13 +484,18 @@
     <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="TwoFactorEnabled" Type="Boolean" />
     <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_AspNetUsers" FromRole="AspNetUsers" ToRole="Appointment" />
-    <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
+    <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_AspNetUserClaims_AspNetUsers" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
     <NavigationProperty Name="AspNetUserLogins" Relationship="PMSModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
     <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_AspNetUsers_Faculty" FromRole="AspNetUsers" ToRole="Faculty" />
     <NavigationProperty Name="Title" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="AspNetUsers" ToRole="Title" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="AspNetUsers" ToRole="Department" />
     <NavigationProperty Name="Faculty1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="AspNetUsers" ToRole="Faculty" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="AspNetUsers" ToRole="LecturerAssignments" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetableLog" />
+    <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="AspNetUsers" ToRole="SemesterSubjectLIC" />
+    <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="AspNetUsers" ToRole="SubWorkflows" />
   </EntityType>
   <EntityType Name="CalendarPeriod">
     <Key>
@@ -367,34 +524,99 @@
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="Campus" ToRole="ConductedLectures" />
+    <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_Campus" FromRole="Campus" ToRole="ConductedLecturesLog" />
     <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_LectureHall_Campus" FromRole="Campus" ToRole="LectureHall" />
+  </EntityType>
+  <EntityType Name="Claim">
+    <Key>
+      <PropertyRef Name="ClaimId" />
+    </Key>
+    <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ClaimName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ClaimValue" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="SubOperation" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AccessGroupClaims_Claim" FromRole="Claim" ToRole="AccessGroupClaims" />
   </EntityType>
   <EntityType Name="ConductedLectures">
     <Key>
       <PropertyRef Name="CLId" />
     </Key>
     <Property Name="CLId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="LecturerId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="LectureDate" Type="DateTime" Nullable="false" Precision="0" />
-    <Property Name="StartTime" Type="Time" Nullable="false" Precision="7" />
-    <Property Name="EndTime" Type="Time" Nullable="false" Precision="7" />
-    <Property Name="LectureTypeId" Type="Int32" Nullable="false" />
-    <Property Name="LectureHallId" Type="Int32" Nullable="false" />
-    <Property Name="Location" Type="Int32" Nullable="false" />
-    <Property Name="StudentBatchId" Type="Int32" Nullable="false" />
-    <Property Name="StudentCount" Type="Int32" Nullable="false" />
-    <Property Name="StudentAttendanceSheet" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ApprovalStageId" Type="Int32" Nullable="false" />
+    <Property Name="TimetableId" Type="Int32" Nullable="false" />
+    <Property Name="ActualLectureDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="ActualFromTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="ActualToTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="ActualLocationId" Type="Int32" />
+    <Property Name="CampusId" Type="Int32" />
+    <Property Name="StudentBatches" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="StudentCount" Type="Int32" />
+    <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+    <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsApprovedOrRejected" Type="Boolean" />
+    <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
+    <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+    <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentAmount" Type="Double" />
+    <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="ApprovalStages" Relationship="PMSModel.FK_ConductedLectures_ApprovalStages" FromRole="ConductedLectures" ToRole="ApprovalStages" />
     <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="ConductedLectures" ToRole="Campus" />
     <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="ConductedLectures" ToRole="LectureHall" />
-    <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_ConductedLectures_LectureType" FromRole="ConductedLectures" ToRole="LectureType" />
-    <NavigationProperty Name="StudentBatch" Relationship="PMSModel.FK_ConductedLectures_StudentBatch" FromRole="ConductedLectures" ToRole="StudentBatch" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLectures_LectureTimetable" FromRole="ConductedLectures" ToRole="LectureTimetable" />
+    <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLectures" ToRole="ConductedLecturesLog" />
+  </EntityType>
+  <EntityType Name="ConductedLecturesLog">
+    <Key>
+      <PropertyRef Name="CLLogId" />
+    </Key>
+    <Property Name="CLLogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CLId" Type="Int32" Nullable="false" />
+    <Property Name="TimetableId" Type="Int32" Nullable="false" />
+    <Property Name="ActualLectureDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="ActualFromTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="ActualToTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="ActualLocationId" Type="Int32" />
+    <Property Name="CampusId" Type="Int32" />
+    <Property Name="StudentBatches" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="StudentCount" Type="Int32" />
+    <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+    <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsApprovedOrRejected" Type="Boolean" />
+    <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
+    <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedOrRejectedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="IsOpenForModerations" Type="Boolean" Nullable="false" />
+    <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
+    <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentAmount" Type="Double" />
+    <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLecturesLog_Campus" FromRole="ConductedLecturesLog" ToRole="Campus" />
+    <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLecturesLog" ToRole="ConductedLectures" />
+    <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLecturesLog_LectureHall" FromRole="ConductedLecturesLog" ToRole="LectureHall" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLecturesLog_LectureTimetable" FromRole="ConductedLecturesLog" ToRole="LectureTimetable" />
   </EntityType>
   <EntityType Name="ConfigurationalSettings">
     <Key>
@@ -402,12 +624,15 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="ConfigurationKey" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="ConfigurationValue" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsFacultyWise" Type="Boolean" Nullable="false" />
+    <Property Name="FacultyId" Type="Int32" />
+    <Property Name="ConfigurationValue" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_ConfigurationalSettings_Faculty" FromRole="ConfigurationalSettings" ToRole="Faculty" />
   </EntityType>
   <EntityType Name="Degree">
     <Key>
@@ -432,6 +657,7 @@
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Degree" FromRole="Degree" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Degree" FromRole="Degree" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Degree" FromRole="Degree" ToRole="Specialization" />
+    <NavigationProperty Name="Subject" Relationship="PMSModel.FK_Subject_Degree" FromRole="Degree" ToRole="Subject" />
   </EntityType>
   <EntityType Name="Department">
     <Key>
@@ -482,11 +708,13 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Faculty" FromRole="Faculty" ToRole="AspNetUsers" />
     <NavigationProperty Name="AspNetUsers1" Relationship="PMSModel.FK_Faculty_AspNetUsers" FromRole="Faculty" ToRole="AspNetUsers" />
+    <NavigationProperty Name="ConfigurationalSettings" Relationship="PMSModel.FK_ConfigurationalSettings_Faculty" FromRole="Faculty" ToRole="ConfigurationalSettings" />
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Faculty" FromRole="Faculty" ToRole="Degree" />
     <NavigationProperty Name="Department" Relationship="PMSModel.FK_Department_Faculty" FromRole="Faculty" ToRole="Department" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="Faculty" ToRole="PaymentRate" />
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="Faculty" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="Faculty" ToRole="SemesterRegistration" />
+    <NavigationProperty Name="Workflows" Relationship="PMSModel.FK_Workflows_Faculty" FromRole="Faculty" ToRole="Workflows" />
   </EntityType>
   <EntityType Name="Institute">
     <Key>
@@ -537,6 +765,82 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Campus" Relationship="PMSModel.FK_LectureHall_Campus" FromRole="LectureHall" ToRole="Campus" />
     <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="LectureHall" ToRole="ConductedLectures" />
+    <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_LectureHall" FromRole="LectureHall" ToRole="ConductedLecturesLog" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_LectureHall" FromRole="LectureHall" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureHall" FromRole="LectureHall" ToRole="LectureTimetableLog" />
+  </EntityType>
+  <EntityType Name="LecturerAssignments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SemesterId" Type="Int32" Nullable="false" />
+    <Property Name="LecturerId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+    <Property Name="StudentBatches" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="LecturerAssignments" ToRole="AspNetUsers" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_LecturerAssignments_SemesterRegistration" FromRole="LecturerAssignments" ToRole="SemesterRegistration" />
+    <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_LecturerAssignments_SemesterSubject" FromRole="LecturerAssignments" ToRole="SemesterSubject" />
+  </EntityType>
+  <EntityType Name="LectureTimetable">
+    <Key>
+      <PropertyRef Name="TimetableId" />
+    </Key>
+    <Property Name="TimetableId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SemesterId" Type="Int32" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+    <Property Name="LectureDate" Type="DateTime" Precision="0" />
+    <Property Name="FromTime" Type="Time" Precision="7" />
+    <Property Name="ToTime" Type="Time" Precision="7" />
+    <Property Name="LocationId" Type="Int32" />
+    <Property Name="LectureTypeId" Type="Int32" Nullable="false" />
+    <Property Name="LecturerId" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="StudentBatches" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_LectureTimetable_AspNetUsers" FromRole="LectureTimetable" ToRole="AspNetUsers" />
+    <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_LectureTimetable" FromRole="LectureTimetable" ToRole="ConductedLectures" />
+    <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_LectureTimetable" FromRole="LectureTimetable" ToRole="ConductedLecturesLog" />
+    <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_LectureTimetable_LectureHall" FromRole="LectureTimetable" ToRole="LectureHall" />
+    <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_LectureTimetable_LectureType" FromRole="LectureTimetable" ToRole="LectureType" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_LectureTimetable_SemesterRegistration" FromRole="LectureTimetable" ToRole="SemesterRegistration" />
+    <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_LectureTimetable_SemesterSubject" FromRole="LectureTimetable" ToRole="SemesterSubject" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureTimetable" FromRole="LectureTimetable" ToRole="LectureTimetableLog" />
+  </EntityType>
+  <EntityType Name="LectureTimetableLog">
+    <Key>
+      <PropertyRef Name="TimetableLogId" />
+    </Key>
+    <Property Name="TimetableLogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TimetableId" Type="Int32" Nullable="false" />
+    <Property Name="SemesterId" Type="Int32" Nullable="false" />
+    <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+    <Property Name="LectureDate" Type="DateTime" Precision="0" />
+    <Property Name="FromTime" Type="Time" Precision="7" />
+    <Property Name="ToTime" Type="Time" Precision="7" />
+    <Property Name="LocationId" Type="Int32" />
+    <Property Name="LectureTypeId" Type="Int32" Nullable="false" />
+    <Property Name="LecturerId" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="StudentBatches" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_LectureTimetableLog_AspNetUsers" FromRole="LectureTimetableLog" ToRole="AspNetUsers" />
+    <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_LectureTimetableLog_LectureHall" FromRole="LectureTimetableLog" ToRole="LectureHall" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetableLog_LectureTimetable" FromRole="LectureTimetableLog" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_LectureTimetableLog_LectureType" FromRole="LectureTimetableLog" ToRole="LectureType" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_LectureTimetableLog_SemesterRegistration" FromRole="LectureTimetableLog" ToRole="SemesterRegistration" />
+    <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_LectureTimetableLog_SemesterSubject" FromRole="LectureTimetableLog" ToRole="SemesterSubject" />
   </EntityType>
   <EntityType Name="LectureType">
     <Key>
@@ -544,12 +848,14 @@
     </Key>
     <Property Name="LectureTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="LectureTypeName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="ConsiderMinimumStudentCount" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_LectureType" FromRole="LectureType" ToRole="ConductedLectures" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_LectureType" FromRole="LectureType" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureType" FromRole="LectureType" ToRole="LectureTimetableLog" />
   </EntityType>
   <EntityType Name="PaymentRate">
     <Key>
@@ -629,14 +935,16 @@
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="SemesterRegistration" ToRole="Faculty" />
     <NavigationProperty Name="Institute" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="SemesterRegistration" ToRole="Institute" />
     <NavigationProperty Name="Intake" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="SemesterRegistration" ToRole="Intake" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_SemesterRegistration" FromRole="SemesterRegistration" ToRole="LecturerAssignments" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_SemesterRegistration" FromRole="SemesterRegistration" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_SemesterRegistration" FromRole="SemesterRegistration" ToRole="LectureTimetableLog" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_SemesterRegistration_Specialization" FromRole="SemesterRegistration" ToRole="Specialization" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterRegistration" ToRole="SemesterSubject" />
+    <NavigationProperty Name="StudentBatch" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="SemesterRegistration" ToRole="StudentBatch" />
   </EntityType>
   <EntityType Name="SemesterSubject">
     <Key>
       <PropertyRef Name="Id" />
-      <PropertyRef Name="SemesterRegistrationId" />
-      <PropertyRef Name="SubjectId" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
@@ -646,8 +954,27 @@
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_SemesterSubject" FromRole="SemesterSubject" ToRole="LecturerAssignments" />
+    <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_SemesterSubject" FromRole="SemesterSubject" ToRole="LectureTimetable" />
+    <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_SemesterSubject" FromRole="SemesterSubject" ToRole="LectureTimetableLog" />
     <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterSubject_SemesterRegistration" FromRole="SemesterSubject" ToRole="SemesterRegistration" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_SemesterSubject_Subject" FromRole="SemesterSubject" ToRole="Subject" />
+    <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_SemesterSubject" FromRole="SemesterSubject" ToRole="SemesterSubjectLIC" />
+  </EntityType>
+  <EntityType Name="SemesterSubjectLIC">
+    <Key>
+      <PropertyRef Name="SSLICId" />
+    </Key>
+    <Property Name="SSLICId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SemesterSubjectId" Type="Int32" Nullable="false" />
+    <Property Name="LICId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="SemesterSubjectLIC" ToRole="AspNetUsers" />
+    <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubjectLIC_SemesterSubject" FromRole="SemesterSubjectLIC" ToRole="SemesterSubject" />
   </EntityType>
   <EntityType Name="Specialization">
     <Key>
@@ -676,15 +1003,14 @@
       <PropertyRef Name="StudentBatchId" />
     </Key>
     <Property Name="StudentBatchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="CalendarYear" Type="Int32" Nullable="false" />
-    <Property Name="CalendarPeriod" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Degree" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+    <Property Name="SemesterRegistrationId" Type="Int32" Nullable="false" />
+    <Property Name="BatchName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_StudentBatch" FromRole="StudentBatch" ToRole="ConductedLectures" />
+    <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_StudentBatch_SemesterRegistration" FromRole="StudentBatch" ToRole="SemesterRegistration" />
   </EntityType>
   <EntityType Name="Subject">
     <Key>
@@ -693,14 +1019,37 @@
     <Property Name="SubjectId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="SubjectCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="SubjectName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsCommon" Type="Boolean" Nullable="false" />
+    <Property Name="DegreeId" Type="Int32" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Subject_Degree" FromRole="Subject" ToRole="Degree" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="Subject" ToRole="PaymentRate" />
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="Subject" ToRole="PaymentRateLog" />
     <NavigationProperty Name="SemesterSubject" Relationship="PMSModel.FK_SemesterSubject_Subject" FromRole="Subject" ToRole="SemesterSubject" />
+  </EntityType>
+  <EntityType Name="SubWorkflows">
+    <Key>
+      <PropertyRef Name="SubWorkflowId" />
+    </Key>
+    <Property Name="SubWorkflowId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkflowId" Type="Int32" Nullable="false" />
+    <Property Name="WorkflowRole" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="WorkflowStep" Type="Int32" Nullable="false" />
+    <Property Name="ConsideringArea" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsSpecificUser" Type="Boolean" Nullable="false" />
+    <Property Name="WorkflowUser" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_SubWorkflows_AspNetRoles" FromRole="SubWorkflows" ToRole="AspNetRoles" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="SubWorkflows" ToRole="AspNetUsers" />
+    <NavigationProperty Name="Workflows" Relationship="PMSModel.FK_SubWorkflows_Workflows" FromRole="SubWorkflows" ToRole="Workflows" />
   </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>
@@ -726,6 +1075,70 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="Title" ToRole="AspNetUsers" />
   </EntityType>
+  <EntityType Name="Workflows">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkflowName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="FacultyId" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Workflows_Faculty" FromRole="Workflows" ToRole="Faculty" />
+    <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_Workflows" FromRole="Workflows" ToRole="SubWorkflows" />
+  </EntityType>
+  <Association Name="FK_AccessGroupClaims_AccessGroup">
+    <End Type="PMSModel.AccessGroup" Role="AccessGroup" Multiplicity="1" />
+    <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroup">
+        <PropertyRef Name="AccessGroupId" />
+      </Principal>
+      <Dependent Role="AccessGroupClaims">
+        <PropertyRef Name="AccessGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetRoles_AccessGroup">
+    <End Type="PMSModel.AccessGroup" Role="AccessGroup" Multiplicity="1" />
+    <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroup">
+        <PropertyRef Name="AccessGroupId" />
+      </Principal>
+      <Dependent Role="AspNetRoles">
+        <PropertyRef Name="AccessGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AccessGroupClaims_Claim">
+    <End Type="PMSModel.Claim" Role="Claim" Multiplicity="1" />
+    <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Claim">
+        <PropertyRef Name="ClaimId" />
+      </Principal>
+      <Dependent Role="AccessGroupClaims">
+        <PropertyRef Name="ClaimId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetUserClaims_AccessGroupClaims">
+    <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="1" />
+    <End Type="PMSModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroupClaims">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AspNetUserClaims">
+        <PropertyRef Name="AccessGroupClaimId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Appointment_AppointmentType">
     <End Type="PMSModel.AppointmentType" Role="AppointmentType" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -768,20 +1181,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_ApprovalStages">
-    <End Type="PMSModel.ApprovalStages" Role="ApprovalStages" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="ApprovalStages">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="ConductedLectures">
-        <PropertyRef Name="ApprovalStageId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_AspNetUserRoles_AspNetRoles_RoleId">
     <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -796,10 +1195,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+  <Association Name="FK_SubWorkflows_AspNetRoles">
+    <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1" />
+    <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetRoles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SubWorkflows">
+        <PropertyRef Name="WorkflowRole" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AspNetUserClaims_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
     <End Type="PMSModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="AspNetUsers">
@@ -890,6 +1299,66 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_LecturerAssignments_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterSubjectLIC_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+    <End Type="PMSModel.SemesterSubjectLIC" Role="SemesterSubjectLIC" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterSubjectLIC">
+        <PropertyRef Name="LICId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SubWorkflows_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
+    <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SubWorkflows">
+        <PropertyRef Name="WorkflowUser" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_CalendarPeriod">
     <End Type="PMSModel.CalendarPeriod" Role="CalendarPeriod" Multiplicity="0..1" />
     <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
@@ -903,14 +1372,26 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_ConductedLectures_Campus">
-    <End Type="PMSModel.Campus" Role="Campus" Multiplicity="1" />
+    <End Type="PMSModel.Campus" Role="Campus" Multiplicity="0..1" />
     <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Campus">
         <PropertyRef Name="CampusId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="Location" />
+        <PropertyRef Name="CampusId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_Campus">
+    <End Type="PMSModel.Campus" Role="Campus" Multiplicity="0..1" />
+    <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Campus">
+        <PropertyRef Name="CampusId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CampusId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -929,44 +1410,78 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_ConductedLectures_LectureHall">
-    <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="0..1" />
     <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="LectureHall">
         <PropertyRef Name="HallId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="LectureHallId" />
+        <PropertyRef Name="ActualLocationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_LectureType">
-    <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="1">
+  <Association Name="FK_ConductedLectures_LectureTimetable">
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
     <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="LectureType">
-        <PropertyRef Name="LectureTypeId" />
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
       </Principal>
       <Dependent Role="ConductedLectures">
-        <PropertyRef Name="LectureTypeId" />
+        <PropertyRef Name="TimetableId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_ConductedLectures_StudentBatch">
-    <End Type="PMSModel.StudentBatch" Role="StudentBatch" Multiplicity="1">
+  <Association Name="FK_ConductedLecturesLog_ConductedLectures">
+    <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="1">
       <OnDelete Action="Cascade" />
     </End>
-    <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
+    <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="StudentBatch">
-        <PropertyRef Name="StudentBatchId" />
+      <Principal Role="ConductedLectures">
+        <PropertyRef Name="CLId" />
       </Principal>
-      <Dependent Role="ConductedLectures">
-        <PropertyRef Name="StudentBatchId" />
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CLId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_LectureHall">
+    <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="0..1" />
+    <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="ActualLocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_LectureTimetable">
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1" />
+    <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="TimetableId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConfigurationalSettings_Faculty">
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
+    <End Type="PMSModel.ConfigurationalSettings" Role="ConfigurationalSettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="ConfigurationalSettings">
+        <PropertyRef Name="FacultyId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1058,6 +1573,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Subject_Degree">
+    <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
+    <End Type="PMSModel.Subject" Role="Subject" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Degree">
+        <PropertyRef Name="DegreeId" />
+      </Principal>
+      <Dependent Role="Subject">
+        <PropertyRef Name="DegreeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Department_Faculty">
     <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
       <OnDelete Action="Cascade" />
@@ -1144,6 +1671,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Workflows_Faculty">
+    <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
+    <End Type="PMSModel.Workflows" Role="Workflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Faculty">
+        <PropertyRef Name="FacultyId" />
+      </Principal>
+      <Dependent Role="Workflows">
+        <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Institute">
     <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1" />
     <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
@@ -1182,6 +1721,140 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_LectureTimetable_LectureHall">
+    <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="0..1" />
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureHall">
+    <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="0..1" />
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureHall">
+        <PropertyRef Name="HallId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LecturerAssignments_SemesterSubject">
+    <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+    <End Type="PMSModel.LecturerAssignments" Role="LecturerAssignments" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LecturerAssignments">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_LectureType">
+    <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetable_SemesterSubject">
+    <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetable">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureTimetable">
+    <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureTimetable">
+        <PropertyRef Name="TimetableId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="TimetableId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_LectureType">
+    <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LectureTimetableLog_SemesterSubject">
+    <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+    <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="LectureTimetableLog">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Specialization">
     <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="0..1" />
     <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
@@ -1207,7 +1880,9 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_PaymentRateLog_PaymentRate">
-    <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="1" />
+    <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="PaymentRate">
@@ -1268,6 +1943,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_StudentBatch_SemesterRegistration">
+    <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
+    <End Type="PMSModel.StudentBatch" Role="StudentBatch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterRegistration">
+        <PropertyRef Name="SemesterId" />
+      </Principal>
+      <Dependent Role="StudentBatch">
+        <PropertyRef Name="SemesterRegistrationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterSubject_Subject">
     <End Type="PMSModel.Subject" Role="Subject" Multiplicity="1">
       <OnDelete Action="Cascade" />
@@ -1279,6 +1966,30 @@
       </Principal>
       <Dependent Role="SemesterSubject">
         <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SemesterSubjectLIC_SemesterSubject">
+    <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="1" />
+    <End Type="PMSModel.SemesterSubjectLIC" Role="SemesterSubjectLIC" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterSubject">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SemesterSubjectLIC">
+        <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SubWorkflows_Workflows">
+    <End Type="PMSModel.Workflows" Role="Workflows" Multiplicity="1" />
+    <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflows">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SubWorkflows">
+        <PropertyRef Name="WorkflowId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

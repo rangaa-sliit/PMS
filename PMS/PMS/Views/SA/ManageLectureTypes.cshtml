@@ -27,7 +27,7 @@ Modified On:- 2022/08/22*@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateLectureTypeForm('@Url.Action("AddOrEditLectureType", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="lectureTypeTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="lectureTypeTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -38,7 +38,9 @@ Modified On:- 2022/08/22*@
         var lectureTypeTbl;
 
         lectureTypeTbl = $("#lectureTypeTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
@@ -65,6 +67,18 @@ Modified On:- 2022/08/22*@
                 {
                     "title": "Name",
                     "data": "LectureTypeName"
+                },
+                {
+                    "title": "Consider Minimum Student Count For Payments",
+                    "data": "ConsiderMinimumStudentCount",
+                    "render": function (data) {
+                        if (data == true) {
+                            return 'Yes';
+                        }
+                        else {
+                            return 'No';
+                        }
+                    }
                 },
                 {
                     "title": "Status",

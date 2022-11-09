@@ -49,6 +49,25 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsCommon, "Common: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-check custom-control custom-switch">
+                            @Html.EditorFor(model => model.IsCommon, new { htmlAttributes = new { @class = "custom-control-input", @id = "isCommon", onchange = "onIsCommonChange()" } })
+                            <label class="custom-control-label" for="isCommon">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.DegreeId, "Degree: ", new { id = "degreeLabel" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.degreeList, new { @class = "form-control", @id = "degreeList", onchange = "onDegreeChange(this.value)" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsActive, "Status: ")
                     </div>
                     <div class="col-sm-9">
@@ -72,14 +91,31 @@
 @section scripts {
     <script>
         var operation;
-        //var oldSubjectCode, oldSubjectName, oldSubjectStatus, resourceGroupFormOpenAction, resourceGroupDataTable;
-        //var isResourceGroupFormStatusChanged = false;
-        //var resorceGroupData = null;
-        //var resGroupForm = null;
-        //var resourceGroupStatus = null;
+
+        $(function () {
+            $("#degreeList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Degree --"
+                }
+            });
+        });
 
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
+
+            var isCommon = $("#isCommon").prop("checked");
+
+            if (isCommon == true) {
+                $("#degreeList").val(null).change();
+                $("#degreeLabel").removeClass("required");
+                $("#degreeList").prop("disabled", true);
+            }
+            else {
+                $("#degreeLabel").addClass("required");
+                $("#degreeList").prop("disabled", false);
+            }
 
             if (operation != undefined) {
                 $("#subjectSubmitBtn").prop("disabled", true);
@@ -88,9 +124,6 @@
                     $("#aeSubjectMainTitle").html("Edit Subject");
                     $("#aeSubjectCardTitle").html("Edit Subject");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Subject</li>`);
-                    //oldSubjectCode = $("#subjectCode").val();
-                    //oldSubjectName = $("#subjectName").val();
-                    //oldSubjectStatus = $("subjectStatusList :selected").val();
                 }
                 else {
                     $("#aeSubjectMainTitle").html("View Subject");
@@ -98,6 +131,8 @@
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Subject</li>`);
                     $("#subjectCode").prop("disabled", true);
                     $("#subjectName").prop("disabled", true);
+                    $("#isCommon").prop("disabled", true);
+                    $("#degreeList").prop("disabled", true);
                     $("#subjectStatusList").prop("disabled", true);
                 }
             }
@@ -105,6 +140,8 @@
                 $("#aeSubjectMainTitle").html("Add Subject");
                 $("#aeSubjectCardTitle").html("Add Subject");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Subject</li>`);
+                $("#isCommon").prop("checked", false);
+                $("#degreeList").val(null).change();
                 $("#subjectStatusList").val("true");
             }
         })
@@ -115,33 +152,58 @@
             $.validator.unobtrusive.parse(form);
 
             if ($(form).valid()) {
-                $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    url: form.action,
-                    data: $(form).serialize(),
-                    success: function (data) {
-                        $("#loader").hide();
-                        if (data.success) {
-                            if (operation == undefined) {
-                                $("#subjectCode").val("");
-                                $("#subjectName").val("");
-                                $("#subjectStatusList").val("true");
-                            }
+                var isValidtoSubmit = false;
+                var isCommon = $("#isCommon").prop("checked");
+                var isDegreeSelected = $("#degreeList").val();
 
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "success"
-                            })
-                        }
-                        else {
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "error"
-                            })
-                        }
+                if (isCommon == true) {
+                    isValidtoSubmit = true;
+                }
+                else {
+                    if (isDegreeSelected == null) {
+                        isValidtoSubmit = false;
                     }
-                });
+                    else {
+                        isValidtoSubmit = true;
+                    }
+                }
+
+                if (isValidtoSubmit == true) {
+                    $("#loader").show();
+                    $.ajax({
+                        type: "POST",
+                        url: form.action,
+                        data: $(form).serialize(),
+                        success: function (data) {
+                            $("#loader").hide();
+                            if (data.success) {
+                                if (operation == undefined) {
+                                    $("#subjectCode").val("");
+                                    $("#subjectName").val("");
+                                    $("#isCommon").prop("checked", false);
+                                    $("#degreeList").val(null).change();
+                                    $("#degreeLabel").addClass("required");
+                                    $("#degreeList").prop("disabled", false);
+                                    $("#subjectStatusList").val("true");
+                                }
+
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "success"
+                                })
+                            }
+                            else {
+                                $.notify(data.message, {
+                                    globalPosition: "top center",
+                                    className: "error"
+                                })
+                            }
+                        }
+                    });
+                }
+                else {
+                    alert("Please select a Degree");
+                }
             }
             return false;
         }
@@ -150,6 +212,10 @@
             if (operation == undefined) {
                 $("#subjectCode").val("");
                 $("#subjectName").val("");
+                $("#isCommon").prop("checked", false);
+                $("#degreeList").val(null).change();
+                $("#degreeLabel").addClass("required");
+                $("#degreeList").prop("disabled", false);
                 $("#subjectStatusList").val("true");
             }
             else {
@@ -163,6 +229,28 @@
         }
 
         function onSubjectNameInput() {
+            $("#subjectSubmitBtn").prop("disabled", false);
+            $("#subjectClearBtn").prop("disabled", false);
+        }
+
+        function onIsCommonChange() {
+            var newIsCommon = $("#isCommon").prop("checked");
+
+            if (newIsCommon == true) {
+                $("#degreeList").val(null).change();
+                $("#degreeLabel").removeClass("required");
+                $("#degreeList").prop("disabled", true);
+            }
+            else {
+                $("#degreeLabel").addClass("required");
+                $("#degreeList").prop("disabled", false);
+            }
+
+            $("#subjectSubmitBtn").prop("disabled", false);
+            $("#subjectClearBtn").prop("disabled", false);
+        }
+
+        function onDegreeChange(newDegree) {
             $("#subjectSubmitBtn").prop("disabled", false);
             $("#subjectClearBtn").prop("disabled", false);
         }

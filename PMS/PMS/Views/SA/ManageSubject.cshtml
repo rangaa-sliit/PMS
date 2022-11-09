@@ -1,5 +1,5 @@
 ﻿@*Developed By:- Dulanjalee Wickremasinghe
-    Developed On:- 2022/08/24*@
+Developed On:- 2022/08/24*@
 
 @{
     ViewBag.Title = "ManageSubject";
@@ -25,7 +25,7 @@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateSubjectForm('@Url.Action("AddOrEditSubject", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="subjectTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="subjectTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -36,7 +36,9 @@
         var subjectTbl;
 
         subjectTbl = $("#subjectTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
@@ -69,6 +71,10 @@
                     "data": "SubjectName"
                 },
                 {
+                    "title": "Degree",
+                    "data": "DegreeOrCommon"
+                },
+                {
                     "title": "Status",
                     "data": "IsActive",
                     "render": function (data) {
@@ -99,4 +105,3 @@
         }
     </script>
 }
-

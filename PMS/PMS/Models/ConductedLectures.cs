@@ -11,31 +11,59 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+    using System.Web;
+
     public partial class ConductedLectures
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public ConductedLectures()
+        {
+            this.ConductedLecturesLog = new HashSet<ConductedLecturesLog>();
+        }
+    
         public int CLId { get; set; }
-        public string LecturerId { get; set; }
-        public System.DateTime LectureDate { get; set; }
-        public System.TimeSpan StartTime { get; set; }
-        public System.TimeSpan EndTime { get; set; }
-        public int LectureTypeId { get; set; }
-        public int LectureHallId { get; set; }
-        public int Location { get; set; }
-        public int StudentBatchId { get; set; }
-        public int StudentCount { get; set; }
-        public string StudentAttendanceSheet { get; set; }
-        public int ApprovalStageId { get; set; }
+        public int TimetableId { get; set; }
+        [Required(ErrorMessage = "Lecture Date is required")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public System.DateTime ActualLectureDate { get; set; }
+        [Required(ErrorMessage = "Lecture Start Time is required")]
+        public System.TimeSpan ActualFromTime { get; set; }
+        [Required(ErrorMessage = "Lecture End Time is required")]
+        public System.TimeSpan ActualToTime { get; set; }
+        [Required(ErrorMessage = "Location is required")]
+        public Nullable<int> ActualLocationId { get; set; }
+        [Required(ErrorMessage = "Campus is required")]
+        public Nullable<int> CampusId { get; set; }
+        public string StudentBatches { get; set; }
+        public Nullable<int> StudentCount { get; set; }
+        public string StudentAttendanceSheetLocation { get; set; }
+        public string Comment { get; set; }
+        public int CurrentStage { get; set; }
+        public string CurrentStageDisplayName { get; set; }
+        public Nullable<bool> IsApprovedOrRejected { get; set; }
+        public Nullable<System.DateTime> ApprovedOrRejectedDate { get; set; }
+        public string ApprovedOrRejectedBy { get; set; }
+        public string ApprovedOrRejectedRemark { get; set; }
+        public bool IsOpenForModerations { get; set; }
+        public Nullable<System.DateTime> ModerationOpenedDate { get; set; }
+        public string ModerationOpenedBy { get; set; }
+        public string ModerationOpenedRemark { get; set; }
+        public Nullable<double> PaymentAmount { get; set; }
+        public bool IsFinalApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
-    
-        public virtual ApprovalStages ApprovalStages { get; set; }
+
+        public HttpPostedFileBase postedFile { get; set; }
+
         public virtual Campus Campus { get; set; }
         public virtual LectureHall LectureHall { get; set; }
-        public virtual LectureType LectureType { get; set; }
-        public virtual StudentBatch StudentBatch { get; set; }
+        public virtual LectureTimetable LectureTimetable { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
     }
 }

@@ -23,11 +23,14 @@ namespace PMS
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.min.js",
+                      "~/Scripts/select2.min.js",
                       "~/Scripts/sb-admin-2.min.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/Site.css",
                       "~/Content/bootstrap.min.css",
+                      "~/Content/select2.min.css",
+                      "~/Content/select2-bootstrap4.min.css",
                       "~/Content/font-family-nunito.css",
                       "~/Content/sb-admin-2.min.css"));
 

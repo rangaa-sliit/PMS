@@ -11,19 +11,23 @@ namespace PMS.Models
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class ApprovalStages
+    using System.ComponentModel.DataAnnotations;
+
+    public partial class AccessGroup
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ApprovalStages()
+        public AccessGroup()
         {
-            this.ConductedLectures = new HashSet<ConductedLectures>();
+            this.AccessGroupClaims = new HashSet<AccessGroupClaims>();
+            this.AspNetRoles = new HashSet<AspNetRoles>();
         }
     
-        public int Id { get; set; }
-        public string StageName { get; set; }
+        public int AccessGroupId { get; set; }
+        [Required(ErrorMessage = "Access Group Name is required")]
+        [MaxLength(256, ErrorMessage = "Maximum 256 characters exceeded")]
+        public string AccessGroupName { get; set; }
+        [MaxLength(256, ErrorMessage = "Maximum 256 characters exceeded")]
         public string Description { get; set; }
-        public int Priority { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -31,6 +35,8 @@ namespace PMS.Models
         public bool IsActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        public virtual ICollection<AccessGroupClaims> AccessGroupClaims { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AspNetRoles> AspNetRoles { get; set; }
     }
 }

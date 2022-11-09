@@ -9,5 +9,6 @@ namespace PMS.Custom_Classes
     {
         public int FacultyId { get; set; }
         public int InstituteId { get; set; }
+        public HttpPostedFileBase UploadedFile { get; set; }
     }
 }

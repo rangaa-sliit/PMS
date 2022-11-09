@@ -110,6 +110,32 @@
     <script>
         var operation;
 
+        $(function () {
+            $("#DesignationId").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Designation --"
+                }
+            });
+
+            $("#FacultyId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#DegreeId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#SpecializationId").select2({
+                theme: "bootstrap4",
+            });
+
+            $("#SubjectId").select2({
+                theme: "bootstrap4",
+            });
+        });
+
         $(document).ready(function () {
             operation = window.location.pathname.toString().split('/')[4];
 
@@ -138,13 +164,14 @@
                 $("#aePaymentRateMainTitle").html("Add Payment Rate");
                 $("#aePaymentRateCardTitle").html("Add Payment Rate");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Payment Rate</li>`);
-                $("#FacultyId").val("");
-                $("#SubjectId").val("");
-                $("#DegreeId").val("");
-                $("#DesignationId").val("");
-                $("#SpecializationId").val("");
+                //$("#DesignationId").val("");
                 $("#RatePerHour").val("");
                 $("#paymentRateStatusList").val("true");
+                $("#DesignationId").val(null).change();
+                $("#FacultyId").val(null).change();
+                $("#DegreeId").val(null).change();
+                $("#SpecializationId").val(null).change();
+                $("#SubjectId").val(null).change();
             }
         })
 
@@ -163,13 +190,13 @@
                         $("#loader").hide();
                         if (data.success) {
                             if (operation == undefined) {
-                                $("#SubjectId").val("");
-                                $("#DegreeId").val("");
-                                $("#DesignationId").val("");
-                                $("#FacultyId").val("");
                                 $("#RatePerHour").val("");
-                                $("#SpecializationId").val("");
                                 $("#degreeStatusList").val("true");
+                                $("#DesignationId").val(null).change();
+                                $("#FacultyId").val(null).change();
+                                $("#DegreeId").val(null).change();
+                                $("#SpecializationId").val(null).change();
+                                $("#SubjectId").val(null).change();
                             }
 
                             $.notify(data.message, {
@@ -191,13 +218,13 @@
 
         function clearPaymentRateForm() {
             if (operation == undefined) {
-                $("#SubjectId").val("");
-                $("#DegreeId").val("");
-                $("#DesignationId").val("");
-                $("#FacultyId").val("");
-                $("#SpecializationId").val("");
                 $("#RatePerHour").val("");
                 $("#degreeStatusList").val("true");
+                $("#DesignationId").val(null).change();
+                $("#FacultyId").val(null).change();
+                $("#DegreeId").val(null).change();
+                $("#SpecializationId").val(null).change();
+                $("#SubjectId").val(null).change();
             }
             else {
                 window.location.reload();
@@ -212,11 +239,54 @@
         function onFacultyChange(newFaculty) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
+
+            if (newFaculty != "") {
+                loadDegrees(newFaculty);
+            }
+            else {
+                $("#DegreeId").find('option').not(':first').remove();
+            }
+            $("#DegreeId").val(null).change();
+            $("#SpecializationId").find('option').not(':first').remove();
+            $("#SpecializationId").val(null).change();
         }
 
-        function onDegreeChange(newDegree) {
+        function loadDegrees(facultyId) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDegreesByFaculty", "SA")/' + facultyId,
+                success: function (response) {
+                    $("#DegreeId").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#DegreeId option:first").after(dynamicContent);
+                }
+            })
+        }
+
+        function onDegreeChange(degreeId) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSpecializationsByDegree", "SA")/' + degreeId,
+                success: function (response) {
+                    $("#SpecializationId").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#SpecializationId option:first").after(dynamicContent);
+                }
+            });
+            $("#SpecializationId").val(null).change();
         }
 
         function onSpecializationChange(newSpecialization) {

@@ -1,6 +1,89 @@
-﻿@using PMS.Models
-@model LoginViewModel
-@{
-    ViewBag.Title = "Log in";
+﻿@{
+    Layout = null;
 }
 
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .gradient-custom-2 {
+            /* fallback for old browsers */
+            background: linear-gradient(to right, #5a24ee, #36d8bd, #168ff1, #5a24ee);
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, #5a24ee, #36d8bd, #168ff1, #5a24ee);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, #5a24ee, #36d8bd, #168ff1, #5a24ee);
+        }
+    </style>
+
+    <title>WPS</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="~/Content/style.css">
+
+</head>
+<body class="img js-fullheight" style="background-image: url(/Content/Images/B3.jpg);padding: 10rem; background-size: cover; height: 100vh;">
+
+    <section class="ftco-section">
+
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class="col-md-6 text-center mb-5">
+
+                    <img src="~/Content/Images/SL.png" style="width: 100px;height:150px; " alt="logo">
+                    <h1 class="heading-section" style="color:whitesmoke;"><b>Welcome to WPS</b></h1>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4.5">
+                    <div class="login-wrap p-0">
+                        <small class="mb-4 text-center" style="font-size:small; color:whitesmoke;"><h5><b>Please login to your account using SLIIT Username and Password</b></h5></small>
+                        <form action="#" class="signin-form">
+                            <div class="form-group;" style="padding:.3rem;">
+                                <input type="text" class="form-control" placeholder="Enter Username" style="border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke; opacity: 0.6;height: 4rem;" required>
+                            </div>
+                            <div class="form-group" style="padding:.3rem;  ">
+                                <input id="password-field" type="password" class="form-control" placeholder="Enter Password" style="border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke;opacity: 0.6;height: 4rem;" required>
+                                <span onclick="myFunction()" class="fa fa-fw fa-eye field-icon toggle-password" style="color:black; "></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary submit px-3" style="height: 4rem; opacity: 0.7;"><b>Sign In</b></button>
+                            </div>
+                        </form>
+
+                        <br>
+                        <p class="w-100 text-center" style="color:whitesmoke;">&mdash; <b>Powered By</b> &mdash;</p>
+                        <div class="social d-flex text-center">
+                            <p class="w-100 text-center" style="color:whitesmoke; ">&#8606; <b>Business Application Services Division - SLIIT </b> &#8608;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    </section>
+
+
+    </div>
+
+    <script>
+        function myFunction() {
+            var x = document.getElementById("password-field");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+
+</body>
+</html>

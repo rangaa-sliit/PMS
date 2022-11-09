@@ -19,6 +19,8 @@ namespace PMS.Models
         [Required(ErrorMessage = "Configuration Key is required")]
         [MaxLength(250, ErrorMessage = "Maximum 250 characters exceeded")]
         public string ConfigurationKey { get; set; }
+        public bool IsFacultyWise { get; set; }
+        public Nullable<int> FacultyId { get; set; }
         [Required(ErrorMessage = "Configuration Value is required")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string ConfigurationValue { get; set; }
@@ -27,5 +29,7 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
+    
+        public virtual Faculty Faculty { get; set; }
     }
 }
