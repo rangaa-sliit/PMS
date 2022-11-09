@@ -1,0 +1,661 @@
+﻿@*Developed By:- Dulanjalee Wickremasinghe
+    Developed On:- 2022/10/17*@
+
+@{
+    ViewBag.Title = "ManageFacultyAdminDashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+    <link rel="stylesheet" href="cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <style>
+
+
+
+        body {
+            font-family: "Open Sans", Arial;
+            background: #EDEDED;
+        }
+
+        main {
+            width: 500px;
+            margin: 10px auto;
+            padding: 10px 20px 30px;
+            background: #FFF;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+        }
+
+        p {
+            margin-top: 2rem;
+            font-size: 13px;
+        }
+
+        #bar-chart {
+            width: 500px;
+            height: 300px;
+            position: relative;
+        }
+
+        #line-chart {
+            width: 500px;
+            height: 300px;
+            position: relative;
+        }
+
+            #bar-chart::before, #line-chart::before {
+                content: "";
+                position: absolute;
+                display: block;
+                width: 240px;
+                height: 30px;
+                left: 155px;
+                top: 254px;
+                background: #FAFAFA;
+                box-shadow: 1px 1px 0 0 #DDD;
+            }
+
+        #pie-chart {
+            width: 450px;
+            height: 250px;
+            position: relative;
+        }
+
+            #pie-chart::before {
+                content: "";
+                position: absolute;
+                display: block;
+                width: 180px;
+                height: 145px;
+                left: 280px;
+                top: 0;
+                background: #FAFAFA;
+                box-shadow: 1px 1px 0 0 #DDD;
+            }
+        
+        #pie-chart::after {
+            content: "";
+            position: absolute;
+            display: block;
+            top: 260px;
+            left: 70px;
+            width: 170px;
+            height: 2px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+        }
+
+        g rect {
+        }
+
+
+        .count-sp {
+            margin: 0px 10px;
+            font-size: 17px;
+        }
+
+        .cardsubtitle {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .drp-dwn-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #4e73df;
+        }
+
+        table.dataTable tbody td {
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+        }
+
+        .rightbox {
+            height: 100%;
+        }
+
+
+
+        .rb-container ul.rb {
+            margin: 2.5em 0;
+            padding: 0;
+            display: inline-block;
+        }
+
+
+
+            .rb-container ul.rb li {
+                list-style: none;
+                margin: auto;
+                min-height: 50px;
+                border-left: 2px dashed #486dda;
+                padding: 0 0 44px 30px;
+                position: relative;
+            }
+
+
+
+                .rb-container ul.rb li:last-child {
+                    border-left: 0;
+                }
+
+
+
+                .rb-container ul.rb li::before {
+                    position: absolute;
+                    left: -10px;
+                    top: 0px;
+                    content: " ";
+                    border: 8px solid rgb(73 110 219);
+                    border-radius: 500%;
+                    background: #50d890;
+                    height: 20px;
+                    width: 20px;
+                    transition: all 500ms ease-in-out;
+                    font-size: 94px;
+                }
+
+
+
+                .rb-container ul.rb li:hover::before {
+                    border-color: #232931;
+                    transition: all 1000ms ease-in-out;
+                }
+
+
+
+        ul.rb li .timestamp {
+            color: #496fdc;
+            position: relative;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+
+
+        .item-title {
+            color: #3f3f3f;
+        }
+
+
+
+        .container-3 {
+            width: 5em;
+            vertical-align: right;
+            white-space: nowrap;
+            position: absolute;
+        }
+
+
+
+            .container-3 input#search {
+                width: 150px;
+                height: 30px;
+                background: #fbfbfb;
+                border: none;
+                font-size: 10pt;
+                color: #262626;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+                margin: 0.9em 0 0 28.5em;
+                box-shadow: 3px 3px 15px rgba(119, 119, 119, 0.5);
+            }
+
+
+
+            .container-3 .icon {
+                margin: 1.3em 3em 0 31.5em;
+                position: absolute;
+                width: 150px;
+                height: 30px;
+                z-index: 1;
+                color: #4f5b66;
+            }
+
+
+
+        input::placeholder {
+            padding: 5em 5em 1em 1em;
+            color: #50d890;
+        }
+
+
+
+        .app-status {
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            border-radius: 5px;
+            letter-spacing: 0.5px;
+        }
+
+
+
+        .approval-pending {
+            background-color: #f6c23e;
+        }
+
+
+
+        .approval-approved {
+            background-color: #1cc88a;
+        }
+
+
+
+        .approval-rejected {
+            background-color: #e74a3b;
+        }
+
+        .profile-col {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0px;
+            background-color: #e9e9e9;
+            padding: 10px 0px 5px 5px;
+            border-radius: 5px;
+        }
+
+
+
+
+        .profile-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+
+
+            .profile-detail img {
+                max-height: 40px;
+                margin: 0px 15px;
+            }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .profile-btn button {
+                margin: 0px 10px;
+            }
+    
+
+    
+    </style>
+
+
+</head>
+
+<body>
+    <!-- Content Row - Calender -->
+    <div class="row" style="margin-left:1px; margin-right:1px;">
+
+        
+        <div class="col-xl-3 col-md-6 mb-4" style="align-self:right">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1">
+                                View Calender
+                            </div>
+                           
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            <font-awesome-icon icon="fa-solid fa-people" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+       
+       
+       
+    </div>
+
+
+
+    <!-- Content Row - Cards -->
+    <div class="row" style="margin-left:1px; margin-right:1px;">
+
+        <!-- Total Conducted Hours Monthly -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <i class="far fa-caret-square-down drp-dwn-btn"></i>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1">
+                                Total Conducted Hours
+                            </div>
+                            <div class="h5 mb-2 font-weight-bold text-gray-800">145 Hours</div>
+                            <div class="h6 cardsubtitle">Monthly</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            <font-awesome-icon icon="fa-solid fa-people" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Conducted Hours Faculties -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <i class="far fa-caret-square-down drp-dwn-btn"></i>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs cardtitle font-weight-bold text-success text-uppercase mb-1">
+                                Total Conducted Hours
+                            </div>
+                            <div class="h5 mb-2 font-weight-bold text-gray-800">145 Hours</div>
+                            <div class="h6 cardsubtitle">Faculty</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                            <font-awesome-icon icon="fa-solid fa-people" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Total Conducted Hours Monthly -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <i class="far fa-caret-square-down drp-dwn-btn"></i>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs cardtitle font-weight-bold text-info text-uppercase mb-1">
+                                Total Conducted Hours
+                            </div>
+                            <div class="h5 mb-2 font-weight-bold text-gray-800">RS 500,000</div>
+                            <div class="h6 cardsubtitle">Monthly</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-money-bill fa-2x text-gray-300"></i>
+                            <font-awesome-icon icon="fa-solid fa-people" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Amount Paid Faculties -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <i class="far fa-caret-square-down drp-dwn-btn"></i>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs cardtitle font-weight-bold text-warning text-uppercase mb-1">
+                                Amount Paid
+                            </div>
+                            <div class="h5 mb-2 font-weight-bold text-gray-800">RS 1500,000</div>
+                            <div class="h6 cardsubtitle">Faculty</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                            <font-awesome-icon icon="fa-solid fa-people" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Content Row-Monthly Salary Approval Levels -->
+
+
+
+
+    <div class="row" style="margin-left:1px; margin-right:1px;">
+
+
+
+        <div class="col-md-6 grid-margin stretch-card">
+
+
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Monthly Salary Approval Levels</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="timeline">
+
+
+
+                        <div class="rightbox">
+                            <div class="rb-container">
+                                <ul class="rb">
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Programme Cordinator
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 1</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 14</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Head of the Department
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Faculty Admin
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Dean of the Faculty
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Executive Finance
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Senior Manager Finance
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                    <li class="rb-item" ng-repeat="itembx">
+                                        <div class="timestamp">
+                                            Director Finance
+                                        </div>
+                                        <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
+                                    </li>
+                                </ul>
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Content Row-Faculty wise Lectures -->
+
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Faculty Details</h6>
+                </div>
+                <div class="card-body">
+                    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                    <main>
+                        <h5>Faculty wise Lectures</h5>
+                        <div id="pie-chart"></div>
+
+                    </main>
+                </div>
+            </div>
+
+
+            <!-- Content Row-Lecturer Details -->
+
+
+
+            <div class="card  mt-3">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lecturer Details</h6>
+                </div>
+                <div class="card-body">
+                    <input type="text" class="form-control bg-light border-0 small mb-3" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="col-lg-12 mb-12">
+                        <div class="card bg-light text-black shadow">
+                            <div class="card-body">
+                                <div class="profile-col">
+                                    <div class="profile-detail">
+                                        <img src="~/Content/Images/user.png" alt="...">
+                                        <div class="profile-text">
+                                            <h5 class="h6 mb-0 font-weight-bold text-gray-800">
+                                                Nuwan Sirmewan<h5>
+                                                    <h6 class="text-xs font-weight-bold text-primary text-uppercase mb-1">Senior Lecturer<h6>
+                                        </div>
+                                    </div>
+                                    <div class="profile-btn">
+                                        <button type="button" class="btn btn-primary">View</button>
+
+                                    </div>
+                                </div>
+
+                                <div class="profile-col">
+                                    <div class="profile-detail">
+                                        <img src="~/Content/Images/user.png" alt="...">
+                                        <div class="profile-text">
+                                            <h5 class="h6 mb-0 font-weight-bold text-gray-800">
+                                                Dileep Perera<h5>
+                                                    <h6 class="text-xs font-weight-bold text-primary text-uppercase mb-1">Lecturer<h6>
+                                        </div>
+                                    </div>
+                                    <div class="profile-btn">
+                                        <button type="button" class="btn btn-primary">View</button>
+
+                                    </div>
+                                </div>
+
+                                <div class="profile-col">
+                                    <div class="profile-detail">
+                                        <img src="~/Content/Images/user.png" alt="...">
+                                        <div class="profile-text">
+                                            <h5 class="h6 mb-0 font-weight-bold text-gray-800">
+                                                Chamal Fernando<h5>
+                                                    <h6 class="text-xs font-weight-bold text-primary text-uppercase mb-1">Lecturer<h6>
+                                        </div>
+                                    </div>
+                                    <div class="profile-btn">
+                                        <button type="button" class="btn btn-primary">View</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Content Row -->
+
+
+
+
+    <script>
+
+        google.load("visualization", "1", { packages: ["corechart"] });
+        google.setOnLoadCallback(drawCharts);
+        function drawCharts() {
+
+
+
+
+            var pieData = google.visualization.arrayToDataTable([
+                ['Faculty', 'Amount'],
+                ['Faculty of Computing', 54],
+                ['Faculty of Engineering', 30],
+                ['SLIIT Business School', 45],
+                ['Faculty of Humanities & Sciences', 46],
+                ['Graduate Studies and Research', 25]
+            ]);
+
+            var pieOptions = {
+                backgroundColor: 'transparent',
+                pieHole: 0.4,
+                colors: ["cornflowerblue",
+                    "olivedrab",
+                    "orange",
+                    "tomato",
+                    "crimson",
+                    "purple",
+                    "turquoise",
+                    "forestgreen",
+                    "navy",
+                    "gray"],
+                pieSliceText: 'value',
+                tooltip: {
+                    text: 'percentage'
+                },
+                fontName: 'Open Sans',
+                chartArea: {
+                    width: '100%',
+                    height: '94%'
+                },
+                legend: {
+                    textStyle: {
+                        fontSize: 13
+                    }
+                }
+            };
+
+            var pieChart = new google.visualization.PieChart(document.getElementById('pie-chart'));
+            pieChart.draw(pieData, pieOptions);
+        }
+
+        //Datatable
+        $(document).ready(function () {
+            $('#timetable').DataTable();
+        });
+
+
+    </script>
+
+</body>
+
+</html>

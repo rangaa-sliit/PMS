@@ -490,6 +490,7 @@
     <Content Include="Views\SA\ManageCampusWiseReports.cshtml" />
     <Content Include="Views\SA\ManageAppointmentTypeWiseReports.cshtml" />
     <Content Include="Views\SA\ManageTimetable.cshtml" />
+    <Content Include="Views\SA\ManageFacultyAdminDashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

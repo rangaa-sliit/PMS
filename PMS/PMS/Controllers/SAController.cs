@@ -3720,5 +3720,14 @@ namespace PMS.Controllers
         {
             return View();
         }
+
+
+        //Developed By:- Dulanjalee Wickremasinghe
+        //Developed On:- 2022/10/17
+        public ActionResult ManageFacultyAdminDashboard()
+        {
+            return View();
+        }
+
     }
 }
