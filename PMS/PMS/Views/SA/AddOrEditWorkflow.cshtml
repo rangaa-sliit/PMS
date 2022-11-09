@@ -1,0 +1,195 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/10/06*@
+
+@model PMS.Models.Workflows
+
+@{
+    ViewBag.Title = "AddOrEditWorkflow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageWorkflows", "SA")">Manage Workflows</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeWorkflowMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeWorkflowCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditWorkflow", "SA", FormMethod.Post, new { onsubmit = "return SubmitWorkflowForm(this)", @id = "workflowForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.WorkflowName, "Workflow Name: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.WorkflowName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Workflow Name", @id = "workflowName", oninput = "onWorkflowNameInput()" } })
+                        @Html.ValidationMessageFor(model => model.WorkflowName)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Description, "Description: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @placeholder = "Description", @id = "workflowDescription", oninput = "onWorkflowDescriptionInput()" } })
+                        @Html.ValidationMessageFor(model => model.Description)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "facultyList", onchange = "onFacultyChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "workflowStatusList", onchange = "onWorkflowStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="workflowSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="workflowClearBtn" onclick="clearWorkflowForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+
+        $(function () {
+            $("#facultyList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty --"
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            operation = window.location.pathname.toString().split('/')[4];
+
+            if (operation != undefined) {
+                $("#workflowName").prop("readonly", true);
+                $("#workflowSubmitBtn").prop("disabled", true);
+                $("#workflowClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeWorkflowMainTitle").html("Edit Workflow");
+                    $("#aeWorkflowCardTitle").html("Edit Workflow");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Edit Workflow</li>`);
+                }
+                else {
+                    $("#aeWorkflowMainTitle").html("View Workflow");
+                    $("#aeWorkflowCardTitle").html("View Workflow");
+                    $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Workflow</li>`);
+                    $("#workflowDescription").prop("disabled", true);
+                    $("#facultyList").prop("disabled", true);
+                    $("#workflowStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeWorkflowMainTitle").html("Add Workflow");
+                $("#aeWorkflowCardTitle").html("Add Workflow");
+                $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Workflow</li>`);
+                $("#workflowStatusList").val("true");
+                $("#facultyList").val(null).change();
+            }
+        })
+
+        function SubmitWorkflowForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                $("#loader").show();
+                $.ajax({
+                    type: "POST",
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        $("#loader").hide();
+                        if (data.success) {
+                            if (operation == undefined) {
+                                $("#workflowName").val("");
+                                $("#workflowDescription").val("");
+                                $("#workflowStatusList").val("true");
+                                $("#facultyList").val(null).change();
+                            }
+
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "success"
+                            })
+                        }
+                        else {
+                            $.notify(data.message, {
+                                globalPosition: "top center",
+                                className: "error"
+                            })
+                        }
+                    }
+                });
+            }
+            return false;
+        }
+
+        function clearWorkflowForm() {
+            if (operation == undefined) {
+                $("#workflowName").val("");
+                $("#workflowDescription").val("");
+                $("#workflowStatusList").val("true");
+                $("#facultyList").val(null).change();
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onWorkflowNameInput() {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onWorkflowDescriptionInput() {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onFacultyChange(newFaculty) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+
+        function onWorkflowStatusChange(newStatus) {
+            $("#workflowSubmitBtn").prop("disabled", false);
+            $("#workflowClearBtn").prop("disabled", false);
+        }
+    </script>
+}

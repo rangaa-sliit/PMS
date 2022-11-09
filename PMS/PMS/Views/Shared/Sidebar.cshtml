@@ -6,7 +6,7 @@ Developed On:- 2022/08/16*@
         <div class="sidebar-brand-icon">
             <img src="~/Content/Images/SLIIT_Logo_Crest.png" height="50" alt="" />
         </div>
-        <div class="sidebar-brand-text mx-3">PMS</div>
+        <div class="sidebar-brand-text mx-3">WPS</div>
     </a>
 
     <hr class="sidebar-divider my-0" />
@@ -52,6 +52,34 @@ Developed On:- 2022/08/16*@
     <hr class="sidebar-divider" />
 
     <div class="sidebar-heading">
+        Access Control &amp; Workflow
+    </div>
+
+    <li class="nav-item" id="accessControl-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessControl" aria-expanded="true" aria-controls="collapseAccessControl">
+            <i class="fas fa-fw fa-users"></i>
+            <span>User Access</span>
+        </a>
+        <div id="collapseAccessControl" class="collapse" aria-labelledby="headingAccessControl" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">User Access:</h6>
+                <a class="collapse-item" href="@Url.Action("ManageClaims", "SA")">Claims</a>
+                <a class="collapse-item" href="@Url.Action("ManageAccessGroups", "SA")">Access Groups</a>
+                <a class="collapse-item" href="@Url.Action("ManageUsers", "SA")">System Users</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item" id="workflow-nav-item">
+        <a class="nav-link" href="@Url.Action("ManageWorkflows", "SA")">
+            <i class="fas fa-fw fa-road"></i>
+            <span>Workflows</span>
+        </a>
+    </li>
+
+    <hr class="sidebar-divider" />
+
+    <div class="sidebar-heading">
         Academic Details
     </div>
 
@@ -70,18 +98,11 @@ Developed On:- 2022/08/16*@
             </div>
         </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSemesterDetails" aria-expanded="true" aria-controls="collapseSemesterDetails">
+    <li class="nav-item" id="semesterRegistration-nav-item">
+        <a class="nav-link" href="@Url.Action("ManageSemesterRegistrations", "SA")">
             <i class="fas fa-fw fa-calendar-alt"></i>
-            <span>Semester Details</span>
+            <span>Semester Registrations</span>
         </a>
-        <div id="collapseSemesterDetails" class="collapse" aria-labelledby="headingSemesterDetails" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Semester Details:</h6>
-                <a class="collapse-item" href="@Url.Action("ManageSemesterRegistrations", "SA")">Semester Registrations</a>
-                <a class="collapse-item" href="#">Semester Subjects</a>
-            </div>
-        </div>
     </li>
 
     <hr class="sidebar-divider" />
@@ -90,88 +111,34 @@ Developed On:- 2022/08/16*@
         PMS Functions
     </div>
 
-    <li class="nav-item">
+    <li class="nav-item" id="paymentRate-nav-item">
         <a class="nav-link" href="@Url.Action("ManagePaymentRate", "SA")">
             <i class="fas fa-fw fa-money-check-alt"></i>
             <span>Payment Rates</span>
         </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" id="lecturerAppointment-nav-item">
         <a class="nav-link" href="@Url.Action("ManageAppointments", "SA")">
             <i class="fas fa-fw fa-briefcase"></i>
             <span>Lecturer Appointments</span>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="@Url.Action("ManageLectureSessions", "SA")">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Lecture Sessions</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("ManageConductedLectures", "SA")">
             <i class="fas fa-fw fa-chalkboard-teacher"></i>
             <span>Conducted Lectures</span>
         </a>
     </li>
-
-    <hr class="sidebar-divider" />
-
-    <div class="sidebar-heading">
-        Claim Interfaces
-    </div>
-
     <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ClaimManagement", "SA")">
-            <i class=""></i>
-            <span>Claim Management</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("GroupClaims", "SA")">
-            <i class=""></i>
-            <span>Group Claims</span>
-        </a>
-    </li>
-
-    <hr class="sidebar-divider" />
-
-    <div class="sidebar-heading">
-        Users
-    </div>
-
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ManageUsers", "SA")">
-            <i class=""></i>
-            <span>Users</span>
-        </a>
-    </li>
-
-    <hr class="sidebar-divider" />
-
-    <div class="sidebar-heading">
-        Finance Reports
-    </div>
-
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ManageEmployeePaymentHistoryReports", "SA")">
-            <i class=""></i>
-            <span>Employee Payment History Reports</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ManageDepartmentWiseReports", "SA")">
-            <i class=""></i>
-            <span>Department Wise Reports</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ManageCampusWiseReports", "SA")">
-            <i class=""></i>
-            <span>Campus Wise Reports</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="@Url.Action("ManageAppointmentTypeWiseReports", "SA")">
-            <i class=""></i>
-            <span>Appointment Types Wise Reports</span>
+        <a class="nav-link" href="@Url.Action("ManageLectureApprovals", "SA")">
+            <i class="fas fa-fw fa-check"></i>
+            <span>Lecture Approvals</span>
         </a>
     </li>
     <hr class="sidebar-divider d-none d-md-block" />

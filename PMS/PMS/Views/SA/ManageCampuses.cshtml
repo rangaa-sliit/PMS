@@ -25,7 +25,7 @@ Developed On:- 2022/08/17*@
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
             <div class="table-responsive">
-                <table id="campusTbl" class="table table-bordered data-table nowrap"></table>
+                <table id="campusTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -36,7 +36,9 @@ Developed On:- 2022/08/17*@
         var campusTbl;
 
         campusTbl = $("#campusTbl").DataTable({
+            "responsive": true,
             "scrollY": "30vh",
+            "scrollX": true,
             "scroller": true,
             "order": [],
             "ajax": {
@@ -53,8 +55,8 @@ Developed On:- 2022/08/17*@
                                 + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'View')">View Campuses</a>`
-                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'Edit')">Edit Campuses</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'View')">View Campus</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateCampusesForm('@Url.Action("AddOrEditCampus", "SA")/` + data + `', 'Edit')">Edit Campus</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,

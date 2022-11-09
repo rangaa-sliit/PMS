@@ -22,6 +22,7 @@ namespace PMS.Models
             this.PaymentRateLog = new HashSet<PaymentRateLog>();
             this.SemesterRegistration = new HashSet<SemesterRegistration>();
             this.Specialization = new HashSet<Specialization>();
+            this.Subject = new HashSet<Subject>();
         }
     
         public int DegreeId { get; set; }
@@ -54,5 +55,7 @@ namespace PMS.Models
         public virtual ICollection<SemesterRegistration> SemesterRegistration { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Specialization> Specialization { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Subject> Subject { get; set; }
     }
 }

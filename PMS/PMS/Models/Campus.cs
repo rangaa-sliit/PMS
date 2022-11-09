@@ -19,6 +19,7 @@ namespace PMS.Models
         public Campus()
         {
             this.ConductedLectures = new HashSet<ConductedLectures>();
+            this.ConductedLecturesLog = new HashSet<ConductedLecturesLog>();
             this.LectureHall = new HashSet<LectureHall>();
         }
     
@@ -37,6 +38,8 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LectureHall> LectureHall { get; set; }
     }

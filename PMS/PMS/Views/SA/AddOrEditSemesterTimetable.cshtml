@@ -1,0 +1,367 @@
+﻿@*Developed By:- Ranga Athapaththu
+Developed On:- 2022/10/27*@
+
+@model PMS.Models.LectureTimetable
+
+@{
+    ViewBag.Title = "AddOrEditSemesterTimetable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2" id="breadCrumbWrapper">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ManageSemesterRegistrations", "SA")">Manage Semester Registrations</a></li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800" id="aeSemesterTimetableMainTitle"></h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="aeSemesterTimetableCardTitle"></h6>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("AddOrEditSemesterTimetable", "SA", FormMethod.Post, new { onsubmit = "return SubmitSemesterTimetableForm(this)", @id = "semesterTimetableForm", autocomplete = "off" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.TimetableId)
+                @Html.HiddenFor(model => model.SemesterId)
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.SemesterSubjectId, "Subject: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.SemesterSubjectId, (IEnumerable<SelectListItem>)ViewBag.semesterSubjectList, new { @class = "form-control", @id = "semesterSubjectList", onchange = "onSubjectChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.SemesterSubjectId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LectureDate, "Lecture Date: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.LectureDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "lectureDate", oninput = "onLectureDateInput()" } })
+                        @Html.ValidationMessageFor(model => model.LectureDate)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.FromTime, "Lecture Start Time: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.FromTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "lectureStartTime", oninput = "onLectureStartTimeInput()" } })
+                        @Html.ValidationMessageFor(model => model.FromTime)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.ToTime, "Lecture End Time: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => model.ToTime, new { htmlAttributes = new { @class = "form-control", @type = "time", @id = "lectureEndTime", oninput = "onLectureEndTimeInput()" } })
+                        @Html.ValidationMessageFor(model => model.ToTime)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LocationId, "Location: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.LocationId, (IEnumerable<SelectListItem>)ViewBag.lectureHallsList, new { @class = "form-control", @id = "lectureHallsList", onchange = "onLectureHallChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.LocationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LectureTypeId, "Lecture Type: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.LectureTypeId, (IEnumerable<SelectListItem>)ViewBag.lectureTypesList, new { @class = "form-control", @id = "lectureTypesList", onchange = "onLectureTypeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.LectureTypeId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LecturerId, "Lecturer: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9" id="intakeListDiv">
+                        @Html.DropDownListFor(model => model.LecturerId, (IEnumerable<SelectListItem>)ViewBag.lecturersList, new { @class = "form-control", @id = "lecturersList", onchange = "onLecturerChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.LecturerId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.StudentBatches, "Student Batch(es): ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.StudentBatches, (IEnumerable<SelectListItem>)ViewBag.studentBatchesList, new { @class = "form-control", @id = "studentBatches", onchange = "onStudentBatchChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.StudentBatches)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.IsActive, "Status: ")
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.IsActive, new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text = "Active", Value = "true" },
+                            new SelectListItem{ Text = "Inactive", Value = "false" }
+                        }, new { @class = "form-control", @id = "semesterTimetableStatusList", onchange = "onSemesterTimetableStatusChange(this.value)" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit" id="semesterTimetableSubmitBtn">Save</button>
+                    <button class="btn btn-light" type="button" id="semesterTimetableClearBtn" onclick="clearSemesterTimetableForm()">Clear Changes</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var operation;
+        var semesterRegistrationId;
+        var semesterTimetableRecordId;
+        var breadcumText = ``;
+
+        $(function () {
+            $("#semesterSubjectList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Subject --"
+                }
+            });
+
+            $("#lectureHallsList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Location --"
+                }
+            });
+
+            $("#lectureTypesList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Lecture Type --"
+                }
+            });
+
+            $("#lecturersList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Lecturer / Instructor --"
+                }
+            });
+
+            $("#studentBatches").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Student Batch(es) --"
+                },
+                allowClear: false,
+                multiple: true
+            });
+        });
+
+        $(document).ready(function () {
+            semesterRegistrationId = window.location.pathname.toString().split('/')[3];
+            operation = window.location.pathname.toString().split('/')[5];
+
+            breadcumText = `<li class="breadcrumb-item"><a href="@Url.Action("ManageSemesterTimetable", "SA")/` + semesterRegistrationId + `">Manage Semester Timetable</a></li>`;
+
+            if (operation != undefined) {
+                var modelData = @Html.Raw(Json.Encode(Model.StudentBatches));
+
+                var selectedStudentBatches = modelData.toString().trim().split(',');
+                $("#studentBatches").val(selectedStudentBatches).change();
+
+                $("#semesterTimetableSubmitBtn").prop("disabled", true);
+                $("#semesterTimetableClearBtn").prop("disabled", true);
+                if (operation == "Edit") {
+                    $("#aeSemesterTimetableMainTitle").html("Edit Semester Timetable Record");
+                    $("#aeSemesterTimetableCardTitle").html("Edit Semester Timetable Record");
+                    breadcumText += `<li class="breadcrumb-item active">Edit Semester Timetable Record</li>`;
+                    $("#breadCrumbWrapper").append(breadcumText);
+                }
+                else {
+                    $("#aeSemesterTimetableMainTitle").html("View Semester Timetable Record");
+                    $("#aeSemesterTimetableCardTitle").html("View Semester Timetable Record");
+                    breadcumText += `<li class="breadcrumb-item active">View Semester Timetable Record</li>`;
+                    $("#breadCrumbWrapper").append(breadcumText);
+                    $("#semesterSubjectList").prop("disabled", true);
+                    $("#lectureDate").prop("disabled", true);
+                    $("#lectureStartTime").prop("disabled", true);
+                    $("#lectureEndTime").prop("disabled", true);
+                    $("#lectureHallsList").prop("disabled", true);
+                    $("#lectureTypesList").prop("disabled", true);
+                    $("#lecturersList").prop("disabled", true);
+                    $("#studentBatches").prop("disabled", true);
+                    $("#semesterTimetableStatusList").prop("disabled", true);
+                }
+            }
+            else {
+                $("#aeSemesterTimetableMainTitle").html("Add Semester Timetable Record");
+                $("#aeSemesterTimetableCardTitle").html("Add Semester Timetable Record");
+                breadcumText += `<li class="breadcrumb-item active">Add Semester Timetable Record</li>`;
+                $("#breadCrumbWrapper").append(breadcumText);
+                $("#lectureDate").val("");
+                $("#lectureStartTime").val("");
+                $("#lectureEndTime").val("");
+                $("#semesterTimetableStatusList").val("true");
+                $("#semesterSubjectList").val(null).change();
+                $("#lectureHallsList").val(null).change();
+                $("#lectureTypesList").val(null).change();
+                $("#lecturersList").val(null).change();
+                $("#studentBatches").val(null).change();
+            }
+        })
+
+        function SubmitSemesterTimetableForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            if ($(form).valid()) {
+                var startTime = new Date($("#lectureDate").val() + " " + $("#lectureStartTime").val());
+                var endTime = new Date($("#lectureDate").val() + " " + $("#lectureEndTime").val());
+
+                if (startTime >= endTime) {
+                    alert("Lecture Start Time should be less than Lecture End Time");
+                }
+                else {
+                    AddOrEditLT(form);
+                }
+            }
+            return false;
+        }
+
+        function AddOrEditLT(form) {
+            $("#loader").show();
+
+            var studentBatches = [];
+
+            $("#studentBatches :selected").each(function () {
+                studentBatches.push($(this).val());
+            });
+
+            var fd = new FormData();
+
+            $.each($(form).serializeArray(), function (key, input) {
+                fd.append(input.name, input.value);
+            });
+
+            fd.delete("StudentBatches");
+
+            fd.append("StudentBatches", studentBatches);
+
+            $.ajax({
+                type: "POST",
+                url: form.action,
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        if (operation == undefined) {
+                            $("#lectureDate").val("");
+                            $("#lectureStartTime").val("");
+                            $("#lectureEndTime").val("");
+                            $("#semesterTimetableStatusList").val("true");
+                            $("#semesterSubjectList").val(null).change();
+                            $("#lectureHallsList").val(null).change();
+                            $("#lectureTypesList").val(null).change();
+                            $("#lecturersList").val(null).change();
+                            $("#studentBatches").val(null).change();
+                        }
+
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
+
+        function clearSemesterTimetableForm() {
+            if (operation == undefined) {
+                $("#lectureDate").val("");
+                $("#lectureStartTime").val("");
+                $("#lectureEndTime").val("");
+                $("#semesterTimetableStatusList").val("true");
+                $("#semesterSubjectList").val(null).change();
+                $("#lectureHallsList").val(null).change();
+                $("#lectureTypesList").val(null).change();
+                $("#lecturersList").val(null).change();
+                $("#studentBatches").val(null).change();
+            }
+            else {
+                window.location.reload();
+            }
+        }
+
+        function onSubjectChange(newSubject) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLectureDateInput() {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLectureStartTimeInput() {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLectureEndTimeInput() {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLectureHallChange(newHall) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLectureTypeChange(newLectureType) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onLecturerChange(newLecturer) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onStudentBatchChange(newStudentBatch) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+
+        function onSemesterTimetableStatusChange(newStatus) {
+            $("#semesterTimetableSubmitBtn").prop("disabled", false);
+            $("#semesterTimetableClearBtn").prop("disabled", false);
+        }
+    </script>
+}

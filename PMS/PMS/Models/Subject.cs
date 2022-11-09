@@ -30,12 +30,15 @@ namespace PMS.Models
         [Required(ErrorMessage = "Subject Name is required")]
         [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string SubjectName { get; set; }
+        public bool IsCommon { get; set; }
+        public Nullable<int> DegreeId { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
+        public virtual Degree Degree { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

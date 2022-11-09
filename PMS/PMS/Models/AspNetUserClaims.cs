@@ -16,9 +16,14 @@ namespace PMS.Models
     {
         public int Id { get; set; }
         public string UserId { get; set; }
-        public string ClaimType { get; set; }
-        public string ClaimValue { get; set; }
+        public int AccessGroupClaimId { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime ModifiedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public bool IsActive { get; set; }
     
+        public virtual AccessGroupClaims AccessGroupClaims { get; set; }
         public virtual AspNetUsers AspNetUsers { get; set; }
     }
 }
