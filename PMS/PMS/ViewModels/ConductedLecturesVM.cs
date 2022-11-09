@@ -29,5 +29,6 @@ namespace PMS.ViewModels
         public bool IsFinalApproved { get; set; }
         public bool IsActive { get; set; }
         public SemesterTimetableVM timetableRecords { get; set; }
+        public bool canSendToApproval { get; set; }
     }
 }

@@ -32,7 +32,8 @@
                     <label>Record Month: <span id="empName" class="text-dark">@ViewBag.RecordMonth</span></label>
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-check"></i> Approve</button>
+            <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2 mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-times"></i> Reject</button>
             <div class="table-responsive">
                 <table id="lectureApprovalTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>

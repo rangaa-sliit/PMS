@@ -8,6 +8,7 @@ namespace PMS.ViewModels
     public class SemesterTimetableVM
     {
         public int TimetableId { get; set; }
+        public int SemesterSubjectId { get; set; }
         public string SubjectName { get; set; }
         public string LectureDate { get; set; }
         public string FromTime { get; set; }
