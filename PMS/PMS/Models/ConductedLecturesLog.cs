@@ -48,5 +48,6 @@ namespace PMS.Models
         public virtual ConductedLectures ConductedLectures { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }
+        public virtual SubWorkflows SubWorkflows { get; set; }
     }
 }

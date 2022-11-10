@@ -41,16 +41,23 @@ namespace PMS
                       "~/Content/fixedColumns.dataTables.min.css",
                       "~/Content/select.dataTables.min.css"));
 
+            bundles.Add(new ScriptBundle("~/DataTable/checkboxCSS").Include(
+                      "~/Content/dataTables.checkboxes.css"));
+
             bundles.Add(new ScriptBundle("~/DataTable/js").Include(
                       "~/Scripts/jquery.dataTables.min.js",
                       "~/Scripts/dataTables.bootstrap4.min.js",
                       "~/Scripts/dataTables.fixedColumns.min.js",
-                      "~/Scripts/dataTables.select.min.js",
                       //"~/Scripts/dataTables.checkboxes.min.js",
                       "~/Scripts/dataTables.buttons.min.js",
                       "~/Scripts/buttons.bootstrap4.min.js",
                       "~/Scripts/buttons.print.min.js",
-                      "~/Scripts/buttons.html5.min.js"));
+                      "~/Scripts/buttons.html5.min.js",
+                      "~/Scripts/dataTables.select.min.js"));
+
+            bundles.Add(new ScriptBundle("~/DataTable/checkboxJS").Include(
+                      "~/Scripts/dataTables.checkboxes.min.js",
+                      "~/Scripts/dataTables.select.min.js"));
 
             bundles.Add(new ScriptBundle("~/Popper/js").Include(
                       "~/Scripts/popper-4.0.min.js"));

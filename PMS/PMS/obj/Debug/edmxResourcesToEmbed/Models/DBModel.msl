@@ -524,6 +524,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="ToDate" ColumnName="ToDate" />
           <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+          <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
           <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
           <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
           <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />

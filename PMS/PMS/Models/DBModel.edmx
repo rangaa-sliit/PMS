@@ -507,6 +507,7 @@
           <Property Name="InstituteId" Type="int" />
           <Property Name="DegreeId" Type="int" />
           <Property Name="SpecializationId" Type="int" />
+          <Property Name="DepartmentId" Type="int" />
           <Property Name="FromDate" Type="date" />
           <Property Name="ToDate" Type="date" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -833,6 +834,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConductedLectures_SubWorkflows">
+          <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="0..1" />
+          <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubWorkflows">
+              <PropertyRef Name="SubWorkflowId" />
+            </Principal>
+            <Dependent Role="ConductedLectures">
+              <PropertyRef Name="CurrentStage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ConductedLecturesLog_Campus">
           <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
           <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
@@ -880,6 +893,18 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="TimetableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConductedLecturesLog_SubWorkflows">
+          <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="0..1" />
+          <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubWorkflows">
+              <PropertyRef Name="SubWorkflowId" />
+            </Principal>
+            <Dependent Role="ConductedLecturesLog">
+              <PropertyRef Name="CurrentStage" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1341,6 +1366,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SemesterRegistration_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="SemesterRegistration">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SemesterRegistration_Faculty">
           <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
           <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
@@ -1653,6 +1690,10 @@
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="Self.FK_ConductedLectures_SubWorkflows">
+            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+          </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
             <End Role="Campus" EntitySet="Campus" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -1667,6 +1708,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="Self.FK_ConductedLecturesLog_LectureTimetable">
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
+            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
@@ -1815,6 +1860,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_SemesterRegistration_Degree" Association="Self.FK_SemesterRegistration_Degree">
             <End Role="Degree" EntitySet="Degree" />
+            <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SemesterRegistration_Department" Association="Self.FK_SemesterRegistration_Department">
+            <End Role="Department" EntitySet="Department" />
             <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
           </AssociationSet>
           <AssociationSet Name="FK_SemesterRegistration_Faculty" Association="Self.FK_SemesterRegistration_Faculty">
@@ -2042,6 +2091,10 @@
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="PMSModel.FK_ConductedLectures_SubWorkflows">
+            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+          </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="PMSModel.FK_ConductedLecturesLog_ConductedLectures">
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -2052,6 +2105,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="PMSModel.FK_ConductedLecturesLog_LectureTimetable">
             <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="PMSModel.FK_ConductedLecturesLog_SubWorkflows">
+            <End Role="SubWorkflows" EntitySet="SubWorkflows" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="PMSModel.FK_ConfigurationalSettings_Faculty">
@@ -2093,6 +2150,10 @@
           <AssociationSet Name="FK_Department_Faculty" Association="PMSModel.FK_Department_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
             <End Role="Department" EntitySet="Department" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SemesterRegistration_Department" Association="PMSModel.FK_SemesterRegistration_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
           </AssociationSet>
           <AssociationSet Name="FK_Specialization_Department" Association="PMSModel.FK_Specialization_Department">
             <End Role="Department" EntitySet="Department" />
@@ -2474,6 +2535,7 @@
           <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="ConductedLectures" ToRole="Campus" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="ConductedLectures" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLectures_LectureTimetable" FromRole="ConductedLectures" ToRole="LectureTimetable" />
+          <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLectures_SubWorkflows" FromRole="ConductedLectures" ToRole="SubWorkflows" />
           <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLectures" ToRole="ConductedLecturesLog" />
         </EntityType>
         <EntityType Name="ConductedLecturesLog">
@@ -2513,6 +2575,7 @@
           <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLecturesLog" ToRole="ConductedLectures" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLecturesLog_LectureHall" FromRole="ConductedLecturesLog" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLecturesLog_LectureTimetable" FromRole="ConductedLecturesLog" ToRole="LectureTimetable" />
+          <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLecturesLog_SubWorkflows" FromRole="ConductedLecturesLog" ToRole="SubWorkflows" />
         </EntityType>
         <EntityType Name="ConfigurationalSettings">
           <Key>
@@ -2572,6 +2635,7 @@
           <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Department_AspNetUsers" FromRole="Department" ToRole="AspNetUsers" />
           <NavigationProperty Name="Degree" Relationship="PMSModel.FK_Degree_Department" FromRole="Department" ToRole="Degree" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_Department_Faculty" FromRole="Department" ToRole="Faculty" />
+          <NavigationProperty Name="SemesterRegistration" Relationship="PMSModel.FK_SemesterRegistration_Department" FromRole="Department" ToRole="SemesterRegistration" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_Specialization_Department" FromRole="Department" ToRole="Specialization" />
         </EntityType>
         <EntityType Name="Designation">
@@ -2835,6 +2899,7 @@
           <Property Name="InstituteId" Type="Int32" />
           <Property Name="DegreeId" Type="Int32" />
           <Property Name="SpecializationId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
           <Property Name="FromDate" Type="DateTime" Precision="0" />
           <Property Name="ToDate" Type="DateTime" Precision="0" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2844,6 +2909,7 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="CalendarPeriod" Relationship="PMSModel.FK_SemesterRegistration_CalendarPeriod" FromRole="SemesterRegistration" ToRole="CalendarPeriod" />
           <NavigationProperty Name="Degree" Relationship="PMSModel.FK_SemesterRegistration_Degree" FromRole="SemesterRegistration" ToRole="Degree" />
+          <NavigationProperty Name="Department" Relationship="PMSModel.FK_SemesterRegistration_Department" FromRole="SemesterRegistration" ToRole="Department" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_SemesterRegistration_Faculty" FromRole="SemesterRegistration" ToRole="Faculty" />
           <NavigationProperty Name="Institute" Relationship="PMSModel.FK_SemesterRegistration_Institute" FromRole="SemesterRegistration" ToRole="Institute" />
           <NavigationProperty Name="Intake" Relationship="PMSModel.FK_SemesterRegistration_Intake" FromRole="SemesterRegistration" ToRole="Intake" />
@@ -2961,6 +3027,8 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_SubWorkflows_AspNetRoles" FromRole="SubWorkflows" ToRole="AspNetRoles" />
           <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="SubWorkflows" ToRole="AspNetUsers" />
+          <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_SubWorkflows" FromRole="SubWorkflows" ToRole="ConductedLectures" />
+          <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_SubWorkflows" FromRole="SubWorkflows" ToRole="ConductedLecturesLog" />
           <NavigationProperty Name="Workflows" Relationship="PMSModel.FK_SubWorkflows_Workflows" FromRole="SubWorkflows" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="sysdiagrams">
@@ -3359,6 +3427,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConductedLectures_SubWorkflows">
+          <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="0..1" />
+          <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubWorkflows">
+              <PropertyRef Name="SubWorkflowId" />
+            </Principal>
+            <Dependent Role="ConductedLectures">
+              <PropertyRef Name="CurrentStage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ConductedLecturesLog_ConductedLectures">
           <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3394,6 +3474,18 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="TimetableId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConductedLecturesLog_SubWorkflows">
+          <End Type="PMSModel.SubWorkflows" Role="SubWorkflows" Multiplicity="0..1" />
+          <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubWorkflows">
+              <PropertyRef Name="SubWorkflowId" />
+            </Principal>
+            <Dependent Role="ConductedLecturesLog">
+              <PropertyRef Name="CurrentStage" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3520,6 +3612,18 @@
             </Principal>
             <Dependent Role="Department">
               <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SemesterRegistration_Department">
+          <End Type="PMSModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="SemesterRegistration">
+              <PropertyRef Name="DepartmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4446,6 +4550,7 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="ToDate" ColumnName="ToDate" />
                 <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
                 <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
                 <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
                 <ScalarProperty Name="InstituteId" ColumnName="InstituteId" />

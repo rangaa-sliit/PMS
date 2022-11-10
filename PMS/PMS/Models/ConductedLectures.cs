@@ -63,6 +63,7 @@ namespace PMS.Models
         public virtual Campus Campus { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }
+        public virtual SubWorkflows SubWorkflows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
     }

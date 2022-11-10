@@ -46,6 +46,7 @@ namespace PMS.Models
         [Required(ErrorMessage = "Degree is required")]
         public Nullable<int> DegreeId { get; set; }
         public Nullable<int> SpecializationId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         [Required(ErrorMessage = "Semester Starting Date is required")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -62,6 +63,7 @@ namespace PMS.Models
     
         public virtual CalendarPeriod CalendarPeriod { get; set; }
         public virtual Degree Degree { get; set; }
+        public virtual Department Department { get; set; }
         public virtual Faculty Faculty { get; set; }
         public virtual Institute Institute { get; set; }
         public virtual Intake Intake { get; set; }

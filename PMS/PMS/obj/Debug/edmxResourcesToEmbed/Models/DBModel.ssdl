@@ -502,6 +502,7 @@
     <Property Name="InstituteId" Type="int" />
     <Property Name="DegreeId" Type="int" />
     <Property Name="SpecializationId" Type="int" />
+    <Property Name="DepartmentId" Type="int" />
     <Property Name="FromDate" Type="date" />
     <Property Name="ToDate" Type="date" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -828,6 +829,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_ConductedLectures_SubWorkflows">
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="0..1" />
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SubWorkflows">
+        <PropertyRef Name="SubWorkflowId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="CurrentStage" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_ConductedLecturesLog_Campus">
     <End Role="Campus" Type="Self.Campus" Multiplicity="0..1" />
     <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
@@ -875,6 +888,18 @@
       </Principal>
       <Dependent Role="ConductedLecturesLog">
         <PropertyRef Name="TimetableId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_SubWorkflows">
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="0..1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SubWorkflows">
+        <PropertyRef Name="SubWorkflowId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="CurrentStage" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1336,6 +1361,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_SemesterRegistration_Department">
+    <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Department">
+        <PropertyRef Name="DepartmentId" />
+      </Principal>
+      <Dependent Role="SemesterRegistration">
+        <PropertyRef Name="DepartmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_SemesterRegistration_Faculty">
     <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
     <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
@@ -1648,6 +1685,10 @@
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_SubWorkflows" Association="Self.FK_ConductedLectures_SubWorkflows">
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_Campus" Association="Self.FK_ConductedLecturesLog_Campus">
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
@@ -1662,6 +1703,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_LectureTimetable" Association="Self.FK_ConductedLecturesLog_LectureTimetable">
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_SubWorkflows" Association="Self.FK_ConductedLecturesLog_SubWorkflows">
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
@@ -1810,6 +1855,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Degree" Association="Self.FK_SemesterRegistration_Degree">
       <End Role="Degree" EntitySet="Degree" />
+      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SemesterRegistration_Department" Association="Self.FK_SemesterRegistration_Department">
+      <End Role="Department" EntitySet="Department" />
       <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_Faculty" Association="Self.FK_SemesterRegistration_Faculty">
