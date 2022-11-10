@@ -27,6 +27,7 @@
     <EntitySet Name="LectureTimetable" EntityType="PMSModel.LectureTimetable" />
     <EntitySet Name="LectureTimetableLog" EntityType="PMSModel.LectureTimetableLog" />
     <EntitySet Name="LectureType" EntityType="PMSModel.LectureType" />
+    <EntitySet Name="Notifications" EntityType="PMSModel.Notifications" />
     <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
     <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
     <EntitySet Name="SemesterRegistration" EntityType="PMSModel.SemesterRegistration" />
@@ -114,6 +115,10 @@
     <AssociationSet Name="FK_LectureTimetableLog_AspNetUsers" Association="PMSModel.FK_LectureTimetableLog_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Notifications_AspNetUsers" Association="PMSModel.FK_Notifications_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Notifications" EntitySet="Notifications" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterSubjectLIC_AspNetUsers" Association="PMSModel.FK_SemesterSubjectLIC_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -494,6 +499,7 @@
     <NavigationProperty Name="LecturerAssignments" Relationship="PMSModel.FK_LecturerAssignments_AspNetUsers" FromRole="AspNetUsers" ToRole="LecturerAssignments" />
     <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetable" />
     <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_AspNetUsers" FromRole="AspNetUsers" ToRole="LectureTimetableLog" />
+    <NavigationProperty Name="Notifications" Relationship="PMSModel.FK_Notifications_AspNetUsers" FromRole="AspNetUsers" ToRole="Notifications" />
     <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="AspNetUsers" ToRole="SemesterSubjectLIC" />
     <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="AspNetUsers" ToRole="SubWorkflows" />
   </EntityType>
@@ -558,7 +564,7 @@
     <Property Name="StudentCount" Type="Int32" />
     <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+    <Property Name="CurrentStage" Type="Int32" />
     <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsApprovedOrRejected" Type="Boolean" />
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
@@ -596,7 +602,7 @@
     <Property Name="StudentCount" Type="Int32" />
     <Property Name="StudentAttendanceSheetLocation" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="CurrentStage" Type="Int32" Nullable="false" />
+    <Property Name="CurrentStage" Type="Int32" />
     <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="IsApprovedOrRejected" Type="Boolean" />
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
@@ -857,6 +863,20 @@
     <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_LectureType" FromRole="LectureType" ToRole="LectureTimetable" />
     <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureType" FromRole="LectureType" ToRole="LectureTimetableLog" />
   </EntityType>
+  <EntityType Name="Notifications">
+    <Key>
+      <PropertyRef Name="NotificationId" />
+    </Key>
+    <Property Name="NotificationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_Notifications_AspNetUsers" FromRole="Notifications" ToRole="AspNetUsers" />
+  </EntityType>
   <EntityType Name="PaymentRate">
     <Key>
       <PropertyRef Name="Id" />
@@ -868,6 +888,7 @@
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
     <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
     <Property Name="IsApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -893,6 +914,7 @@
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
+    <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
     <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
     <Property Name="IsApproved" Type="Boolean" Nullable="false" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -1332,6 +1354,18 @@
       </Principal>
       <Dependent Role="LectureTimetableLog">
         <PropertyRef Name="LecturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Notifications_AspNetUsers">
+    <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+    <End Type="PMSModel.Notifications" Role="Notifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Notifications">
+        <PropertyRef Name="UserId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

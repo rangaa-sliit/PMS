@@ -234,6 +234,14 @@
                 "type": "GET",
                 "dataType": "json"
             },
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'checkboxes': {
+                        'selectRow': true
+                    }
+                }
+            ],
             "columns": [
                 {
                     "data": null,
@@ -347,20 +355,10 @@
                     "data": "CurrentStageDisplayName"
                 }
             ],
-            "columnDefs": [
-                {
-                    "orderable": false,
-                    "className": 'select-checkbox',
-                    "targets": 0,
-                }
-            ],
-            "select": {
-                "style": 'multi',
-                "selector": 'td:first-child'
+            'select': {
+                'style': 'multi',
+                'selector': 'td:first-child'
             },
-            "language": {
-                "emptyTable": "No Records Found!"
-            }
         });
 
         function OpenTimetableComparisonForm(data) {

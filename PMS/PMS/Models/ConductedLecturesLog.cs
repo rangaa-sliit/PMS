@@ -26,7 +26,7 @@ namespace PMS.Models
         public Nullable<int> StudentCount { get; set; }
         public string StudentAttendanceSheetLocation { get; set; }
         public string Comment { get; set; }
-        public int CurrentStage { get; set; }
+        public Nullable<int> CurrentStage { get; set; }
         public string CurrentStageDisplayName { get; set; }
         public Nullable<bool> IsApprovedOrRejected { get; set; }
         public Nullable<System.DateTime> ApprovedOrRejectedDate { get; set; }

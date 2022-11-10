@@ -204,6 +204,7 @@
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />
+    <Compile Include="Custom_Classes\SubWorkflow_WorkflowCC.cs" />
     <Compile Include="Custom_Classes\UserClaimCC.cs" />
     <Compile Include="Custom_Classes\UserGroupsRolesCC.cs" />
     <Compile Include="Custom_Classes\SubWorkflowCC.cs" />
@@ -307,6 +308,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Notifications.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PaymentRate.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>

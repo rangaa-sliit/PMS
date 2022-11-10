@@ -457,6 +457,20 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Notifications">
+      <EntityTypeMapping TypeName="PMSModel.Notifications">
+        <MappingFragment StoreEntitySet="Notifications">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="NotificationId" ColumnName="NotificationId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="PaymentRate">
       <EntityTypeMapping TypeName="PMSModel.PaymentRate">
         <MappingFragment StoreEntitySet="PaymentRate">
@@ -467,6 +481,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
+          <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
@@ -488,6 +503,7 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
+          <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />

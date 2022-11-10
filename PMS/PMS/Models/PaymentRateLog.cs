@@ -21,6 +21,7 @@ namespace PMS.Models
         public Nullable<int> SubjectId { get; set; }
         public int DesignationId { get; set; }
         public double RatePerHour { get; set; }
+        public double OldRatePerHour { get; set; }
         public bool SentForApproval { get; set; }
         public bool IsApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }

@@ -31,6 +31,7 @@ namespace PMS.Models
         [Required(ErrorMessage = "Rate Per Hour is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Only positive values are allowed")]
         public double RatePerHour { get; set; }
+        public double OldRatePerHour { get; set; }
         public bool SentForApproval { get; set; }
         public bool IsApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }

@@ -10,6 +10,7 @@ Developed On:- 2022/08/16*@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Styles.Render("~/DataTable/css")
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body id="page-top">
@@ -35,6 +36,7 @@ Developed On:- 2022/08/16*@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/DataTable/js")
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
     @Scripts.Render("~/Notify/js")
     <script>
         $("#loader").hide();
@@ -167,7 +169,7 @@ Developed On:- 2022/08/16*@
 
             var accessControlUrlArray = ['ManageClaims', 'AddOrEditClaim',
                 'ManageAccessGroups', 'AddOrEditAccessGroup',
-                'ManageAccessGroupClaims', 
+                'ManageAccessGroupClaims',
                 'ManageAccessGroupRoles', 'AddOrEditAccessGroupRole',
                 'ManageUsers', 'AddOrEditUser', 'ManageUserClaims'
             ];

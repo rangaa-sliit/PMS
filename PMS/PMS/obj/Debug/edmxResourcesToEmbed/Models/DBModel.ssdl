@@ -195,7 +195,7 @@
     <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-    <Property Name="CurrentStage" Type="int" Nullable="false" />
+    <Property Name="CurrentStage" Type="int" />
     <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
@@ -229,7 +229,7 @@
     <Property Name="StudentCount" Type="int" />
     <Property Name="StudentAttendanceSheetLocation" Type="nvarchar" MaxLength="500" />
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
-    <Property Name="CurrentStage" Type="int" Nullable="false" />
+    <Property Name="CurrentStage" Type="int" />
     <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
@@ -433,6 +433,19 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="Notifications">
+    <Key>
+      <PropertyRef Name="NotificationId" />
+    </Key>
+    <Property Name="NotificationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="PaymentRate">
     <Key>
       <PropertyRef Name="Id" />
@@ -444,6 +457,7 @@
     <Property Name="SubjectId" Type="int" />
     <Property Name="DesignationId" Type="int" Nullable="false" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="OldRatePerHour" Type="float" Nullable="false" />
     <Property Name="SentForApproval" Type="bit" Nullable="false" />
     <Property Name="IsApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -463,6 +477,7 @@
     <Property Name="SubjectId" Type="int" />
     <Property Name="DesignationId" Type="int" Nullable="false" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
+    <Property Name="OldRatePerHour" Type="float" Nullable="false" />
     <Property Name="SentForApproval" Type="bit" Nullable="false" />
     <Property Name="IsApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -1151,6 +1166,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Notifications_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Notifications">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Degree">
     <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
@@ -1548,6 +1575,7 @@
     <EntitySet Name="LectureTimetable" EntityType="Self.LectureTimetable" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureTimetableLog" EntityType="Self.LectureTimetableLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
@@ -1727,6 +1755,10 @@
     <AssociationSet Name="FK_LectureTimetableLog_SemesterSubject" Association="Self.FK_LectureTimetableLog_SemesterSubject">
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
       <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Notifications_AspNetUsers" Association="Self.FK_Notifications_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Notifications" EntitySet="Notifications" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
       <End Role="Degree" EntitySet="Degree" />

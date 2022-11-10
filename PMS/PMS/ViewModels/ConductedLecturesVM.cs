@@ -18,7 +18,7 @@ namespace PMS.ViewModels
         public Nullable<int> StudentCount { get; set; }
         public string StudentAttendanceSheetLocation { get; set; }
         public string Comment { get; set; }
-        public int CurrentStage { get; set; }
+        public Nullable<int> CurrentStage { get; set; }
         public string CurrentStageDisplayName { get; set; }
         public Nullable<bool> IsApprovedOrRejected { get; set; }
         public string ApprovedOrRejectedDate { get; set; }
@@ -28,6 +28,8 @@ namespace PMS.ViewModels
         public Nullable<double> PaymentAmount { get; set; }
         public bool IsFinalApproved { get; set; }
         public bool IsActive { get; set; }
+        public int FacultyId { get; set; }
+        public Nullable<int> DepartmentId { get; set; }
         public SemesterTimetableVM timetableRecords { get; set; }
         public bool canSendToApproval { get; set; }
     }

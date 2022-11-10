@@ -52,6 +52,7 @@ namespace PMS.Models
         public virtual DbSet<LectureTimetable> LectureTimetable { get; set; }
         public virtual DbSet<LectureTimetableLog> LectureTimetableLog { get; set; }
         public virtual DbSet<LectureType> LectureType { get; set; }
+        public virtual DbSet<Notifications> Notifications { get; set; }
         public virtual DbSet<PaymentRate> PaymentRate { get; set; }
         public virtual DbSet<PaymentRateLog> PaymentRateLog { get; set; }
         public virtual DbSet<SemesterRegistration> SemesterRegistration { get; set; }

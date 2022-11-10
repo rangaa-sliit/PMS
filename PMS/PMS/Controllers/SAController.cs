@@ -4325,24 +4325,121 @@ namespace PMS.Controllers
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
             using(PMSEntities db = new PMSEntities())
             {
-                List<SubWorkflows> xyz = new List<SubWorkflows>();
-                SubWorkflows xy = new SubWorkflows()
+                var currentDateTime = DateTime.Now;
+                var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+                var username = "ranga.a";
+                //int deadlineDays = 0;
+
+                //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
+                List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
+                List<SubWorkflow_WorkflowCC> nextWorkflows = new List<SubWorkflow_WorkflowCC>();
+
+                var userRecord = (from u in db.AspNetUsers
+                                  join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
+                                  from fac in u_f.DefaultIfEmpty()
+                                  where u.UserName.Equals(username)
+                                  select u).FirstOrDefault();
+
+                var conductedLectureRecords = (from cl in db.ConductedLectures
+                                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                               join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                               where tt.LecturerId.Equals(userRecord.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                               && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
+                                               select new
+                                               {
+                                                   lectureRecord = cl,
+                                                   facultyId = sem.FacultyId.Value
+                                               }).ToList();
+
+                for (var i = 0; i < conductedLectureRecords.Count; i++)
                 {
-                    SubWorkflowId = 1,
-                    WorkflowRole = "pqr"
-                };
+                    int deadlineDays = 0;
+                    var paymentConsideringMonth = 0;
+                    int facultyId = conductedLectureRecords[i].facultyId;
+                    var checkingCS = deadlineCSList.Find(cs => cs.FacultyId.Value.Equals(facultyId));
 
-                SubWorkflows yz = new SubWorkflows()
-                {
-                    SubWorkflowId = 2,
-                    WorkflowRole = "pqr"
-                };
+                    if (checkingCS == null)
+                    {
+                        var deadlineCSRecord = (from c in db.ConfigurationalSettings
+                                                where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value == facultyId
+                                                select c).FirstOrDefault();
 
-                xyz.Add(xy);
-                xyz.Add(yz);
-                var subWorkflow = xyz.FindAll(sw => sw.WorkflowRole == "pqr");
+                        if (deadlineCSRecord != null)
+                        {
+                            deadlineCSList.Add(deadlineCSRecord);
+                            deadlineDays = int.Parse(deadlineCSRecord.ConfigurationValue);
+                        }
+                    }
+                    else
+                    {
+                        deadlineDays = int.Parse(checkingCS.ConfigurationValue);
+                    }
 
-                return Json(new { data = subWorkflow }, JsonRequestBehavior.AllowGet);
+                    if (deadlineDays != 0)
+                    {
+                        var deadlineDate = monthStartDate.AddDays(deadlineDays);
+
+                        if (currentDateTime <= deadlineDate)
+                        {
+                            paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
+                        }
+                        else
+                        {
+                            paymentConsideringMonth = currentDateTime.Month;
+                        }
+                    }
+                    else
+                    {
+                        paymentConsideringMonth = currentDateTime.Month;
+                    }
+
+                    //var checkingWorkflow = nextWorkflows.Find(sw => sw.WorkflowRecord.FacultyId.Value == conductedLectureRecords[i].facultyId);
+
+                    //if (checkingWorkflow == null)
+                    //{
+                    //    var nextWorkflowRecord = (from sw in db.SubWorkflows
+                    //                              join w in db.Workflows on sw.WorkflowId equals w.Id
+                    //                              join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                    //                              where sw.WorkflowStep.Equals(2) && w.FacultyId.Value.Equals(conductedLectureRecords[i].facultyId)
+                    //                              select new SubWorkflow_WorkflowCC
+                    //                              {
+                    //                                  SubWorkflowRecord = sw,
+                    //                                  WorkflowRole = r.Name,
+                    //                                  WorkflowRecord = w
+                    //                              }).FirstOrDefault();
+
+                    //    if (nextWorkflowRecord != null)
+                    //    {
+                    //        nextWorkflows.Add(nextWorkflowRecord);
+
+                    //        if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
+                    //            && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                    //        {
+                    //            conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
+                    //            conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
+                    //            conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
+                    //            conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+
+                    //            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
+                    //            && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                    //    {
+                    //        conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
+                    //        conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
+                    //        conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
+                    //        conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+
+                    //        db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                    //    }
+                    //}
+                }
+
+                return Json(new { data = deadlineCSList }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -8121,7 +8218,6 @@ namespace PMS.Controllers
                                 paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
                             }
 
-                            clObj.CurrentStage = 1;
                             clObj.CurrentStageDisplayName = "Saved";
                             clObj.PaymentAmount = paymentAmount;
                             clObj.CreatedBy = "Ranga";
@@ -8142,7 +8238,6 @@ namespace PMS.Controllers
                             clLogObj.StudentBatches = clObj.StudentBatches;
                             clLogObj.StudentCount = clObj.StudentCount;
                             clLogObj.Comment = clObj.Comment;
-                            clLogObj.CurrentStage = clObj.CurrentStage;
                             clLogObj.CurrentStageDisplayName = clObj.CurrentStageDisplayName;
                             clLogObj.PaymentAmount = clObj.PaymentAmount;
                             clLogObj.CreatedDate = clObj.CreatedDate;
@@ -8547,66 +8642,114 @@ namespace PMS.Controllers
                     var currentDateTime = DateTime.Now;
                     var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
                     var username = "ranga.a";
-                    int deadlineDays = 0;
-                    var paymentConsideringMonth = 0;
+                    //int deadlineDays = 0;
 
-                    List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
-                    AspNetRoles nextWorkflowRole = new AspNetRoles();
+                    //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
+                    List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
+                    List<SubWorkflow_WorkflowCC> nextWorkflows = new List<SubWorkflow_WorkflowCC>();
 
                     var userRecord = (from u in db.AspNetUsers
                                       join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                       from fac in u_f.DefaultIfEmpty()
                                       where u.UserName.Equals(username)
-                                      select new {
-                                          user = u,
-                                          faculty = fac != null ? fac : null
-                                      }).FirstOrDefault();
+                                      select u).FirstOrDefault();
 
-                    if(userRecord.faculty != null)
+                    var conductedLectureRecords = (from cl in db.ConductedLectures
+                                                   join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                   join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                                   where tt.LecturerId.Equals(userRecord.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                   && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
+                                                   select new {
+                                                       lectureRecord = cl,
+                                                       facultyId = sem.FacultyId.Value
+                                                   }).ToList();
+
+                    for (var i = 0; i < conductedLectureRecords.Count; i++)
                     {
-                        deadlineDays = int.Parse((from c in db.ConfigurationalSettings
-                                                  where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
-                                                  select c.ConfigurationValue).FirstOrDefault());
+                        int deadlineDays = 0;
+                        var paymentConsideringMonth = 0;
+                        int facultyId = conductedLectureRecords[i].facultyId;
 
-                        nextWorkflowRole = (from sw in db.SubWorkflows
-                                            join w in db.Workflows on sw.WorkflowId equals w.Id
-                                            join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
-                                            where sw.WorkflowStep.Equals(2) && w.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
-                                            select r).FirstOrDefault();
-                    }                    
-
-                    if(deadlineDays != 0)
-                    {
-                        var deadlineDate = monthStartDate.AddDays(deadlineDays);
+                        var checkingCS = deadlineCSList.Find(cs => cs.FacultyId.Value == facultyId);
                         
-                        if (currentDateTime <= deadlineDate)
+                        if(checkingCS == null)
                         {
-                            paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
+                            var deadlineCSRecord = (from c in db.ConfigurationalSettings
+                                                    where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value == facultyId
+                                                    select c).FirstOrDefault();
+
+                            if(deadlineCSRecord != null)
+                            {
+                                deadlineCSList.Add(deadlineCSRecord);
+                                deadlineDays = int.Parse(deadlineCSRecord.ConfigurationValue);
+                            }
+                        }
+                        else
+                        {
+                            deadlineDays = int.Parse(checkingCS.ConfigurationValue);
+                        }
+
+                        if (deadlineDays != 0)
+                        {
+                            var deadlineDate = monthStartDate.AddDays(deadlineDays);
+
+                            if (currentDateTime <= deadlineDate)
+                            {
+                                paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
+                            }
+                            else
+                            {
+                                paymentConsideringMonth = currentDateTime.Month;
+                            }
                         }
                         else
                         {
                             paymentConsideringMonth = currentDateTime.Month;
                         }
-                    }
-                    else
-                    {
-                        paymentConsideringMonth = currentDateTime.Month;
-                    }
 
-                    conductedLectureRecords = (from cl in db.ConductedLectures
-                                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                               where tt.LecturerId.Equals(userRecord.user.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                               && cl.CurrentStage.Equals(1) && cl.ActualLectureDate.Month == paymentConsideringMonth
-                                               select cl).ToList();
+                        var checkingWorkflow = nextWorkflows.Find(sw => sw.WorkflowRecord.FacultyId.Value == facultyId);
 
-                    for (var i = 0; i < conductedLectureRecords.Count; i++)
-                    {
-                        conductedLectureRecords[i].CurrentStage = 2;
-                        conductedLectureRecords[i].CurrentStageDisplayName = "Submitted to " + nextWorkflowRole.Name;
-                        conductedLectureRecords[i].ModifiedDate = currentDateTime;
-                        conductedLectureRecords[i].ModifiedBy = "Ranga";
+                        if (checkingWorkflow == null)
+                        {
+                            var nextWorkflowRecord = (from sw in db.SubWorkflows
+                                                      join w in db.Workflows on sw.WorkflowId equals w.Id
+                                                      join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                                      where sw.WorkflowStep.Equals(2) && w.FacultyId.Value == facultyId
+                                                      select new SubWorkflow_WorkflowCC {
+                                                          SubWorkflowRecord = sw,
+                                                          WorkflowRole = r.Name,
+                                                          WorkflowRecord = w
+                                                      }).FirstOrDefault();
 
-                        db.Entry(conductedLectureRecords[i]).State = EntityState.Modified;
+                            if (nextWorkflowRecord != null)
+                            {
+                                nextWorkflows.Add(nextWorkflowRecord);
+
+                                if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year 
+                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                                {
+                                    conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
+                                    conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
+                                    conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
+                                    conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+
+                                    db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
+                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                            {
+                                conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
+                                conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
+                                conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
+                                conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+
+                                db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                            }
+                        }
                     }
 
                     db.SaveChanges();
@@ -8651,7 +8794,7 @@ namespace PMS.Controllers
                 List<ConductedLectureApprovalVM> conductedLecturesList = new List<ConductedLectureApprovalVM>();
                 List<SubWorkflows> subWorkflowsList = new List<SubWorkflows>();
                 List<string> consideringAreas = new List<string>();
-                List<int> stepsList = new List<int>();
+                List<int> stagesList = new List<int>();
                 var username = "roshan.v";
                 int stepListMin = 0;
                 int stepListMax = 0;
@@ -8675,7 +8818,7 @@ namespace PMS.Controllers
                                  where u.UserName.Equals(username) && ur.IsActive.Equals(true) && r.IsActive.Equals(true)
                                  select r.Id).ToList();
 
-                if(userRecord.faculty != null)
+                if (userRecord.faculty != null)
                 {
                     subWorkflowsList = (from sw in db.SubWorkflows
                                         join w in db.Workflows on sw.WorkflowId equals w.Id
@@ -8708,16 +8851,16 @@ namespace PMS.Controllers
                                 consideringAreas.Add(sw.ConsideringArea);
                             }
 
-                            if (!stepsList.Contains(sw.WorkflowStep))
+                            if (!stagesList.Contains(sw.SubWorkflowId))
                             {
-                                stepsList.Add(sw.WorkflowStep);
+                                stagesList.Add(sw.SubWorkflowId);
                             }
                         }
                     }
                 }
 
-                stepListMin = stepsList.Min();
-                stepListMax = stepsList.Max();
+                stepListMin = stagesList.Min();
+                stepListMax = stagesList.Max();
 
                 if (consideringAreas.Contains("All"))
                 {
@@ -8725,7 +8868,7 @@ namespace PMS.Controllers
                                              join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                              join u in db.AspNetUsers on tt.LecturerId equals u.Id
                                              join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                             where stepsList.Contains(cl.CurrentStage) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                             where stagesList.Contains(cl.CurrentStage.Value) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
                                              orderby cl.CreatedDate descending
                                              select new ConductedLectureApprovalVM
                                              {
@@ -8735,7 +8878,7 @@ namespace PMS.Controllers
                                                  PendingRecordsCount = (from ncl in db.ConductedLectures
                                                                         join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                         where ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
-                                                                        && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stepsList.Contains(ncl.CurrentStage)
+                                                                        && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
                                                                         && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                         select ncl).Count(),
                                                  ApprovedRecordsCount = (from ncl in db.ConductedLectures
@@ -8756,43 +8899,44 @@ namespace PMS.Controllers
                 {
                     if(userRecord.faculty != null)
                     {
-                        List<int> allowedSubjects = new List<int>();
+                        //List<int> allowedSubjects = new List<int>();
 
-                        List<Subject> clSubjectList = (from cl in db.ConductedLectures
-                                                       join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                                       join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
-                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                                       where stepsList.Contains(cl.CurrentStage) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                                       select s).ToList();
+                        //List<Subject> clSubjectList = (from cl in db.ConductedLectures
+                        //                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                        //                               join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                        //                               join s in db.Subject on ss.SubjectId equals s.SubjectId
+                        //                               where stepsList.Contains(cl.CurrentStage) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                        //                               select s).ToList();
 
-                        List<Subject> facultySubjects = (from s in db.Subject
-                                                         join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
-                                                         from dgr in s_d.DefaultIfEmpty()
-                                                         where dgr.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
-                                                         select s).ToList();
+                        //List<Subject> facultySubjects = (from s in db.Subject
+                        //                                 join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                        //                                 from dgr in s_d.DefaultIfEmpty()
+                        //                                 where dgr.FacultyId.Value.Equals(userRecord.faculty.FacultyId)
+                        //                                 select s).ToList();
 
-                        for(var i = 0; i < clSubjectList.Count; i++)
-                        {
-                            if(clSubjectList[i].IsCommon == true)
-                            {
-                                allowedSubjects.Add(clSubjectList[i].SubjectId);
-                            }
-                            else
-                            {
-                                if (facultySubjects.Contains(clSubjectList[i]))
-                                {
-                                    allowedSubjects.Add(clSubjectList[i].SubjectId);
-                                }
-                            }
-                        }
+                        //for(var i = 0; i < clSubjectList.Count; i++)
+                        //{
+                        //    if(clSubjectList[i].IsCommon == true)
+                        //    {
+                        //        allowedSubjects.Add(clSubjectList[i].SubjectId);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (facultySubjects.Contains(clSubjectList[i]))
+                        //        {
+                        //            allowedSubjects.Add(clSubjectList[i].SubjectId);
+                        //        }
+                        //    }
+                        //}
 
                         conductedLecturesList = (from cl in db.ConductedLectures
                                                  join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                 join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
                                                  join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
                                                  join s in db.Subject on ss.SubjectId equals s.SubjectId
                                                  join u in db.AspNetUsers on tt.LecturerId equals u.Id
                                                  join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                                 where stepsList.Contains(cl.CurrentStage) && allowedSubjects.Contains(s.SubjectId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                 where stagesList.Contains(cl.CurrentStage.Value) && sem.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
                                                  orderby cl.CreatedDate descending
                                                  select new ConductedLectureApprovalVM
                                                  {
@@ -8801,22 +8945,25 @@ namespace PMS.Controllers
                                                      RecordMonth = cl.ActualLectureDate.Year.ToString() + "-" + cl.ActualLectureDate.Month.ToString(),
                                                      PendingRecordsCount = (from ncl in db.ConductedLectures
                                                                             join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
+                                                                            join nsem in db.SemesterRegistration on ntt.SemesterId equals nsem.SemesterId
                                                                             join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                            where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
-                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stepsList.Contains(ncl.CurrentStage)
+                                                                            where nsem.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
                                                                             && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
+                                                                             join nsem in db.SemesterRegistration on ntt.SemesterId equals nsem.SemesterId
                                                                              join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                             where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                             where nsem.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                              && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && ncl.CurrentStage > stepListMax
                                                                              && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                              select ncl).Count(),
                                                      RejectedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
+                                                                             join nsem in db.SemesterRegistration on ntt.SemesterId equals nsem.SemesterId
                                                                              join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                             where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                             where nsem.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                              && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && ncl.IsApprovedOrRejected.Value.Equals(false)
                                                                              && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                              select ncl).Count(),
@@ -8827,43 +8974,45 @@ namespace PMS.Controllers
                 {
                     if (userRecord.department != null)
                     {
-                        List<int> allowedSubjects = new List<int>();
+                        //List<int> allowedSubjects = new List<int>();
 
-                        List<Subject> clSubjectList = (from cl in db.ConductedLectures
-                                                       join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                                       join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
-                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                                       where stepsList.Contains(cl.CurrentStage) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                                       select s).ToList();
+                        //List<Subject> clSubjectList = (from cl in db.ConductedLectures
+                        //                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                        //                               join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                        //                               join s in db.Subject on ss.SubjectId equals s.SubjectId
+                        //                               where stepsList.Contains(cl.CurrentStage) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                        //                               select s).ToList();
 
-                        List<Subject> departmentSubjects = (from s in db.Subject
-                                                            join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
-                                                            from dgr in s_d.DefaultIfEmpty()
-                                                            where dgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId)
-                                                            select s).ToList();
+                        //List<Subject> departmentSubjects = (from s in db.Subject
+                        //                                    join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                        //                                    from dgr in s_d.DefaultIfEmpty()
+                        //                                    where dgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId)
+                        //                                    select s).ToList();
 
-                        for (var i = 0; i < clSubjectList.Count; i++)
-                        {
-                            if (clSubjectList[i].IsCommon == true)
-                            {
-                                allowedSubjects.Add(clSubjectList[i].SubjectId);
-                            }
-                            else
-                            {
-                                if (departmentSubjects.Contains(clSubjectList[i]))
-                                {
-                                    allowedSubjects.Add(clSubjectList[i].SubjectId);
-                                }
-                            }
-                        }
+                        //for (var i = 0; i < clSubjectList.Count; i++)
+                        //{
+                        //    if (clSubjectList[i].IsCommon == true)
+                        //    {
+                        //        allowedSubjects.Add(clSubjectList[i].SubjectId);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (departmentSubjects.Contains(clSubjectList[i]))
+                        //        {
+                        //            allowedSubjects.Add(clSubjectList[i].SubjectId);
+                        //        }
+                        //    }
+                        //}
 
                         conductedLecturesList = (from cl in db.ConductedLectures
                                                  join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                                  join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
                                                  join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                 join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                 from dgr in s_d.DefaultIfEmpty()
                                                  join u in db.AspNetUsers on tt.LecturerId equals u.Id
                                                  join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                                 where stepsList.Contains(cl.CurrentStage) && allowedSubjects.Contains(s.SubjectId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                 where stagesList.Contains(cl.CurrentStage.Value) && dgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
                                                  orderby cl.CreatedDate descending
                                                  select new ConductedLectureApprovalVM
                                                  {
@@ -8873,21 +9022,30 @@ namespace PMS.Controllers
                                                      PendingRecordsCount = (from ncl in db.ConductedLectures
                                                                             join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                             join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                            where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
-                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stepsList.Contains(ncl.CurrentStage)
+                                                                            join ns in db.Subject on nss.SubjectId equals ns.SubjectId
+                                                                            join nd in db.Degree on ns.DegreeId equals nd.DegreeId into ns_nd
+                                                                            from ndgr in ns_nd.DefaultIfEmpty()
+                                                                            where ndgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
                                                                             && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                              join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                             where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                             join ns in db.Subject on nss.SubjectId equals ns.SubjectId
+                                                                             join nd in db.Degree on ns.DegreeId equals nd.DegreeId into ns_nd
+                                                                             from ndgr in ns_nd.DefaultIfEmpty()
+                                                                             where ndgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                              && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && ncl.CurrentStage > stepListMax
                                                                              && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                              select ncl).Count(),
                                                      RejectedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                              join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
-                                                                             where allowedSubjects.Contains(nss.SubjectId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
+                                                                             join ns in db.Subject on nss.SubjectId equals ns.SubjectId
+                                                                             join nd in db.Degree on ns.DegreeId equals nd.DegreeId into ns_nd
+                                                                             from ndgr in ns_nd.DefaultIfEmpty()
+                                                                             where ndgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                              && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && ncl.IsApprovedOrRejected.Value.Equals(false)
                                                                              && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                              select ncl).Count(),
@@ -8911,7 +9069,7 @@ namespace PMS.Controllers
                                                  join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
                                                  join u in db.AspNetUsers on tt.LecturerId equals u.Id
                                                  join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                                 where stepsList.Contains(cl.CurrentStage) && licSubjectList.Contains(ss.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                 where stagesList.Contains(cl.CurrentStage.Value) && licSubjectList.Contains(ss.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
                                                  orderby cl.CreatedDate descending
                                                  select new ConductedLectureApprovalVM
                                                  {
@@ -8922,7 +9080,7 @@ namespace PMS.Controllers
                                                                             join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                             join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
                                                                             where licSubjectList.Contains(nss.Id) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
-                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stepsList.Contains(ncl.CurrentStage)
+                                                                            && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
                                                                             && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
@@ -8972,8 +9130,8 @@ namespace PMS.Controllers
             {
                 List<ConductedLecturesVM> conductedLecturesList = new List<ConductedLecturesVM>();
                 List<SubWorkflows> subWorkflowsList = new List<SubWorkflows>();
-                List<SubWorkflows> userWorkflows = new List<SubWorkflows>();
-                List<int> stepsList = new List<int>();
+                List<string> consideringAreas = new List<string>();
+                List<int> stagesList = new List<int>();
                 var username = "roshan.v";
 
                 var userRecord = (from u in db.AspNetUsers
@@ -8995,13 +9153,21 @@ namespace PMS.Controllers
                                  where u.UserName.Equals(username) && ur.IsActive.Equals(true) && r.IsActive.Equals(true)
                                  select r.Id).ToList();
 
-                AspNetUsers lecturerRecord = (from u in db.AspNetUsers where u.Id.Equals(id) select u).FirstOrDefault();
-
-                subWorkflowsList = (from sw in db.SubWorkflows
-                                    join w in db.Workflows on sw.WorkflowId equals w.Id
-                                    where (sw.ConsideringArea != "Initial Level") && w.FacultyId.Value.Equals(lecturerRecord.FacultyId.Value) && (sw.WorkflowStep >= 2)
-                                    && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
-                                    select sw).ToList();
+                if (userRecord.faculty != null)
+                {
+                    subWorkflowsList = (from sw in db.SubWorkflows
+                                        join w in db.Workflows on sw.WorkflowId equals w.Id
+                                        where (sw.ConsideringArea != "Initial Level") && w.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && (sw.WorkflowStep >= 2)
+                                        && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
+                                        select sw).ToList();
+                }
+                else
+                {
+                    subWorkflowsList = (from sw in db.SubWorkflows
+                                        join w in db.Workflows on sw.WorkflowId equals w.Id
+                                        where (sw.ConsideringArea != "Initial Level") && (sw.WorkflowStep >= 2) && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
+                                        select sw).ToList();
+                }
 
                 List<string> distinctSubWorkflowRoles = subWorkflowsList.Select(sw => sw.WorkflowRole).Distinct().ToList();
 
@@ -9009,32 +9175,34 @@ namespace PMS.Controllers
 
                 for (var i = 0; i < matchingRoles.Count; i++)
                 {
-                    var subWorkflow = subWorkflowsList.Find(sw => sw.WorkflowRole == matchingRoles[i]);
+                    var subWorkflows = subWorkflowsList.FindAll(sw => sw.WorkflowRole == matchingRoles[i]);
 
-                    if (subWorkflow != null)
+                    if (subWorkflows != null)
                     {
-                        if (!userWorkflows.Contains(subWorkflow))
+                        foreach (SubWorkflows sw in subWorkflows)
                         {
-                            userWorkflows.Add(subWorkflow);
+                            if (!consideringAreas.Contains(sw.ConsideringArea))
+                            {
+                                consideringAreas.Add(sw.ConsideringArea);
+                            }
+
+                            if (!stagesList.Contains(sw.SubWorkflowId))
+                            {
+                                stagesList.Add(sw.SubWorkflowId);
+                            }
                         }
                     }
                 }
 
-                List<int> licSubjectList = (from sslic in db.SemesterSubjectLIC
-                                            join ss in db.SemesterSubject on sslic.SemesterSubjectId equals ss.Id
-                                            join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                            join u in db.AspNetUsers on sslic.LICId equals u.Id
-                                            where u.UserName.Equals(username) && u.IsActive.Equals(true) && sslic.IsActive.Equals(true)
-                                            && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
-                                            select ss.Id).ToList();
-
                 var lectureMonthInDateTime = Convert.ToDateTime(operation);
 
-                conductedLecturesList = (from cl in db.ConductedLectures
+                List<ConductedLecturesVM> conductedLectureRecords = (from cl in db.ConductedLectures
                                                                      join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                                                      join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
                                                                      join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
                                                                      join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                                     join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                                     from dgr in s_d.DefaultIfEmpty()
                                                                      join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
                                                                      join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
                                                                      from hll in tt_lh.DefaultIfEmpty()
@@ -9047,7 +9215,7 @@ namespace PMS.Controllers
                                                                      join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
                                                                      from usr in tt_u.DefaultIfEmpty()
                                                                      join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
-                                                                     where cl.CurrentStage >= 2 && tt.LecturerId.Equals(id) && cl.ActualLectureDate.Year.Equals(lectureMonthInDateTime.Year)
+                                                                     where !string.IsNullOrEmpty(cl.CurrentStage.Value.ToString()) && tt.LecturerId.Equals(id) && cl.ActualLectureDate.Year.Equals(lectureMonthInDateTime.Year)
                                                                      && cl.ActualLectureDate.Month.Equals(lectureMonthInDateTime.Month) && cl.IsActive.Equals(true)
                                                                      && tt.IsActive.Equals(true)
                                                                      orderby cl.CLId descending
@@ -9061,14 +9229,16 @@ namespace PMS.Controllers
                                                                          ActualLocation = aHll != null ? aCmps.CampusName + " - " + aHll.Building + " - " + aHll.Floor + " - " + aHll.HallName : null,
                                                                          CampusName = aCam != null ? aCam.CampusName : null,
                                                                          StudentBatches = cl.StudentBatches,
-                                                                         StudentCount = cl.StudentCount,
+                                                                         StudentCount = cl.StudentCount.Value,
                                                                          StudentAttendanceSheetLocation = cl.StudentAttendanceSheetLocation,
                                                                          Comment = cl.Comment,
-                                                                         CurrentStage = cl.CurrentStage,
+                                                                         CurrentStage = cl.CurrentStage.Value,
                                                                          CurrentStageDisplayName = cl.CurrentStageDisplayName,
                                                                          PaymentAmount = cl.PaymentAmount,
                                                                          IsActive = cl.IsActive,
                                                                          canSendToApproval = false,
+                                                                         FacultyId = s.FacultyId.Value,
+                                                                         DepartmentId = dgr.DepartmentId.Value,
                                                                          timetableRecords = new SemesterTimetableVM()
                                                                          {
                                                                              TimetableId = tt.TimetableId,
@@ -9084,23 +9254,71 @@ namespace PMS.Controllers
                                                                          }
                                                                      }).ToList();
 
-                for (int i = 0; i < conductedLecturesList.Count; i++)
+                if (consideringAreas.Contains("All"))
                 {
-                    var matchingWorkflow = userWorkflows.Find(w => w.WorkflowStep == conductedLecturesList[i].CurrentStage);
-
-                    if(matchingWorkflow != null)
+                    foreach (ConductedLecturesVM clRecord in conductedLectureRecords)
                     {
-                        if(matchingWorkflow.ConsideringArea == "Subject Only" && licSubjectList.Count != 0)
+                        if (stagesList.Contains(clRecord.CurrentStage.Value))
                         {
-                            if (licSubjectList.Contains(conductedLecturesList[i].timetableRecords.SemesterSubjectId))
+                            clRecord.canSendToApproval = true;
+                        }
+                    }
+                    conductedLecturesList = conductedLectureRecords;
+                }
+                else if (consideringAreas.Contains("Faculty Only"))
+                {
+                    if (userRecord.faculty != null)
+                    {
+                        var filteredRecords = conductedLectureRecords.Where(cl => cl.FacultyId == userRecord.faculty.FacultyId).ToList();
+
+                        foreach (ConductedLecturesVM clRecord in filteredRecords)
+                        {
+                            if (stagesList.Contains(clRecord.CurrentStage.Value))
                             {
-                                conductedLecturesList[i].canSendToApproval = true;
+                                clRecord.canSendToApproval = true;
                             }
                         }
-                        else
-                        {
-                            conductedLecturesList[i].canSendToApproval = true;
-                        }
+                        conductedLecturesList = filteredRecords;
+                    }
+                }
+                else if (consideringAreas.Contains("Department Only"))
+                {
+                    if (userRecord.department != null)
+                    {
+                        var filteredRecords = conductedLectureRecords.Where(cl => cl.DepartmentId == userRecord.department.DepartmentId).ToList();
+
+                        //foreach (ConductedLecturesVM clRecord in filteredRecords)
+                        //{
+                        //    if (stagesList.Contains(clRecord.CurrentStage.Value))
+                        //    {
+                        //        clRecord.canSendToApproval = true;
+                        //    }
+                        //}
+                        conductedLecturesList = filteredRecords;
+                    }
+                }
+                else if (consideringAreas.Contains("Subject Only"))
+                {
+                    List<int> licSubjectList = (from sslic in db.SemesterSubjectLIC
+                                                join ss in db.SemesterSubject on sslic.SemesterSubjectId equals ss.Id
+                                                join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                join u in db.AspNetUsers on sslic.LICId equals u.Id
+                                                where u.UserName.Equals(username) && u.IsActive.Equals(true) && sslic.IsActive.Equals(true)
+                                                && ss.IsActive.Equals(true) && s.IsActive.Equals(true)
+                                                select ss.Id).ToList();
+
+                    if (licSubjectList.Count != 0)
+                    {
+                        var filteredRecords = conductedLectureRecords.Where(cl => licSubjectList.Contains(cl.timetableRecords.SemesterSubjectId)).ToList();
+
+                        //foreach (ConductedLecturesVM clRecord in filteredRecords)
+                        //{
+                        //    if (stagesList.Contains(clRecord.CurrentStage.Value))
+                        //    {
+                        //        clRecord.canSendToApproval = true;
+                        //    }
+                        //}
+                        conductedLecturesList = filteredRecords;
                     }
                 }
 
