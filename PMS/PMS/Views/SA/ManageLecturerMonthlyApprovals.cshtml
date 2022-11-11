@@ -230,43 +230,56 @@
             "scrollX": true,
             "scroller": true,
             "order": [],
+            'select': {
+                'style': 'multi',
+                'selector': 'td:first-child'
+            },
             "ajax": {
                 "url": "@Url.Action("GetLecturerMonthlyRecords", "SA")/" + lecturerId + "/" + recordMonth,
                 "type": "GET",
                 "dataType": "json"
             },
-            'columnDefs': [
-                {
-                    'targets': 0,
-                    //'render': function (data, type, row, meta) {
-                    //    data = '<input type="checkbox" class="dt-checkboxes">'
-                    //    if (row.canSendToApproval == false) {
-                    //        data = ''
-                    //    }
+            //'columnDefs': [
+            //    {
+            //        'targets': 0,
+            //        //'render': function (data, type, row, meta) {
+            //        //    data = '<input type="checkbox" class="dt-checkboxes">'
+            //        //    if (row.canSendToApproval == false) {
+            //        //        data = ''
+            //        //    }
 
-                    //    return data;
-                    //},
-                    'createdCell': function (td, cellData, rowData, row, col) {
-                        //alert(cellData.CLId);
-                        if (rowData.CLId == 1010) {
-                            $(td).find('input:checkbox').prop('disabled', true);
-                            //this.api().cell(td).checkboxes.disable();
-                        }
-                    },
-                    //'createdRow': function (row, data, dataIndex) {
-                    //    if (!data.canSendToApproval) {
-                    //        $(row).find('input:checkbox').prop('disabled', true);
-                    //    }
-                    //},
-                    'checkboxes': {
-                        'selectRow': true
-                    }
-                }
-            ],
+            //        //    return data;
+            //        //},
+            //        'createdCell': function (td, cellData, rowData, row, col) {
+            //            //alert(cellData.CLId);
+            //            if (rowData.CLId == 1010) {
+            //                $(td).find('input:checkbox').prop('disabled', true);
+            //                //this.api().cell(td).checkboxes.disable();
+            //            }
+            //        },
+            //        //'createdRow': function (row, data, dataIndex) {
+            //        //    if (!data.canSendToApproval) {
+            //        //        $(row).find('input:checkbox').prop('disabled', true);
+            //        //    }
+            //        //},
+            //        'checkboxes': {
+            //            'selectRow': true
+            //        }
+            //    }
+            //],
             "columns": [
                 {
                     "data": null,
-                    "defaultContent": ''
+                    "defaultContent": '',
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        if (rowData.canSendToApproval == false) {
+                            $(td).find('input:checkbox').prop('disabled', true);
+                        }
+                    },
+                    'targets': 0,
+                    'checkboxes': {
+                        'selectRow': true
+                    }
                 },
                 {
                     "title": "",
@@ -376,10 +389,22 @@
                     "data": "CurrentStageDisplayName"
                 }
             ],
-            'select': {
-                'style': 'multi',
-                'selector': 'td:first-child'
-            },
+            "language": {
+                "emptyTable": "No Records Found!"
+            }
+            //language: {
+            //    select: {
+            //        rows: {
+            //            _: "You have selected %d rows",
+            //            0: "Click a row to select it",
+            //            1: "Only 1 row selected"
+            //        }
+            //    }
+            //}
+            //'select': {
+            //    'style': 'multi',
+            //    'selector': 'td:first-child'
+            //},
             //rowCallback: function (row, data) {
             //    // Set the checked state of the checkbox in the table
             //    if (data.canSendToApproval == false) {
@@ -389,19 +414,31 @@
             //}
         });
 
-        lectureApprovalTbl.on('user-select', function (e, dt, type, cell, originalEvent) {
-            var row = dt.row(cell.index().row);
+        //lectureApprovalTbl.on('user-select', function (e, dt, type, cell, originalEvent) {
+        //    var row = dt.row(cell.index().row);
 
-            if (row.data().canSendToApproval == false) {
-                e.preventDefault();
-            }
-        });
+        //    if (row.data().canSendToApproval == false) {
+        //        e.preventDefault();
+        //    }
+        //});
 
-        $('.dt-checkboxes-select-all').on('click', function () {
-            alert($('#dataTables').find('input[type="checkbox"]:enabled'));
-            //selectedCLRecordsList.push($('#dataTables').find('input[type="checkbox"]:enabled').)
-            //$('span.select-info').children().first().html('1 rows selected');
-        });
+        //$('.dt-checkboxes-select-all').on('click', function () {
+        //    var selectedRows = lectureApprovalTbl.rows(function (idx, data, node) {
+        //        return $(node).find('input[type="checkbox"]:not(:disabled)').length
+        //    }).data();
+
+        //    if (selectedRows.length != 0) {
+        //        for (var i = 0; i < selectedRows.length; i++) {
+        //            selectedCLRecordsList.push(selectedRows[i].CLId);
+        //        }
+        //        $('.select-item').html("xxxxxxxxxxxxxxxx");
+        //    }
+        //    else {
+
+        //    }
+        //    //selectedCLRecordsList.push($('#dataTables').find('input[type="checkbox"]:enabled').)
+        //    //$('span.select-info').children().first().html('1 rows selected');
+        //});
 
         function OpenTimetableComparisonForm(data) {
             $("#subjectLabel").html("");
@@ -466,13 +503,41 @@
             window.open(data);
         }
 
-        function onSendToApprovalClick() {
-            var selectedLectures = lectureApprovalTbl.rows('.selected').data();
+        //lectureApprovalTbl.on('select', function (e, dt, type, indexes) {
+        //    if (type === 'row') {
+        //        var data = lectureApprovalTbl.rows(indexes).data().pluck('CLId');
+        //        alert(data.CLId);
+        //        // do something with the ID of the selected items
+        //    }
+        //});
 
-            if (selectedLectures.length != 0) {
-                for (var i = 0; i < selectedLectures.length; i++) {
-                    selectedCLRecordsList.push(selectedLectures[i].CLId);
+        function onSendToApprovalClick() {
+            var allselectedRows = lectureApprovalTbl.rows('.selected').data();
+
+            if (allselectedRows.length != 0) {
+                var allSRList = [];
+                var enabledSRList = [];
+
+                for (var i = 0; i < allselectedRows.length; i++) {
+                    allSRList.push(allselectedRows[i].CLId);
                 }
+
+                var selectedRows = lectureApprovalTbl.rows(function (idx, data, node) {
+                    return $(node).find('input[type="checkbox"]:enabled').length
+                }).data();
+
+                for (var i = 0; i < selectedRows.length; i++) {
+                    enabledSRList.push(selectedRows[i].CLId);
+                }
+
+                for (var i = 0; i < enabledSRList.length; i++) {
+                    if (allSRList.indexOf(enabledSRList[i]) > -1) {
+                        selectedCLRecordsList.push(enabledSRList[i]);
+                    }
+                }
+            }
+
+            if (selectedCLRecordsList.length != 0) {
                 $("#sendToApprovalModal").modal("show");
             }
             else {
@@ -481,8 +546,8 @@
         }
 
         function SendToApprovalConfirm() {
-            alert(selectedCLRecordsList);
-            @*$("#loader").show();
+            //alert(selectedCLRecordsList);
+            $("#loader").show();
 
             var CLObj = {
                 CLIdList: selectedCLRecordsList
@@ -509,7 +574,7 @@
                         })
                     }
                 }
-            });*@
+            });
         }
     </script>
 }
