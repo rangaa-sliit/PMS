@@ -40,7 +40,7 @@ Developed On:- 2022/11/05*@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to your lecture records to approval?</p>
+                    <p>Are you sure you want send your lecture records to approval?</p>
                     <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
                 </div>
                 <div class="modal-footer">
@@ -78,7 +78,7 @@ Developed On:- 2022/11/05*@
                             + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
                             + `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'View')">View Conducted Lecture</a>`;
 
-                        if (data.CurrentStage == 1) {
+                        if (data.CurrentStage == null) {
                             dynamicContent += `<a class='dropdown-item btn' onclick="NavigateConductedLecturesForm(` + data.TimetableId + `,` + data.CLId + `, 'Edit')">Edit Conducted Lecture</a></div></div>`;
                         }
                         else {
@@ -185,27 +185,27 @@ Developed On:- 2022/11/05*@
 
         function SendToApprovalConfirm() {
             $("#loader").show();
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("ConductedLectureSendToApproval", "SA")',
-                    success: function (data) {
-                        $("#loader").hide();
-                        if (data.success) {
-                            $("#sendToApprovalModal").modal("hide");
-                            conductedLecturesTbl.ajax.reload();
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "success"
-                            })
-                        }
-                        else {
-                            $.notify(data.message, {
-                                globalPosition: "top center",
-                                className: "error"
-                            })
-                        }
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ConductedLectureSendToApproval", "SA")',
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#sendToApprovalModal").modal("hide");
+                        conductedLecturesTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
                     }
-                });
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
         }
 
     </script>

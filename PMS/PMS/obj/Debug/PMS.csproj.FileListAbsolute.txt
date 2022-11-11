@@ -1,6 +1,5 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.ReaderWriter.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.XmlDocument.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Newtonsoft.Json.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -41,6 +40,8 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Security.Cryptograph
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Security.Principal.Windows.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Text.Encoding.CodePages.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.ValueTuple.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.ReaderWriter.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.XmlDocument.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.XPath.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\System.Xml.XPath.XDocument.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\vbc.exe
@@ -60,7 +61,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Core.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.EntityFramework.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Owin.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Host.SystemWeb.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.Cookies.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Security.dll
@@ -92,7 +92,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Deployment.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Razor.xml
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Newtonsoft.Json.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Antlr3.Runtime.pdb
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.SqlServer.xml
@@ -112,4 +111,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.CodeDom.Providers.DotNet
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs.cache
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb

@@ -4328,118 +4328,27 @@ namespace PMS.Controllers
                 var currentDateTime = DateTime.Now;
                 var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
                 var username = "ranga.a";
+                List<Faculty_SubworkflowsCC> fsw = new List<Faculty_SubworkflowsCC>();
                 //int deadlineDays = 0;
 
                 //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
-                List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
-                List<SubWorkflow_WorkflowCC> nextWorkflows = new List<SubWorkflow_WorkflowCC>();
+                var nextWorkflowRecord = (from sw in db.SubWorkflows
+                                          join w in db.Workflows on sw.WorkflowId equals w.Id
+                                          join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                          where w.FacultyId.Value == 1
+                                          select new SubWorkflow_WorkflowCC
+                                          {
+                                              SubWorkflowRecord = sw,
+                                              WorkflowRole = r.Name
+                                          }).ToList();
 
-                var userRecord = (from u in db.AspNetUsers
-                                  join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
-                                  from fac in u_f.DefaultIfEmpty()
-                                  where u.UserName.Equals(username)
-                                  select u).FirstOrDefault();
-
-                var conductedLectureRecords = (from cl in db.ConductedLectures
-                                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                               join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
-                                               where tt.LecturerId.Equals(userRecord.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                               && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
-                                               select new
-                                               {
-                                                   lectureRecord = cl,
-                                                   facultyId = sem.FacultyId.Value
-                                               }).ToList();
-
-                for (var i = 0; i < conductedLectureRecords.Count; i++)
+                fsw.Add(new Faculty_SubworkflowsCC()
                 {
-                    int deadlineDays = 0;
-                    var paymentConsideringMonth = 0;
-                    int facultyId = conductedLectureRecords[i].facultyId;
-                    var checkingCS = deadlineCSList.Find(cs => cs.FacultyId.Value.Equals(facultyId));
+                    FacultyId = 1,
+                    SubworkflowList = nextWorkflowRecord
+                });
 
-                    if (checkingCS == null)
-                    {
-                        var deadlineCSRecord = (from c in db.ConfigurationalSettings
-                                                where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value == facultyId
-                                                select c).FirstOrDefault();
-
-                        if (deadlineCSRecord != null)
-                        {
-                            deadlineCSList.Add(deadlineCSRecord);
-                            deadlineDays = int.Parse(deadlineCSRecord.ConfigurationValue);
-                        }
-                    }
-                    else
-                    {
-                        deadlineDays = int.Parse(checkingCS.ConfigurationValue);
-                    }
-
-                    if (deadlineDays != 0)
-                    {
-                        var deadlineDate = monthStartDate.AddDays(deadlineDays);
-
-                        if (currentDateTime <= deadlineDate)
-                        {
-                            paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
-                        }
-                        else
-                        {
-                            paymentConsideringMonth = currentDateTime.Month;
-                        }
-                    }
-                    else
-                    {
-                        paymentConsideringMonth = currentDateTime.Month;
-                    }
-
-                    //var checkingWorkflow = nextWorkflows.Find(sw => sw.WorkflowRecord.FacultyId.Value == conductedLectureRecords[i].facultyId);
-
-                    //if (checkingWorkflow == null)
-                    //{
-                    //    var nextWorkflowRecord = (from sw in db.SubWorkflows
-                    //                              join w in db.Workflows on sw.WorkflowId equals w.Id
-                    //                              join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
-                    //                              where sw.WorkflowStep.Equals(2) && w.FacultyId.Value.Equals(conductedLectureRecords[i].facultyId)
-                    //                              select new SubWorkflow_WorkflowCC
-                    //                              {
-                    //                                  SubWorkflowRecord = sw,
-                    //                                  WorkflowRole = r.Name,
-                    //                                  WorkflowRecord = w
-                    //                              }).FirstOrDefault();
-
-                    //    if (nextWorkflowRecord != null)
-                    //    {
-                    //        nextWorkflows.Add(nextWorkflowRecord);
-
-                    //        if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
-                    //            && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
-                    //        {
-                    //            conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
-                    //            conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
-                    //            conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                    //            conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
-
-                    //            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
-                    //            && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
-                    //    {
-                    //        conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
-                    //        conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
-                    //        conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                    //        conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
-
-                    //        db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
-                    //    }
-                    //}
-                }
-
-                return Json(new { data = deadlineCSList }, JsonRequestBehavior.AllowGet);
+                return Json(new { data = fsw }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -8094,6 +8003,7 @@ namespace PMS.Controllers
                                                                }).FirstOrDefault<SemesterTimetableVM>();
 
                 ViewBag.semesterTimetableRecord = semesterTimetableRecord;
+                ViewBag.studentBatches = semesterTimetableRecord.StudentBatches.Trim().Split(',').Select(b => b.Trim()).ToList();
 
                 var lectureHalls = (from lh in db.LectureHall
                                     join c in db.Campus on lh.CampusId equals c.CampusId
@@ -8120,7 +8030,7 @@ namespace PMS.Controllers
 
                 if (operation == 0)
                 {
-                    return View(new ConductedLectures() { StudentBatches = semesterTimetableRecord.StudentBatches });
+                    return View(new ConductedLectures());
                 }
                 else
                 {
@@ -9287,13 +9197,13 @@ namespace PMS.Controllers
                     {
                         var filteredRecords = conductedLectureRecords.Where(cl => cl.DepartmentId == userRecord.department.DepartmentId).ToList();
 
-                        //foreach (ConductedLecturesVM clRecord in filteredRecords)
-                        //{
-                        //    if (stagesList.Contains(clRecord.CurrentStage.Value))
-                        //    {
-                        //        clRecord.canSendToApproval = true;
-                        //    }
-                        //}
+                        foreach (ConductedLecturesVM clRecord in filteredRecords)
+                        {
+                            if (stagesList.Contains(clRecord.CurrentStage.Value))
+                            {
+                                clRecord.canSendToApproval = true;
+                            }
+                        }
                         conductedLecturesList = filteredRecords;
                     }
                 }
@@ -9311,18 +9221,150 @@ namespace PMS.Controllers
                     {
                         var filteredRecords = conductedLectureRecords.Where(cl => licSubjectList.Contains(cl.timetableRecords.SemesterSubjectId)).ToList();
 
-                        //foreach (ConductedLecturesVM clRecord in filteredRecords)
-                        //{
-                        //    if (stagesList.Contains(clRecord.CurrentStage.Value))
-                        //    {
-                        //        clRecord.canSendToApproval = true;
-                        //    }
-                        //}
+                        foreach (ConductedLecturesVM clRecord in filteredRecords)
+                        {
+                            if (stagesList.Contains(clRecord.CurrentStage.Value))
+                            {
+                                clRecord.canSendToApproval = true;
+                            }
+                        }
                         conductedLecturesList = filteredRecords;
                     }
                 }
 
                 return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/06
+        [HttpPost]
+        public ActionResult LecturerMonthlyRecordsApproval(LecturerMonthlyApprovalCC mlRecords)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "anupama.s";
+                    List<Faculty_SubworkflowsCC> facultyWiseSubWorkflows = new List<Faculty_SubworkflowsCC>();
+
+                    var conductedLectureRecords = (from cl in db.ConductedLectures
+                                                   join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                   join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                                   where !string.IsNullOrEmpty(cl.CurrentStage.Value.ToString()) && mlRecords.CLIdList.Contains(cl.CLId)
+                                                   select new
+                                                   {
+                                                       lectureRecord = cl,
+                                                       timetableRecord = tt,
+                                                       facultyId = sem.FacultyId.Value
+                                                   }).ToList();
+
+                    for (var i = 0; i < conductedLectureRecords.Count; i++)
+                    {
+                        int facultyId = conductedLectureRecords[i].facultyId;
+                        int subworkflowListMaxStep = 0;
+
+                        var checkingWorkflow = facultyWiseSubWorkflows.Find(fsw => fsw.FacultyId == facultyId);
+
+                        if (checkingWorkflow == null)
+                        {
+                            List<SubWorkflow_WorkflowCC> subWorkflowRecords = (from sw in db.SubWorkflows
+                                                                               join w in db.Workflows on sw.WorkflowId equals w.Id
+                                                                               join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                                                               where sw.WorkflowStep > 1 && w.FacultyId.Value == facultyId
+                                                                               select new SubWorkflow_WorkflowCC
+                                                                               {
+                                                                                   SubWorkflowRecord = sw,
+                                                                                   WorkflowRole = r.Name
+                                                                               }).ToList();
+
+                            if (subWorkflowRecords.Count != 0)
+                            {
+                                facultyWiseSubWorkflows.Add(new Faculty_SubworkflowsCC()
+                                {
+                                    FacultyId = facultyId,
+                                    SubworkflowList = subWorkflowRecords
+                                });
+
+                                subworkflowListMaxStep = subWorkflowRecords.Max(sw => sw.SubWorkflowRecord.WorkflowStep);
+
+                                SubWorkflow_WorkflowCC currentWorkflow = subWorkflowRecords.Find(sw => sw.SubWorkflowRecord.SubWorkflowId == conductedLectureRecords[i].lectureRecord.CurrentStage.Value);
+
+                                if(currentWorkflow.SubWorkflowRecord.WorkflowStep == subworkflowListMaxStep)
+                                {
+                                    conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Final Approved";
+                                    conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+                                    conductedLectureRecords[i].lectureRecord.IsFinalApproved = true;
+                                }
+                                else
+                                {
+                                    SubWorkflow_WorkflowCC nextWorkflow = subWorkflowRecords.Find(sw => sw.SubWorkflowRecord.WorkflowStep == (currentWorkflow.SubWorkflowRecord.WorkflowStep + 1));
+
+                                    conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflow.SubWorkflowRecord.SubWorkflowId;
+                                    conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflow.WorkflowRole;
+                                    conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+                                }
+
+                                db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                            }
+                        }
+                        else
+                        {
+                            subworkflowListMaxStep = checkingWorkflow.SubworkflowList.Max(sw => sw.SubWorkflowRecord.WorkflowStep);
+
+                            SubWorkflow_WorkflowCC currentWorkflow = checkingWorkflow.SubworkflowList.Find(sw => sw.SubWorkflowRecord.SubWorkflowId == conductedLectureRecords[i].lectureRecord.CurrentStage.Value);
+
+                            if (currentWorkflow.SubWorkflowRecord.WorkflowStep == subworkflowListMaxStep)
+                            {
+                                conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Final Approved";
+                                conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+                                conductedLectureRecords[i].lectureRecord.IsFinalApproved = true;
+                            }
+                            else
+                            {
+                                SubWorkflow_WorkflowCC nextWorkflow = checkingWorkflow.SubworkflowList.Find(sw => sw.SubWorkflowRecord.WorkflowStep == (currentWorkflow.SubWorkflowRecord.WorkflowStep + 1));
+
+                                conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflow.SubWorkflowRecord.SubWorkflowId;
+                                conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflow.WorkflowRole;
+                                conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+                            }
+
+                            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Approved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
             }
         }
     }

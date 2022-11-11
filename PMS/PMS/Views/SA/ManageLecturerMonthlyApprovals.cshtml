@@ -33,7 +33,7 @@
                 </div>
             </div>
             <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-check"></i> Approve</button>
-            <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2 mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-times"></i> Reject</button>
+            <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2 mb-3" onclick="onRejectClick()"><i class="fa fa-times"></i> Reject</button>
             <div class="table-responsive">
                 <table id="lectureApprovalTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -205,7 +205,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to your lecture records to approval?</p>
+                    <p>Are you sure you want send selected lecture records to approval?</p>
                     <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
                 </div>
                 <div class="modal-footer">
@@ -220,6 +220,7 @@
 @section scripts {
     <script>
         var lectureApprovalTbl;
+        var selectedCLRecordsList = [];
         var lecturerId = window.location.pathname.toString().split('/')[3];
         var recordMonth = window.location.pathname.toString().split('/')[4];
 
@@ -237,6 +238,26 @@
             'columnDefs': [
                 {
                     'targets': 0,
+                    //'render': function (data, type, row, meta) {
+                    //    data = '<input type="checkbox" class="dt-checkboxes">'
+                    //    if (row.canSendToApproval == false) {
+                    //        data = ''
+                    //    }
+
+                    //    return data;
+                    //},
+                    'createdCell': function (td, cellData, rowData, row, col) {
+                        //alert(cellData.CLId);
+                        if (rowData.CLId == 1010) {
+                            $(td).find('input:checkbox').prop('disabled', true);
+                            //this.api().cell(td).checkboxes.disable();
+                        }
+                    },
+                    //'createdRow': function (row, data, dataIndex) {
+                    //    if (!data.canSendToApproval) {
+                    //        $(row).find('input:checkbox').prop('disabled', true);
+                    //    }
+                    //},
                     'checkboxes': {
                         'selectRow': true
                     }
@@ -356,10 +377,30 @@
                 }
             ],
             'select': {
-                'info': true,
                 'style': 'multi',
                 'selector': 'td:first-child'
             },
+            //rowCallback: function (row, data) {
+            //    // Set the checked state of the checkbox in the table
+            //    if (data.canSendToApproval == false) {
+            //        $('input.dt-checkboxes', row).prop('disabled', true);
+            //    }
+            //    //$('input.dt-checkboxes', row).prop('disabled', data.canSendToApproval == false);
+            //}
+        });
+
+        lectureApprovalTbl.on('user-select', function (e, dt, type, cell, originalEvent) {
+            var row = dt.row(cell.index().row);
+
+            if (row.data().canSendToApproval == false) {
+                e.preventDefault();
+            }
+        });
+
+        $('.dt-checkboxes-select-all').on('click', function () {
+            alert($('#dataTables').find('input[type="checkbox"]:enabled'));
+            //selectedCLRecordsList.push($('#dataTables').find('input[type="checkbox"]:enabled').)
+            //$('span.select-info').children().first().html('1 rows selected');
         });
 
         function OpenTimetableComparisonForm(data) {
@@ -423,6 +464,52 @@
 
         function viewAttendanceSheet(data) {
             window.open(data);
+        }
+
+        function onSendToApprovalClick() {
+            var selectedLectures = lectureApprovalTbl.rows('.selected').data();
+
+            if (selectedLectures.length != 0) {
+                for (var i = 0; i < selectedLectures.length; i++) {
+                    selectedCLRecordsList.push(selectedLectures[i].CLId);
+                }
+                $("#sendToApprovalModal").modal("show");
+            }
+            else {
+                alert("You must choose one or more lecture records before sending to approval");
+            }
+        }
+
+        function SendToApprovalConfirm() {
+            alert(selectedCLRecordsList);
+            @*$("#loader").show();
+
+            var CLObj = {
+                CLIdList: selectedCLRecordsList
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("LecturerMonthlyRecordsApproval", "SA")',
+                data: CLObj,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#sendToApprovalModal").modal("hide");
+                        lectureApprovalTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });*@
         }
     </script>
 }

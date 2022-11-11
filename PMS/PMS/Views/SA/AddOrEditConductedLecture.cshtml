@@ -72,11 +72,10 @@ Developed On:- 2022/10/27*@
                                 @Html.LabelFor(model => model.StudentBatches, "Student Batch(es): ", new { @class = "required" })
                             </div>
                             <div class="col-sm-9" id="studentBatchesDiv">
-                                @if (Model.StudentBatches != null)
+                                @if (ViewBag.studentBatches != null)
                                 {
-                                    List<string> studentBatches = Model.StudentBatches.ToString().Trim().Split(',').Select(b => b.Trim()).ToList();
                                     <select class="form-control" id="studentBatches" onchange="onStudentBatchChange()">
-                                        @foreach (var sb in studentBatches)
+                                        @foreach (var sb in ViewBag.studentBatches)
                                         {
                                             <option value="@sb">@sb</option>
                                         }
@@ -255,6 +254,7 @@ Developed On:- 2022/10/27*@
             operation = window.location.pathname.toString().split('/')[5];
 
             var timetableData = @Html.Raw(Json.Encode(ViewBag.semesterTimetableRecord));
+            var studentBatches = @Html.Raw(Json.Encode(ViewBag.studentBatches));
             var hallList = @Html.Raw(Json.Encode(ViewBag.lectureHallsList));
 
             if (operation != undefined) {
@@ -307,6 +307,13 @@ Developed On:- 2022/10/27*@
                 }
                 else {
                     $("#lectureHallsList").val(null).change();
+                }
+
+                if (studentBatches != null) {
+                    $("#studentBatches").val(studentBatches).change();
+                }
+                else {
+                    $("#studentBatches").val(null).change();
                 }
 
                 $("#campusList").val(null).change();
