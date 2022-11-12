@@ -205,12 +205,52 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want send selected lecture records to approval?</p>
+                    <p>Are you sure you want send selected lecture record(s) to approval?</p>
                     <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label>Remark: </label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="approvalRemark" />
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
                     <button type="button" class="btn btn-primary" onclick="SendToApprovalConfirm()">Yes, Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="rejectLecturesModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Lecture Record(s) Rejection Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want reject selected lecture record(s)?</p>
+                    <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label>Remark: </label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="rejectionRemark" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" onclick="RejectLecturesConfirm()">Yes, Send</button>
                 </div>
             </div>
         </div>
@@ -231,6 +271,7 @@
             "scroller": true,
             "order": [],
             'select': {
+                'info': false,
                 'style': 'multi',
                 'selector': 'td:first-child'
             },
@@ -272,7 +313,7 @@
                     "data": null,
                     "defaultContent": '',
                     'createdCell': function (td, cellData, rowData, row, col) {
-                        if (rowData.canSendToApproval == false) {
+                        if (rowData.canSendToApproval == false || rowData.IsApprovedOrRejected == false) {
                             $(td).find('input:checkbox').prop('disabled', true);
                         }
                     },
@@ -375,6 +416,18 @@
                 {
                     "title": "Comment",
                     "data": "Comment",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Approval / Rejection Remark",
+                    "data": "ApprovedOrRejectedRemark",
                     "render": function (data) {
                         if (data == null) {
                             return "N/A";
@@ -512,6 +565,7 @@
         //});
 
         function onSendToApprovalClick() {
+            selectedCLRecordsList = [];
             var allselectedRows = lectureApprovalTbl.rows('.selected').data();
 
             if (allselectedRows.length != 0) {
@@ -550,7 +604,8 @@
             $("#loader").show();
 
             var CLObj = {
-                CLIdList: selectedCLRecordsList
+                CLIdList: selectedCLRecordsList,
+                Remark: $("#approvalRemark").val()
             };
 
             $.ajax({
@@ -561,6 +616,73 @@
                     $("#loader").hide();
                     if (data.success) {
                         $("#sendToApprovalModal").modal("hide");
+                        lectureApprovalTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
+
+        function onRejectClick() {
+            var allselectedRows = lectureApprovalTbl.rows('.selected').data();
+
+            if (allselectedRows.length != 0) {
+                var allSRList = [];
+                var enabledSRList = [];
+
+                for (var i = 0; i < allselectedRows.length; i++) {
+                    allSRList.push(allselectedRows[i].CLId);
+                }
+
+                var selectedRows = lectureApprovalTbl.rows(function (idx, data, node) {
+                    return $(node).find('input[type="checkbox"]:enabled').length
+                }).data();
+
+                for (var i = 0; i < selectedRows.length; i++) {
+                    enabledSRList.push(selectedRows[i].CLId);
+                }
+
+                for (var i = 0; i < enabledSRList.length; i++) {
+                    if (allSRList.indexOf(enabledSRList[i]) > -1) {
+                        selectedCLRecordsList.push(enabledSRList[i]);
+                    }
+                }
+            }
+
+            if (selectedCLRecordsList.length != 0) {
+                $("#rejectLecturesModal").modal("show");
+            }
+            else {
+                alert("You must choose one or more lecture records for rejection");
+            }
+        }
+
+        function RejectLecturesConfirm() {
+            //alert(selectedCLRecordsList);
+            $("#loader").show();
+
+            var CLObj = {
+                CLIdList: selectedCLRecordsList,
+                Remark: $("#rejectionRemark").val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("LecturerMonthlyRecordsRejection", "SA")',
+                data: CLObj,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#rejectLecturesModal").modal("hide");
                         lectureApprovalTbl.ajax.reload();
                         $.notify(data.message, {
                             globalPosition: "top center",

@@ -463,8 +463,13 @@
           <Property Name="DesignationId" Type="int" Nullable="false" />
           <Property Name="RatePerHour" Type="float" Nullable="false" />
           <Property Name="OldRatePerHour" Type="float" Nullable="false" />
-          <Property Name="SentForApproval" Type="bit" Nullable="false" />
-          <Property Name="IsApproved" Type="bit" Nullable="false" />
+          <Property Name="SentForApproval" Type="bit" />
+          <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="SentToApprovalDate" Type="datetime" />
+          <Property Name="IsApproved" Type="bit" />
+          <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ApprovedDate" Type="datetime" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -483,8 +488,13 @@
           <Property Name="DesignationId" Type="int" Nullable="false" />
           <Property Name="RatePerHour" Type="float" Nullable="false" />
           <Property Name="OldRatePerHour" Type="float" Nullable="false" />
-          <Property Name="SentForApproval" Type="bit" Nullable="false" />
-          <Property Name="IsApproved" Type="bit" Nullable="false" />
+          <Property Name="SentForApproval" Type="bit" />
+          <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="SentToApprovalDate" Type="datetime" />
+          <Property Name="IsApproved" Type="bit" />
+          <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ApprovedDate" Type="datetime" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -2843,8 +2853,13 @@
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
           <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
-          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
-          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+          <Property Name="SentForApproval" Type="Boolean" />
+          <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
+          <Property Name="IsApproved" Type="Boolean" />
+          <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2869,8 +2884,13 @@
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
           <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
-          <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
-          <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+          <Property Name="SentForApproval" Type="Boolean" />
+          <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
+          <Property Name="IsApproved" Type="Boolean" />
+          <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -4505,7 +4525,12 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+                <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
                 <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
@@ -4527,7 +4552,12 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+                <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+                <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
                 <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />

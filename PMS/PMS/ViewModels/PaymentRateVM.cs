@@ -12,13 +12,16 @@ namespace PMS.ViewModels
     {
 
         public int Id { get; set; }
-        public int RatePerHour { get; set; }
+        public double CurrentRatePerHour { get; set; }
+        public double OldRatePerHour { get; set; }
         public string DesignationName { get; set; }
         public string FacultyName { get; set; }
         public string DegreeName { get; set; }
         public string SpecializationName { get; set; }
         public string SubjectName { get; set; }
-        public bool IsApproved { get; set; }
+        public Nullable<bool> SentForApproval { get; set; }
+        public Nullable<bool> IsApproved { get; set; }
+        public string ApprovalOrRejectionRemark { get; set; }
         public bool IsActive { get; set; }
     }
 }

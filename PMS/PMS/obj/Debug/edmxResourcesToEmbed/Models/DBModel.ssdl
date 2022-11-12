@@ -458,8 +458,13 @@
     <Property Name="DesignationId" Type="int" Nullable="false" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
     <Property Name="OldRatePerHour" Type="float" Nullable="false" />
-    <Property Name="SentForApproval" Type="bit" Nullable="false" />
-    <Property Name="IsApproved" Type="bit" Nullable="false" />
+    <Property Name="SentForApproval" Type="bit" />
+    <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="SentToApprovalDate" Type="datetime" />
+    <Property Name="IsApproved" Type="bit" />
+    <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedDate" Type="datetime" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -478,8 +483,13 @@
     <Property Name="DesignationId" Type="int" Nullable="false" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
     <Property Name="OldRatePerHour" Type="float" Nullable="false" />
-    <Property Name="SentForApproval" Type="bit" Nullable="false" />
-    <Property Name="IsApproved" Type="bit" Nullable="false" />
+    <Property Name="SentForApproval" Type="bit" />
+    <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="SentToApprovalDate" Type="datetime" />
+    <Property Name="IsApproved" Type="bit" />
+    <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedDate" Type="datetime" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />

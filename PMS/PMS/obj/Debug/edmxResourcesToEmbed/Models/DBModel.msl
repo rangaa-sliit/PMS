@@ -479,7 +479,12 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+          <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+          <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
@@ -501,7 +506,12 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+          <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
+          <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+          <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />

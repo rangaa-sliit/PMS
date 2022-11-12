@@ -22,8 +22,13 @@ namespace PMS.Models
         public int DesignationId { get; set; }
         public double RatePerHour { get; set; }
         public double OldRatePerHour { get; set; }
-        public bool SentForApproval { get; set; }
-        public bool IsApproved { get; set; }
+        public Nullable<bool> SentForApproval { get; set; }
+        public string SentToApprovalBy { get; set; }
+        public Nullable<System.DateTime> SentToApprovalDate { get; set; }
+        public Nullable<bool> IsApproved { get; set; }
+        public string ApprovalOrRejectionRemark { get; set; }
+        public string ApprovedBy { get; set; }
+        public Nullable<System.DateTime> ApprovedDate { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }

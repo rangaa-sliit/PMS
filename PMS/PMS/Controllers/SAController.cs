@@ -2951,7 +2951,7 @@ namespace PMS.Controllers
         //Developed On:- 2022/08/25
         //Modified By:- Ranga Athapaththu
         //Modified On:- 2022/09/03
-        public ActionResult GetPaymentRate()
+        public ActionResult GetPaymentRates()
         {
             using (PMSEntities db = new PMSEntities())
             {
@@ -2974,7 +2974,11 @@ namespace PMS.Controllers
                                                            SubjectName = sub.SubjectName,
                                                            SpecializationName = spc.Name,
                                                            DesignationName = ds.DesignationName,
-                                                           IsApproved = pr.IsApproved,
+                                                           CurrentRatePerHour = pr.RatePerHour,
+                                                           OldRatePerHour = pr.OldRatePerHour,
+                                                           SentForApproval = pr.SentForApproval.Value,
+                                                           IsApproved = pr.IsApproved.Value,
+                                                           ApprovalOrRejectionRemark = pr.ApprovalOrRejectionRemark,
                                                            IsActive = pr.IsActive
                                                        }).ToList();
 
@@ -3145,7 +3149,7 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            paymentRate.IsApproved = false;
+                            paymentRate.OldRatePerHour = paymentRate.RatePerHour;
                             paymentRate.CreatedBy = "Dulanjalee";
                             paymentRate.CreatedDate = dateTime;
                             paymentRate.ModifiedBy = "Dulanjalee";
@@ -3161,8 +3165,8 @@ namespace PMS.Controllers
                             prLog.SpecializationId = paymentRate.SpecializationId;
                             prLog.SubjectId = paymentRate.SubjectId;
                             prLog.RatePerHour = paymentRate.RatePerHour;
+                            prLog.OldRatePerHour = paymentRate.RatePerHour;
                             prLog.IsActive = paymentRate.IsActive;
-                            prLog.IsApproved = false;
                             prLog.CreatedBy = "Ranga";
                             prLog.CreatedDate = dateTime;
                             prLog.ModifiedBy = "Ranga";
@@ -3202,7 +3206,14 @@ namespace PMS.Controllers
                                 editingPaymentRate.DegreeId = paymentRate.DegreeId;
                                 editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
                                 editingPaymentRate.SubjectId = paymentRate.SubjectId;
-                                editingPaymentRate.RatePerHour = paymentRate.RatePerHour;
+
+                                if(editingPaymentRate.RatePerHour != paymentRate.RatePerHour)
+                                {
+                                    editingPaymentRate.RatePerHour = paymentRate.RatePerHour;
+                                    editingPaymentRate.IsApproved = null;
+                                    editingPaymentRate.SentForApproval = null;
+                                }
+                                
                                 editingPaymentRate.IsActive = paymentRate.IsActive;
                                 editingPaymentRate.ModifiedBy = "Dulanjalee";
                                 editingPaymentRate.ModifiedDate = dateTime;
@@ -9144,6 +9155,8 @@ namespace PMS.Controllers
                                                                          Comment = cl.Comment,
                                                                          CurrentStage = cl.CurrentStage.Value,
                                                                          CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                                         IsApprovedOrRejected = cl.IsApprovedOrRejected,
+                                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
                                                                          PaymentAmount = cl.PaymentAmount,
                                                                          IsActive = cl.IsActive,
                                                                          canSendToApproval = false,
@@ -9295,6 +9308,7 @@ namespace PMS.Controllers
                                 {
                                     conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Final Approved";
                                     conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
                                     conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
                                     conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
                                     conductedLectureRecords[i].lectureRecord.IsFinalApproved = true;
@@ -9306,6 +9320,7 @@ namespace PMS.Controllers
                                     conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflow.SubWorkflowRecord.SubWorkflowId;
                                     conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflow.WorkflowRole;
                                     conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                    conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
                                     conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
                                     conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
                                 }
@@ -9323,6 +9338,7 @@ namespace PMS.Controllers
                             {
                                 conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Final Approved";
                                 conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
                                 conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
                                 conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
                                 conductedLectureRecords[i].lectureRecord.IsFinalApproved = true;
@@ -9334,6 +9350,7 @@ namespace PMS.Controllers
                                 conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflow.SubWorkflowRecord.SubWorkflowId;
                                 conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflow.WorkflowRole;
                                 conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = true;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
                                 conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
                                 conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
                             }
@@ -9348,6 +9365,261 @@ namespace PMS.Controllers
                     {
                         success = true,
                         message = "Successfully Approved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/12
+        [HttpPost]
+        public ActionResult LecturerMonthlyRecordsRejection(LecturerMonthlyApprovalCC mlRecords)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "anupama.s";
+                    List<Faculty_SubworkflowsCC> facultyWiseSubWorkflows = new List<Faculty_SubworkflowsCC>();
+
+                    var conductedLectureRecords = (from cl in db.ConductedLectures
+                                                   join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                   join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                                   where !string.IsNullOrEmpty(cl.CurrentStage.Value.ToString()) && mlRecords.CLIdList.Contains(cl.CLId)
+                                                   select new
+                                                   {
+                                                       lectureRecord = cl,
+                                                       timetableRecord = tt,
+                                                       facultyId = sem.FacultyId.Value
+                                                   }).ToList();
+
+                    for (var i = 0; i < conductedLectureRecords.Count; i++)
+                    {
+                        int facultyId = conductedLectureRecords[i].facultyId;
+
+                        var checkingWorkflow = facultyWiseSubWorkflows.Find(fsw => fsw.FacultyId == facultyId);
+
+                        if (checkingWorkflow == null)
+                        {
+                            List<SubWorkflow_WorkflowCC> subWorkflowRecords = (from sw in db.SubWorkflows
+                                                                               join w in db.Workflows on sw.WorkflowId equals w.Id
+                                                                               join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                                                               where sw.WorkflowStep > 1 && w.FacultyId.Value == facultyId
+                                                                               select new SubWorkflow_WorkflowCC
+                                                                               {
+                                                                                   SubWorkflowRecord = sw,
+                                                                                   WorkflowRole = r.Name
+                                                                               }).ToList();
+
+                            if (subWorkflowRecords.Count != 0)
+                            {
+                                facultyWiseSubWorkflows.Add(new Faculty_SubworkflowsCC()
+                                {
+                                    FacultyId = facultyId,
+                                    SubworkflowList = subWorkflowRecords
+                                });
+
+                                SubWorkflow_WorkflowCC currentWorkflow = subWorkflowRecords.Find(sw => sw.SubWorkflowRecord.SubWorkflowId == conductedLectureRecords[i].lectureRecord.CurrentStage.Value);
+
+                                conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Rejected by " + currentWorkflow.WorkflowRole;
+                                conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = false;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                                conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+
+                                db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                            }
+                        }
+                        else
+                        {
+                            SubWorkflow_WorkflowCC currentWorkflow = checkingWorkflow.SubworkflowList.Find(sw => sw.SubWorkflowRecord.SubWorkflowId == conductedLectureRecords[i].lectureRecord.CurrentStage.Value);
+
+                            conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Rejected by " + currentWorkflow.WorkflowRole;
+                            conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected = false;
+                            conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark = mlRecords.Remark;
+                            conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy = username;
+                            conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
+
+                            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+
+                            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                        }
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Rejected"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/12
+        [HttpPost]
+        public ActionResult PaymentRateSendtoApproval(PaymentRateApprovalCC paymentRates)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "anupama.s";
+
+                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+
+                    for (var i = 0; i < paymentRateRecords.Count; i++)
+                    {
+                        paymentRateRecords[i].SentForApproval = true;
+                        paymentRateRecords[i].SentToApprovalBy = username;
+                        paymentRateRecords[i].SentToApprovalDate = currentDateTime;
+                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Sent for Approval"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/12
+        [HttpPost]
+        public ActionResult ApprovePaymentRates(PaymentRateApprovalCC paymentRates)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "anupama.s";
+
+                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+
+                    for (var i = 0; i < paymentRateRecords.Count; i++)
+                    {
+                        paymentRateRecords[i].SentForApproval = null;
+                        paymentRateRecords[i].IsApproved = true;
+                        paymentRateRecords[i].ApprovedBy = username;
+                        paymentRateRecords[i].ApprovedDate = currentDateTime;
+                        paymentRateRecords[i].OldRatePerHour = paymentRateRecords[i].RatePerHour;
+                        paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
+
+                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Approved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/12
+        [HttpPost]
+        public ActionResult RejectPaymentRates(PaymentRateApprovalCC paymentRates)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "anupama.s";
+
+                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+
+                    for (var i = 0; i < paymentRateRecords.Count; i++)
+                    {
+                        paymentRateRecords[i].SentForApproval = null;
+                        paymentRateRecords[i].IsApproved = false;
+                        paymentRateRecords[i].ApprovedBy = username;
+                        paymentRateRecords[i].ApprovedDate = currentDateTime;
+                        paymentRateRecords[i].RatePerHour = paymentRateRecords[i].OldRatePerHour;
+                        paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
+
+                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                    }
+
+                    db.SaveChanges();
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Rejected"
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)

@@ -203,6 +203,7 @@
     <Compile Include="Custom_Classes\CustomExtensions.cs" />
     <Compile Include="Custom_Classes\Faculty_SubworkflowsCC.cs" />
     <Compile Include="Custom_Classes\LecturerMonthlyApprovalCC.cs" />
+    <Compile Include="Custom_Classes\PaymentRateApprovalCC.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />

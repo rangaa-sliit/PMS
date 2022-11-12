@@ -24,9 +24,91 @@
         </div>
         <div class="card-body">
             <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="NavigatePaymentRateForm('@Url.Action("AddOrEditPaymentRate", "SA")', 'Add')"><i class="fa fa-plus"></i> Add New</button>
-            <button type="button" class="btn btn-sm btn-outline-primary float-right"><i class="fa fa-arrow-right"></i> Send To Approval</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
+            <button type="button" class="btn btn-sm btn-outline-success float-right mr-2" onclick="onApproveClick()"><i class="fa fa-check"></i> Approve</button>
+            <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2" onclick="onRejectClick()"><i class="fa fa-times"></i> Reject</button>
             <div class="table-responsive">
                 <table id="paymentRateTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="sendToApprovalModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send To Approval Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want send selected payment rates to approval?</p>
+                    <p class="text-danger">This action cannot be undone once you click on 'Yes, Send'!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="SendToApprovalConfirm()">Yes, Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="paymentRateApprovalModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Payment Rate(s) Approval Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want approve selected payment rate(s)?</p>
+                    <p class="text-danger">This action cannot be undone once you click on 'Yes, Approve'!</p>
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label>Remark: </label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="approvalRemark" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="PaymentRateApprovalConfirm()">Yes, Approve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="paymentRateRejectModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Payment Rate(s) Rejection Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want reject selected payment rate(s)?</p>
+                    <p class="text-danger">This action cannot be undone once you click on 'Yes, Reject'!</p>
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+                                <label>Remark: </label>
+                            </div>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="rejectionRemark" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" onclick="PaymentRateRejectConfirm()">Yes, Reject</button>
+                </div>
             </div>
         </div>
     </div>
@@ -35,6 +117,7 @@
 @section scripts {
     <script>
         var paymentRateTbl;
+        var selectedCLRecordsList = [];
 
         paymentRateTbl = $("#paymentRateTbl").DataTable({
             "responsive": true,
@@ -43,7 +126,7 @@
             "scroller": true,
             "order": [],
             "ajax": {
-                "url": "@Url.Action("GetPaymentRate", "SA")",
+                "url": "@Url.Action("GetPaymentRates", "SA")",
                 "type": "GET",
                 "dataType": "json"
             },
@@ -92,6 +175,18 @@
                     }
                 },
                 {
+                    "title": "Approved Rate Per Hour",
+                    "data": "CurrentRatePerHour",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
                     "title": "Degree",
                     "data": "DegreeName",
                     "render": function (data) {
@@ -128,14 +223,46 @@
                     }
                 },
                 {
-                    "title": "Approval Status",
-                    "data": "IsApproved",
+                    "title": "Old Rate Per Hour",
+                    "data": "OldRatePerHour",
                     "render": function (data) {
-                        if (data == true) {
-                            return 'Approved';
+                        if (data == null) {
+                            return "N/A";
                         }
                         else {
-                            return 'Not Approved';
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Approval Status",
+                    "data": null,
+                    "render": function (data) {
+                        if (data.SentForApproval == true) {
+                            return 'Sent For Approval';
+                        }
+                        else {
+                            if (data.IsApproved == true) {
+                                return 'Approved';
+                            }
+                            else if (data.IsApproved == false) {
+                                return 'Rejected';
+                            }
+                            else {
+                                return 'Not Sent For Approval'
+                            }
+                        }
+                    }
+                },
+                {
+                    "title": "Approval / Rejection Remark",
+                    "data": "ApprovalOrRejectionRemark",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
                         }
                     }
                 },
@@ -178,6 +305,155 @@
             else {
                 window.location.href = url + "/View";
             }
+        }
+
+        function onSendToApprovalClick() {
+            selectedCLRecordsList = [];
+            var allselectedRows = paymentRateTbl.rows('.selected').data();
+
+            if (allselectedRows.length != 0) {
+                for (var i = 0; i < allselectedRows.length; i++) {
+                    selectedCLRecordsList.push(allselectedRows[i].Id);
+                }
+            }
+
+            if (selectedCLRecordsList.length != 0) {
+                $("#sendToApprovalModal").modal("show");
+            }
+            else {
+                alert("You must choose one or more payment rates before sending to approval");
+            }
+        }
+
+        function SendToApprovalConfirm() {
+            $("#loader").show();
+
+            var paymentRateObj = {
+                PaymentRateIdList: selectedCLRecordsList
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PaymentRateSendtoApproval", "SA")',
+                data: paymentRateObj,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#sendToApprovalModal").modal("hide");
+                        paymentRateTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
+
+        function onApproveClick() {
+            selectedCLRecordsList = [];
+            var allselectedRows = paymentRateTbl.rows('.selected').data();
+
+            if (allselectedRows.length != 0) {
+                for (var i = 0; i < allselectedRows.length; i++) {
+                    selectedCLRecordsList.push(allselectedRows[i].Id);
+                }
+            }
+
+            if (selectedCLRecordsList.length != 0) {
+                $("#paymentRateApprovalModal").modal("show");
+            }
+            else {
+                alert("You must choose one or more payment rates to approve");
+            }
+        }
+
+        function PaymentRateApprovalConfirm() {
+            $("#loader").show();
+
+            var paymentRateObj = {
+                PaymentRateIdList: selectedCLRecordsList,
+                Remark: $("#approvalRemark").val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ApprovePaymentRates", "SA")',
+                data: paymentRateObj,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#paymentRateApprovalModal").modal("hide");
+                        paymentRateTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
+
+        function onRejectClick() {
+            selectedCLRecordsList = [];
+            var allselectedRows = paymentRateTbl.rows('.selected').data();
+
+            if (allselectedRows.length != 0) {
+                for (var i = 0; i < allselectedRows.length; i++) {
+                    selectedCLRecordsList.push(allselectedRows[i].Id);
+                }
+            }
+
+            if (selectedCLRecordsList.length != 0) {
+                $("#paymentRateRejectModal").modal("show");
+            }
+            else {
+                alert("You must choose one or more payment rates to reject");
+            }
+        }
+
+        function PaymentRateRejectConfirm() {
+            $("#loader").show();
+
+            var paymentRateObj = {
+                PaymentRateIdList: selectedCLRecordsList,
+                Remark: $("#rejectionRemark").val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RejectPaymentRates", "SA")',
+                data: paymentRateObj,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#paymentRateRejectModal").modal("hide");
+                        paymentRateTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
         }
     </script>
 }

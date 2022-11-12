@@ -5,9 +5,9 @@ using System.Web;
 
 namespace PMS.Custom_Classes
 {
-    public class LecturerMonthlyApprovalCC
+    public class PaymentRateApprovalCC
     {
-        public List<int> CLIdList { get; set; }
+        public List<int> PaymentRateIdList { get; set; }
         public string Remark { get; set; }
     }
 }

@@ -904,8 +904,13 @@
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
     <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
-    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
-    <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" />
+    <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
+    <Property Name="IsApproved" Type="Boolean" />
+    <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -930,8 +935,13 @@
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
     <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
-    <Property Name="SentForApproval" Type="Boolean" Nullable="false" />
-    <Property Name="IsApproved" Type="Boolean" Nullable="false" />
+    <Property Name="SentForApproval" Type="Boolean" />
+    <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
+    <Property Name="IsApproved" Type="Boolean" />
+    <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
