@@ -28,8 +28,6 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(model => model.Id)
-
-
                 <div class="form-group row">
                     <div class="col-sm-2">
                         @Html.LabelFor(model => model.DesignationId, "Designation: ", new { @class = "required" })
@@ -37,6 +35,15 @@
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.DesignationId, (IEnumerable<SelectListItem>)ViewBag.designationList, new { @class = "form-control", @id = "DesignationId", onchange = "onDesignationChange(this.value)" })
                         @Html.ValidationMessageFor(model => model.DesignationId)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.LectureTypeId, "Lecture Type: ", new { @class = "required" })
+                    </div>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(model => model.LectureTypeId, (IEnumerable<SelectListItem>)ViewBag.lectureTypeList, new { @class = "form-control", @id = "lectureTypeId", onchange = "onLectureTypeChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.LectureTypeId)
                     </div>
                 </div>
                 <div class="form-group row">
@@ -119,8 +126,20 @@
                 }
             });
 
+            $("#lectureTypeId").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Designation --"
+                }
+            });
+
             $("#FacultyId").select2({
                 theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Designation --"
+                }
             });
 
             $("#DegreeId").select2({
@@ -152,6 +171,7 @@
                     $("#aeDegreeCardTitle").html("View Payment Rate");
                     $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">View Payment Rate</li>`);
                     $("#DesignationId").prop("disabled", true);
+                    $("#lectureTypeId").prop("disabled", true);
                     $("#SubjectId").prop("disabled", true);
                     $("#DegreeId").prop("disabled", true);
                     $("#FacultyId").prop("disabled", true);
@@ -168,6 +188,7 @@
                 $("#RatePerHour").val("");
                 $("#paymentRateStatusList").val("true");
                 $("#DesignationId").val(null).change();
+                $("#lectureTypeId").val(null).change();
                 $("#FacultyId").val(null).change();
                 $("#DegreeId").val(null).change();
                 $("#SpecializationId").val(null).change();
@@ -193,6 +214,7 @@
                                 $("#RatePerHour").val("");
                                 $("#degreeStatusList").val("true");
                                 $("#DesignationId").val(null).change();
+                                $("#lectureTypeId").val(null).change();
                                 $("#FacultyId").val(null).change();
                                 $("#DegreeId").val(null).change();
                                 $("#SpecializationId").val(null).change();
@@ -221,6 +243,7 @@
                 $("#RatePerHour").val("");
                 $("#degreeStatusList").val("true");
                 $("#DesignationId").val(null).change();
+                $("#lectureTypeId").val(null).change();
                 $("#FacultyId").val(null).change();
                 $("#DegreeId").val(null).change();
                 $("#SpecializationId").val(null).change();
@@ -232,6 +255,11 @@
         }
 
         function onDesignationChange(newDesignation) {
+            $("#paymentRateSubmitBtn").prop("disabled", false);
+            $("#paymentRateClearBtn").prop("disabled", false);
+        }
+
+        function onLectureTypeChange(newLectureType) {
             $("#paymentRateSubmitBtn").prop("disabled", false);
             $("#paymentRateClearBtn").prop("disabled", false);
         }

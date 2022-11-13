@@ -300,6 +300,14 @@
       <End Role="SemesterSubject" EntitySet="SemesterSubject" />
       <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
     </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_LectureType" Association="PMSModel.FK_PaymentRate_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_LectureType" Association="PMSModel.FK_PaymentRateLog_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Specialization" Association="PMSModel.FK_PaymentRate_Specialization">
       <End Role="Specialization" EntitySet="Specialization" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
@@ -877,6 +885,8 @@
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_LectureType" FromRole="LectureType" ToRole="LectureTimetable" />
     <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureType" FromRole="LectureType" ToRole="LectureTimetableLog" />
+    <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_LectureType" FromRole="LectureType" ToRole="PaymentRate" />
+    <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_LectureType" FromRole="LectureType" ToRole="PaymentRateLog" />
   </EntityType>
   <EntityType Name="Notifications">
     <Key>
@@ -902,6 +912,7 @@
     <Property Name="FacultyId" Type="Int32" />
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
+    <Property Name="LectureTypeId" Type="Int32" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
     <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
     <Property Name="SentForApproval" Type="Boolean" />
@@ -909,8 +920,8 @@
     <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
     <Property Name="IsApproved" Type="Boolean" />
     <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+    <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -919,6 +930,7 @@
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_PaymentRate_Degree" FromRole="PaymentRate" ToRole="Degree" />
     <NavigationProperty Name="Designation" Relationship="PMSModel.FK_PaymentRate_Designation" FromRole="PaymentRate" ToRole="Designation" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="PaymentRate" ToRole="Faculty" />
+    <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_PaymentRate_LectureType" FromRole="PaymentRate" ToRole="LectureType" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="PaymentRate" ToRole="Specialization" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="PaymentRate" ToRole="Subject" />
     <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRate" ToRole="PaymentRateLog" />
@@ -933,6 +945,7 @@
     <Property Name="FacultyId" Type="Int32" />
     <Property Name="SubjectId" Type="Int32" />
     <Property Name="DesignationId" Type="Int32" Nullable="false" />
+    <Property Name="LectureTypeId" Type="Int32" />
     <Property Name="RatePerHour" Type="Double" Nullable="false" />
     <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
     <Property Name="SentForApproval" Type="Boolean" />
@@ -940,8 +953,8 @@
     <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
     <Property Name="IsApproved" Type="Boolean" />
     <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-    <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+    <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -951,6 +964,7 @@
     <NavigationProperty Name="Degree" Relationship="PMSModel.FK_PaymentRateLog_Degree" FromRole="PaymentRateLog" ToRole="Degree" />
     <NavigationProperty Name="Designation" Relationship="PMSModel.FK_PaymentRateLog_Designation" FromRole="PaymentRateLog" ToRole="Designation" />
     <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="PaymentRateLog" ToRole="Faculty" />
+    <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_PaymentRateLog_LectureType" FromRole="PaymentRateLog" ToRole="LectureType" />
     <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRateLog" ToRole="PaymentRate" />
     <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
     <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
@@ -1951,6 +1965,30 @@
       </Principal>
       <Dependent Role="LectureTimetableLog">
         <PropertyRef Name="SemesterSubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRate_LectureType">
+    <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_LectureType">
+    <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="0..1" />
+    <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="LectureTypeId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

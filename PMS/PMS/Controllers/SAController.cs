@@ -2957,6 +2957,8 @@ namespace PMS.Controllers
             {
                 List<PaymentRateVM> paymentRateList = (from pr in db.PaymentRate
                                                        join ds in db.Designation on pr.DesignationId equals ds.DesignationId
+                                                       join lt in db.LectureType on pr.LectureTypeId equals lt.LectureTypeId into pr_lt
+                                                       from lTyp in pr_lt.DefaultIfEmpty()
                                                        join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
                                                        from fac in pr_f.DefaultIfEmpty()
                                                        join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
@@ -2974,6 +2976,7 @@ namespace PMS.Controllers
                                                            SubjectName = sub.SubjectName,
                                                            SpecializationName = spc.Name,
                                                            DesignationName = ds.DesignationName,
+                                                           LectureTypeName = lTyp.LectureTypeName,
                                                            CurrentRatePerHour = pr.RatePerHour,
                                                            OldRatePerHour = pr.OldRatePerHour,
                                                            SentForApproval = pr.SentForApproval.Value,
@@ -3008,6 +3011,18 @@ namespace PMS.Controllers
                 //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
                 ViewBag.designationList = designationList;
 
+                var lectureTypes = (from lt in db.LectureType
+                                    where lt.IsActive.Equals(true)
+                                    select new
+                                    {
+                                        Text = lt.LectureTypeName,
+                                        Value = lt.LectureTypeId
+                                    }).ToList();
+
+                List<SelectListItem> lectureTypeList = new SelectList(lectureTypes, "Value", "Text").ToList();
+                //designationList.Insert(0, new SelectListItem() { Text = "-- Select Designation --", Value = "", Disabled = true, Selected = true });
+                ViewBag.lectureTypeList = lectureTypeList;
+
                 var faculty = (from f in db.Faculty
                                where f.IsActive.Equals(true)
                                select new
@@ -3017,7 +3032,7 @@ namespace PMS.Controllers
                                }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculty, "Value", "Text").ToList();
-                facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
+                //facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.facultyList = facultyList;
 
                 var subject = (from s in db.Subject
@@ -3132,7 +3147,7 @@ namespace PMS.Controllers
                 {
                     var dateTime = DateTime.Now;
                     PaymentRate validationRecord = (from pr in db.PaymentRate
-                                                    where pr.DesignationId.Equals(paymentRate.DesignationId) && pr.FacultyId.Value.Equals(paymentRate.FacultyId.Value)
+                                                    where pr.DesignationId.Equals(paymentRate.DesignationId) && pr.LectureTypeId.Value.Equals(paymentRate.LectureTypeId.Value) && pr.FacultyId.Value.Equals(paymentRate.FacultyId.Value)
                                                     && pr.DegreeId.Value.Equals(paymentRate.DegreeId.Value) && pr.SpecializationId.Value.Equals(paymentRate.SpecializationId.Value)
                                                     && pr.SubjectId.Value.Equals(paymentRate.SubjectId.Value)
                                                     select pr).FirstOrDefault<PaymentRate>();
@@ -3160,6 +3175,7 @@ namespace PMS.Controllers
                             PaymentRateLog prLog = new PaymentRateLog();
 
                             prLog.DesignationId = paymentRate.DesignationId;
+                            prLog.LectureTypeId = paymentRate.LectureTypeId;
                             prLog.FacultyId = paymentRate.FacultyId;
                             prLog.DegreeId = paymentRate.DegreeId;
                             prLog.SpecializationId = paymentRate.SpecializationId;
@@ -3187,7 +3203,7 @@ namespace PMS.Controllers
                     {
                         PaymentRate editingPaymentRate = (from pr in db.PaymentRate where pr.Id.Equals(paymentRate.Id) select pr).FirstOrDefault<PaymentRate>();
 
-                        if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.FacultyId != paymentRate.FacultyId
+                        if (editingPaymentRate.DesignationId != paymentRate.DesignationId || editingPaymentRate.LectureTypeId != paymentRate.LectureTypeId || editingPaymentRate.FacultyId != paymentRate.FacultyId
                             || editingPaymentRate.DegreeId != paymentRate.DegreeId || editingPaymentRate.SpecializationId != paymentRate.SpecializationId 
                             || editingPaymentRate.SubjectId != paymentRate.SubjectId || editingPaymentRate.RatePerHour != paymentRate.RatePerHour || editingPaymentRate.IsActive != paymentRate.IsActive)
                         {
@@ -3202,6 +3218,7 @@ namespace PMS.Controllers
                             else
                             {
                                 editingPaymentRate.DesignationId = paymentRate.DesignationId;
+                                editingPaymentRate.LectureTypeId = paymentRate.LectureTypeId;
                                 editingPaymentRate.FacultyId = paymentRate.FacultyId;
                                 editingPaymentRate.DegreeId = paymentRate.DegreeId;
                                 editingPaymentRate.SpecializationId = paymentRate.SpecializationId;
@@ -3223,6 +3240,7 @@ namespace PMS.Controllers
                                 PaymentRateLog prLog = new PaymentRateLog();
 
                                 prLog.DesignationId = paymentRate.DesignationId;
+                                prLog.LectureTypeId = paymentRate.LectureTypeId;
                                 prLog.FacultyId = paymentRate.FacultyId;
                                 prLog.DegreeId = paymentRate.DegreeId;
                                 prLog.SpecializationId = paymentRate.SpecializationId;
@@ -4337,29 +4355,91 @@ namespace PMS.Controllers
             using(PMSEntities db = new PMSEntities())
             {
                 var currentDateTime = DateTime.Now;
-                var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
-                var username = "ranga.a";
-                List<Faculty_SubworkflowsCC> fsw = new List<Faculty_SubworkflowsCC>();
-                //int deadlineDays = 0;
+                double paymentRate = 0.0;
+                double paymentAmount = 0.0;
+                bool considerMinimumStudentCount = false;
+                int lecturerDesignationId = 0;
+                int minimumStudentCount = 0;
 
-                //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
-                var nextWorkflowRecord = (from sw in db.SubWorkflows
-                                          join w in db.Workflows on sw.WorkflowId equals w.Id
-                                          join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
-                                          where w.FacultyId.Value == 1
-                                          select new SubWorkflow_WorkflowCC
-                                          {
-                                              SubWorkflowRecord = sw,
-                                              WorkflowRole = r.Name
-                                          }).ToList();
+                var timetableRecord = (from tt in db.LectureTimetable
+                                       join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                       join u in db.AspNetUsers on tt.LecturerId equals u.Id
+                                       join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                       where tt.TimetableId.Equals(3077)
+                                       select new
+                                       {
+                                           ttRecord = tt,
+                                           considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
+                                           lecturerId = u.Id,
+                                           facultyId = sem.FacultyId.Value
+                                       }).FirstOrDefault();
 
-                fsw.Add(new Faculty_SubworkflowsCC()
+                List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
+                                                               join d in db.Designation on a.DesignationId equals d.DesignationId
+                                                               where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= currentDateTime
+                                                               && a.IsActive.Equals(true) && d.IsActive.Equals(true)
+                                                               select a).ToList();
+                var x = "";
+                for (int i = 0; i < lectureAppointmentDetails.Count; i++)
                 {
-                    FacultyId = 1,
-                    SubworkflowList = nextWorkflowRecord
-                });
+                    if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
+                    {
+                        x = "true";
+                        lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                        break;
+                    }
+                    else
+                    {
+                        x = "false";
+                        if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
+                        {
+                            x = "trues";
+                            lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                            break;
+                        }
+                    }
+                }
 
-                return Json(new { data = fsw }, JsonRequestBehavior.AllowGet);
+                if (lecturerDesignationId != 0)
+                {
+                    PaymentRate facultyPaymentRate = (from p in db.PaymentRate
+                                                      where p.DesignationId.Equals(lecturerDesignationId) && p.LectureTypeId.Value.Equals(timetableRecord.ttRecord.LectureTypeId) && p.FacultyId.Value.Equals(timetableRecord.facultyId) && p.IsActive.Equals(true)
+                                                      select p).FirstOrDefault();
+
+                    if (facultyPaymentRate != null)
+                    {
+                        if (facultyPaymentRate.IsApproved == true)
+                        {
+                            paymentRate = facultyPaymentRate.RatePerHour;
+                        }
+                        else
+                        {
+                            if (facultyPaymentRate.SentForApproval == true || facultyPaymentRate.IsApproved == false)
+                            {
+                                paymentRate = facultyPaymentRate.OldRatePerHour;
+                            }
+                        }
+                    }
+                }
+
+                if (timetableRecord.considerMinimumStudentCount == true)
+                {
+                    considerMinimumStudentCount = true;
+                    ConfigurationalSettings csSetting = (from cs in db.ConfigurationalSettings
+                                                         where cs.ConfigurationKey.Equals("Minimum Student Count For Session") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
+                                                         select cs).FirstOrDefault();
+
+                    if (csSetting != null)
+                    {
+                        int minCount = 0;
+                        if (int.TryParse(csSetting.ConfigurationValue, out minCount))
+                        {
+                            minimumStudentCount = int.Parse(csSetting.ConfigurationValue);
+                        }
+                    }
+                }
+
+                return Json(new { data = minimumStudentCount }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -8068,7 +8148,87 @@ namespace PMS.Controllers
             {
                 try
                 {
-                    var dateTime = DateTime.Now;
+                    var currentDateTime = DateTime.Now;
+                    double paymentRate = 0.0;
+                    double paymentAmount = 0.0;
+                    bool considerMinimumStudentCount = false;
+                    int lecturerDesignationId = 0;
+                    int minimumStudentCount = 0;
+
+                    var timetableRecord = (from tt in db.LectureTimetable
+                                           join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                           join u in db.AspNetUsers on tt.LecturerId equals u.Id
+                                           join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                           where tt.TimetableId.Equals(clObj.TimetableId)
+                                           select new
+                                           {
+                                               ttRecord = tt,
+                                               considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
+                                               lecturerId = u.Id,
+                                               facultyId = sem.FacultyId.Value
+                                           }).FirstOrDefault();
+
+                    List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
+                                                                   join d in db.Designation on a.DesignationId equals d.DesignationId
+                                                                   where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= currentDateTime
+                                                                   && a.IsActive.Equals(true) && d.IsActive.Equals(true)
+                                                                   select a).ToList();
+
+                    for (int i = 0; i < lectureAppointmentDetails.Count; i++)
+                    {
+                        if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
+                        {
+                            lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                            break;
+                        }
+                        else
+                        {
+                            if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
+                            {
+                                lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (lecturerDesignationId != 0)
+                    {
+                        PaymentRate facultyPaymentRate = (from p in db.PaymentRate
+                                                          where p.DesignationId.Equals(lecturerDesignationId) && p.LectureTypeId.Value.Equals(timetableRecord.ttRecord.LectureTypeId) && p.FacultyId.Value.Equals(timetableRecord.facultyId) && p.IsActive.Equals(true)
+                                                          select p).FirstOrDefault();
+
+                        if (facultyPaymentRate != null)
+                        {
+                            if (facultyPaymentRate.IsApproved == true)
+                            {
+                                paymentRate = facultyPaymentRate.RatePerHour;
+                            }
+                            else
+                            {
+                                if (facultyPaymentRate.SentForApproval == true || facultyPaymentRate.IsApproved == false)
+                                {
+                                    paymentRate = facultyPaymentRate.OldRatePerHour;
+                                }
+                            }
+                        }
+                    }
+
+                    if (timetableRecord.considerMinimumStudentCount == true)
+                    {
+                        considerMinimumStudentCount = true;
+                        ConfigurationalSettings csSetting = (from cs in db.ConfigurationalSettings
+                                                             where cs.ConfigurationKey.Equals("Minimum Student Count For Session") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
+                                                             select cs).FirstOrDefault();
+
+                        if (csSetting != null)
+                        {
+                            int minCount = 0;
+                            if (int.TryParse(csSetting.ConfigurationValue, out minCount))
+                            {
+                                minimumStudentCount = int.Parse(csSetting.ConfigurationValue);
+                            }
+                        }
+                    }
 
                     if (clObj.CLId == 0)
                     {
@@ -8084,15 +8244,10 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            LectureTimetable timetableRecord = (from tt in db.LectureTimetable where tt.TimetableId.Equals(clObj.TimetableId) select tt).FirstOrDefault<LectureTimetable>();
-
-                            TimeSpan duration = DateTime.Parse(timetableRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.FromTime.ToString()));
+                            TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
 
                             int numbeofHours = duration.Hours;
                             int numbeofMinutes = duration.Minutes;
-
-                            int paymentRate = 1000;
-                            int paymentAmount = 0;
 
                             ConductedLecturesLog clLogObj = new ConductedLecturesLog();
 
@@ -8129,22 +8284,43 @@ namespace PMS.Controllers
                                 }
                             }
 
-                            if(numbeofHours != 0)
+                            if(considerMinimumStudentCount == true)
                             {
-                                paymentAmount = paymentAmount + paymentRate * numbeofHours;
-                            }
+                                if(clObj.StudentCount.HasValue)
+                                {
+                                    if (minimumStudentCount <= clObj.StudentCount.Value)
+                                    {
+                                        if (numbeofHours != 0)
+                                        {
+                                            paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                        }
 
-                            if(numbeofMinutes != 0)
+                                        if (numbeofMinutes != 0)
+                                        {
+                                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                        }
+                                    }
+                                }
+                            }
+                            else
                             {
-                                paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                if (numbeofHours != 0)
+                                {
+                                    paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                }
+
+                                if (numbeofMinutes != 0)
+                                {
+                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                }
                             }
 
                             clObj.CurrentStageDisplayName = "Saved";
                             clObj.PaymentAmount = paymentAmount;
                             clObj.CreatedBy = "Ranga";
-                            clObj.CreatedDate = dateTime;
+                            clObj.CreatedDate = currentDateTime;
                             clObj.ModifiedBy = "Ranga";
-                            clObj.ModifiedDate = dateTime;
+                            clObj.ModifiedDate = currentDateTime;
 
                             db.ConductedLectures.Add(clObj);
                             db.SaveChanges();
@@ -8181,15 +8357,10 @@ namespace PMS.Controllers
                     {
                         ConductedLectures editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
 
-                        LectureTimetable timetableRecord = (from tt in db.LectureTimetable where tt.TimetableId.Equals(clObj.TimetableId) select tt).FirstOrDefault<LectureTimetable>();
-
-                        TimeSpan duration = DateTime.Parse(timetableRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.FromTime.ToString()));
+                        TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
 
                         int numbeofHours = duration.Hours;
                         int numbeofMinutes = duration.Minutes;
-
-                        int paymentRate = 1000;
-                        int paymentAmount = 0;
 
                         ConductedLecturesLog clLogObj = new ConductedLecturesLog();
 
@@ -8233,14 +8404,35 @@ namespace PMS.Controllers
                             }
                         }
 
-                        if (numbeofHours != 0)
+                        if (considerMinimumStudentCount == true)
                         {
-                            paymentAmount = paymentAmount + paymentRate * numbeofHours;
-                        }
+                            if (clObj.StudentCount.HasValue)
+                            {
+                                if (minimumStudentCount <= clObj.StudentCount.Value)
+                                {
+                                    if (numbeofHours != 0)
+                                    {
+                                        paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                    }
 
-                        if (numbeofMinutes != 0)
+                                    if (numbeofMinutes != 0)
+                                    {
+                                        paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                    }
+                                }
+                            }
+                        }
+                        else
                         {
-                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                            if (numbeofHours != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                            }
+
+                            if (numbeofMinutes != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                            }
                         }
 
                         editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
@@ -8253,7 +8445,7 @@ namespace PMS.Controllers
                         editingConductedLecture.Comment = clObj.Comment;
                         editingConductedLecture.PaymentAmount = paymentAmount;
                         editingConductedLecture.ModifiedBy = "Ranga";
-                        editingConductedLecture.ModifiedDate = dateTime;
+                        editingConductedLecture.ModifiedDate = currentDateTime;
                         editingConductedLecture.IsActive = clObj.IsActive;
 
                         db.Entry(editingConductedLecture).State = EntityState.Modified;
@@ -8273,7 +8465,7 @@ namespace PMS.Controllers
                         clLogObj.PaymentAmount = paymentAmount;
                         clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
                         clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
-                        clLogObj.ModifiedDate = dateTime;
+                        clLogObj.ModifiedDate = currentDateTime;
                         clLogObj.ModifiedBy = "Ranga";
                         clLogObj.IsActive = clObj.IsActive;
 
@@ -9554,8 +9746,8 @@ namespace PMS.Controllers
                     {
                         paymentRateRecords[i].SentForApproval = null;
                         paymentRateRecords[i].IsApproved = true;
-                        paymentRateRecords[i].ApprovedBy = username;
-                        paymentRateRecords[i].ApprovedDate = currentDateTime;
+                        paymentRateRecords[i].ApprovedOrRejectedBy = username;
+                        paymentRateRecords[i].ApprovedOrRejectedDate = currentDateTime;
                         paymentRateRecords[i].OldRatePerHour = paymentRateRecords[i].RatePerHour;
                         paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
 
@@ -9606,8 +9798,8 @@ namespace PMS.Controllers
                     {
                         paymentRateRecords[i].SentForApproval = null;
                         paymentRateRecords[i].IsApproved = false;
-                        paymentRateRecords[i].ApprovedBy = username;
-                        paymentRateRecords[i].ApprovedDate = currentDateTime;
+                        paymentRateRecords[i].ApprovedOrRejectedBy = username;
+                        paymentRateRecords[i].ApprovedOrRejectedDate = currentDateTime;
                         paymentRateRecords[i].RatePerHour = paymentRateRecords[i].OldRatePerHour;
                         paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
 

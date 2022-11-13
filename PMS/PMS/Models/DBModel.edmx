@@ -461,6 +461,7 @@
           <Property Name="FacultyId" Type="int" />
           <Property Name="SubjectId" Type="int" />
           <Property Name="DesignationId" Type="int" Nullable="false" />
+          <Property Name="LectureTypeId" Type="int" />
           <Property Name="RatePerHour" Type="float" Nullable="false" />
           <Property Name="OldRatePerHour" Type="float" Nullable="false" />
           <Property Name="SentForApproval" Type="bit" />
@@ -468,8 +469,8 @@
           <Property Name="SentToApprovalDate" Type="datetime" />
           <Property Name="IsApproved" Type="bit" />
           <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
-          <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
-          <Property Name="ApprovedDate" Type="datetime" />
+          <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -486,6 +487,7 @@
           <Property Name="FacultyId" Type="int" />
           <Property Name="SubjectId" Type="int" />
           <Property Name="DesignationId" Type="int" Nullable="false" />
+          <Property Name="LectureTypeId" Type="int" />
           <Property Name="RatePerHour" Type="float" Nullable="false" />
           <Property Name="OldRatePerHour" Type="float" Nullable="false" />
           <Property Name="SentForApproval" Type="bit" />
@@ -493,8 +495,8 @@
           <Property Name="SentToApprovalDate" Type="datetime" />
           <Property Name="IsApproved" Type="bit" />
           <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
-          <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
-          <Property Name="ApprovedDate" Type="datetime" />
+          <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+          <Property Name="ApprovedOrRejectedDate" Type="datetime" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1254,6 +1256,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PaymentRate_LectureType">
+          <End Role="LectureType" Type="Self.LectureType" Multiplicity="0..1" />
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LectureType">
+              <PropertyRef Name="LectureTypeId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="LectureTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentRate_Specialization">
           <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
           <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
@@ -1311,6 +1325,18 @@
             </Principal>
             <Dependent Role="PaymentRateLog">
               <PropertyRef Name="FacultyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRateLog_LectureType">
+          <End Role="LectureType" Type="Self.LectureType" Multiplicity="0..1" />
+          <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LectureType">
+              <PropertyRef Name="LectureTypeId" />
+            </Principal>
+            <Dependent Role="PaymentRateLog">
+              <PropertyRef Name="LectureTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1832,6 +1858,10 @@
             <End Role="Faculty" EntitySet="Faculty" />
             <End Role="PaymentRate" EntitySet="PaymentRate" />
           </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_LectureType" Association="Self.FK_PaymentRate_LectureType">
+            <End Role="LectureType" EntitySet="LectureType" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
           <AssociationSet Name="FK_PaymentRate_Specialization" Association="Self.FK_PaymentRate_Specialization">
             <End Role="Specialization" EntitySet="Specialization" />
             <End Role="PaymentRate" EntitySet="PaymentRate" />
@@ -1850,6 +1880,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRateLog_Faculty" Association="Self.FK_PaymentRateLog_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
+            <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRateLog_LectureType" Association="Self.FK_PaymentRateLog_LectureType">
+            <End Role="LectureType" EntitySet="LectureType" />
             <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRateLog_PaymentRate" Association="Self.FK_PaymentRateLog_PaymentRate">
@@ -2248,6 +2282,14 @@
           <AssociationSet Name="FK_LectureTimetableLog_SemesterSubject" Association="PMSModel.FK_LectureTimetableLog_SemesterSubject">
             <End Role="SemesterSubject" EntitySet="SemesterSubject" />
             <End Role="LectureTimetableLog" EntitySet="LectureTimetableLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRate_LectureType" Association="PMSModel.FK_PaymentRate_LectureType">
+            <End Role="LectureType" EntitySet="LectureType" />
+            <End Role="PaymentRate" EntitySet="PaymentRate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentRateLog_LectureType" Association="PMSModel.FK_PaymentRateLog_LectureType">
+            <End Role="LectureType" EntitySet="LectureType" />
+            <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentRate_Specialization" Association="PMSModel.FK_PaymentRate_Specialization">
             <End Role="Specialization" EntitySet="Specialization" />
@@ -2826,6 +2868,8 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_LectureTimetable_LectureType" FromRole="LectureType" ToRole="LectureTimetable" />
           <NavigationProperty Name="LectureTimetableLog" Relationship="PMSModel.FK_LectureTimetableLog_LectureType" FromRole="LectureType" ToRole="LectureTimetableLog" />
+          <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_LectureType" FromRole="LectureType" ToRole="PaymentRate" />
+          <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_LectureType" FromRole="LectureType" ToRole="PaymentRateLog" />
         </EntityType>
         <EntityType Name="Notifications">
           <Key>
@@ -2851,6 +2895,7 @@
           <Property Name="FacultyId" Type="Int32" />
           <Property Name="SubjectId" Type="Int32" />
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
+          <Property Name="LectureTypeId" Type="Int32" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
           <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
           <Property Name="SentForApproval" Type="Boolean" />
@@ -2858,8 +2903,8 @@
           <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
           <Property Name="IsApproved" Type="Boolean" />
           <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+          <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2868,6 +2913,7 @@
           <NavigationProperty Name="Degree" Relationship="PMSModel.FK_PaymentRate_Degree" FromRole="PaymentRate" ToRole="Degree" />
           <NavigationProperty Name="Designation" Relationship="PMSModel.FK_PaymentRate_Designation" FromRole="PaymentRate" ToRole="Designation" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRate_Faculty" FromRole="PaymentRate" ToRole="Faculty" />
+          <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_PaymentRate_LectureType" FromRole="PaymentRate" ToRole="LectureType" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRate_Specialization" FromRole="PaymentRate" ToRole="Specialization" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRate_Subject" FromRole="PaymentRate" ToRole="Subject" />
           <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRate" ToRole="PaymentRateLog" />
@@ -2882,6 +2928,7 @@
           <Property Name="FacultyId" Type="Int32" />
           <Property Name="SubjectId" Type="Int32" />
           <Property Name="DesignationId" Type="Int32" Nullable="false" />
+          <Property Name="LectureTypeId" Type="Int32" />
           <Property Name="RatePerHour" Type="Double" Nullable="false" />
           <Property Name="OldRatePerHour" Type="Double" Nullable="false" />
           <Property Name="SentForApproval" Type="Boolean" />
@@ -2889,8 +2936,8 @@
           <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
           <Property Name="IsApproved" Type="Boolean" />
           <Property Name="ApprovalOrRejectionRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ApprovedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ApprovedDate" Type="DateTime" Precision="3" />
+          <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2900,6 +2947,7 @@
           <NavigationProperty Name="Degree" Relationship="PMSModel.FK_PaymentRateLog_Degree" FromRole="PaymentRateLog" ToRole="Degree" />
           <NavigationProperty Name="Designation" Relationship="PMSModel.FK_PaymentRateLog_Designation" FromRole="PaymentRateLog" ToRole="Designation" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_PaymentRateLog_Faculty" FromRole="PaymentRateLog" ToRole="Faculty" />
+          <NavigationProperty Name="LectureType" Relationship="PMSModel.FK_PaymentRateLog_LectureType" FromRole="PaymentRateLog" ToRole="LectureType" />
           <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRateLog_PaymentRate" FromRole="PaymentRateLog" ToRole="PaymentRate" />
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
@@ -3903,6 +3951,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PaymentRate_LectureType">
+          <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="0..1" />
+          <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LectureType">
+              <PropertyRef Name="LectureTypeId" />
+            </Principal>
+            <Dependent Role="PaymentRate">
+              <PropertyRef Name="LectureTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentRateLog_LectureType">
+          <End Type="PMSModel.LectureType" Role="LectureType" Multiplicity="0..1" />
+          <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LectureType">
+              <PropertyRef Name="LectureTypeId" />
+            </Principal>
+            <Dependent Role="PaymentRateLog">
+              <PropertyRef Name="LectureTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentRate_Specialization">
           <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="0..1" />
           <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="*" />
@@ -4525,8 +4597,8 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+                <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
                 <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
@@ -4534,6 +4606,7 @@
                 <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
+                <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
                 <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
@@ -4552,8 +4625,8 @@
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+                <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
                 <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
                 <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
                 <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
@@ -4561,6 +4634,7 @@
                 <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
                 <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
                 <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
+                <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
                 <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
                 <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />

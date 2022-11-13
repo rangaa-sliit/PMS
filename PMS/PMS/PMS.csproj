@@ -197,6 +197,7 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Custom_Classes\AccessGroupClaimCC.cs" />
     <Compile Include="Custom_Classes\AccessGroupClaim_ClaimCC.cs" />
+    <Compile Include="Custom_Classes\ADLoginCC.cs" />
     <Compile Include="Custom_Classes\ConductedLectureCC.cs" />
     <Compile Include="Custom_Classes\ControllerActions.cs" />
     <Compile Include="Custom_Classes\CustomAuthorizeAttribute.cs" />

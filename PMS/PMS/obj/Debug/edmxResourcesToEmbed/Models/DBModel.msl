@@ -479,8 +479,8 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+          <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+          <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
           <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
@@ -488,6 +488,7 @@
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
+          <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
@@ -506,8 +507,8 @@
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
-          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+          <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
+          <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovalOrRejectionRemark" ColumnName="ApprovalOrRejectionRemark" />
           <ScalarProperty Name="IsApproved" ColumnName="IsApproved" />
           <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
@@ -515,6 +516,7 @@
           <ScalarProperty Name="SentForApproval" ColumnName="SentForApproval" />
           <ScalarProperty Name="OldRatePerHour" ColumnName="OldRatePerHour" />
           <ScalarProperty Name="RatePerHour" ColumnName="RatePerHour" />
+          <ScalarProperty Name="LectureTypeId" ColumnName="LectureTypeId" />
           <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
           <ScalarProperty Name="SubjectId" ColumnName="SubjectId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />

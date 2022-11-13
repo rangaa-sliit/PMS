@@ -163,6 +163,18 @@
                     }
                 },
                 {
+                    "title": "Lecture Type",
+                    "data": "LectureTypeName",
+                    "render": function (data) {
+                        if (data == null) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
                     "title": "Faculty",
                     "data": "FacultyName",
                     "render": function (data) {

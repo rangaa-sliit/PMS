@@ -456,6 +456,7 @@
     <Property Name="FacultyId" Type="int" />
     <Property Name="SubjectId" Type="int" />
     <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="LectureTypeId" Type="int" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
     <Property Name="OldRatePerHour" Type="float" Nullable="false" />
     <Property Name="SentForApproval" Type="bit" />
@@ -463,8 +464,8 @@
     <Property Name="SentToApprovalDate" Type="datetime" />
     <Property Name="IsApproved" Type="bit" />
     <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
-    <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
-    <Property Name="ApprovedDate" Type="datetime" />
+    <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -481,6 +482,7 @@
     <Property Name="FacultyId" Type="int" />
     <Property Name="SubjectId" Type="int" />
     <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="LectureTypeId" Type="int" />
     <Property Name="RatePerHour" Type="float" Nullable="false" />
     <Property Name="OldRatePerHour" Type="float" Nullable="false" />
     <Property Name="SentForApproval" Type="bit" />
@@ -488,8 +490,8 @@
     <Property Name="SentToApprovalDate" Type="datetime" />
     <Property Name="IsApproved" Type="bit" />
     <Property Name="ApprovalOrRejectionRemark" Type="nvarchar" MaxLength="500" />
-    <Property Name="ApprovedBy" Type="nvarchar" MaxLength="256" />
-    <Property Name="ApprovedDate" Type="datetime" />
+    <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
@@ -1249,6 +1251,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PaymentRate_LectureType">
+    <End Role="LectureType" Type="Self.LectureType" Multiplicity="0..1" />
+    <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="PaymentRate">
+        <PropertyRef Name="LectureTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_PaymentRate_Specialization">
     <End Role="Specialization" Type="Self.Specialization" Multiplicity="0..1" />
     <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="*" />
@@ -1306,6 +1320,18 @@
       </Principal>
       <Dependent Role="PaymentRateLog">
         <PropertyRef Name="FacultyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PaymentRateLog_LectureType">
+    <End Role="LectureType" Type="Self.LectureType" Multiplicity="0..1" />
+    <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LectureType">
+        <PropertyRef Name="LectureTypeId" />
+      </Principal>
+      <Dependent Role="PaymentRateLog">
+        <PropertyRef Name="LectureTypeId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1827,6 +1853,10 @@
       <End Role="Faculty" EntitySet="Faculty" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
     </AssociationSet>
+    <AssociationSet Name="FK_PaymentRate_LectureType" Association="Self.FK_PaymentRate_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
+      <End Role="PaymentRate" EntitySet="PaymentRate" />
+    </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Specialization" Association="Self.FK_PaymentRate_Specialization">
       <End Role="Specialization" EntitySet="Specialization" />
       <End Role="PaymentRate" EntitySet="PaymentRate" />
@@ -1845,6 +1875,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRateLog_Faculty" Association="Self.FK_PaymentRateLog_Faculty">
       <End Role="Faculty" EntitySet="Faculty" />
+      <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PaymentRateLog_LectureType" Association="Self.FK_PaymentRateLog_LectureType">
+      <End Role="LectureType" EntitySet="LectureType" />
       <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRateLog_PaymentRate" Association="Self.FK_PaymentRateLog_PaymentRate">

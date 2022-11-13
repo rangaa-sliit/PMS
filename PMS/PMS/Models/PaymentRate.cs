@@ -29,6 +29,8 @@ namespace PMS.Models
         public Nullable<int> SubjectId { get; set; }
         [Required(ErrorMessage = "Designation is required")]
         public int DesignationId { get; set; }
+        [Required(ErrorMessage = "Lecture Type is required")]
+        public Nullable<int> LectureTypeId { get; set; }
         [Required(ErrorMessage = "Rate Per Hour is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Only positive values are allowed")]
         public double RatePerHour { get; set; }
@@ -38,8 +40,8 @@ namespace PMS.Models
         public Nullable<System.DateTime> SentToApprovalDate { get; set; }
         public Nullable<bool> IsApproved { get; set; }
         public string ApprovalOrRejectionRemark { get; set; }
-        public string ApprovedBy { get; set; }
-        public Nullable<System.DateTime> ApprovedDate { get; set; }
+        public string ApprovedOrRejectedBy { get; set; }
+        public Nullable<System.DateTime> ApprovedOrRejectedDate { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime ModifiedDate { get; set; }
@@ -49,6 +51,7 @@ namespace PMS.Models
         public virtual Degree Degree { get; set; }
         public virtual Designation Designation { get; set; }
         public virtual Faculty Faculty { get; set; }
+        public virtual LectureType LectureType { get; set; }
         public virtual Specialization Specialization { get; set; }
         public virtual Subject Subject { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

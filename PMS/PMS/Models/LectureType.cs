@@ -20,6 +20,8 @@ namespace PMS.Models
         {
             this.LectureTimetable = new HashSet<LectureTimetable>();
             this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
+            this.PaymentRate = new HashSet<PaymentRate>();
+            this.PaymentRateLog = new HashSet<PaymentRateLog>();
         }
     
         public int LectureTypeId { get; set; }
@@ -37,5 +39,9 @@ namespace PMS.Models
         public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LectureTimetableLog> LectureTimetableLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRate> PaymentRate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentRateLog> PaymentRateLog { get; set; }
     }
 }

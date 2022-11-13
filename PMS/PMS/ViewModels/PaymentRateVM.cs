@@ -15,6 +15,7 @@ namespace PMS.ViewModels
         public double CurrentRatePerHour { get; set; }
         public double OldRatePerHour { get; set; }
         public string DesignationName { get; set; }
+        public string LectureTypeName { get; set; }
         public string FacultyName { get; set; }
         public string DegreeName { get; set; }
         public string SpecializationName { get; set; }

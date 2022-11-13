@@ -193,6 +193,12 @@ Developed On:- 2022/08/16*@
             var paymentRateUrlArray = ['ManagePaymentRate', 'AddOrEditPaymentRate'];
 
             var lecturerAppointmentUrlArray = ['ManageAppointments', 'AddOrEditAppointment'];
+
+            var lectureSessionUrlArray = ['ManageLectureSessions'];
+
+            var conductedLecturesUrlArray = ['ManageConductedLectures', 'AddOrEditConductedLecture'];
+
+            var lectureApprovalsUrlArray = ['ManageLectureApprovals', 'ManageLecturerMonthlyApprovals'];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -223,7 +229,16 @@ Developed On:- 2022/08/16*@
             }
             else if (lecturerAppointmentUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#lecturerAppointment-nav-item').addClass('active');
-            }   
+            }
+            else if (lectureSessionUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#lecturerSession-nav-item').addClass('active');
+            }
+            else if (conductedLecturesUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#conductedLectures-nav-item').addClass('active');
+            }
+            else if (lectureApprovalsUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#lectureApprovals-nav-item').addClass('active');
+            }
 
             $("#sidebarToggle").on("click", function () {
                 $(".data-table").DataTable().columns.adjust();
