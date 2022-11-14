@@ -64,6 +64,7 @@ namespace PMS.Models
         public virtual DbSet<SubWorkflows> SubWorkflows { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Title> Title { get; set; }
+        public virtual DbSet<UserClaims> UserClaims { get; set; }
         public virtual DbSet<Workflows> Workflows { get; set; }
     }
 }

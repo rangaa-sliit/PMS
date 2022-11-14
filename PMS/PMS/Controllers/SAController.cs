@@ -4865,7 +4865,7 @@ namespace PMS.Controllers
                     }
                 }
 
-                List<AspNetUserClaims> selectedUserClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
+                List<UserClaims> selectedUserClaims = (from uc in db.UserClaims where uc.UserId.Equals(id) && uc.IsActive.Equals(true) select uc).ToList();
                 userClaim.SelectedUserClaimIds = selectedUserClaims.Select(uc => uc.AccessGroupClaimId).ToList();
 
                 return View(userClaim);
@@ -4933,7 +4933,7 @@ namespace PMS.Controllers
 
                     List<AspNetUserRoles> userRoles = (from ur in db.AspNetUserRoles where ur.UserId.Equals(userClaimCC.UserId) select ur).ToList();
 
-                    List<AspNetUserClaims> userClaims = (from uc in db.AspNetUserClaims where uc.UserId.Equals(userClaimCC.UserId) select uc).ToList();
+                    List<UserClaims> userClaims = (from uc in db.UserClaims where uc.UserId.Equals(userClaimCC.UserId) select uc).ToList();
 
                     if(passingUserRoles.Count != 0)
                     {
@@ -4989,7 +4989,7 @@ namespace PMS.Controllers
                             {
                                 if (userClaims.Find(uc => uc.AccessGroupClaimId == passingUserClaims[i]) == null)
                                 {
-                                    AspNetUserClaims userClaimObj = new AspNetUserClaims();
+                                    UserClaims userClaimObj = new UserClaims();
                                     userClaimObj.UserId = userClaimCC.UserId;
                                     userClaimObj.AccessGroupClaimId = passingUserClaims[i];
                                     userClaimObj.CreatedBy = "Ranga";
@@ -4998,7 +4998,7 @@ namespace PMS.Controllers
                                     userClaimObj.ModifiedDate = dateTime;
                                     userClaimObj.IsActive = true;
 
-                                    db.AspNetUserClaims.Add(userClaimObj);
+                                    db.UserClaims.Add(userClaimObj);
                                 }
                                 else
                                 {
@@ -9813,6 +9813,132 @@ namespace PMS.Controllers
                         success = true,
                         message = "Successfully Rejected"
                     }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/14
+        public ActionResult ManageEmlployeePaymentReports()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var lecturers = (from a in db.Appointment
+                                 join u in db.AspNetUsers on a.UserId equals u.Id
+                                 join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                 where u.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                     Value = u.Id
+                                 }).Distinct().ToList();
+
+                List<SelectListItem> usersList = new SelectList(lecturers, "Value", "Text").ToList();
+                usersList.Insert(0, new SelectListItem() { Text = "All", Value = "All" });
+                ViewBag.usersList = usersList;
+
+                return View();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/14
+        [HttpPost]
+        public ActionResult GetEmployeePaymentReports(ReportsCC reportCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    List<ConductedLecturesVM> conductedLecturesList = new List<ConductedLecturesVM>();
+                    var searchStartDate = Convert.ToDateTime(reportCC.StartDate + " 00:00:00.000");
+                    var searchEndDate = Convert.ToDateTime(reportCC.EndDate + " 23:59:59.999");
+
+                    if(reportCC.LecturerId == "All")
+                    {
+                        conductedLecturesList = (from cl in db.ConductedLectures
+                                                 join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                 join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                 join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                 join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                 join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                 join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                 from usr in tt_u.DefaultIfEmpty()
+                                                 join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                 where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                 && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                 orderby cl.CLId descending
+                                                 select new ConductedLecturesVM
+                                                 {
+                                                     ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                     ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                     ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                     Comment = cl.Comment,
+                                                     CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                     ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                     PaymentAmount = cl.PaymentAmount,
+                                                     timetableRecords = new SemesterTimetableVM()
+                                                     {
+                                                         LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                         SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                         LectureTypeName = lt.LectureTypeName,
+                                                         LectureDate = tt.LectureDate.ToString(),
+                                                         FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                         ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                     }
+                                                 }).ToList();
+                    }
+                    else
+                    {
+                        conductedLecturesList = (from cl in db.ConductedLectures
+                                                 join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                 join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                 join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                 join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                 join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                 join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                 from usr in tt_u.DefaultIfEmpty()
+                                                 join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                 where usr.Id.Equals(reportCC.LecturerId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                 && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                 orderby cl.CLId descending
+                                                 select new ConductedLecturesVM
+                                                 {
+                                                     ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                     ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                     ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                     Comment = cl.Comment,
+                                                     CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                     ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                     PaymentAmount = cl.PaymentAmount,
+                                                     timetableRecords = new SemesterTimetableVM()
+                                                     {
+                                                         LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                         SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                         LectureTypeName = lt.LectureTypeName,
+                                                         LectureDate = tt.LectureDate.ToString(),
+                                                         FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                         ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                     }
+                                                 }).ToList();
+                    }
+
+                    return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
                 {

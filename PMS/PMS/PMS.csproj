@@ -67,10 +67,16 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.DirectoryServices.Protocols.7.0.0\lib\netstandard2.0\System.DirectoryServices.Protocols.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -205,6 +211,7 @@
     <Compile Include="Custom_Classes\Faculty_SubworkflowsCC.cs" />
     <Compile Include="Custom_Classes\LecturerMonthlyApprovalCC.cs" />
     <Compile Include="Custom_Classes\PaymentRateApprovalCC.cs" />
+    <Compile Include="Custom_Classes\ReportsCC.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />
@@ -346,6 +353,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Title.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserClaims.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Workflows.cs">
@@ -592,6 +602,7 @@
     <Content Include="Views\SA\ManageConductedLectures.cshtml" />
     <Content Include="Views\SA\ManageLectureApprovals.cshtml" />
     <Content Include="Views\SA\ManageLecturerMonthlyApprovals.cshtml" />
+    <Content Include="Views\SA\ManageEmlployeePaymentReports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

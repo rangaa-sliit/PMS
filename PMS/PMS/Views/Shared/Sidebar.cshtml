@@ -141,6 +141,21 @@ Developed On:- 2022/08/16*@
             <span>Lecture Approvals</span>
         </a>
     </li>
+
+    <li class="nav-item" id="reports-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReports" aria-expanded="true" aria-controls="collapseReports">
+            <i class="fas fa-fw fa-file"></i>
+            <span>Reports</span>
+        </a>
+        <div id="collapseReports" class="collapse" aria-labelledby="headingReports" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Reports:</h6>
+                <a class="collapse-item" href="@Url.Action("ManageEmlployeePaymentReports", "SA")">Employee Wise Report</a>
+                <a class="collapse-item" href="@Url.Action("ManageAccessGroups", "SA")">Access Groups</a>
+                <a class="collapse-item" href="@Url.Action("ManageUsers", "SA")">System Users</a>
+            </div>
+        </div>
+    </li>
     <hr class="sidebar-divider d-none d-md-block" />
 
     <div class="text-center d-none d-md-inline">

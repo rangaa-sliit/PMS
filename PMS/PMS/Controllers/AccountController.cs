@@ -1,6 +1,8 @@
 ﻿using System;
+using System.DirectoryServices.Protocols;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -8,6 +10,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using PMS.Custom_Classes;
 using PMS.Models;
 
 namespace PMS.Controllers
@@ -66,29 +69,67 @@ namespace PMS.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(ADLoginCC model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            bool domainResult = false;
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            try
             {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                if (!ModelState.IsValid)
+                {
                     return View(model);
+                }
+                else
+                {
+                    domainResult = LDAPAuthentication(model.Username, model.Password);
+
+                    if (domainResult == true)
+                    {
+                        var IsUserAvailable = await UserManager.FindByNameAsync(model.Username);
+
+                        if (IsUserAvailable != null)
+                        {
+                            await SignInManager.SignInAsync(IsUserAvailable, false, false);
+                            return RedirectToAction("Index", "SA");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "User is not available in WPS");
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Incorrect Username or Password.");
+                        return View(model);
+                    }
+                }
             }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(model);
+            //}
+
+            //// This doesn't count login failures towards account lockout
+            //// To enable password failures to trigger account lockout, change to shouldLockout: true
+            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            //switch (result)
+            //{
+            //    case SignInStatus.Success:
+            //        return RedirectToLocal(returnUrl);
+            //    case SignInStatus.LockedOut:
+            //        return View("Lockout");
+            //    case SignInStatus.RequiresVerification:
+            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            //    case SignInStatus.Failure:
+            //    default:
+            //        ModelState.AddModelError("", "Invalid login attempt.");
+            //        return View(model);
+            //}
         }
 
         //
@@ -421,6 +462,25 @@ namespace PMS.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        private bool LDAPAuthentication(string username, string password)
+        {
+            //LdapDirectoryIdentifier ldapId = new LdapDirectoryIdentifier("172.16.10.20");
+            //NetworkCredential crd = new NetworkCredential(username, password);
+
+            //LdapConnection ldap = new LdapConnection(ldapId, crd);
+
+            try
+            {
+                //ldap.Bind();
+                return true;
+            }
+            catch
+            {
+                //ldap.Dispose();
+                return false;
+            }
         }
 
         #region Helpers

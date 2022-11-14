@@ -81,12 +81,8 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="AccessGroupClaimId" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="ClaimType" Type="nvarchar(max)" />
+          <Property Name="ClaimValue" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="AspNetUserLogins">
           <Key>
@@ -638,6 +634,19 @@
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="AccessGroupClaimId" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Workflows">
           <Key>
             <PropertyRef Name="Id" />
@@ -677,9 +686,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_AppointmentType">
-          <End Role="AppointmentType" Type="Self.AppointmentType" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AppointmentType" Type="Self.AppointmentType" Multiplicity="1" />
           <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AppointmentType">
@@ -691,9 +698,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -705,9 +710,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_Designation">
-          <End Role="Designation" Type="Self.Designation" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
           <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Designation">
@@ -730,34 +733,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_AspNetUserClaims_AccessGroupClaims">
-          <End Role="AccessGroupClaims" Type="Self.AccessGroupClaims" Multiplicity="1" />
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AccessGroupClaims">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserClaims">
-              <PropertyRef Name="AccessGroupClaimId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_AspNetUserClaims_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="AspNetUserClaims">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_AspNetUserRoles_AspNetRoles_RoleId">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetRoles">
@@ -769,9 +746,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AspNetUserRoles_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -795,9 +770,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AspNetUsers_Title">
-          <End Role="Title" Type="Self.Title" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Title" Type="Self.Title" Multiplicity="1" />
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Title">
@@ -833,9 +806,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ConductedLectures_LectureTimetable">
-          <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1" />
           <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LectureTimetable">
@@ -871,9 +842,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ConductedLecturesLog_ConductedLectures">
-          <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="1" />
           <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ConductedLectures">
@@ -932,10 +901,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
+          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -959,9 +940,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Degree_Faculty">
-          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
           <End Role="Degree" Type="Self.Degree" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Faculty">
@@ -985,9 +964,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Department" Type="Self.Department" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -999,9 +976,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_Faculty">
-          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
           <End Role="Department" Type="Self.Department" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Faculty">
@@ -1025,9 +1000,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LectureHall_Campus">
-          <End Role="Campus" Type="Self.Campus" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Campus" Type="Self.Campus" Multiplicity="1" />
           <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Campus">
@@ -1159,9 +1132,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LectureTimetableLog_LectureTimetable">
-          <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="1" />
           <End Role="LectureTimetableLog" Type="Self.LectureTimetableLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LectureTimetable">
@@ -1341,9 +1312,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PaymentRateLog_PaymentRate">
-          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="PaymentRate" Type="Self.PaymentRate" Multiplicity="1" />
           <End Role="PaymentRateLog" Type="Self.PaymentRateLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PaymentRate">
@@ -1463,9 +1432,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SemesterSubject_SemesterRegistration">
-          <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
           <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SemesterRegistration">
@@ -1477,9 +1444,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SemesterSubject_Subject">
-          <End Role="Subject" Type="Self.Subject" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Subject" Type="Self.Subject" Multiplicity="1" />
           <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Subject">
@@ -1515,9 +1480,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Degree">
-          <End Role="Degree" Type="Self.Degree" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Degree" Type="Self.Degree" Multiplicity="0..1" />
           <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Degree">
@@ -1541,9 +1504,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Institute">
-          <End Role="Institute" Type="Self.Institute" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Institute" Type="Self.Institute" Multiplicity="0..1" />
           <End Role="Specialization" Type="Self.Specialization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Institute">
@@ -1614,6 +1575,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserClaims_AccessGroupClaims">
+          <End Role="AccessGroupClaims" Type="Self.AccessGroupClaims" Multiplicity="1" />
+          <End Role="UserClaims" Type="Self.UserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccessGroupClaims">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserClaims">
+              <PropertyRef Name="AccessGroupClaimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserClaims_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="UserClaims" Type="Self.UserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Workflows_Faculty">
           <End Role="Faculty" Type="Self.Faculty" Multiplicity="0..1" />
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
@@ -1665,6 +1650,7 @@
           <EntitySet Name="SubWorkflows" EntityType="Self.SubWorkflows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title" EntityType="Self.Title" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserClaims" EntityType="Self.UserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="Self.FK_AccessGroupClaims_AccessGroup">
             <End Role="AccessGroup" EntitySet="AccessGroup" />
@@ -1689,14 +1675,6 @@
           <AssociationSet Name="FK_AspNetRoles_AccessGroup" Association="Self.FK_AspNetRoles_AccessGroup">
             <End Role="AccessGroup" EntitySet="AccessGroup" />
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_AspNetUserClaims_AccessGroupClaims" Association="Self.FK_AspNetUserClaims_AccessGroupClaims">
-            <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_AspNetUserClaims_AspNetUsers" Association="Self.FK_AspNetUserClaims_AspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="Self.FK_AspNetUserRoles_AspNetRoles_RoleId">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
@@ -1753,6 +1731,10 @@
           <AssociationSet Name="FK_ConfigurationalSettings_Faculty" Association="Self.FK_ConfigurationalSettings_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
             <End Role="ConfigurationalSettings" EntitySet="ConfigurationalSettings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1974,6 +1956,14 @@
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="SubWorkflows" EntitySet="SubWorkflows" />
           </AssociationSet>
+          <AssociationSet Name="FK_UserClaims_AccessGroupClaims" Association="Self.FK_UserClaims_AccessGroupClaims">
+            <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+            <End Role="UserClaims" EntitySet="UserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserClaims_AspNetUsers" Association="Self.FK_UserClaims_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UserClaims" EntitySet="UserClaims" />
+          </AssociationSet>
           <AssociationSet Name="FK_Workflows_Faculty" Association="Self.FK_Workflows_Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
             <End Role="Workflows" EntitySet="Workflows" />
@@ -2022,6 +2012,7 @@
           <EntitySet Name="SubWorkflows" EntityType="PMSModel.SubWorkflows" />
           <EntitySet Name="sysdiagrams" EntityType="PMSModel.sysdiagrams" />
           <EntitySet Name="Title" EntityType="PMSModel.Title" />
+          <EntitySet Name="UserClaims" EntityType="PMSModel.UserClaims" />
           <EntitySet Name="Workflows" EntityType="PMSModel.Workflows" />
           <AssociationSet Name="FK_AccessGroupClaims_AccessGroup" Association="PMSModel.FK_AccessGroupClaims_AccessGroup">
             <End Role="AccessGroup" EntitySet="AccessGroup" />
@@ -2035,9 +2026,9 @@
             <End Role="Claim" EntitySet="Claim" />
             <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
           </AssociationSet>
-          <AssociationSet Name="FK_AspNetUserClaims_AccessGroupClaims" Association="PMSModel.FK_AspNetUserClaims_AccessGroupClaims">
+          <AssociationSet Name="FK_UserClaims_AccessGroupClaims" Association="PMSModel.FK_UserClaims_AccessGroupClaims">
             <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+            <End Role="UserClaims" EntitySet="UserClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_Appointment_AppointmentType" Association="PMSModel.FK_Appointment_AppointmentType">
             <End Role="AppointmentType" EntitySet="AppointmentType" />
@@ -2059,7 +2050,7 @@
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="SubWorkflows" EntitySet="SubWorkflows" />
           </AssociationSet>
-          <AssociationSet Name="FK_AspNetUserClaims_AspNetUsers" Association="PMSModel.FK_AspNetUserClaims_AspNetUsers">
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
           </AssociationSet>
@@ -2110,6 +2101,10 @@
           <AssociationSet Name="FK_SubWorkflows_AspNetUsers" Association="PMSModel.FK_SubWorkflows_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="SubWorkflows" EntitySet="SubWorkflows" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserClaims_AspNetUsers" Association="PMSModel.FK_UserClaims_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UserClaims" EntitySet="UserClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="PMSModel.FK_SemesterRegistration_CalendarPeriod">
             <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
@@ -2365,7 +2360,7 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AccessGroupClaims_AccessGroup" FromRole="AccessGroupClaims" ToRole="AccessGroup" />
           <NavigationProperty Name="Claim" Relationship="PMSModel.FK_AccessGroupClaims_Claim" FromRole="AccessGroupClaims" ToRole="Claim" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_AspNetUserClaims_AccessGroupClaims" FromRole="AccessGroupClaims" ToRole="AspNetUserClaims" />
+          <NavigationProperty Name="UserClaims" Relationship="PMSModel.FK_UserClaims_AccessGroupClaims" FromRole="AccessGroupClaims" ToRole="UserClaims" />
         </EntityType>
         <EntityType Name="Appointment">
           <Key>
@@ -2424,14 +2419,9 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="AccessGroupClaimId" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AspNetUserClaims_AccessGroupClaims" FromRole="AspNetUserClaims" ToRole="AccessGroupClaims" />
-          <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUserClaims_AspNetUsers" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
         </EntityType>
         <EntityType Name="AspNetUserLogins">
           <Key>
@@ -2492,7 +2482,7 @@
           <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TwoFactorEnabled" Type="Boolean" />
           <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_AspNetUsers" FromRole="AspNetUsers" ToRole="Appointment" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_AspNetUserClaims_AspNetUsers" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="PMSModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="PMSModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserRoles" />
           <NavigationProperty Name="Faculty" Relationship="PMSModel.FK_AspNetUsers_Faculty" FromRole="AspNetUsers" ToRole="Faculty" />
@@ -2505,6 +2495,7 @@
           <NavigationProperty Name="Notifications" Relationship="PMSModel.FK_Notifications_AspNetUsers" FromRole="AspNetUsers" ToRole="Notifications" />
           <NavigationProperty Name="SemesterSubjectLIC" Relationship="PMSModel.FK_SemesterSubjectLIC_AspNetUsers" FromRole="AspNetUsers" ToRole="SemesterSubjectLIC" />
           <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetUsers" FromRole="AspNetUsers" ToRole="SubWorkflows" />
+          <NavigationProperty Name="UserClaims" Relationship="PMSModel.FK_UserClaims_AspNetUsers" FromRole="AspNetUsers" ToRole="UserClaims" />
         </EntityType>
         <EntityType Name="CalendarPeriod">
           <Key>
@@ -3123,6 +3114,21 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_AspNetUsers_Title" FromRole="Title" ToRole="AspNetUsers" />
         </EntityType>
+        <EntityType Name="UserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="AccessGroupClaimId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_UserClaims_AccessGroupClaims" FromRole="UserClaims" ToRole="AccessGroupClaims" />
+          <NavigationProperty Name="AspNetUsers" Relationship="PMSModel.FK_UserClaims_AspNetUsers" FromRole="UserClaims" ToRole="AspNetUsers" />
+        </EntityType>
         <EntityType Name="Workflows">
           <Key>
             <PropertyRef Name="Id" />
@@ -3175,22 +3181,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_AspNetUserClaims_AccessGroupClaims">
+        <Association Name="FK_UserClaims_AccessGroupClaims">
           <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="1" />
-          <End Type="PMSModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
+          <End Type="PMSModel.UserClaims" Role="UserClaims" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AccessGroupClaims">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserClaims">
+            <Dependent Role="UserClaims">
               <PropertyRef Name="AccessGroupClaimId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_AppointmentType">
-          <End Type="PMSModel.AppointmentType" Role="AppointmentType" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AppointmentType" Role="AppointmentType" Multiplicity="1" />
           <End Type="PMSModel.Appointment" Role="Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AppointmentType">
@@ -3202,9 +3206,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_AspNetUsers">
-          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
           <End Type="PMSModel.Appointment" Role="Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -3216,9 +3218,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Appointment_Designation">
-          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="1" />
           <End Type="PMSModel.Appointment" Role="Appointment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Designation">
@@ -3230,9 +3230,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AspNetUserRoles_AspNetRoles_RoleId">
-          <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1" />
           <End Type="PMSModel.AspNetUserRoles" Role="AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetRoles">
@@ -3255,8 +3253,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_AspNetUserClaims_AspNetUsers">
-          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="PMSModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -3268,9 +3268,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
           <End Type="PMSModel.AspNetUserLogins" Role="AspNetUserLogins" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -3282,9 +3280,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AspNetUserRoles_AspNetUsers_UserId">
-          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
           <End Type="PMSModel.AspNetUserRoles" Role="AspNetUserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -3308,9 +3304,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AspNetUsers_Title">
-          <End Type="PMSModel.Title" Role="Title" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Title" Role="Title" Multiplicity="1" />
           <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Title">
@@ -3322,9 +3316,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_AspNetUsers">
-          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="0..1" />
           <End Type="PMSModel.Department" Role="Department" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -3419,6 +3411,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserClaims_AspNetUsers">
+          <End Type="PMSModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1" />
+          <End Type="PMSModel.UserClaims" Role="UserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SemesterRegistration_CalendarPeriod">
           <End Type="PMSModel.CalendarPeriod" Role="CalendarPeriod" Multiplicity="0..1" />
           <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="*" />
@@ -3456,9 +3460,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LectureHall_Campus">
-          <End Type="PMSModel.Campus" Role="Campus" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Campus" Role="Campus" Multiplicity="1" />
           <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Campus">
@@ -3482,9 +3484,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ConductedLectures_LectureTimetable">
-          <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1" />
           <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LectureTimetable">
@@ -3508,9 +3508,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ConductedLecturesLog_ConductedLectures">
-          <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="1" />
           <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ConductedLectures">
@@ -3582,9 +3580,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Degree_Faculty">
-          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
           <End Type="PMSModel.Degree" Role="Degree" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Faculty">
@@ -3644,9 +3640,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Degree">
-          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Degree" Role="Degree" Multiplicity="0..1" />
           <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Degree">
@@ -3670,9 +3664,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Department_Faculty">
-          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Faculty" Role="Faculty" Multiplicity="0..1" />
           <End Type="PMSModel.Department" Role="Department" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Faculty">
@@ -3792,9 +3784,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Specialization_Institute">
-          <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Institute" Role="Institute" Multiplicity="0..1" />
           <End Type="PMSModel.Specialization" Role="Specialization" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Institute">
@@ -3902,9 +3892,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LectureTimetableLog_LectureTimetable">
-          <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.LectureTimetable" Role="LectureTimetable" Multiplicity="1" />
           <End Type="PMSModel.LectureTimetableLog" Role="LectureTimetableLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LectureTimetable">
@@ -4000,9 +3988,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_PaymentRateLog_PaymentRate">
-          <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.PaymentRate" Role="PaymentRate" Multiplicity="1" />
           <End Type="PMSModel.PaymentRateLog" Role="PaymentRateLog" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PaymentRate">
@@ -4050,9 +4036,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SemesterSubject_SemesterRegistration">
-          <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.SemesterRegistration" Role="SemesterRegistration" Multiplicity="1" />
           <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SemesterRegistration">
@@ -4076,9 +4060,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SemesterSubject_Subject">
-          <End Type="PMSModel.Subject" Role="Subject" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Type="PMSModel.Subject" Role="Subject" Multiplicity="1" />
           <End Type="PMSModel.SemesterSubject" Role="SemesterSubject" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Subject">
@@ -4197,12 +4179,8 @@
           <EntitySetMapping Name="AspNetUserClaims">
             <EntityTypeMapping TypeName="PMSModel.AspNetUserClaims">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="AccessGroupClaimId" ColumnName="AccessGroupClaimId" />
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -4784,6 +4762,20 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="TitleName" ColumnName="TitleName" />
                 <ScalarProperty Name="TitleId" ColumnName="TitleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserClaims">
+            <EntityTypeMapping TypeName="PMSModel.UserClaims">
+              <MappingFragment StoreEntitySet="UserClaims">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="AccessGroupClaimId" ColumnName="AccessGroupClaimId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

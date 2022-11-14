@@ -30,6 +30,7 @@ namespace PMS.Models
             this.Notifications = new HashSet<Notifications>();
             this.SemesterSubjectLIC = new HashSet<SemesterSubjectLIC>();
             this.SubWorkflows = new HashSet<SubWorkflows>();
+            this.UserClaims = new HashSet<UserClaims>();
         }
     
         public string Id { get; set; }
@@ -98,5 +99,7 @@ namespace PMS.Models
         public virtual ICollection<SemesterSubjectLIC> SemesterSubjectLIC { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubWorkflows> SubWorkflows { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserClaims> UserClaims { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public AccessGroupClaims()
         {
-            this.AspNetUserClaims = new HashSet<AspNetUserClaims>();
+            this.UserClaims = new HashSet<UserClaims>();
         }
     
         public int Id { get; set; }
@@ -32,6 +32,6 @@ namespace PMS.Models
         public virtual AccessGroup AccessGroup { get; set; }
         public virtual Claim Claim { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual ICollection<UserClaims> UserClaims { get; set; }
     }
 }

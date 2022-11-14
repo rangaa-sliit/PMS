@@ -51,22 +51,26 @@
                         @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @id = "login-form", autocomplete = "off" }))
                         {
                             @Html.AntiForgeryToken()
+                            <div class="input-group login-validation-error" id="loginValidationError">
+                                @Html.ValidationSummary(true, "")
+                            </div>
                             <div class="form-group" style="padding:.3rem;">
-                                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @type = "text", @placeholder = "SLIIT Domain Username", @id = "loginUserName", @style = "border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke; opacity: 0.6;height: 4rem;", @tabindex = "1", @autofocus = "true" } })
+                                @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @type = "text", @placeholder = "SLIIT Domain Username", @id = "loginUserName", @style = "border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke; opacity: 0.6;height: 4rem;", @tabindex = "1", @autofocus = "true", oninput = "onUsernameInput()" } })
+                                @Html.ValidationMessageFor(model => model.Username, "", new { @id = "usernameValidation" })
                                 @*<input type="text" class="form-control" placeholder="Enter Domain Username">*@
                             </div>
-                            <div class="form-group" style="padding:.3rem;">
-                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password", @placeholder = "SLIIT Domain Password", @id = "loginPassword", @style = "border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke;opacity: 0.6;height: 4rem;", @tabindex = "2" } })
+                            <div class="form-group pb-0 mb-0" style="padding-top:.3rem; padding-right:.3rem; padding-left:.3rem;">
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password", @placeholder = "SLIIT Domain Password", @id = "loginPassword", @style = "border-color:white;border-width:thin; font-size: medium; background-color: whitesmoke;opacity: 0.6;height: 4rem;", @tabindex = "2", oninput = "onPasswordInput()" } })
                                 <span onclick="myFunction()" class="fa fa-fw fa-eye field-icon toggle-password" style="color:black; "></span>
-                                @Html.ValidationMessageFor(model => model.Password)
                             </div>
-                            <div class="form-group">
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "pt-0", @id = "passwordValidation" })
+                            <div class="form-group mt-4">
                                 <button type="submit" class="form-control btn btn-primary submit px-3" id="loginBtn" style="height: 4rem; opacity: 0.7;">Login</button>
                             </div>
                         }
 
                         <br>
-                        <p class="w-100 text-center" style="color:whitesmoke;">&mdash; <b>Powered By</b> &mdash;</p>
+                        <p class="w-100 text-center" style="color:whitesmoke;">&mdash; <b>Powered By @ViewBag.test</b> &mdash;</p>
                         <div class="social d-flex text-center">
                             <p class="w-100 text-center" style="color:whitesmoke; ">&#8606; <b>IT - Business Application Services Division - SLIIT </b> &#8608;</p>
                         </div>
@@ -96,6 +100,19 @@
                 document.getElementById("loginBtn").click();
             }
         })
+
+        function onUsernameInput() {
+            document.getElementById("usernameValidation").style.display = "none";
+            document.getElementById("loginUserName").classList.remove("input-validation-error");
+            document.getElementById("loginValidationError").style.display = "none";
+        }
+
+        function onPasswordInput() {
+            document.getElementById("passwordValidation").style.display = "none";
+            document.getElementById("loginPassword").classList.remove("input-validation-error");
+            document.getElementById("loginValidationError").style.display = "none";
+        }
+
     </script>
 
 </body>

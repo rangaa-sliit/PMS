@@ -8357,3 +8357,25 @@ textarea.form-control {
           max-width:400px;
           margin: 0 auto;
         }
+
+.field-validation-error {
+    color: #C44444 !important;
+    font-weight: bold;
+    font-size: small;
+}
+
+input.input-validation-error {
+    border: 1px solid red !important;
+}
+
+.validation-summary-errors ul {
+    list-style: none;
+    margin: 0;
+}
+
+.login-validation-error {
+    color: #A60E1C;
+    font-weight: bold;
+    justify-content: center;
+    text-align: center;
+}

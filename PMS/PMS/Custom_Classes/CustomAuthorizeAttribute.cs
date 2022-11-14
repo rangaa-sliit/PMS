@@ -29,7 +29,7 @@ namespace PMS.Custom_Classes
                 List<string> allClaims = new List<string>();
                 //AspNetUsers adminUser = (from u in db.AspNetUsers where u.UserName.Equals(currentUser) && u.IsActive.Equals(true) select u).FirstOrDefault<>();
                 List<Claim> usrClaims = (from u in db.AspNetUsers
-                                         join uc in db.AspNetUserClaims on u.Id equals uc.UserId
+                                         join uc in db.UserClaims on u.Id equals uc.UserId
                                          join agc in db.AccessGroupClaims on uc.AccessGroupClaimId equals agc.Id
                                          join c in db.Claim on agc.ClaimId equals c.ClaimId
                                          where u.UserName.Equals(currentUser) && u.IsActive.Equals(true) && uc.IsActive.Equals(true)
