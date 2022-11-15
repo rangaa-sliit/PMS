@@ -8170,25 +8170,45 @@ namespace PMS.Controllers
 
                     List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
                                                                    join d in db.Designation on a.DesignationId equals d.DesignationId
-                                                                   where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= currentDateTime
-                                                                   && a.IsActive.Equals(true) && d.IsActive.Equals(true)
+                                                                   where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= timetableRecord.ttRecord.LectureDate.Value
+                                                                   && d.IsActive.Equals(true)
                                                                    select a).ToList();
 
                     for (int i = 0; i < lectureAppointmentDetails.Count; i++)
                     {
-                        if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
+                        DateTime appointmentToDate = lectureAppointmentDetails[i].AppointmentTo.Value;
+
+                        if (appointmentToDate != null)
                         {
-                            lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
-                            break;
-                        }
-                        else
-                        {
-                            if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
+                            DateTime toDate = Convert.ToDateTime(appointmentToDate.Date + " 23:59:59.999");
+
+                            if(timetableRecord.ttRecord.LectureDate.Value <= toDate)
                             {
                                 lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
                                 break;
                             }
                         }
+                        else
+                        {
+                            if (lectureAppointmentDetails[i].IsActive == true)
+                            {
+                                lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                                break;
+                            }
+                        }
+                        //if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
+                        //{
+                        //    lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                        //    break;
+                        //}
+                        //else
+                        //{
+                        //    if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
+                        //    {
+                        //        lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                        //        break;
+                        //    }
+                        //}
                     }
 
                     if (lecturerDesignationId != 0)
@@ -9834,7 +9854,7 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/14
-        public ActionResult ManageEmlployeePaymentReports()
+        public ActionResult LecInsPaymentReports()
         {
             using (PMSEntities db = new PMSEntities())
             {
@@ -9852,6 +9872,18 @@ namespace PMS.Controllers
                 usersList.Insert(0, new SelectListItem() { Text = "All", Value = "All" });
                 ViewBag.usersList = usersList;
 
+                var appointmentTypes = (from at in db.AppointmentType
+                                        where at.IsActive.Equals(true)
+                                        select new
+                                        {
+                                            Text = at.AppointmentTypeName,
+                                            Value = at.AppointmentTypeId
+                                        }).ToList();
+
+                List<SelectListItem> appointmentTypeList = new SelectList(appointmentTypes, "Value", "Text").ToList();
+                appointmentTypeList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.appointmentTypeList = appointmentTypeList;
+
                 return View();
             }
         }
@@ -9859,7 +9891,7 @@ namespace PMS.Controllers
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/14
         [HttpPost]
-        public ActionResult GetEmployeePaymentReports(ReportsCC reportCC)
+        public ActionResult GetLecInsPaymentReports(ReportsCC reportCC)
         {
             using (PMSEntities db = new PMSEntities())
             {
@@ -9869,73 +9901,611 @@ namespace PMS.Controllers
                     var searchStartDate = Convert.ToDateTime(reportCC.StartDate + " 00:00:00.000");
                     var searchEndDate = Convert.ToDateTime(reportCC.EndDate + " 23:59:59.999");
 
-                    if(reportCC.LecturerId == "All")
+                    if (reportCC.SelectedTable == "Employee Wise")
                     {
-                        conductedLecturesList = (from cl in db.ConductedLectures
-                                                 join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                                 join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
-                                                 join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
-                                                 join sub in db.Subject on ss.SubjectId equals sub.SubjectId
-                                                 join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
-                                                 join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
-                                                 from usr in tt_u.DefaultIfEmpty()
-                                                 join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
-                                                 where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
-                                                 && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                                 orderby cl.CLId descending
-                                                 select new ConductedLecturesVM
-                                                 {
-                                                     ActualLectureDate = cl.ActualLectureDate.ToString(),
-                                                     ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
-                                                     ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
-                                                     Comment = cl.Comment,
-                                                     CurrentStageDisplayName = cl.CurrentStageDisplayName,
-                                                     ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
-                                                     PaymentAmount = cl.PaymentAmount,
-                                                     timetableRecords = new SemesterTimetableVM()
+                        if (reportCC.LecturerId == "All")
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
                                                      {
-                                                         LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
-                                                         SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
-                                                         LectureTypeName = lt.LectureTypeName,
-                                                         LectureDate = tt.LectureDate.ToString(),
-                                                         FromTime = tt.FromTime.ToString().Substring(0, 5),
-                                                         ToTime = tt.ToTime.ToString().Substring(0, 5),
-                                                     }
-                                                 }).ToList();
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where usr.Id.Equals(reportCC.LecturerId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
                     }
-                    else
+                    else if(reportCC.SelectedTable == "Employment Type Wise")
                     {
-                        conductedLecturesList = (from cl in db.ConductedLectures
-                                                 join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
-                                                 join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
-                                                 join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
-                                                 join sub in db.Subject on ss.SubjectId equals sub.SubjectId
-                                                 join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
-                                                 join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
-                                                 from usr in tt_u.DefaultIfEmpty()
-                                                 join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
-                                                 where usr.Id.Equals(reportCC.LecturerId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
-                                                 && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
-                                                 orderby cl.CLId descending
-                                                 select new ConductedLecturesVM
-                                                 {
-                                                     ActualLectureDate = cl.ActualLectureDate.ToString(),
-                                                     ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
-                                                     ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
-                                                     Comment = cl.Comment,
-                                                     CurrentStageDisplayName = cl.CurrentStageDisplayName,
-                                                     ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
-                                                     PaymentAmount = cl.PaymentAmount,
-                                                     timetableRecords = new SemesterTimetableVM()
+                        List<ConductedLecturesVM> conductedLectureRecords = new List<ConductedLecturesVM>();
+
+                        conductedLectureRecords = (from cl in db.ConductedLectures
+                                                   join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                   join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                   join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                   join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                   join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                   join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                   from usr in tt_u.DefaultIfEmpty()
+                                                   join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                   where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                   && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                   orderby cl.CLId descending
+                                                   select new ConductedLecturesVM
+                                                   {
+                                                       ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                       ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                       ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                       Comment = cl.Comment,
+                                                       CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                       ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                       PaymentAmount = cl.PaymentAmount,
+                                                       timetableRecords = new SemesterTimetableVM()
+                                                       {
+                                                           LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                           SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                           LectureTypeName = lt.LectureTypeName,
+                                                           LectureDate = tt.LectureDate.ToString(),
+                                                           FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                           ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                           AppointmentTypeDetails = (from a in db.Appointment
+                                                                                  join at in db.AppointmentType on a.AppointmentTypeId equals at.AppointmentTypeId
+                                                                                  where a.UserId.Equals(usr.Id) && a.AppointmentFrom.Value <= tt.LectureDate.Value
+                                                                                  && (a.AppointmentTo.HasValue ? a.AppointmentTo.Value >= tt.LectureDate.Value : a.IsActive == true ? true : false)
+                                                                                  select at).FirstOrDefault()
+                                                       }
+                                                   }).ToList();
+
+                        if (reportCC.AppointmentTypeId == -1)
+                        {
+                            conductedLecturesList = conductedLectureRecords;
+                        }
+                        else
+                        {
+                            conductedLecturesList = conductedLectureRecords.Where(cl => cl.timetableRecords.AppointmentTypeDetails.AppointmentTypeId == reportCC.AppointmentTypeId).ToList();
+                        }
+                    }
+
+                    return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/15
+        public ActionResult AcademicPaymentReports()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var campuses = (from c in db.Campus
+                                where c.IsActive.Equals(true)
+                                select new
+                                {
+                                    Text = c.CampusName,
+                                    Value = c.CampusId
+                                }).ToList();
+
+                List<SelectListItem> campusList = new SelectList(campuses, "Value", "Text").ToList();
+                campusList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.campusList = campusList;
+
+                var departments = (from d in db.Department
+                                   where d.IsActive.Equals(true)
+                                   select new
+                                   {
+                                       Text = d.DepartmentName,
+                                       Value = d.DepartmentId
+                                   }).ToList();
+
+                List<SelectListItem> departmentList = new SelectList(departments, "Value", "Text").ToList();
+                departmentList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.departmentList = departmentList;
+
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Text = f.FacultyName,
+                                     Value = f.FacultyId
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.facultyList = facultyList;
+
+                var degrees = (from d in db.Degree
+                               where d.IsActive.Equals(true)
+                               select new
+                               {
+                                   Text = d.Code + " - " + d.Name,
+                                   Value = d.DegreeId
+                               }).ToList();
+
+                List<SelectListItem> degreeList = new SelectList(degrees, "Value", "Text").ToList();
+                degreeList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.degreeList = degreeList;
+
+                var subjects = (from s in db.Subject
+                                where s.IsActive.Equals(true)
+                                select new
+                                {
+                                    Text = s.SubjectCode + " - " + s.SubjectName,
+                                    Value = s.SubjectId
+                                }).ToList();
+
+                List<SelectListItem> subjectList = new SelectList(subjects, "Value", "Text").ToList();
+                subjectList.Insert(0, new SelectListItem() { Text = "All", Value = "-1" });
+                ViewBag.subjectList = subjectList;
+
+                return View();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/14
+        [HttpPost]
+        public ActionResult GetAcademicPaymentReports(ReportsCC reportCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    List<ConductedLecturesVM> conductedLecturesList = new List<ConductedLecturesVM>();
+                    var searchStartDate = Convert.ToDateTime(reportCC.StartDate + " 00:00:00.000");
+                    var searchEndDate = Convert.ToDateTime(reportCC.EndDate + " 23:59:59.999");
+
+                    if (reportCC.SelectedTable == "Campus Wise")
+                    {
+                        if (reportCC.CampusId == -1)
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join c in db.Campus on cl.CampusId equals c.CampusId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
                                                      {
-                                                         LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
-                                                         SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
-                                                         LectureTypeName = lt.LectureTypeName,
-                                                         LectureDate = tt.LectureDate.ToString(),
-                                                         FromTime = tt.FromTime.ToString().Substring(0, 5),
-                                                         ToTime = tt.ToTime.ToString().Substring(0, 5),
-                                                     }
-                                                 }).ToList();
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         CampusName = c.CampusName,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join c in db.Campus on cl.CampusId equals c.CampusId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where c.CampusId.Equals(reportCC.CampusId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         CampusName = c.CampusName,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
+                    }
+                    else if (reportCC.SelectedTable == "Department Wise")
+                    {
+                        if (reportCC.DepartmentId == -1)
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                     from dgr in s_d.DefaultIfEmpty()
+                                                     join dp in db.Department on dgr.DepartmentId equals dp.DepartmentId into dgr_dp
+                                                     from dep in dgr_dp.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             DepartmentName = dep.DepartmentName
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                     from dgr in s_d.DefaultIfEmpty()
+                                                     join dp in db.Department on dgr.DepartmentId equals dp.DepartmentId into dgr_dp
+                                                     from dep in dgr_dp.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where dep.DepartmentId.Equals(reportCC.DepartmentId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             DepartmentName = dep.DepartmentName
+                                                         }
+                                                     }).ToList();
+                        }
+                    }
+                    else if(reportCC.SelectedTable == "Faculty Wise")
+                    {
+                        if (reportCC.FacultyId == -1)
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join f in db.Faculty on s.FacultyId equals f.FacultyId into s_f
+                                                     from fac in s_f.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             FacultyName = fac.FacultyName
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join f in db.Faculty on s.FacultyId equals f.FacultyId into s_f
+                                                     from fac in s_f.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where fac.FacultyId.Equals(reportCC.FacultyId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             FacultyName = fac.FacultyName
+                                                         }
+                                                     }).ToList();
+                        }
+                    }
+                    else if (reportCC.SelectedTable == "Degree Wise")
+                    {
+                        if (reportCC.DegreeId == -1)
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                     from dgr in s_d.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             DegreeName = dgr.Name
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join d in db.Degree on s.DegreeId equals d.DegreeId into s_d
+                                                     from dgr in s_d.DefaultIfEmpty()
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where dgr.DegreeId.Equals(reportCC.DegreeId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                             DegreeName = dgr.Name
+                                                         }
+                                                     }).ToList();
+                        }
+                    }
+                    else if (reportCC.SelectedTable == "Subject Wise")
+                    {
+                        if (reportCC.SubjectId == -1)
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
+                        else
+                        {
+                            conductedLecturesList = (from cl in db.ConductedLectures
+                                                     join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                     join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                     join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                     join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                     join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                     join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                     from usr in tt_u.DefaultIfEmpty()
+                                                     join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                     where sub.SubjectId.Equals(reportCC.SubjectId) && (searchStartDate <= cl.ActualLectureDate && cl.ActualLectureDate <= searchEndDate)
+                                                     && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                     orderby cl.CLId descending
+                                                     select new ConductedLecturesVM
+                                                     {
+                                                         ActualLectureDate = cl.ActualLectureDate.ToString(),
+                                                         ActualFromTime = cl.ActualFromTime.ToString().Substring(0, 5),
+                                                         ActualToTime = cl.ActualToTime.ToString().Substring(0, 5),
+                                                         Comment = cl.Comment,
+                                                         CurrentStageDisplayName = cl.CurrentStageDisplayName,
+                                                         ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                         PaymentAmount = cl.PaymentAmount,
+                                                         timetableRecords = new SemesterTimetableVM()
+                                                         {
+                                                             LecturerName = ttl.TitleName + " " + usr.FirstName + " " + usr.LastName,
+                                                             SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                             LectureTypeName = lt.LectureTypeName,
+                                                             LectureDate = tt.LectureDate.ToString(),
+                                                             FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                             ToTime = tt.ToTime.ToString().Substring(0, 5)
+                                                         }
+                                                     }).ToList();
+                        }
                     }
 
                     return Json(new { data = conductedLecturesList }, JsonRequestBehavior.AllowGet);

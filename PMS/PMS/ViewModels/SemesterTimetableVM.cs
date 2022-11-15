@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PMS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,5 +21,9 @@ namespace PMS.ViewModels
         public bool IsActive { get; set; }
         public bool IsLectureRecordAdded { get; set; }
         public string Comment { get; set; }
+        public string DepartmentName { get; set; }
+        public string FacultyName { get; set; }
+        public string DegreeName { get; set; }
+        public AppointmentType AppointmentTypeDetails { get; set; }
     }
 }

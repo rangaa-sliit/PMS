@@ -1,0 +1,1435 @@
+﻿@*Developed By:- Ranga Athapaththu
+    Developed On:- 2022/11/15*@
+
+@model PMS.Custom_Classes.ReportsCC
+
+@{
+    ViewBag.Title = "AcademicPaymentReports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mt-2 mb-0">
+    <div class="col-12">
+        <ol class="breadcrumb ml-2 mr-2 pt-2 pb-0 mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "SA")">Home</a></li>
+            <li class="breadcrumb-item active">Academic Payment Reports</li>
+        </ol>
+    </div>
+</div>
+<hr class="ml-2 mr-2 mt-0 mb-2" />
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Academic Payment Reports</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Academic Payment Reports</h6>
+        </div>
+        <div class="card-body">
+            <nav>
+                <div class="nav nav-tabs pt-3" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-campus-tab" data-toggle="tab" href="#nav-campus" role="tab" aria-controls="nav-campus" aria-selected="true">Campus Wise Report</a>
+                    <a class="nav-item nav-link" id="nav-faculty-tab" data-toggle="tab" href="#nav-faculty" role="tab" aria-controls="nav-faculty" aria-selected="true">Faculty Wise Report</a>
+                    <a class="nav-item nav-link" id="nav-department-tab" data-toggle="tab" href="#nav-department" role="tab" aria-controls="nav-department" aria-selected="true">Department Wise Report</a>
+                    <a class="nav-item nav-link" id="nav-degree-tab" data-toggle="tab" href="#nav-degree" role="tab" aria-controls="nav-degree" aria-selected="true">Degree Wise Report</a>
+                    <a class="nav-item nav-link" id="nav-subject-tab" data-toggle="tab" href="#nav-subject" role="tab" aria-controls="nav-subject" aria-selected="true">Subject Wise Report</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active pt-2" id="nav-campus" role="tabpanel" aria-labelledby="nav-campus-tab">
+                    @using (Html.BeginForm("GetAcademicPaymentReports", "SA", FormMethod.Post, new { onsubmit = "return SubmitCampusReportForm(this)", @class = "pt-2", @id = "campusReportForm", autocomplete = "off" }))
+                    {
+                        <div class="form-group row">
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                @Html.DropDownListFor(model => model.CampusId, (IEnumerable<SelectListItem>)ViewBag.campusList, new { @class = "form-control", @id = "campusList" })
+                                @Html.ValidationMessageFor(model => model.CampusId)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "campusReportStartDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.StartDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @id = "campusReportEndDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.EndDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 repFormInputs">
+                                <button class="btn btn-primary" type="submit" id="generateReportBtn">Generate Report</button>
+                                <button class="btn btn-light ml-2" type="button" id="clearBtn" onclick="clearCampusReportForm()">Clear</button>
+                            </div>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table id="campusReportsTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                    </div>
+                </div>
+                <div class="tab-pane fade pt-2" id="nav-faculty" role="tabpanel" aria-labelledby="nav-faculty-tab">
+                    @using (Html.BeginForm("GetAcademicPaymentReports", "SA", FormMethod.Post, new { onsubmit = "return SubmitFacultyReportForm(this)", @class = "pt-2", @id = "facultyReportForm", autocomplete = "off" }))
+                    {
+                        <div class="form-group row">
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "facultyList" })
+                                @Html.ValidationMessageFor(model => model.FacultyId)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "facultyReportStartDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.StartDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @id = "facultyReportEndDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.EndDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 repFormInputs">
+                                <button class="btn btn-primary" type="submit" id="generateReportBtn">Generate Report</button>
+                                <button class="btn btn-light ml-2" type="button" id="clearBtn" onclick="clearFacultyReportForm()">Clear</button>
+                            </div>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table id="facultyReportsTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                    </div>
+                </div>
+                <div class="tab-pane fade pt-2" id="nav-department" role="tabpanel" aria-labelledby="nav-department-tab">
+                    @using (Html.BeginForm("GetAcademicPaymentReports", "SA", FormMethod.Post, new { onsubmit = "return SubmitDepartmentReportForm(this)", @class = "pt-2", @id = "departmentReportForm", autocomplete = "off" }))
+                    {
+                        <div class="form-group row">
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                @Html.DropDownListFor(model => model.DepartmentId, (IEnumerable<SelectListItem>)ViewBag.departmentList, new { @class = "form-control", @id = "departmentList" })
+                                @Html.ValidationMessageFor(model => model.DepartmentId)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "departmentReportStartDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.StartDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @id = "departmentReportEndDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.EndDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 repFormInputs">
+                                <button class="btn btn-primary" type="submit" id="generateReportBtn">Generate Report</button>
+                                <button class="btn btn-light ml-2" type="button" id="clearBtn" onclick="clearDepartmentReportForm()">Clear</button>
+                            </div>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table id="departmentReportsTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                    </div>
+                </div>
+                <div class="tab-pane fade pt-2" id="nav-degree" role="tabpanel" aria-labelledby="nav-degree-tab">
+                    @using (Html.BeginForm("GetAcademicPaymentReports", "SA", FormMethod.Post, new { onsubmit = "return SubmitDegreeReportForm(this)", @class = "pt-2", @id = "degreeReportForm", autocomplete = "off" }))
+                    {
+                        <div class="form-group row">
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                @Html.DropDownListFor(model => model.DegreeId, (IEnumerable<SelectListItem>)ViewBag.degreeList, new { @class = "form-control", @id = "degreeList" })
+                                @Html.ValidationMessageFor(model => model.DegreeId)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "degreeReportStartDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.StartDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @id = "degreeReportEndDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.EndDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 repFormInputs">
+                                <button class="btn btn-primary" type="submit" id="generateReportBtn">Generate Report</button>
+                                <button class="btn btn-light ml-2" type="button" id="clearBtn" onclick="clearDegreeReportForm()">Clear</button>
+                            </div>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table id="degreeReportsTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                    </div>
+                </div>
+                <div class="tab-pane fade pt-2" id="nav-subject" role="tabpanel" aria-labelledby="nav-subject-tab">
+                    @using (Html.BeginForm("GetAcademicPaymentReports", "SA", FormMethod.Post, new { onsubmit = "return SubmitSubjectReportForm(this)", @class = "pt-2", @id = "subjectReportForm", autocomplete = "off" }))
+                    {
+                        <div class="form-group row">
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3">
+                                @Html.DropDownListFor(model => model.SubjectId, (IEnumerable<SelectListItem>)ViewBag.subjectList, new { @class = "form-control", @id = "subjectList" })
+                                @Html.ValidationMessageFor(model => model.SubjectId)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "subjectReportStartDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.StartDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 repFormInputs">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @id = "subjectReportEndDate", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.EndDate)
+                            </div>
+                            <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 repFormInputs">
+                                <button class="btn btn-primary" type="submit" id="generateReportBtn">Generate Report</button>
+                                <button class="btn btn-light ml-2" type="button" id="clearBtn" onclick="clearSubjectReportForm()">Clear</button>
+                            </div>
+                        </div>
+                    }
+                    <div class="table-responsive">
+                        <table id="subjectReportsTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var departmentReportsTbl, facultyReportsTbl, degreeReportsTbl, subjectReportsTbl, campusReportsTbl;
+        var departmentReportsTableInitiated = false;
+        var facultyReportsTableInitiated = false;
+        var degreeReportsTableInitiated = false;
+        var subjectReportsTableInitiated = false;
+        var campusReportsTableInitiated = false;
+        var postSearchParameters = null;
+
+        $(function () {
+            $("#campusList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Campus --"
+                }
+            });
+
+            $("#departmentList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Department --"
+                }
+            });
+
+            $("#facultyList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty --"
+                }
+            });
+
+            $("#degreeList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Degree --"
+                }
+            });
+
+            $("#subjectList").select2({
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Subject --"
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $("#campusList").val(null).change();
+            $("#departmentList").val(null).change();
+            $("#facultyList").val(null).change();
+            $("#degreeList").val(null).change();
+            $("#subjectList").val(null).change();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+            });
+        })
+
+        function SubmitCampusReportForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var isValid = false;
+
+            if ($(form).valid()) {
+                var campusReportStartDate = new Date($("#campusReportStartDate").val());
+                var campusReportEndDate = new Date($("#campusReportEndDate").val());
+
+                if (campusReportStartDate > campusReportEndDate) {
+                    isValid = false;
+                    alert("Start Date should be greater than or equal to End Date");
+                }
+                else {
+                    isValid = true;
+                }
+
+                if (isValid == true) {
+                    postSearchParameters = {
+                        CampusId: $("#campusList :selected").val(),
+                        StartDate: $("#campusReportStartDate").val(),
+                        EndDate: $("#campusReportEndDate").val(),
+                        SelectedTable: "Campus Wise"
+                    }
+                    onCampusPaymentReportView();
+                }
+            }
+            return false;
+        }
+
+        function clearCampusReportForm() {
+            $("#campusReportForm").find("input").val("");
+            $("#campusList").val(null).change();
+        }
+
+        function SubmitDepartmentReportForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var isValid = false;
+
+            if ($(form).valid()) {
+                var departmentReportStartDate = new Date($("#departmentReportStartDate").val());
+                var departmentReportEndDate = new Date($("#departmentReportEndDate").val());
+
+                if (departmentReportStartDate > departmentReportEndDate) {
+                    isValid = false;
+                    alert("Start Date should be greater than or equal to End Date");
+                }
+                else {
+                    isValid = true;
+                }
+
+                if (isValid == true) {
+                    postSearchParameters = {
+                        DepartmentId: $("#departmentList :selected").val(),
+                        StartDate: $("#departmentReportStartDate").val(),
+                        EndDate: $("#departmentReportEndDate").val(),
+                        SelectedTable: "Department Wise"
+                    }
+                    onDepartmentPaymentReportView();
+                }
+            }
+            return false;
+        }
+
+        function clearDepartmentReportForm() {
+            $("#departmentReportForm").find("input").val("");
+            $("#departmentList").val(null).change();
+        }
+
+        function SubmitFacultyReportForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var isValid = false;
+
+            if ($(form).valid()) {
+                var facultyReportStartDate = new Date($("#facultyReportStartDate").val());
+                var facultyReportEndDate = new Date($("#facultyReportEndDate").val());
+
+                if (facultyReportStartDate > facultyReportEndDate) {
+                    isValid = false;
+                    alert("Start Date should be greater than or equal to End Date");
+                }
+                else {
+                    isValid = true;
+                }
+
+                if (isValid == true) {
+                    postSearchParameters = {
+                        FacultyId: $("#facultyList :selected").val(),
+                        StartDate: $("#facultyReportStartDate").val(),
+                        EndDate: $("#facultyReportEndDate").val(),
+                        SelectedTable: "Faculty Wise"
+                    }
+                    onFacultyPaymentReportView();
+                }
+            }
+            return false;
+        }
+
+        function clearFacultyReportForm() {
+            $("#facultyReportForm").find("input").val("");
+            $("#facultyList").val(null).change();
+        }
+
+        function SubmitDegreeReportForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var isValid = false;
+
+            if ($(form).valid()) {
+                var degreeReportStartDate = new Date($("#degreeReportStartDate").val());
+                var degreeReportEndDate = new Date($("#degreeReportEndDate").val());
+
+                if (degreeReportStartDate > degreeReportEndDate) {
+                    isValid = false;
+                    alert("Start Date should be greater than or equal to End Date");
+                }
+                else {
+                    isValid = true;
+                }
+
+                if (isValid == true) {
+                    postSearchParameters = {
+                        DegreeId: $("#degreeList :selected").val(),
+                        StartDate: $("#degreeReportStartDate").val(),
+                        EndDate: $("#degreeReportEndDate").val(),
+                        SelectedTable: "Degree Wise"
+                    }
+                    onDegreePaymentReportView();
+                }
+            }
+            return false;
+        }
+
+        function clearDegreeReportForm() {
+            $("#degreeReportForm").find("input").val("");
+            $("#degreeList").val(null).change();
+        }
+
+        function SubmitSubjectReportForm(form) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse(form);
+
+            var isValid = false;
+
+            if ($(form).valid()) {
+                var subjectReportStartDate = new Date($("#subjectReportStartDate").val());
+                var subjectReportEndDate = new Date($("#subjectReportEndDate").val());
+
+                if (subjectReportStartDate > subjectReportEndDate) {
+                    isValid = false;
+                    alert("Start Date should be greater than or equal to End Date");
+                }
+                else {
+                    isValid = true;
+                }
+
+                if (isValid == true) {
+                    postSearchParameters = {
+                        SubjectId: $("#subjectList :selected").val(),
+                        StartDate: $("#subjectReportStartDate").val(),
+                        EndDate: $("#subjectReportEndDate").val(),
+                        SelectedTable: "Subject Wise"
+                    }
+                    onSubjectPaymentReportView();
+                }
+            }
+            return false;
+        }
+
+        function clearSubjectReportForm() {
+            $("#subjectReportForm").find("input").val("");
+            $("#subjectList").val(null).change();
+        }
+
+        function onCampusPaymentReportView() {
+            if (campusReportsTableInitiated == true) {
+                $("#campusReportsTbl").DataTable().destroy();
+            }
+
+            var downloadFileName = "";
+
+            if (postSearchParameters.CampusId != -1) {
+                downloadFileName = "Campus Payment Report for " + $("#campusList :selected").text() + " From " + $("#campusReportStartDate").val() + " To " + $("#campusReportEndDate").val();
+            }
+            else {
+                downloadFileName = "Campus Payment Report for All Campuses From " + $("#campusReportStartDate").val() + " To " + $("#campusReportEndDate").val();
+            }
+
+            campusReportsTbl = $("#campusReportsTbl").DataTable({
+                "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": {
+                    "buttons": [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fa fa-download"></i> CSV Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-download"></i> Excel Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        }
+                    ],
+                    "dom": {
+                        "button": {
+                            className: 'btn'
+                        }
+                    }
+                },
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetAcademicPaymentReports", "SA")",
+                    "type": "POST",
+                    "data": postSearchParameters
+                },
+                "columns": [
+                    {
+                        "title": "Campus",
+                        "data": "CampusName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor",
+                        "data": "timetableRecords.LecturerName"
+                    },
+                    {
+                        "title": "Subject",
+                        "data": "timetableRecords.SubjectName"
+                    },
+                    {
+                        "title": "Lecture Type",
+                        "data": "timetableRecords.LectureTypeName"
+                    },
+                    {
+                        "title": "Payment Amount",
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "title": "Current Stage",
+                        "data": "CurrentStageDisplayName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Date",
+                        "data": "ActualLectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Start Time",
+                        "data": "ActualFromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture End Time",
+                        "data": "ActualToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Date",
+                        "data": "timetableRecords.LectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Start Time",
+                        "data": "timetableRecords.FromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture End Time",
+                        "data": "timetableRecords.ToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor Comment",
+                        "data": "Comment",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Approval / Rejection Remark",
+                        "data": "ApprovedOrRejectedRemark",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Data Found!"
+                }
+            });
+
+            if (postSearchParameters.CampusId != -1) {
+                campusReportsTbl.column(0).visible(false);
+            }
+            else {
+                campusReportsTbl.column(0).visible(true);
+            }
+
+            campusReportsTbl.columns.adjust();
+            campusReportsTableInitiated = true;
+        }
+
+        function onDepartmentPaymentReportView() {
+            if (departmentReportsTableInitiated == true) {
+                $("#departmentReportsTbl").DataTable().destroy();
+            }
+
+            var downloadFileName = "";
+
+            if (postSearchParameters.DepartmentId != -1) {
+                downloadFileName = "Department Payment Report for " + $("#departmentList :selected").text() + " From " + $("#departmentReportStartDate").val() + " To " + $("#departmentReportEndDate").val();
+            }
+            else {
+                downloadFileName = "Department Payment Report for All Departments From " + $("#departmentReportStartDate").val() + " To " + $("#departmentReportEndDate").val();
+            }
+
+            departmentReportsTbl = $("#departmentReportsTbl").DataTable({
+                "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": {
+                    "buttons": [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fa fa-download"></i> CSV Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-download"></i> Excel Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        }
+                    ],
+                    "dom": {
+                        "button": {
+                            className: 'btn'
+                        }
+                    }
+                },
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetAcademicPaymentReports", "SA")",
+                    "type": "POST",
+                    "data": postSearchParameters
+                },
+                "columns": [
+                    {
+                        "title": "Department",
+                        "data": "timetableRecords.DepartmentName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor",
+                        "data": "timetableRecords.LecturerName"
+                    },
+                    {
+                        "title": "Subject",
+                        "data": "timetableRecords.SubjectName"
+                    },
+                    {
+                        "title": "Lecture Type",
+                        "data": "timetableRecords.LectureTypeName"
+                    },
+                    {
+                        "title": "Payment Amount",
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "title": "Current Stage",
+                        "data": "CurrentStageDisplayName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Date",
+                        "data": "ActualLectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Start Time",
+                        "data": "ActualFromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture End Time",
+                        "data": "ActualToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Date",
+                        "data": "timetableRecords.LectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Start Time",
+                        "data": "timetableRecords.FromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture End Time",
+                        "data": "timetableRecords.ToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor Comment",
+                        "data": "Comment",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Approval / Rejection Remark",
+                        "data": "ApprovedOrRejectedRemark",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Data Found!"
+                }
+            });
+
+            if (postSearchParameters.DepartmentId != -1) {
+                departmentReportsTbl.column(0).visible(false);
+            }
+            else {
+                departmentReportsTbl.column(0).visible(true);
+            }
+
+            departmentReportsTbl.columns.adjust();
+            departmentReportsTableInitiated = true;
+        }
+
+        function onFacultyPaymentReportView() {
+            if (facultyReportsTableInitiated == true) {
+                $("#facultyReportsTbl").DataTable().destroy();
+            }
+
+            var downloadFileName = "";
+
+            if (postSearchParameters.FacultyId != -1) {
+                downloadFileName = "Faculty Payment Report for " + $("#facultyList :selected").text() + " From " + $("#facultyReportStartDate").val() + " To " + $("#facultyReportEndDate").val();
+            }
+            else {
+                downloadFileName = "Faculty Payment Report for All Faculties From " + $("#facultyReportStartDate").val() + " To " + $("#facultyReportEndDate").val();
+            }
+
+            facultyReportsTbl = $("#facultyReportsTbl").DataTable({
+                "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": {
+                    "buttons": [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fa fa-download"></i> CSV Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-download"></i> Excel Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        }
+                    ],
+                    "dom": {
+                        "button": {
+                            className: 'btn'
+                        }
+                    }
+                },
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetAcademicPaymentReports", "SA")",
+                    "type": "POST",
+                    "data": postSearchParameters
+                },
+                "columns": [
+                    {
+                        "title": "Faculty",
+                        "data": "timetableRecords.FacultyName"
+                    },
+                    {
+                        "title": "Lecturer / Instructor",
+                        "data": "timetableRecords.LecturerName"
+                    },
+                    {
+                        "title": "Subject",
+                        "data": "timetableRecords.SubjectName"
+                    },
+                    {
+                        "title": "Lecture Type",
+                        "data": "timetableRecords.LectureTypeName"
+                    },
+                    {
+                        "title": "Payment Amount",
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "title": "Current Stage",
+                        "data": "CurrentStageDisplayName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Date",
+                        "data": "ActualLectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Start Time",
+                        "data": "ActualFromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture End Time",
+                        "data": "ActualToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Date",
+                        "data": "timetableRecords.LectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Start Time",
+                        "data": "timetableRecords.FromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture End Time",
+                        "data": "timetableRecords.ToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor Comment",
+                        "data": "Comment",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Approval / Rejection Remark",
+                        "data": "ApprovedOrRejectedRemark",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Data Found!"
+                }
+            });
+
+            if (postSearchParameters.FacultyId != -1) {
+                facultyReportsTbl.column(0).visible(false);
+            }
+            else {
+                facultyReportsTbl.column(0).visible(true);
+            }
+
+            facultyReportsTbl.columns.adjust();
+            facultyReportsTableInitiated = true;
+        }
+
+        function onDegreePaymentReportView() {
+            if (degreeReportsTableInitiated == true) {
+                $("#degreeReportsTbl").DataTable().destroy();
+            }
+
+            var downloadFileName = "";
+
+            if (postSearchParameters.DegreeId != -1) {
+                downloadFileName = "Degree Payment Report for " + $("#degreeList :selected").text() + " From " + $("#degreeReportStartDate").val() + " To " + $("#degreeReportEndDate").val();
+            }
+            else {
+                downloadFileName = "Degree Payment Report for All Degrees From " + $("#degreeReportStartDate").val() + " To " + $("#degreeReportEndDate").val();
+            }
+
+            degreeReportsTbl = $("#degreeReportsTbl").DataTable({
+                "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": {
+                    "buttons": [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fa fa-download"></i> CSV Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-download"></i> Excel Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        }
+                    ],
+                    "dom": {
+                        "button": {
+                            className: 'btn'
+                        }
+                    }
+                },
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetAcademicPaymentReports", "SA")",
+                    "type": "POST",
+                    "data": postSearchParameters
+                },
+                "columns": [
+                    {
+                        "title": "Degree",
+                        "data": "timetableRecords.DegreeName"
+                    },
+                    {
+                        "title": "Lecturer / Instructor",
+                        "data": "timetableRecords.LecturerName"
+                    },
+                    {
+                        "title": "Subject",
+                        "data": "timetableRecords.SubjectName"
+                    },
+                    {
+                        "title": "Lecture Type",
+                        "data": "timetableRecords.LectureTypeName"
+                    },
+                    {
+                        "title": "Payment Amount",
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "title": "Current Stage",
+                        "data": "CurrentStageDisplayName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Date",
+                        "data": "ActualLectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Start Time",
+                        "data": "ActualFromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture End Time",
+                        "data": "ActualToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Date",
+                        "data": "timetableRecords.LectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Start Time",
+                        "data": "timetableRecords.FromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture End Time",
+                        "data": "timetableRecords.ToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor Comment",
+                        "data": "Comment",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Approval / Rejection Remark",
+                        "data": "ApprovedOrRejectedRemark",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Data Found!"
+                }
+            });
+
+            if (postSearchParameters.DegreeId != -1) {
+                degreeReportsTbl.column(0).visible(false);
+            }
+            else {
+                degreeReportsTbl.column(0).visible(true);
+            }
+
+            degreeReportsTbl.columns.adjust();
+            degreeReportsTableInitiated = true;
+        }
+
+        function onSubjectPaymentReportView() {
+            if (subjectReportsTableInitiated == true) {
+                $("#subjectReportsTbl").DataTable().destroy();
+            }
+
+            var downloadFileName = "";
+
+            if (postSearchParameters.SubjectId != -1) {
+                downloadFileName = "Subject Payment Report for " + $("#subjectList :selected").text() + " From " + $("#subjectReportStartDate").val() + " To " + $("#subjectReportEndDate").val();
+            }
+            else {
+                downloadFileName = "Subject Payment Report for All Subjects From " + $("#subjectReportStartDate").val() + " To " + $("#subjectReportEndDate").val();
+            }
+
+            subjectReportsTbl = $("#subjectReportsTbl").DataTable({
+                "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": {
+                    "buttons": [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fa fa-download"></i> CSV Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fa fa-download"></i> Excel Download',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            title: downloadFileName,
+                            className: 'btn btn-sm btn-outline-success'
+                        }
+                    ],
+                    "dom": {
+                        "button": {
+                            className: 'btn'
+                        }
+                    }
+                },
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetAcademicPaymentReports", "SA")",
+                    "type": "POST",
+                    "data": postSearchParameters
+                },
+                "columns": [
+                    {
+                        "title": "Subject",
+                        "data": "timetableRecords.SubjectName"
+                    },
+                    {
+                        "title": "Lecturer / Instructor",
+                        "data": "timetableRecords.LecturerName"
+                    },
+                    {
+                        "title": "Lecture Type",
+                        "data": "timetableRecords.LectureTypeName"
+                    },
+                    {
+                        "title": "Payment Amount",
+                        "data": "PaymentAmount"
+                    },
+                    {
+                        "title": "Current Stage",
+                        "data": "CurrentStageDisplayName",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Date",
+                        "data": "ActualLectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture Start Time",
+                        "data": "ActualFromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Actual Lecture End Time",
+                        "data": "ActualToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Date",
+                        "data": "timetableRecords.LectureDate",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture Start Time",
+                        "data": "timetableRecords.FromTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Timetable Lecture End Time",
+                        "data": "timetableRecords.ToTime",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Lecturer / Instructor Comment",
+                        "data": "Comment",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                    {
+                        "title": "Approval / Rejection Remark",
+                        "data": "ApprovedOrRejectedRemark",
+                        "render": function (data) {
+                            if (data == null) {
+                                return "N/A";
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Data Found!"
+                }
+            });
+
+            if (postSearchParameters.SubjectId != -1) {
+                subjectReportsTbl.column(0).visible(false);
+            }
+            else {
+                subjectReportsTbl.column(0).visible(true);
+            }
+
+            subjectReportsTbl.columns.adjust();
+            subjectReportsTableInitiated = true;
+        }
+    </script>
+}

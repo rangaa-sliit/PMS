@@ -602,7 +602,8 @@
     <Content Include="Views\SA\ManageConductedLectures.cshtml" />
     <Content Include="Views\SA\ManageLectureApprovals.cshtml" />
     <Content Include="Views\SA\ManageLecturerMonthlyApprovals.cshtml" />
-    <Content Include="Views\SA\ManageEmlployeePaymentReports.cshtml" />
+    <Content Include="Views\SA\LecInsPaymentReports.cshtml" />
+    <Content Include="Views\SA\AcademicPaymentReports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

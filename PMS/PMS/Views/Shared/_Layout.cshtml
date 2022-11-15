@@ -200,7 +200,7 @@ Developed On:- 2022/08/16*@
 
             var lectureApprovalsUrlArray = ['ManageLectureApprovals', 'ManageLecturerMonthlyApprovals'];
 
-            var reportsUrlArray = ['ManageEmlployeePaymentReports', 'ManageLecturerMonthlyApprovals'];
+            var reportsUrlArray = ['LecInsPaymentReports', 'AcademicPaymentReports'];
             //var cAction = splittedPath[1] + "/" + splittedPath[2];
             //alert(cAction);
             //var cPage = cPath.substring(cPath.lastIndexOf('/') + 1);
@@ -240,6 +240,9 @@ Developed On:- 2022/08/16*@
             }
             else if (lectureApprovalsUrlArray.indexOf(splittedPath[2]) != -1) {
                 $('#lectureApprovals-nav-item').addClass('active');
+            }
+            else if (reportsUrlArray.indexOf(splittedPath[2]) != -1) {
+                $('#reports-nav-item').addClass('active');
             }
 
             $("#sidebarToggle").on("click", function () {
