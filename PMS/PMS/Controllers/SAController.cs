@@ -26,6 +26,7 @@ namespace PMS.Controllers
         // GET: SA
         public ActionResult Index()
         {
+            this.AutoUpdateAppointments();
             return View();
         }
 
@@ -4354,8 +4355,21 @@ namespace PMS.Controllers
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
             using(PMSEntities db = new PMSEntities())
             {
-                var currentDateTime = Convert.ToDateTime("2022-10-15 11:53:56.000");
+                var currentDateTime = Convert.ToDateTime("2022-11-15 11:53:56.000");
                 string deadlineDate = "0";
+
+                var timetableRecord = (from tt in db.LectureTimetable
+                                       join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                       join u in db.AspNetUsers on tt.LecturerId equals u.Id
+                                       join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                       where tt.TimetableId.Equals(4068)
+                                       select new
+                                       {
+                                           ttRecord = tt,
+                                           considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
+                                           lecturerId = u.Id,
+                                           facultyId = sem.FacultyId.Value
+                                       }).FirstOrDefault();
 
                 var startDayOfMonth = new DateTime(2022, currentDateTime.Month, 1);
 
@@ -4376,13 +4390,28 @@ namespace PMS.Controllers
                     consideringLastDate = consideringMonthEndDate;
                 }
 
+                if (currentDateTime > consideringLastDate)
+                {
+                    consideringMonthStartDate = startDayOfMonth;
+                    consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+
+                    if (int.Parse(deadlineDate) != 0)
+                    {
+                        consideringLastDate = consideringMonthEndDate.AddDays(int.Parse(deadlineDate));
+                    }
+                    else
+                    {
+                        consideringLastDate = consideringMonthEndDate;
+                    }
+                }
+
+                //var lectureEndDateTime = new Date(data.LectureDate + " " + data.ToTime);
+                var LectureDate = timetableRecord.ttRecord.LectureDate.Value;
+                var LectureEndTime = timetableRecord.ttRecord.ToTime.Value;
+
                 return Json(new
                 {
-                    data = new {
-                        s = consideringMonthStartDate.ToString(),
-                        e = consideringMonthEndDate.ToString(),
-                        l = consideringLastDate.ToString()
-                    }
+                    data = new DateTime(LectureDate.Year, LectureDate.Month, LectureDate.Day, LectureEndTime.Hours, LectureEndTime.Minutes, LectureEndTime.Seconds, LectureEndTime.Milliseconds).ToString()
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -8234,68 +8263,116 @@ namespace PMS.Controllers
                                 consideringLastDate = consideringMonthEndDate;
                             }
 
-                            //if (currentDateTime > consideringLastDate)
-                            //{
-                            //    consideringMonthStartDate = startDayOfMonth;
-                            //    consideringMonthEndDate = new Date(consideringMonthStartDate.getFullYear(), consideringMonthStartDate.getMonth() + 1, 0);
-
-                            //    if (parseInt(data.DeadlineDate) != 0)
-                            //    {
-                            //        consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + parseInt(data.DeadlineDate) + 1));
-                            //    }
-                            //    else
-                            //    {
-                            //        consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + 1));
-                            //    }
-                            //}
-
-                            //var lectureEndDateTime = new Date(data.LectureDate + " " + data.ToTime);
-
-                            TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
-
-                            int numbeofHours = duration.Hours;
-                            int numbeofMinutes = duration.Minutes;
-
-                            ConductedLecturesLog clLogObj = new ConductedLecturesLog();
-
-                            if (clObj.postedFile != null)
+                            if (currentDateTime > consideringLastDate)
                             {
-                                List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
-                                var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
-                                if (allowedFileTypes.Contains(uploadedFileExtension))
+                                consideringMonthStartDate = startDayOfMonth;
+                                consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+
+                                if (int.Parse(deadlineDate) != 0)
                                 {
-                                    if (clObj.postedFile.ContentLength > 1000000)
+                                    consideringLastDate = consideringMonthEndDate.AddDays(int.Parse(deadlineDate));
+                                }
+                                else
+                                {
+                                    consideringLastDate = consideringMonthEndDate;
+                                }
+                            }
+
+                            var LectureDate = timetableRecord.ttRecord.LectureDate.Value;
+                            var LectureEndTime = timetableRecord.ttRecord.ToTime.Value;
+
+                            DateTime lectureEndDateTime = new DateTime(LectureDate.Year, LectureDate.Month, LectureDate.Day, LectureEndTime.Hours, LectureEndTime.Minutes, LectureEndTime.Seconds, LectureEndTime.Milliseconds);
+
+                            if (consideringMonthStartDate <= lectureEndDateTime && lectureEndDateTime <= consideringLastDate && currentDateTime >= lectureEndDateTime)
+                            {
+                                bool isValidToSubmit = false;
+                                string maximumEntriesPerSession = (from cs in db.ConfigurationalSettings
+                                                                   where cs.ConfigurationKey.Equals("Maximum Entries Per Session") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
+                                                                   select cs.ConfigurationValue).FirstOrDefault();
+
+                                if (int.Parse(maximumEntriesPerSession) != 0)
+                                {
+                                    int submittedLectureRecordsCount = (from cl in db.ConductedLectures
+                                                                        join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                                        where tt.LectureDate.Value.Equals(timetableRecord.ttRecord.LectureDate.Value) && tt.FromTime.Value.Equals(timetableRecord.ttRecord.FromTime.Value)
+                                                                        && tt.ToTime.Value.Equals(timetableRecord.ttRecord.ToTime.Value) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                                        select cl).ToList().Count;
+
+                                    if (submittedLectureRecordsCount >= int.Parse(maximumEntriesPerSession))
                                     {
-                                        return Json(new
-                                        {
-                                            success = false,
-                                            message = "File size should be less than 1 MB"
-                                        }, JsonRequestBehavior.AllowGet);
+                                        isValidToSubmit = false;
                                     }
                                     else
                                     {
-                                        string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
-                                        string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
-                                        clObj.postedFile.SaveAs(Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName)));
-                                        clObj.StudentAttendanceSheetLocation = path;
-                                        clLogObj.StudentAttendanceSheetLocation = path;
+                                        isValidToSubmit = true;
                                     }
                                 }
                                 else
                                 {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "Only PDF & Image files supported"
-                                    }, JsonRequestBehavior.AllowGet);
+                                    isValidToSubmit = true;
                                 }
-                            }
 
-                            if(considerMinimumStudentCount == true)
-                            {
-                                if(clObj.StudentCount.HasValue)
+                                if (isValidToSubmit)
                                 {
-                                    if (minimumStudentCount <= clObj.StudentCount.Value)
+                                    TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
+
+                                    int numbeofHours = duration.Hours;
+                                    int numbeofMinutes = duration.Minutes;
+
+                                    ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
+                                    if (clObj.postedFile != null)
+                                    {
+                                        List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
+                                        var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
+                                        if (allowedFileTypes.Contains(uploadedFileExtension))
+                                        {
+                                            if (clObj.postedFile.ContentLength > 1000000)
+                                            {
+                                                return Json(new
+                                                {
+                                                    success = false,
+                                                    message = "File size should be less than 1 MB"
+                                                }, JsonRequestBehavior.AllowGet);
+                                            }
+                                            else
+                                            {
+                                                string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                                string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
+                                                clObj.postedFile.SaveAs(Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName)));
+                                                clObj.StudentAttendanceSheetLocation = path;
+                                                clLogObj.StudentAttendanceSheetLocation = path;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            return Json(new
+                                            {
+                                                success = false,
+                                                message = "Only PDF & Image files supported"
+                                            }, JsonRequestBehavior.AllowGet);
+                                        }
+                                    }
+
+                                    if (considerMinimumStudentCount == true)
+                                    {
+                                        if (clObj.StudentCount.HasValue)
+                                        {
+                                            if (minimumStudentCount <= clObj.StudentCount.Value)
+                                            {
+                                                if (numbeofHours != 0)
+                                                {
+                                                    paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                                }
+
+                                                if (numbeofMinutes != 0)
+                                                {
+                                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
                                     {
                                         if (numbeofHours != 0)
                                         {
@@ -8307,57 +8384,61 @@ namespace PMS.Controllers
                                             paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
                                         }
                                     }
+
+                                    clObj.CurrentStageDisplayName = "Saved";
+                                    clObj.PaymentAmount = paymentAmount;
+                                    clObj.CreatedBy = "Ranga";
+                                    clObj.CreatedDate = currentDateTime;
+                                    clObj.ModifiedBy = "Ranga";
+                                    clObj.ModifiedDate = currentDateTime;
+
+                                    db.ConductedLectures.Add(clObj);
+                                    db.SaveChanges();
+
+                                    clLogObj.CLId = clObj.CLId;
+                                    clLogObj.TimetableId = clObj.TimetableId;
+                                    clLogObj.ActualLectureDate = clObj.ActualLectureDate;
+                                    clLogObj.ActualFromTime = clObj.ActualFromTime;
+                                    clLogObj.ActualToTime = clObj.ActualToTime;
+                                    clLogObj.ActualLocationId = clObj.ActualLocationId;
+                                    clLogObj.CampusId = clObj.CampusId;
+                                    clLogObj.StudentBatches = clObj.StudentBatches;
+                                    clLogObj.StudentCount = clObj.StudentCount;
+                                    clLogObj.Comment = clObj.Comment;
+                                    clLogObj.CurrentStageDisplayName = clObj.CurrentStageDisplayName;
+                                    clLogObj.PaymentAmount = clObj.PaymentAmount;
+                                    clLogObj.CreatedDate = clObj.CreatedDate;
+                                    clLogObj.CreatedBy = clObj.CreatedBy;
+                                    clLogObj.ModifiedDate = clObj.ModifiedDate;
+                                    clLogObj.ModifiedBy = clObj.ModifiedBy;
+                                    clLogObj.IsActive = clObj.IsActive;
+
+                                    db.ConductedLecturesLog.Add(clLogObj);
+                                    db.SaveChanges();
+
+                                    return Json(new
+                                    {
+                                        success = true,
+                                        message = "Successfully Saved"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "Maximum Entries Per Session has Already Filled"
+                                    }, JsonRequestBehavior.AllowGet);
                                 }
                             }
                             else
                             {
-                                if (numbeofHours != 0)
+                                return Json(new
                                 {
-                                    paymentAmount = paymentAmount + paymentRate * numbeofHours;
-                                }
-
-                                if (numbeofMinutes != 0)
-                                {
-                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
-                                }
+                                    success = false,
+                                    message = "You Cannot Submit This Lecture Record"
+                                }, JsonRequestBehavior.AllowGet);
                             }
-
-                            clObj.CurrentStageDisplayName = "Saved";
-                            clObj.PaymentAmount = paymentAmount;
-                            clObj.CreatedBy = "Ranga";
-                            clObj.CreatedDate = currentDateTime;
-                            clObj.ModifiedBy = "Ranga";
-                            clObj.ModifiedDate = currentDateTime;
-
-                            db.ConductedLectures.Add(clObj);
-                            db.SaveChanges();
-
-                            clLogObj.CLId = clObj.CLId;
-                            clLogObj.TimetableId = clObj.TimetableId;
-                            clLogObj.ActualLectureDate = clObj.ActualLectureDate;
-                            clLogObj.ActualFromTime = clObj.ActualFromTime;
-                            clLogObj.ActualToTime = clObj.ActualToTime;
-                            clLogObj.ActualLocationId = clObj.ActualLocationId;
-                            clLogObj.CampusId = clObj.CampusId;
-                            clLogObj.StudentBatches = clObj.StudentBatches;
-                            clLogObj.StudentCount = clObj.StudentCount;
-                            clLogObj.Comment = clObj.Comment;
-                            clLogObj.CurrentStageDisplayName = clObj.CurrentStageDisplayName;
-                            clLogObj.PaymentAmount = clObj.PaymentAmount;
-                            clLogObj.CreatedDate = clObj.CreatedDate;
-                            clLogObj.CreatedBy = clObj.CreatedBy;
-                            clLogObj.ModifiedDate = clObj.ModifiedDate;
-                            clLogObj.ModifiedBy = clObj.ModifiedBy;
-                            clLogObj.IsActive = clObj.IsActive;
-
-                            db.ConductedLecturesLog.Add(clLogObj);
-                            db.SaveChanges();
-
-                            return Json(new
-                            {
-                                success = true,
-                                message = "Successfully Saved"
-                            }, JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
@@ -8369,7 +8450,7 @@ namespace PMS.Controllers
                             return Json(new
                             {
                                 success = false,
-                                message = "Cannot Edit Sent to Approval Record"
+                                message = "You Cannot Edit A Sent to Approval Record"
                             }, JsonRequestBehavior.AllowGet);
                         }
                         else
@@ -10996,6 +11077,37 @@ namespace PMS.Controllers
             }
             //new MailNotifications().SendEmail(x, cc, "WPS: Conducted Lectures Rejection Notification", "Test Body");
             //return Json(new { data = mailObj }, JsonRequestBehavior.AllowGet);
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/17
+        public void AutoUpdateAppointments()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                DateTime currentDateTime = DateTime.Now;
+                List<Appointment> appointmentList = (from a in db.Appointment where a.IsActive.Equals(true) select a).ToList();
+
+                for(int i = 0; i < appointmentList.Count; i++)
+                {
+                    var appointmentTo = appointmentList[i].AppointmentTo.Value;
+
+                    if (appointmentTo != null)
+                    {
+                        DateTime appointmentToDT = new DateTime(appointmentTo.Year, appointmentTo.Month, appointmentTo.Day, 23, 59, 59);
+
+                        if (appointmentToDT < currentDateTime)
+                        {
+                            appointmentList[i].IsActive = false;
+                            appointmentList[i].Comment = "Auto Updated";
+
+                            db.Entry(appointmentList[i]).State = EntityState.Modified;
+                        }
+                    }
+                }
+
+                db.SaveChanges();
+            }
         }
     }
 }
