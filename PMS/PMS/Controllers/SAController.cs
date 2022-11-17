@@ -4354,92 +4354,36 @@ namespace PMS.Controllers
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
             using(PMSEntities db = new PMSEntities())
             {
-                var currentDateTime = DateTime.Now;
-                double paymentRate = 0.0;
-                double paymentAmount = 0.0;
-                bool considerMinimumStudentCount = false;
-                int lecturerDesignationId = 0;
-                int minimumStudentCount = 0;
+                var currentDateTime = Convert.ToDateTime("2022-10-15 11:53:56.000");
+                string deadlineDate = "0";
 
-                var timetableRecord = (from tt in db.LectureTimetable
-                                       join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
-                                       join u in db.AspNetUsers on tt.LecturerId equals u.Id
-                                       join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
-                                       where tt.TimetableId.Equals(3077)
-                                       select new
-                                       {
-                                           ttRecord = tt,
-                                           considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
-                                           lecturerId = u.Id,
-                                           facultyId = sem.FacultyId.Value
-                                       }).FirstOrDefault();
+                var startDayOfMonth = new DateTime(2022, currentDateTime.Month, 1);
 
-                List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
-                                                               join d in db.Designation on a.DesignationId equals d.DesignationId
-                                                               where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= currentDateTime
-                                                               && a.IsActive.Equals(true) && d.IsActive.Equals(true)
-                                                               select a).ToList();
-                var x = "";
-                for (int i = 0; i < lectureAppointmentDetails.Count; i++)
+                DateTime consideringMonthStartDate;
+                DateTime consideringMonthEndDate;
+                DateTime consideringLastDate;
+
+                if (int.Parse(deadlineDate) != 0)
                 {
-                    if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
-                    {
-                        x = "true";
-                        lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
-                        break;
-                    }
-                    else
-                    {
-                        x = "false";
-                        if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
-                        {
-                            x = "trues";
-                            lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
-                            break;
-                        }
-                    }
+                    consideringMonthStartDate = new DateTime(startDayOfMonth.Year, startDayOfMonth.Month, 1);
+                    consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+                    consideringLastDate = consideringMonthEndDate.AddDays(int.Parse(deadlineDate));
+                }
+                else
+                {
+                    consideringMonthStartDate = new DateTime(startDayOfMonth.Year, startDayOfMonth.Month, 1);
+                    consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+                    consideringLastDate = consideringMonthEndDate;
                 }
 
-                if (lecturerDesignationId != 0)
+                return Json(new
                 {
-                    PaymentRate facultyPaymentRate = (from p in db.PaymentRate
-                                                      where p.DesignationId.Equals(lecturerDesignationId) && p.LectureTypeId.Value.Equals(timetableRecord.ttRecord.LectureTypeId) && p.FacultyId.Value.Equals(timetableRecord.facultyId) && p.IsActive.Equals(true)
-                                                      select p).FirstOrDefault();
-
-                    if (facultyPaymentRate != null)
-                    {
-                        if (facultyPaymentRate.IsApproved == true)
-                        {
-                            paymentRate = facultyPaymentRate.RatePerHour;
-                        }
-                        else
-                        {
-                            if (facultyPaymentRate.SentForApproval == true || facultyPaymentRate.IsApproved == false)
-                            {
-                                paymentRate = facultyPaymentRate.OldRatePerHour;
-                            }
-                        }
+                    data = new {
+                        s = consideringMonthStartDate.ToString(),
+                        e = consideringMonthEndDate.ToString(),
+                        l = consideringLastDate.ToString()
                     }
-                }
-
-                if (timetableRecord.considerMinimumStudentCount == true)
-                {
-                    considerMinimumStudentCount = true;
-                    ConfigurationalSettings csSetting = (from cs in db.ConfigurationalSettings
-                                                         where cs.ConfigurationKey.Equals("Minimum Student Count For Session") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
-                                                         select cs).FirstOrDefault();
-
-                    if (csSetting != null)
-                    {
-                        int minCount = 0;
-                        if (int.TryParse(csSetting.ConfigurationValue, out minCount))
-                        {
-                            minimumStudentCount = int.Parse(csSetting.ConfigurationValue);
-                        }
-                    }
-                }
-
-                return Json(new { data = minimumStudentCount }, JsonRequestBehavior.AllowGet);
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -8010,9 +7954,9 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                var deadlineDate = (from cs in db.ConfigurationalSettings where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") && cs.FacultyId.Value.Equals(1) select cs.ConfigurationValue).FirstOrDefault();
+                //var deadlineDate = (from cs in db.ConfigurationalSettings where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") && cs.FacultyId.Value.Equals(1) select cs.ConfigurationValue).FirstOrDefault();
 
-                ViewBag.deadlineDate = deadlineDate;
+                //ViewBag.deadlineDate = deadlineDate;
 
                 return View();
             }
@@ -8052,7 +7996,10 @@ namespace PMS.Controllers
                                                                               IsActive = tt.IsActive,
                                                                               IsLectureRecordAdded = (from cl in db.ConductedLectures
                                                                                                       where cl.TimetableId.Equals(tt.TimetableId)
-                                                                                                      select cl).FirstOrDefault<ConductedLectures>() != null ? true : false
+                                                                                                      select cl).FirstOrDefault<ConductedLectures>() != null ? true : false,
+                                                                              DeadlineDate = (from cs in db.ConfigurationalSettings
+                                                                                              where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") && cs.FacultyId.Value.Equals(s.FacultyId.Value)
+                                                                                              select cs.ConfigurationValue).FirstOrDefault()
                                                                           }).ToList();
 
                 return Json(new { data = semesterTimetableRecordsList }, JsonRequestBehavior.AllowGet);
@@ -8180,7 +8127,7 @@ namespace PMS.Controllers
 
                         if (appointmentToDate != null)
                         {
-                            DateTime toDate = Convert.ToDateTime(appointmentToDate.Date + " 23:59:59.999");
+                            DateTime toDate = Convert.ToDateTime(appointmentToDate.Year + "-" + appointmentToDate.Month + "-" + appointmentToDate.Day + " 23:59:59.999");
 
                             if(timetableRecord.ttRecord.LectureDate.Value <= toDate)
                             {
@@ -8264,6 +8211,46 @@ namespace PMS.Controllers
                         }
                         else
                         {
+                            string deadlineDate = (from cs in db.ConfigurationalSettings
+                                                   where cs.ConfigurationKey.Equals("Lecture Submission Deadline Date") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
+                                                   select cs.ConfigurationValue).FirstOrDefault();
+
+                            var startDayOfMonth = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+
+                            DateTime consideringMonthStartDate;
+                            DateTime consideringMonthEndDate;
+                            DateTime consideringLastDate;
+
+                            if (int.Parse(deadlineDate) != 0)
+                            {
+                                consideringMonthStartDate = new DateTime(startDayOfMonth.Year, startDayOfMonth.Month, 1);
+                                consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+                                consideringLastDate = consideringMonthEndDate.AddDays(int.Parse(deadlineDate));
+                            }
+                            else
+                            {
+                                consideringMonthStartDate = new DateTime(startDayOfMonth.Year, startDayOfMonth.Month, 1);
+                                consideringMonthEndDate = consideringMonthStartDate.AddMonths(1);
+                                consideringLastDate = consideringMonthEndDate;
+                            }
+
+                            //if (currentDateTime > consideringLastDate)
+                            //{
+                            //    consideringMonthStartDate = startDayOfMonth;
+                            //    consideringMonthEndDate = new Date(consideringMonthStartDate.getFullYear(), consideringMonthStartDate.getMonth() + 1, 0);
+
+                            //    if (parseInt(data.DeadlineDate) != 0)
+                            //    {
+                            //        consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + parseInt(data.DeadlineDate) + 1));
+                            //    }
+                            //    else
+                            //    {
+                            //        consideringLastDate = new Date(consideringMonthEndDate.setDate(consideringMonthEndDate.getDate() + 1));
+                            //    }
+                            //}
+
+                            //var lectureEndDateTime = new Date(data.LectureDate + " " + data.ToTime);
+
                             TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
 
                             int numbeofHours = duration.Hours;
@@ -8377,126 +8364,137 @@ namespace PMS.Controllers
                     {
                         ConductedLectures editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
 
-                        TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
-
-                        int numbeofHours = duration.Hours;
-                        int numbeofMinutes = duration.Minutes;
-
-                        ConductedLecturesLog clLogObj = new ConductedLecturesLog();
-
-                        if (clObj.postedFile != null)
+                        if(!string.IsNullOrEmpty(editingConductedLecture.CurrentStage.Value.ToString()))
                         {
-                            List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
-                            var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
-                            if (allowedFileTypes.Contains(uploadedFileExtension))
+                            return Json(new
                             {
-                                if (clObj.postedFile.ContentLength > 1000000)
+                                success = false,
+                                message = "Cannot Edit Sent to Approval Record"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
+
+                            int numbeofHours = duration.Hours;
+                            int numbeofMinutes = duration.Minutes;
+
+                            ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
+                            if (clObj.postedFile != null)
+                            {
+                                List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
+                                var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
+                                if (allowedFileTypes.Contains(uploadedFileExtension))
+                                {
+                                    if (clObj.postedFile.ContentLength > 1000000)
+                                    {
+                                        return Json(new
+                                        {
+                                            success = false,
+                                            message = "File size should be less than 1 MB"
+                                        }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                        string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
+                                        string absolutePath = Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName));
+
+                                        if (System.IO.File.Exists(absolutePath))
+                                        {
+                                            System.IO.File.Delete(absolutePath);
+                                        }
+
+                                        clObj.postedFile.SaveAs(absolutePath);
+                                        editingConductedLecture.StudentAttendanceSheetLocation = path;
+                                        clLogObj.StudentAttendanceSheetLocation = path;
+                                    }
+                                }
+                                else
                                 {
                                     return Json(new
                                     {
                                         success = false,
-                                        message = "File size should be less than 1 MB"
+                                        message = "Only PDF & Image files supported"
                                     }, JsonRequestBehavior.AllowGet);
                                 }
-                                else
+                            }
+
+                            if (considerMinimumStudentCount == true)
+                            {
+                                if (clObj.StudentCount.HasValue)
                                 {
-                                    string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
-                                    string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
-                                    string absolutePath = Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName));
-
-                                    if (System.IO.File.Exists(absolutePath))
+                                    if (minimumStudentCount <= clObj.StudentCount.Value)
                                     {
-                                        System.IO.File.Delete(absolutePath);
-                                    }
+                                        if (numbeofHours != 0)
+                                        {
+                                            paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                        }
 
-                                    clObj.postedFile.SaveAs(absolutePath);
-                                    editingConductedLecture.StudentAttendanceSheetLocation = path;
-                                    clLogObj.StudentAttendanceSheetLocation = path;
+                                        if (numbeofMinutes != 0)
+                                        {
+                                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                        }
+                                    }
                                 }
                             }
                             else
                             {
-                                return Json(new
+                                if (numbeofHours != 0)
                                 {
-                                    success = false,
-                                    message = "Only PDF & Image files supported"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                        }
+                                    paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                }
 
-                        if (considerMinimumStudentCount == true)
-                        {
-                            if (clObj.StudentCount.HasValue)
-                            {
-                                if (minimumStudentCount <= clObj.StudentCount.Value)
+                                if (numbeofMinutes != 0)
                                 {
-                                    if (numbeofHours != 0)
-                                    {
-                                        paymentAmount = paymentAmount + paymentRate * numbeofHours;
-                                    }
-
-                                    if (numbeofMinutes != 0)
-                                    {
-                                        paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
-                                    }
+                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (numbeofHours != 0)
+
+                            editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
+                            editingConductedLecture.ActualFromTime = clObj.ActualFromTime;
+                            editingConductedLecture.ActualToTime = clObj.ActualToTime;
+                            editingConductedLecture.ActualLocationId = clObj.ActualLocationId;
+                            editingConductedLecture.CampusId = clObj.CampusId;
+                            editingConductedLecture.StudentBatches = clObj.StudentBatches;
+                            editingConductedLecture.StudentCount = clObj.StudentCount;
+                            editingConductedLecture.Comment = clObj.Comment;
+                            editingConductedLecture.PaymentAmount = paymentAmount;
+                            editingConductedLecture.ModifiedBy = "Ranga";
+                            editingConductedLecture.ModifiedDate = currentDateTime;
+                            editingConductedLecture.IsActive = clObj.IsActive;
+
+                            db.Entry(editingConductedLecture).State = EntityState.Modified;
+
+                            clLogObj.CLId = editingConductedLecture.CLId;
+                            clLogObj.TimetableId = editingConductedLecture.TimetableId;
+                            clLogObj.ActualLectureDate = clObj.ActualLectureDate;
+                            clLogObj.ActualFromTime = clObj.ActualFromTime;
+                            clLogObj.ActualToTime = clObj.ActualToTime;
+                            clLogObj.ActualLocationId = clObj.ActualLocationId;
+                            clLogObj.CampusId = clObj.CampusId;
+                            clLogObj.StudentBatches = clObj.StudentBatches;
+                            clLogObj.StudentCount = clObj.StudentCount;
+                            clLogObj.Comment = clObj.Comment;
+                            clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
+                            clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
+                            clLogObj.PaymentAmount = paymentAmount;
+                            clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
+                            clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
+                            clLogObj.ModifiedDate = currentDateTime;
+                            clLogObj.ModifiedBy = "Ranga";
+                            clLogObj.IsActive = clObj.IsActive;
+
+                            db.ConductedLecturesLog.Add(clLogObj);
+                            db.SaveChanges();
+
+                            return Json(new
                             {
-                                paymentAmount = paymentAmount + paymentRate * numbeofHours;
-                            }
-
-                            if (numbeofMinutes != 0)
-                            {
-                                paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
-                            }
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
                         }
-
-                        editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
-                        editingConductedLecture.ActualFromTime = clObj.ActualFromTime;
-                        editingConductedLecture.ActualToTime = clObj.ActualToTime;
-                        editingConductedLecture.ActualLocationId = clObj.ActualLocationId;
-                        editingConductedLecture.CampusId = clObj.CampusId;
-                        editingConductedLecture.StudentBatches = clObj.StudentBatches;
-                        editingConductedLecture.StudentCount = clObj.StudentCount;
-                        editingConductedLecture.Comment = clObj.Comment;
-                        editingConductedLecture.PaymentAmount = paymentAmount;
-                        editingConductedLecture.ModifiedBy = "Ranga";
-                        editingConductedLecture.ModifiedDate = currentDateTime;
-                        editingConductedLecture.IsActive = clObj.IsActive;
-
-                        db.Entry(editingConductedLecture).State = EntityState.Modified;
-
-                        clLogObj.CLId = editingConductedLecture.CLId;
-                        clLogObj.TimetableId = editingConductedLecture.TimetableId;
-                        clLogObj.ActualLectureDate = clObj.ActualLectureDate;
-                        clLogObj.ActualFromTime = clObj.ActualFromTime;
-                        clLogObj.ActualToTime = clObj.ActualToTime;
-                        clLogObj.ActualLocationId = clObj.ActualLocationId;
-                        clLogObj.CampusId = clObj.CampusId;
-                        clLogObj.StudentBatches = clObj.StudentBatches;
-                        clLogObj.StudentCount = clObj.StudentCount;
-                        clLogObj.Comment = clObj.Comment;
-                        clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
-                        clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
-                        clLogObj.PaymentAmount = paymentAmount;
-                        clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
-                        clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
-                        clLogObj.ModifiedDate = currentDateTime;
-                        clLogObj.ModifiedBy = "Ranga";
-                        clLogObj.IsActive = clObj.IsActive;
-
-                        db.ConductedLecturesLog.Add(clLogObj);
-                        db.SaveChanges();
-
-                        return Json(new
-                        {
-                            success = true,
-                            message = "Successfully Updated"
-                        }, JsonRequestBehavior.AllowGet);
                     }
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
@@ -9608,17 +9606,34 @@ namespace PMS.Controllers
                 {
                     var currentDateTime = DateTime.Now;
                     var username = "anupama.s";
+                    string rejectedByRole = "";
+                    var mailBody = "";
+                    List<string> ccMails = new List<string>();
+                    List<string> mailBodyList = new List<string>();
                     List<Faculty_SubworkflowsCC> facultyWiseSubWorkflows = new List<Faculty_SubworkflowsCC>();
+
+                    var lecturerDetails = (from u in db.AspNetUsers
+                                        join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                        where u.Id.Equals(mlRecords.LecturerId)
+                                        select new {
+                                            lecturerName = t.TitleName + " " + u.FirstName + " " + u.LastName,
+                                            email = u.Email
+                                        }).FirstOrDefault();
 
                     var conductedLectureRecords = (from cl in db.ConductedLectures
                                                    join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                                    join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                                   join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                   join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                   join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
                                                    where !string.IsNullOrEmpty(cl.CurrentStage.Value.ToString()) && mlRecords.CLIdList.Contains(cl.CLId)
                                                    select new
                                                    {
                                                        lectureRecord = cl,
                                                        timetableRecord = tt,
-                                                       facultyId = sem.FacultyId.Value
+                                                       facultyId = sem.FacultyId.Value,
+                                                       subjectName = s.SubjectCode + " - " + s.SubjectName,
+                                                       lectureTypeName = lt.LectureTypeName
                                                    }).ToList();
 
                     for (var i = 0; i < conductedLectureRecords.Count; i++)
@@ -9656,6 +9671,28 @@ namespace PMS.Controllers
                                 conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate = currentDateTime;
 
                                 db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+
+                                string mb = "<b>Subject Name:- </b>" + conductedLectureRecords[i].subjectName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + conductedLectureRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Submitted Session Date:- </b>" + conductedLectureRecords[i].lectureRecord.ActualLectureDate.ToString().Substring(0, 10) + "<br />"
+                                    + "<b>Submitted Session Start time (24 Hrs):- </b>" + conductedLectureRecords[i].lectureRecord.ActualFromTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Submitted Session End time (24 Hrs):- </b>" + conductedLectureRecords[i].lectureRecord.ActualToTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Timetable Session Date:- </b>" + conductedLectureRecords[i].timetableRecord.LectureDate.ToString().Substring(0, 10) + "<br />"
+                                    + "<b>Timetable Session Start time (24 Hrs):- </b>" + conductedLectureRecords[i].timetableRecord.FromTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Timetable Session End time (24 Hrs):- </b>" + conductedLectureRecords[i].timetableRecord.ToTime.ToString().Substring(0, 5);
+
+                                if (!string.IsNullOrEmpty(conductedLectureRecords[i].lectureRecord.Comment))
+                                {
+                                    mb = mb + "<br /><b>Comment:- </b>" + conductedLectureRecords[i].lectureRecord.Comment;
+                                }
+
+                                if (!string.IsNullOrEmpty(mlRecords.Remark))
+                                {
+                                    mb = mb + "<br /><b>Rejection Remark:- </b>" + mlRecords.Remark;
+                                }
+
+                                mailBodyList.Add(mb);
+                                rejectedByRole = currentWorkflow.WorkflowRole;
                             }
                         }
                         else
@@ -9670,11 +9707,56 @@ namespace PMS.Controllers
 
                             db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
 
-                            db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                            string mb = "<b>Subject Name:- </b>" + conductedLectureRecords[i].subjectName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + conductedLectureRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Submitted Session Date:- </b>" + conductedLectureRecords[i].lectureRecord.ActualLectureDate.ToString().Substring(0, 10) + "<br />"
+                                    + "<b>Submitted Session Start time (24 Hrs):- </b>" + conductedLectureRecords[i].lectureRecord.ActualFromTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Submitted Session End time (24 Hrs):- </b>" + conductedLectureRecords[i].lectureRecord.ActualToTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Timetable Session Date:- </b>" + conductedLectureRecords[i].timetableRecord.LectureDate.ToString().Substring(0, 10) + "<br />"
+                                    + "<b>Timetable Session Start time (24 Hrs):- </b>" + conductedLectureRecords[i].timetableRecord.FromTime.ToString().Substring(0, 5) + "<br />"
+                                    + "<b>Timetable Session End time (24 Hrs):- </b>" + conductedLectureRecords[i].timetableRecord.ToTime.ToString().Substring(0, 5);
+
+                            if (!string.IsNullOrEmpty(conductedLectureRecords[i].lectureRecord.Comment))
+                            {
+                                mb = mb + "<br /><b>Comment:- </b>" + conductedLectureRecords[i].lectureRecord.Comment;
+                            }
+
+                            if (!string.IsNullOrEmpty(mlRecords.Remark))
+                            {
+                                mb = mb + "<br /><b>Rejection Remark:- </b>" + mlRecords.Remark;
+                            }
+
+                            mailBodyList.Add(mb);
+                            rejectedByRole = currentWorkflow.WorkflowRole;
                         }
                     }
 
                     db.SaveChanges();
+
+                    mailBody = mailBody + "Dear " + lecturerDetails.lecturerName + ",<br /><br />"
+                        + "Following conducted lecture records of your's has been rejected. Relevant lecture record details as follows: <br /><br />";
+
+                    for (int i = 0; i < mailBodyList.Count; i++)
+                    {
+                        mailBody = mailBody + mailBodyList[i];
+
+                        if (i != mailBodyList.Count - 1)
+                        {
+                            mailBody = mailBody + "<br / ><br / >";
+                        }
+                    }
+
+                    mailBody = mailBody + "<br /><br />" + "Thanks & Regards,<br />WPS";
+
+                    MailCC mailObj = new MailCC()
+                    {
+                        ToMail = lecturerDetails.email,
+                        CCMails = ccMails,
+                        MailSubject = "WPS: Conducted Lectures Rejection Notification",
+                        MailBody = mailBody
+                    };
+
+                    Session["LecturesRejectionMailObj"] = mailObj;
 
                     return Json(new
                     {
@@ -9710,19 +9792,130 @@ namespace PMS.Controllers
                 try
                 {
                     var currentDateTime = DateTime.Now;
-                    var username = "anupama.s";
+                    var username = "ranga.a";
+                    List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
 
-                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+                    var paymentRateRecords = (from pr in db.PaymentRate
+                                              join de in db.Designation on pr.DesignationId equals de.DesignationId
+                                              join lt in db.LectureType on pr.LectureTypeId equals lt.LectureTypeId into pr_lt
+                                              from lecTyp in pr_lt.DefaultIfEmpty()
+                                              join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
+                                              from fac in pr_f.DefaultIfEmpty()
+                                              join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
+                                              from dgr in pr_d.DefaultIfEmpty()
+                                              join sp in db.Specialization on pr.SpecializationId equals sp.SpecializationId into pr_sp
+                                              from spzl in pr_sp.DefaultIfEmpty()
+                                              join s in db.Subject on pr.SubjectId equals s.SubjectId into pr_s
+                                              from sub in pr_s.DefaultIfEmpty()
+                                              where paymentRates.PaymentRateIdList.Contains(pr.Id)
+                                              select new {
+                                                  paymentRate = pr,
+                                                  designationName = de.DesignationName,
+                                                  lectureTypeName = lecTyp.LectureTypeName,
+                                                  facultyName = fac.FacultyName,
+                                                  degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
+                                                  specializationName = spzl != null ? spzl.Name : null,
+                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
+                                              }).ToList();
 
                     for (var i = 0; i < paymentRateRecords.Count; i++)
                     {
-                        paymentRateRecords[i].SentForApproval = true;
-                        paymentRateRecords[i].SentToApprovalBy = username;
-                        paymentRateRecords[i].SentToApprovalDate = currentDateTime;
-                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                        PaymentRateMailCC checkingPRMail = prMailList.Find(pr => pr.FacultyId == paymentRateRecords[i].paymentRate.FacultyId.Value);
+
+                        if(checkingPRMail == null)
+                        {
+                            int facultyId = paymentRateRecords[i].paymentRate.FacultyId.Value;
+
+                            PaymentRateMailCC prMailObj = (from f in db.Faculty
+                                                           join u in db.AspNetUsers on f.FacultyDean equals u.Id
+                                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                           where f.FacultyId.Equals(facultyId)
+                                                           select new PaymentRateMailCC
+                                                           {
+                                                               FacultyId = f.FacultyId,
+                                                               ToMail = u.Email,
+                                                               MailSubject = "WPS: Payment Rates Approval Request Notification",
+                                                               MailBody = "Dear " + t.TitleName + " " + u.FirstName + " " + u.LastName + ",<br /><br />" 
+                                                               + "Please be kind enough to  Approve/Reject following payment rates. Relevant payment rate details as follows: <br /><br />"
+                                                           }).FirstOrDefault();
+
+                            if(prMailObj != null)
+                            {
+                                string mailBody = "<b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                                if(paymentRateRecords[i].degreeName != null)
+                                {
+                                    mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].specializationName != null)
+                                {
+                                    mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].subjectName != null)
+                                {
+                                    mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                                }
+
+                                mailBody = mailBody + "<b>Approval Requesting Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                                if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                                {
+                                    mailBody = mailBody + "<br /><b>Old Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                                }
+
+                                prMailObj.MailBody += mailBody;
+                                prMailList.Add(prMailObj);
+                            }
+                        }
+                        else
+                        {
+                            string mailBody = "<br /><br /><b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                            if (paymentRateRecords[i].degreeName != null)
+                            {
+                                mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].specializationName != null)
+                            {
+                                mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].subjectName != null)
+                            {
+                                mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                            }
+
+                            mailBody = mailBody + "<b>Approval Requesting Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                            if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                            {
+                                mailBody = mailBody + "<br /><b>Old Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                            }
+
+                            checkingPRMail.MailBody += mailBody;
+                        }
+
+                        paymentRateRecords[i].paymentRate.SentForApproval = true;
+                        paymentRateRecords[i].paymentRate.SentToApprovalBy = username;
+                        paymentRateRecords[i].paymentRate.SentToApprovalDate = currentDateTime;
+                        db.Entry(paymentRateRecords[i].paymentRate).State = EntityState.Modified;
                     }
 
                     db.SaveChanges();
+
+                    for(int i = 0; i < prMailList.Count; i++)
+                    {
+                        prMailList[i].MailBody += "<br /><br />" + "Thanks & Regards,<br />WPS";
+                    }
+
+                    Session["PaymentRateMailObj"] = prMailList;
 
                     return Json(new
                     {
@@ -9759,22 +9952,142 @@ namespace PMS.Controllers
                 {
                     var currentDateTime = DateTime.Now;
                     var username = "anupama.s";
+                    List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
 
-                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+                    var paymentRateRecords = (from pr in db.PaymentRate
+                                              join de in db.Designation on pr.DesignationId equals de.DesignationId
+                                              join lt in db.LectureType on pr.LectureTypeId equals lt.LectureTypeId into pr_lt
+                                              from lecTyp in pr_lt.DefaultIfEmpty()
+                                              join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
+                                              from fac in pr_f.DefaultIfEmpty()
+                                              join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
+                                              from dgr in pr_d.DefaultIfEmpty()
+                                              join sp in db.Specialization on pr.SpecializationId equals sp.SpecializationId into pr_sp
+                                              from spzl in pr_sp.DefaultIfEmpty()
+                                              join s in db.Subject on pr.SubjectId equals s.SubjectId into pr_s
+                                              from sub in pr_s.DefaultIfEmpty()
+                                              where paymentRates.PaymentRateIdList.Contains(pr.Id)
+                                              select new
+                                              {
+                                                  paymentRate = pr,
+                                                  designationName = de.DesignationName,
+                                                  lectureTypeName = lecTyp.LectureTypeName,
+                                                  facultyName = fac.FacultyName,
+                                                  degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
+                                                  specializationName = spzl != null ? spzl.Name : null,
+                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
+                                              }).ToList();
 
                     for (var i = 0; i < paymentRateRecords.Count; i++)
                     {
-                        paymentRateRecords[i].SentForApproval = null;
-                        paymentRateRecords[i].IsApproved = true;
-                        paymentRateRecords[i].ApprovedOrRejectedBy = username;
-                        paymentRateRecords[i].ApprovedOrRejectedDate = currentDateTime;
-                        paymentRateRecords[i].OldRatePerHour = paymentRateRecords[i].RatePerHour;
-                        paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
+                        string sentToApprovalBy = paymentRateRecords[i].paymentRate.SentToApprovalBy;
 
-                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                        PaymentRateMailCC checkingPRMail = prMailList.Find(pr => pr.ToUsername == sentToApprovalBy);
+
+                        if (checkingPRMail == null)
+                        {
+                            PaymentRateMailCC prMailObj = (from u in db.AspNetUsers
+                                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                           where u.UserName.Equals(sentToApprovalBy)
+                                                           select new PaymentRateMailCC
+                                                           {
+                                                               ToUsername = u.UserName,
+                                                               ToMail = u.Email,
+                                                               MailSubject = "WPS: Payment Rates Approval Notification",
+                                                               MailBody = "Dear " + t.TitleName + " " + u.FirstName + " " + u.LastName + ",<br /><br />"
+                                                               + "Following Payment Rate(s) has/have been Approved by the Faculty Dean. Relevant payment rate details as follows: <br /><br />"
+                                                           }).FirstOrDefault();
+
+                            if (prMailObj != null)
+                            {
+                                string mailBody = "<b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                                if (paymentRateRecords[i].degreeName != null)
+                                {
+                                    mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].specializationName != null)
+                                {
+                                    mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].subjectName != null)
+                                {
+                                    mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                                }
+
+                                mailBody = mailBody + "<b>Approved Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                                if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                                {
+                                    mailBody = mailBody + "<br /><b>Old Hourly Rate Before Approval:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                                }
+
+                                prMailObj.MailBody += mailBody;
+                                prMailList.Add(prMailObj);
+                            }
+                        }
+                        else
+                        {
+                            string mailBody = "<br /><br /><b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                            if (paymentRateRecords[i].degreeName != null)
+                            {
+                                mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].specializationName != null)
+                            {
+                                mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].subjectName != null)
+                            {
+                                mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                            }
+
+                            mailBody = mailBody + "<b>Approved Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                            if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                            {
+                                mailBody = mailBody + "<br /><b>Old Hourly Rate Before Approval:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                            }
+
+                            checkingPRMail.MailBody += mailBody;
+                        }
+
+                        paymentRateRecords[i].paymentRate.SentForApproval = null;
+                        paymentRateRecords[i].paymentRate.IsApproved = true;
+                        paymentRateRecords[i].paymentRate.ApprovedOrRejectedBy = username;
+                        paymentRateRecords[i].paymentRate.ApprovedOrRejectedDate = currentDateTime;
+                        paymentRateRecords[i].paymentRate.OldRatePerHour = paymentRateRecords[i].paymentRate.RatePerHour;
+                        paymentRateRecords[i].paymentRate.ApprovalOrRejectionRemark = paymentRates.Remark;
+
+                        db.Entry(paymentRateRecords[i].paymentRate).State = EntityState.Modified;
                     }
 
                     db.SaveChanges();
+
+                    for (int i = 0; i < prMailList.Count; i++)
+                    {
+                        string mailBody = "";
+
+                        if (!string.IsNullOrEmpty(paymentRates.Remark))
+                        {
+                            mailBody = mailBody + "<br /><br /><b>Approval Remark:- </b>" + paymentRates.Remark;
+                        }
+
+                        mailBody = mailBody + "<br /><br />" + "Thanks & Regards,<br />WPS";
+
+                        prMailList[i].MailBody += mailBody;
+                    }
+
+                    Session["PaymentRateMailObj"] = prMailList;
 
                     return Json(new
                     {
@@ -9811,22 +10124,142 @@ namespace PMS.Controllers
                 {
                     var currentDateTime = DateTime.Now;
                     var username = "anupama.s";
+                    List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
 
-                    List<PaymentRate> paymentRateRecords = (from pr in db.PaymentRate where paymentRates.PaymentRateIdList.Contains(pr.Id) select pr).ToList();
+                    var paymentRateRecords = (from pr in db.PaymentRate
+                                              join de in db.Designation on pr.DesignationId equals de.DesignationId
+                                              join lt in db.LectureType on pr.LectureTypeId equals lt.LectureTypeId into pr_lt
+                                              from lecTyp in pr_lt.DefaultIfEmpty()
+                                              join f in db.Faculty on pr.FacultyId equals f.FacultyId into pr_f
+                                              from fac in pr_f.DefaultIfEmpty()
+                                              join d in db.Degree on pr.DegreeId equals d.DegreeId into pr_d
+                                              from dgr in pr_d.DefaultIfEmpty()
+                                              join sp in db.Specialization on pr.SpecializationId equals sp.SpecializationId into pr_sp
+                                              from spzl in pr_sp.DefaultIfEmpty()
+                                              join s in db.Subject on pr.SubjectId equals s.SubjectId into pr_s
+                                              from sub in pr_s.DefaultIfEmpty()
+                                              where paymentRates.PaymentRateIdList.Contains(pr.Id)
+                                              select new
+                                              {
+                                                  paymentRate = pr,
+                                                  designationName = de.DesignationName,
+                                                  lectureTypeName = lecTyp.LectureTypeName,
+                                                  facultyName = fac.FacultyName,
+                                                  degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
+                                                  specializationName = spzl != null ? spzl.Name : null,
+                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
+                                              }).ToList();
 
                     for (var i = 0; i < paymentRateRecords.Count; i++)
                     {
-                        paymentRateRecords[i].SentForApproval = null;
-                        paymentRateRecords[i].IsApproved = false;
-                        paymentRateRecords[i].ApprovedOrRejectedBy = username;
-                        paymentRateRecords[i].ApprovedOrRejectedDate = currentDateTime;
-                        paymentRateRecords[i].RatePerHour = paymentRateRecords[i].OldRatePerHour;
-                        paymentRateRecords[i].ApprovalOrRejectionRemark = paymentRates.Remark;
+                        string sentToApprovalBy = paymentRateRecords[i].paymentRate.SentToApprovalBy;
 
-                        db.Entry(paymentRateRecords[i]).State = EntityState.Modified;
+                        PaymentRateMailCC checkingPRMail = prMailList.Find(pr => pr.ToUsername == sentToApprovalBy);
+
+                        if (checkingPRMail == null)
+                        {
+                            PaymentRateMailCC prMailObj = (from u in db.AspNetUsers
+                                                           join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                           where u.UserName.Equals(sentToApprovalBy)
+                                                           select new PaymentRateMailCC
+                                                           {
+                                                               ToUsername = u.UserName,
+                                                               ToMail = u.Email,
+                                                               MailSubject = "WPS: Payment Rates Rejection Notification",
+                                                               MailBody = "Dear " + t.TitleName + " " + u.FirstName + " " + u.LastName + ",<br /><br />"
+                                                               + "Following Payment Rate(s) has/have been Rejected by the Faculty Dean. Relevant payment rate details as follows: <br /><br />"
+                                                           }).FirstOrDefault();
+
+                            if (prMailObj != null)
+                            {
+                                string mailBody = "<b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                                if (paymentRateRecords[i].degreeName != null)
+                                {
+                                    mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].specializationName != null)
+                                {
+                                    mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                                }
+
+                                if (paymentRateRecords[i].subjectName != null)
+                                {
+                                    mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                                }
+
+                                mailBody = mailBody + "<b>Approval Requested Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                                if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                                {
+                                    mailBody = mailBody + "<br /><b>Old Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                                }
+
+                                prMailObj.MailBody += mailBody;
+                                prMailList.Add(prMailObj);
+                            }
+                        }
+                        else
+                        {
+                            string mailBody = "<br /><br /><b>Designation:- </b>" + paymentRateRecords[i].designationName + "<br />"
+                                    + "<b>Lecture Type:- </b>" + paymentRateRecords[i].lectureTypeName + "<br />"
+                                    + "<b>Faculty Name:- </b>" + paymentRateRecords[i].facultyName + "<br />";
+
+                            if (paymentRateRecords[i].degreeName != null)
+                            {
+                                mailBody = mailBody + "<b>Degree Name:- </b>" + paymentRateRecords[i].degreeName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].specializationName != null)
+                            {
+                                mailBody = mailBody + "<b>Specialization Name:- </b>" + paymentRateRecords[i].specializationName + "<br />";
+                            }
+
+                            if (paymentRateRecords[i].subjectName != null)
+                            {
+                                mailBody = mailBody + "<b>Subject Name:- </b>" + paymentRateRecords[i].subjectName + "<br />";
+                            }
+
+                            mailBody = mailBody + "<b>Approval Requested Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.RatePerHour;
+
+                            if (!string.IsNullOrEmpty(paymentRateRecords[i].paymentRate.OldRatePerHour.ToString()))
+                            {
+                                mailBody = mailBody + "<br /><b>Old Hourly Rate:- </b>Rs. " + paymentRateRecords[i].paymentRate.OldRatePerHour;
+                            }
+
+                            checkingPRMail.MailBody += mailBody;
+                        }
+
+                        paymentRateRecords[i].paymentRate.SentForApproval = null;
+                        paymentRateRecords[i].paymentRate.IsApproved = false;
+                        paymentRateRecords[i].paymentRate.ApprovedOrRejectedBy = username;
+                        paymentRateRecords[i].paymentRate.ApprovedOrRejectedDate = currentDateTime;
+                        paymentRateRecords[i].paymentRate.RatePerHour = paymentRateRecords[i].paymentRate.OldRatePerHour;
+                        paymentRateRecords[i].paymentRate.ApprovalOrRejectionRemark = paymentRates.Remark;
+
+                        db.Entry(paymentRateRecords[i].paymentRate).State = EntityState.Modified;
                     }
 
                     db.SaveChanges();
+
+                    for (int i = 0; i < prMailList.Count; i++)
+                    {
+                        string mailBody = "";
+
+                        if (!string.IsNullOrEmpty(paymentRates.Remark))
+                        {
+                            mailBody = mailBody + "<br /><br /><b>Rejection Remark:- </b>" + paymentRates.Remark;
+                        }
+
+                        mailBody = mailBody + "<br /><br />" + "Thanks & Regards,<br />WPS";
+
+                        prMailList[i].MailBody += mailBody;
+                    }
+
+                    Session["PaymentRateMailObj"] = prMailList;
 
                     return Json(new
                     {
@@ -10526,6 +10959,43 @@ namespace PMS.Controllers
                     throw raise;
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/15
+        public void SendLectureRejectionEmail()
+        {
+            //List<string> x = new List<string>() { "ranga.a@sliit.lk", "anupama.s@sliit.lk" };
+            //List<string> cc = new List<string>();
+            //MailCC mailObjs = new MailCC()
+            //{
+            //    ToMails = x,
+            //    CCMails = cc,
+            //    MailSubject = "WPS: Conducted Lectures Rejection Notification",
+            //    MailBody = "Test Body"
+            //};
+
+            //Session["MailObj"] = mailObjs;
+
+            MailCC mailObj = Session["LecturesRejectionMailObj"] as MailCC;
+            new MailNotifications().SendEmailToSinglePerson(mailObj.ToMail, mailObj.CCMails, mailObj.MailSubject, mailObj.MailBody);
+            //new MailNotifications().SendEmail(x, cc, "WPS: Conducted Lectures Rejection Notification", "Test Body");
+            //return Json(new { data = mailObj }, JsonRequestBehavior.AllowGet);
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/15
+        public void SendPaymentRateEmails()
+        {
+            List<PaymentRateMailCC> mailObjs = Session["PaymentRateMailObj"] as List<PaymentRateMailCC>;
+            List<string> ccMails = new List<string>();
+
+            foreach(PaymentRateMailCC mailObj in mailObjs)
+            {
+                new MailNotifications().SendEmailToSinglePerson(mailObj.ToMail, ccMails, mailObj.MailSubject, mailObj.MailBody);
+            }
+            //new MailNotifications().SendEmail(x, cc, "WPS: Conducted Lectures Rejection Notification", "Test Body");
+            //return Json(new { data = mailObj }, JsonRequestBehavior.AllowGet);
         }
     }
 }

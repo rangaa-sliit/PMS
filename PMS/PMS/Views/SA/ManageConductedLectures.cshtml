@@ -103,11 +103,11 @@ Developed On:- 2022/11/05*@
                     "data": "ActualLectureDate"
                 },
                 {
-                    "title": "Lecture Started Time",
+                    "title": "Lecture Started Time (24 Hrs)",
                     "data": "ActualFromTime"
                 },
                 {
-                    "title": "Lecture Ended Time",
+                    "title": "Lecture Ended Time (24 Hrs)",
                     "data": "ActualToTime"
                 },
                 {
@@ -139,8 +139,16 @@ Developed On:- 2022/11/05*@
                     }
                 },
                 {
-                    "title": "Payment Amount",
-                    "data": "PaymentAmount"
+                    "title": "Payment Amount (Rs.)",
+                    "data": "PaymentAmount",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return parseFloat(data).toFixed(2);
+                        }
+                    }
                 },
                 {
                     "title": "Current Stage",

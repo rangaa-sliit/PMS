@@ -208,8 +208,11 @@
     <Compile Include="Custom_Classes\ControllerActions.cs" />
     <Compile Include="Custom_Classes\CustomAuthorizeAttribute.cs" />
     <Compile Include="Custom_Classes\CustomExtensions.cs" />
+    <Compile Include="Custom_Classes\FacultyDeanCC.cs" />
     <Compile Include="Custom_Classes\Faculty_SubworkflowsCC.cs" />
     <Compile Include="Custom_Classes\LecturerMonthlyApprovalCC.cs" />
+    <Compile Include="Custom_Classes\PaymentRateMailCC.cs" />
+    <Compile Include="Custom_Classes\MailCC.cs" />
     <Compile Include="Custom_Classes\PaymentRateApprovalCC.cs" />
     <Compile Include="Custom_Classes\ReportsCC.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
@@ -219,6 +222,7 @@
     <Compile Include="Custom_Classes\UserClaimCC.cs" />
     <Compile Include="Custom_Classes\UserGroupsRolesCC.cs" />
     <Compile Include="Custom_Classes\SubWorkflowCC.cs" />
+    <Compile Include="Functions\MailNotifications.cs" />
     <Compile Include="Functions\UserFunctions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -488,7 +492,9 @@
     <Content Include="Scripts\umd\popper.js" />
     <Content Include="Scripts\umd\popper.min.js" />
     <Content Include="UploadedFiles\AttendanceSheets\3100.jpg" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

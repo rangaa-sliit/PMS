@@ -500,8 +500,16 @@
                         "data": "timetableRecords.LectureTypeName"
                     },
                     {
-                        "title": "Payment Amount",
-                        "data": "PaymentAmount"
+                        "title": "Payment Amount (Rs.)",
+                        "data": "PaymentAmount",
+                        "render": function (data) {
+                            if (data == true) {
+                                return "N/A";
+                            }
+                            else {
+                                return parseFloat(data).toFixed(2);
+                            }
+                        }
                     },
                     {
                         "title": "Current Stage",
@@ -528,7 +536,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture Start Time",
+                        "title": "Actual Lecture Start Time (24 Hrs)",
                         "data": "ActualFromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -540,7 +548,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture End Time",
+                        "title": "Actual Lecture End Time (24 Hrs)",
                         "data": "ActualToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -564,7 +572,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture Start Time",
+                        "title": "Timetable Lecture Start Time (24 Hrs)",
                         "data": "timetableRecords.FromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -576,7 +584,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture End Time",
+                        "title": "Timetable Lecture End Time (24 Hrs)",
                         "data": "timetableRecords.ToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -708,8 +716,16 @@
                         "data": "timetableRecords.LectureTypeName"
                     },
                     {
-                        "title": "Payment Amount",
-                        "data": "PaymentAmount"
+                        "title": "Payment Amount (Rs.)",
+                        "data": "PaymentAmount",
+                        "render": function (data) {
+                            if (data == true) {
+                                return "N/A";
+                            }
+                            else {
+                                return parseFloat(data).toFixed(2);
+                            }
+                        }
                     },
                     {
                         "title": "Current Stage",
@@ -736,7 +752,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture Start Time",
+                        "title": "Actual Lecture Start Time (24 Hrs)",
                         "data": "ActualFromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -748,7 +764,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture End Time",
+                        "title": "Actual Lecture End Time (24 Hrs)",
                         "data": "ActualToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -772,7 +788,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture Start Time",
+                        "title": "Timetable Lecture Start Time (24 Hrs)",
                         "data": "timetableRecords.FromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -784,7 +800,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture End Time",
+                        "title": "Timetable Lecture End Time (24 Hrs)",
                         "data": "timetableRecords.ToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -908,8 +924,16 @@
                         "data": "timetableRecords.LectureTypeName"
                     },
                     {
-                        "title": "Payment Amount",
-                        "data": "PaymentAmount"
+                        "title": "Payment Amount (Rs.)",
+                        "data": "PaymentAmount",
+                        "render": function (data) {
+                            if (data == true) {
+                                return "N/A";
+                            }
+                            else {
+                                return parseFloat(data).toFixed(2);
+                            }
+                        }
                     },
                     {
                         "title": "Current Stage",
@@ -936,7 +960,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture Start Time",
+                        "title": "Actual Lecture Start Time (24 Hrs)",
                         "data": "ActualFromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -948,7 +972,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture End Time",
+                        "title": "Actual Lecture End Time (24 Hrs)",
                         "data": "ActualToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -972,7 +996,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture Start Time",
+                        "title": "Timetable Lecture Start Time (24 Hrs)",
                         "data": "timetableRecords.FromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -984,7 +1008,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture End Time",
+                        "title": "Timetable Lecture End Time (24 Hrs)",
                         "data": "timetableRecords.ToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1108,8 +1132,16 @@
                         "data": "timetableRecords.LectureTypeName"
                     },
                     {
-                        "title": "Payment Amount",
-                        "data": "PaymentAmount"
+                        "title": "Payment Amount (Rs.)",
+                        "data": "PaymentAmount",
+                        "render": function (data) {
+                            if (data == true) {
+                                return "N/A";
+                            }
+                            else {
+                                return parseFloat(data).toFixed(2);
+                            }
+                        }
                     },
                     {
                         "title": "Current Stage",
@@ -1136,7 +1168,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture Start Time",
+                        "title": "Actual Lecture Start Time (24 Hrs)",
                         "data": "ActualFromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1148,7 +1180,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture End Time",
+                        "title": "Actual Lecture End Time (24 Hrs)",
                         "data": "ActualToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1172,7 +1204,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture Start Time",
+                        "title": "Timetable Lecture Start Time (24 Hrs)",
                         "data": "timetableRecords.FromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1184,7 +1216,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture End Time",
+                        "title": "Timetable Lecture End Time (24 Hrs)",
                         "data": "timetableRecords.ToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1304,8 +1336,16 @@
                         "data": "timetableRecords.LectureTypeName"
                     },
                     {
-                        "title": "Payment Amount",
-                        "data": "PaymentAmount"
+                        "title": "Payment Amount (Rs.)",
+                        "data": "PaymentAmount",
+                        "render": function (data) {
+                            if (data == true) {
+                                return "N/A";
+                            }
+                            else {
+                                return parseFloat(data).toFixed(2);
+                            }
+                        }
                     },
                     {
                         "title": "Current Stage",
@@ -1332,7 +1372,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture Start Time",
+                        "title": "Actual Lecture Start Time (24 Hrs)",
                         "data": "ActualFromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1344,7 +1384,7 @@
                         }
                     },
                     {
-                        "title": "Actual Lecture End Time",
+                        "title": "Actual Lecture End Time (24 Hrs)",
                         "data": "ActualToTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1368,7 +1408,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture Start Time",
+                        "title": "Timetable Lecture Start Time (24 Hrs)",
                         "data": "timetableRecords.FromTime",
                         "render": function (data) {
                             if (data == null) {
@@ -1380,7 +1420,7 @@
                         }
                     },
                     {
-                        "title": "Timetable Lecture End Time",
+                        "title": "Timetable Lecture End Time (24 Hrs)",
                         "data": "timetableRecords.ToTime",
                         "render": function (data) {
                             if (data == null) {

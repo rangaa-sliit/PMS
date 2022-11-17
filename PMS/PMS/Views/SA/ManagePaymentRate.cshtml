@@ -27,6 +27,7 @@
             <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
             <button type="button" class="btn btn-sm btn-outline-success float-right mr-2" onclick="onApproveClick()"><i class="fa fa-check"></i> Approve</button>
             <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2" onclick="onRejectClick()"><i class="fa fa-times"></i> Reject</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right mr-2" onclick="OpenWorkflowMap('@Url.Action("ViewSubWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> Color Coding Desctription</button>
             <div class="table-responsive">
                 <table id="paymentRateTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -118,8 +119,39 @@
     <script>
         var paymentRateTbl;
         var selectedCLRecordsList = [];
+        var downloadFileName = "Payment Rates"
 
         paymentRateTbl = $("#paymentRateTbl").DataTable({
+            "dom": "<'row'<'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-3 col-lg-3 col-xl-3'l><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-4 col-lg-4 col-xl-4'B><'col-12 col-xs-6 col-sm-6 col-xs-12 col-md-5 col-lg-5 col-xl-5'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            "buttons": {
+                "buttons": [
+                    {
+                        extend: 'csv',
+                        text: '<i class="fa fa-download"></i> CSV Download',
+                        title: downloadFileName,
+                        className: 'btn btn-sm btn-outline-success'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="fa fa-download"></i> Excel Download',
+                        title: downloadFileName,
+                        className: 'btn btn-sm btn-outline-success'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: downloadFileName,
+                        className: 'btn btn-sm btn-outline-success'
+                    }
+                ],
+                "dom": {
+                    "button": {
+                        className: 'btn'
+                    }
+                }
+            },
             "responsive": true,
             "scrollY": "30vh",
             "scrollX": true,
@@ -129,6 +161,11 @@
                 "url": "@Url.Action("GetPaymentRates", "SA")",
                 "type": "GET",
                 "dataType": "json"
+            },
+            "createdRow": function (row, data, dataIndex) {
+                if (data.IsApproved == null) {
+                    $(row).addClass("pendingRow");
+                }
             },
             "columns": [
                 {
@@ -187,14 +224,14 @@
                     }
                 },
                 {
-                    "title": "Approved Rate Per Hour",
+                    "title": "Approved Rate Per Hour (Rs.)",
                     "data": "CurrentRatePerHour",
                     "render": function (data) {
                         if (data == null) {
                             return "N/A";
                         }
                         else {
-                            return data;
+                            return parseFloat(data).toFixed(2);
                         }
                     }
                 },
@@ -235,14 +272,14 @@
                     }
                 },
                 {
-                    "title": "Old Rate Per Hour",
+                    "title": "Old Rate Per Hour (Rs.)",
                     "data": "OldRatePerHour",
                     "render": function (data) {
                         if (data == null) {
                             return "N/A";
                         }
                         else {
-                            return data;
+                            return parseFloat(data).toFixed(2);
                         }
                     }
                 },
@@ -356,7 +393,15 @@
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
-                        })
+                        });
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("SendPaymentRateEmails", "SA")',
+                            success: function (data) {
+
+                            }
+                        });
                     }
                     else {
                         $.notify(data.message, {
@@ -406,7 +451,15 @@
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
-                        })
+                        });
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("SendPaymentRateEmails", "SA")',
+                            success: function (data) {
+
+                            }
+                        });
                     }
                     else {
                         $.notify(data.message, {
@@ -456,7 +509,15 @@
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
-                        })
+                        });
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("SendPaymentRateEmails", "SA")',
+                            success: function (data) {
+
+                            }
+                        });
                     }
                     else {
                         $.notify(data.message, {

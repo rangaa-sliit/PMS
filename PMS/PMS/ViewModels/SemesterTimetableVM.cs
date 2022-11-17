@@ -25,5 +25,6 @@ namespace PMS.ViewModels
         public string FacultyName { get; set; }
         public string DegreeName { get; set; }
         public AppointmentType AppointmentTypeDetails { get; set; }
+        public string DeadlineDate { get; set; }
     }
 }

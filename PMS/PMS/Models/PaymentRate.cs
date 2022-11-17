@@ -33,6 +33,7 @@ namespace PMS.Models
         public Nullable<int> LectureTypeId { get; set; }
         [Required(ErrorMessage = "Rate Per Hour is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Only positive values are allowed")]
+        [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
         public double RatePerHour { get; set; }
         public double OldRatePerHour { get; set; }
         public Nullable<bool> SentForApproval { get; set; }

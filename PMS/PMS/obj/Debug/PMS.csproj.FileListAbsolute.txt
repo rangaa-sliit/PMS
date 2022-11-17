@@ -1,4 +1,5 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.ObjectModel.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\WebGrease.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -101,7 +102,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Net.Sockets.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Net.WebHeaderCollection.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Net.WebSockets.Client.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Net.WebSockets.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.ObjectModel.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Reflection.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Reflection.Extensions.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Reflection.Primitives.dll
@@ -145,6 +145,7 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.XmlSerializer.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.XPath.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.XPath.XDocument.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Antlr3.Runtime.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.SqlServer.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.Interfaces.dll
@@ -176,7 +177,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Deployment.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Razor.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\WebGrease.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EPPlus.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.pdb
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.xml
@@ -212,4 +212,3 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
-E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

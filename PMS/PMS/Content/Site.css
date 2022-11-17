@@ -261,6 +261,22 @@ table.dataTable tbody td {
     background-color: #58bb58;
 }
 
+.approvedRow {
+    background-color: palegreen !important;
+}
+
+.rejectedRow {
+    background-color: lightcoral !important;
+}
+
+.cancelledRow {
+    background-color: lightsalmon !important;
+}
+
+.pendingRow {
+    background-color: lightcyan !important;
+}
+
 /*#steps {
   width: 80%;
   margin: 50px auto; 

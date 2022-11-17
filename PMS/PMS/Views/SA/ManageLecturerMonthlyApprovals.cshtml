@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-4">
-                                            <label>Lecture Start Time: </label>
+                                            <label>Lecture Start Time (24 Hrs): </label>
                                         </div>
                                         <div class="col-sm-8">
                                             <label class="text-dark" id="actualStartTimeLabel"></label>
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-4">
-                                            <label>Lecture End Time: </label>
+                                            <label>Lecture End Time (24 Hrs): </label>
                                         </div>
                                         <div class="col-sm-8">
                                             <label class="text-dark" id="actualEndTimeLabel"></label>
@@ -172,7 +172,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-4">
-                                            <label>Lecture Start Time: </label>
+                                            <label>Lecture Start Time (24 Hrs): </label>
                                         </div>
                                         <div class="col-sm-8">
                                             <label class="text-dark" id="timetableStartTimeLabel"></label>
@@ -180,7 +180,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-sm-4">
-                                            <label>Lecture End Time: </label>
+                                            <label>Lecture End Time (24 Hrs): </label>
                                         </div>
                                         <div class="col-sm-8">
                                             <label class="text-dark" id="timetableEndTimeLabel"></label>
@@ -274,7 +274,7 @@
 </div>
 
 @section scripts {
-    <script>
+<script>
         var lectureApprovalTbl;
         var selectedCLRecordsList = [];
         var lecturerId = window.location.pathname.toString().split('/')[3];
@@ -330,7 +330,7 @@
                     "defaultContent": '',
                     'createdCell': function (td, cellData, rowData, row, col) {
                         if (rowData.canSendToApproval == false || rowData.IsApprovedOrRejected == false) {
-                            $(td).find('input:checkbox').prop('disabled', true);
+                            $(td).find('input:checkbox').remove();
                         }
                     },
                     'targets': 0,
@@ -366,16 +366,24 @@
                     "data": "ActualLectureDate"
                 },
                 {
-                    "title": "Lecture Started Time",
+                    "title": "Lecture Started Time (24 Hrs)",
                     "data": "ActualFromTime"
                 },
                 {
-                    "title": "Lecture Ended Time",
+                    "title": "Lecture Ended Time (24 Hrs)",
                     "data": "ActualToTime"
                 },
                 {
-                    "title": "Payment Amount",
-                    "data": "PaymentAmount"
+                    "title": "Payment Amount (Rs.)",
+                    "data": "PaymentAmount",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return parseFloat(data).toFixed(2);
+                        }
+                    }
                 },
                 {
                     "title": "Student Count",
@@ -698,6 +706,7 @@
             $("#loader").show();
 
             var CLObj = {
+                LecturerId: lecturerId,
                 CLIdList: selectedCLRecordsList,
                 Remark: $("#rejectionRemark").val()
             };
@@ -714,6 +723,14 @@
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
+                        });
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("SendLectureRejectionEmail", "SA")',
+                            success: function (data) {
+
+                            }
                         })
                     }
                     else {
@@ -725,5 +742,5 @@
                 }
             });
         }
-    </script>
+</script>
 }

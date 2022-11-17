@@ -84,7 +84,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.RatePerHour, "Rate Per Hour: ", new { @class = "required" })
+                        @Html.LabelFor(model => model.RatePerHour, "Rate Per Hour (Rs.): ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.EditorFor(model => model.RatePerHour, new { htmlAttributes = new { @class = "form-control", @placeholder = "RatePerHour", @id = "RatePerHour", oninput = "onRatePerHourInput()" } })
