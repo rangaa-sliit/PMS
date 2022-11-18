@@ -201,6 +201,8 @@
     <Property Name="ModerationOpenedDate" Type="datetime" />
     <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="UsedDesignationId" Type="int" />
+    <Property Name="UsedPaymentRate" Type="float" />
     <Property Name="PaymentAmount" Type="float" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -235,6 +237,8 @@
     <Property Name="ModerationOpenedDate" Type="datetime" />
     <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
     <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="UsedDesignationId" Type="int" />
+    <Property Name="UsedPaymentRate" Type="float" />
     <Property Name="PaymentAmount" Type="float" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -788,6 +792,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_ConductedLectures_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+    <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="ConductedLectures">
+        <PropertyRef Name="UsedDesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_ConductedLectures_LectureHall">
     <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
     <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
@@ -845,6 +861,18 @@
       </Principal>
       <Dependent Role="ConductedLecturesLog">
         <PropertyRef Name="CLId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ConductedLecturesLog_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+    <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="ConductedLecturesLog">
+        <PropertyRef Name="UsedDesignationId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1691,6 +1719,10 @@
       <End Role="Campus" EntitySet="Campus" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
     </AssociationSet>
+    <AssociationSet Name="FK_ConductedLectures_Designation" Association="Self.FK_ConductedLectures_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+    </AssociationSet>
     <AssociationSet Name="FK_ConductedLectures_LectureHall" Association="Self.FK_ConductedLectures_LectureHall">
       <End Role="LectureHall" EntitySet="LectureHall" />
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
@@ -1709,6 +1741,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="Self.FK_ConductedLecturesLog_ConductedLectures">
       <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+      <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ConductedLecturesLog_Designation" Association="Self.FK_ConductedLecturesLog_Designation">
+      <End Role="Designation" EntitySet="Designation" />
       <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
     </AssociationSet>
     <AssociationSet Name="FK_ConductedLecturesLog_LectureHall" Association="Self.FK_ConductedLecturesLog_LectureHall">

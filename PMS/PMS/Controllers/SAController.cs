@@ -11194,7 +11194,7 @@ namespace PMS.Controllers
                 try
                 {
                     var currentDateTime = DateTime.Now;
-                    var username = "ranga.a";
+                    var username = "roshan.v";
                     double paymentRate = 0.0;
                     double paymentAmount = 0.0;
                     bool considerMinimumStudentCount = false;
@@ -11213,6 +11213,7 @@ namespace PMS.Controllers
                                                ttRecord = tt,
                                                considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
                                                lecturerUsername = u.UserName,
+                                               lecturerEmail = u.Email,
                                                lecturerId = u.Id,
                                                lecturerName = ttl.TitleName + " " + u.FirstName + " " + u.LastName,
                                                facultyId = sem.FacultyId.Value
@@ -11310,7 +11311,67 @@ namespace PMS.Controllers
                             }
                         }
 
-                        var editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
+                        var editingConductedLecture = (from cl in db.ConductedLectures
+                                                       join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                       join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                                       join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
+                                                       join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                       join c in db.Campus on cl.CampusId equals c.CampusId
+                                                       join hl in db.LectureHall on cl.ActualLocationId equals hl.HallId into cl_hl
+                                                       from hll in cl_hl.DefaultIfEmpty()
+                                                       join ac in db.Campus on hll.CampusId equals ac.CampusId
+                                                       join tthl in db.LectureHall on tt.LocationId equals tthl.HallId into tt_tthl
+                                                       from tthll in tt_tthl.DefaultIfEmpty()
+                                                       join ttc in db.Campus on tthll.CampusId equals ttc.CampusId
+                                                       where cl.CLId.Equals(clObj.CLId)
+                                                       select new
+                                                       {
+                                                           lectureRecord = cl,
+                                                           timetableRecord = tt,
+                                                           facultyId = sem.FacultyId.Value,
+                                                           subjectName = s.SubjectCode + " - " + s.SubjectName,
+                                                           lectureTypeName = lt.LectureTypeName,
+                                                           actualLocation = ac.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName,
+                                                           timetableLocation = ttc.CampusName + " - " + tthll.Building + " - " + tthll.Floor + " - " + tthll.HallName,
+                                                           campusName = c.CampusName
+                                                       }).FirstOrDefault();
+
+                        string dataBeforeEdit = "<b>Subject Name:- </b>" + editingConductedLecture.subjectName + "<br />"
+                            + "<b>Lecture Type:- </b>" + editingConductedLecture.lectureTypeName + "<br />"
+                            + "<b>Submitted Session Date:- </b>" + editingConductedLecture.lectureRecord.ActualLectureDate.ToString().Substring(0, 10) + "<br />"
+                            + "<b>Submitted Session Start time (24 Hrs):- </b>" + editingConductedLecture.lectureRecord.ActualFromTime.ToString().Substring(0, 5) + "<br />"
+                            + "<b>Submitted Session End time (24 Hrs):- </b>" + editingConductedLecture.lectureRecord.ActualToTime.ToString().Substring(0, 5) + "<br />";
+
+                        if(editingConductedLecture.actualLocation != null)
+                        {
+                            dataBeforeEdit += "<b>Submitted Location:- </b>" + editingConductedLecture.actualLocation + "<br />";
+                        }
+
+                        if (!string.IsNullOrEmpty(editingConductedLecture.lectureRecord.StudentBatches))
+                        {
+                            dataBeforeEdit += "<b>Submitted Student Batch(es):- </b>" + editingConductedLecture.lectureRecord.StudentBatches + "<br />";
+                        }
+
+                        if (!string.IsNullOrEmpty(editingConductedLecture.lectureRecord.StudentCount.ToString()))
+                        {
+                            dataBeforeEdit += "<b>Submitted Student Count:- </b>" + editingConductedLecture.lectureRecord.StudentCount + "<br />";
+                        }
+
+                        dataBeforeEdit += "<b>Submitted Campus:- </b>" + editingConductedLecture.campusName + "<br />"
+                            + "<b>Timetable Session Date:- </b>" + editingConductedLecture.timetableRecord.LectureDate.ToString().Substring(0, 10) + "<br />"
+                            + "<b>Timetable Session Start time (24 Hrs):- </b>" + editingConductedLecture.timetableRecord.FromTime.ToString().Substring(0, 5) + "<br />"
+                            + "<b>Timetable Session End time (24 Hrs):- </b>" + editingConductedLecture.timetableRecord.ToTime.ToString().Substring(0, 5);
+
+                        if (!string.IsNullOrEmpty(editingConductedLecture.lectureRecord.Comment))
+                        {
+                            dataBeforeEdit += "<br /><b>Comment:- </b>" + editingConductedLecture.lectureRecord.Comment;
+                        }
+
+                        if (!string.IsNullOrEmpty(editingConductedLecture.lectureRecord.ApprovedOrRejectedRemark))
+                        {
+                            dataBeforeEdit += "<br /><b>Approval Remark:- </b>" + editingConductedLecture.lectureRecord.ApprovedOrRejectedRemark;
+                        }
 
                         TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
 
@@ -11335,7 +11396,7 @@ namespace PMS.Controllers
                                 }
                                 else
                                 {
-                                    string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                    string renamedFileName = timetableRecord.ttRecord.TimetableId.ToString() + "." + uploadedFileExtension;
                                     string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
                                     string absolutePath = Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName));
 
@@ -11345,7 +11406,7 @@ namespace PMS.Controllers
                                     }
 
                                     clObj.postedFile.SaveAs(absolutePath);
-                                    editingConductedLecture.StudentAttendanceSheetLocation = path;
+                                    editingConductedLecture.lectureRecord.StudentAttendanceSheetLocation = path;
                                     clLogObj.StudentAttendanceSheetLocation = path;
                                 }
                             }
@@ -11390,25 +11451,25 @@ namespace PMS.Controllers
                             }
                         }
 
-                        editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
-                        editingConductedLecture.ActualFromTime = clObj.ActualFromTime;
-                        editingConductedLecture.ActualToTime = clObj.ActualToTime;
-                        editingConductedLecture.ActualLocationId = clObj.ActualLocationId;
-                        editingConductedLecture.CampusId = clObj.CampusId;
-                        editingConductedLecture.StudentBatches = clObj.StudentBatches;
-                        editingConductedLecture.StudentCount = clObj.StudentCount;
-                        editingConductedLecture.Comment = clObj.Comment;
-                        editingConductedLecture.PaymentAmount = paymentAmount;
-                        editingConductedLecture.IsOpenForModerations = true;
-                        editingConductedLecture.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
-                        editingConductedLecture.ModerationOpenedBy = "Ranga";
-                        editingConductedLecture.ModerationOpenedDate = currentDateTime;
-                        editingConductedLecture.IsActive = clObj.IsActive;
+                        editingConductedLecture.lectureRecord.ActualLectureDate = clObj.ActualLectureDate;
+                        editingConductedLecture.lectureRecord.ActualFromTime = clObj.ActualFromTime;
+                        editingConductedLecture.lectureRecord.ActualToTime = clObj.ActualToTime;
+                        editingConductedLecture.lectureRecord.ActualLocationId = clObj.ActualLocationId;
+                        editingConductedLecture.lectureRecord.CampusId = clObj.CampusId;
+                        editingConductedLecture.lectureRecord.StudentBatches = clObj.StudentBatches;
+                        editingConductedLecture.lectureRecord.StudentCount = clObj.StudentCount;
+                        editingConductedLecture.lectureRecord.Comment = clObj.Comment;
+                        editingConductedLecture.lectureRecord.PaymentAmount = paymentAmount;
+                        editingConductedLecture.lectureRecord.IsOpenForModerations = true;
+                        editingConductedLecture.lectureRecord.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
+                        editingConductedLecture.lectureRecord.ModerationOpenedBy = "Ranga";
+                        editingConductedLecture.lectureRecord.ModerationOpenedDate = currentDateTime;
+                        editingConductedLecture.lectureRecord.IsActive = clObj.IsActive;
 
-                        db.Entry(editingConductedLecture).State = EntityState.Modified;
+                        db.Entry(editingConductedLecture.lectureRecord).State = EntityState.Modified;
 
-                        clLogObj.CLId = editingConductedLecture.CLId;
-                        clLogObj.TimetableId = editingConductedLecture.TimetableId;
+                        clLogObj.CLId = editingConductedLecture.lectureRecord.CLId;
+                        clLogObj.TimetableId = editingConductedLecture.lectureRecord.TimetableId;
                         clLogObj.ActualLectureDate = clObj.ActualLectureDate;
                         clLogObj.ActualFromTime = clObj.ActualFromTime;
                         clLogObj.ActualToTime = clObj.ActualToTime;
@@ -11417,13 +11478,13 @@ namespace PMS.Controllers
                         clLogObj.StudentBatches = clObj.StudentBatches;
                         clLogObj.StudentCount = clObj.StudentCount;
                         clLogObj.Comment = clObj.Comment;
-                        clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
-                        clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
+                        clLogObj.CurrentStage = editingConductedLecture.lectureRecord.CurrentStage;
+                        clLogObj.CurrentStageDisplayName = editingConductedLecture.lectureRecord.CurrentStageDisplayName;
                         clLogObj.PaymentAmount = paymentAmount;
-                        clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
-                        clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
-                        clLogObj.ModifiedDate = editingConductedLecture.ModifiedDate;
-                        clLogObj.ModifiedBy = editingConductedLecture.ModifiedBy;
+                        clLogObj.CreatedDate = editingConductedLecture.lectureRecord.CreatedDate;
+                        clLogObj.CreatedBy = editingConductedLecture.lectureRecord.CreatedBy;
+                        clLogObj.ModifiedDate = editingConductedLecture.lectureRecord.ModifiedDate;
+                        clLogObj.ModifiedBy = editingConductedLecture.lectureRecord.ModifiedBy;
                         clLogObj.IsOpenForModerations = true;
                         clLogObj.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
                         clLogObj.ModerationOpenedDate = currentDateTime;
@@ -11432,6 +11493,74 @@ namespace PMS.Controllers
 
                         db.ConductedLecturesLog.Add(clLogObj);
                         db.SaveChanges();
+
+                        var editedConductedLecture = (from cl in db.ConductedLectures
+                                                      join c in db.Campus on cl.CampusId equals c.CampusId
+                                                      join hl in db.LectureHall on cl.ActualLocationId equals hl.HallId into cl_hl
+                                                      from hll in cl_hl.DefaultIfEmpty()
+                                                      join ac in db.Campus on hll.CampusId equals ac.CampusId
+                                                      where cl.CLId.Equals(clObj.CLId)
+                                                      select new
+                                                      {
+                                                           lectureRecord = cl,
+                                                           actualLocation = ac.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName,
+                                                           campusName = c.CampusName
+                                                       }).FirstOrDefault();
+
+                        var moderationOpenSWName = (from sw in db.SubWorkflows
+                                                    join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
+                                                    where sw.SubWorkflowId.Equals(editedConductedLecture.lectureRecord.CurrentStage.Value)
+                                                    select r.Name).FirstOrDefault();
+
+                        string dataAfterEdit = "<b>Subject Name:- </b>" + editingConductedLecture.subjectName + "<br />"
+                            + "<b>Lecture Type:- </b>" + editingConductedLecture.lectureTypeName + "<br />"
+                            + "<b>Submitted Session Date:- </b>" + editedConductedLecture.lectureRecord.ActualLectureDate.ToString().Substring(0, 10) + "<br />"
+                            + "<b>Submitted Session Start time (24 Hrs):- </b>" + editedConductedLecture.lectureRecord.ActualFromTime.ToString().Substring(0, 5) + "<br />"
+                            + "<b>Submitted Session End time (24 Hrs):- </b>" + editedConductedLecture.lectureRecord.ActualToTime.ToString().Substring(0, 5) + "<br />";
+
+                        if (editedConductedLecture.actualLocation != null)
+                        {
+                            dataAfterEdit += "<b>Submitted Location:- </b>" + editedConductedLecture.actualLocation + "<br />";
+                        }
+
+                        if (!string.IsNullOrEmpty(editedConductedLecture.lectureRecord.StudentBatches))
+                        {
+                            dataAfterEdit += "<b>Submitted Student Batch(es):- </b>" + editedConductedLecture.lectureRecord.StudentBatches + "<br />";
+                        }
+
+                        if (!string.IsNullOrEmpty(editedConductedLecture.lectureRecord.StudentCount.ToString()))
+                        {
+                            dataAfterEdit += "<b>Submitted Student Count:- </b>" + editedConductedLecture.lectureRecord.StudentCount + "<br />";
+                        }
+
+                        dataAfterEdit += "<b>Submitted Campus:- </b>" + editedConductedLecture.campusName;
+
+                        if (!string.IsNullOrEmpty(editedConductedLecture.lectureRecord.Comment))
+                        {
+                            dataAfterEdit += "<br /><b>Comment:- </b>" + editedConductedLecture.lectureRecord.Comment;
+                        }
+
+                        if (!string.IsNullOrEmpty(clObj.ModerationOpenedRemark))
+                        {
+                            dataAfterEdit += "<br /><b>Moderation Opened Remark:- </b>" + clObj.ModerationOpenedRemark;
+                        }
+
+                        string mailbody = "Dear " + timetableRecord.lecturerName + ",<br /><br />"
+                            + "One of your submitted lecture record has been opened for moderations by " + moderationOpenSWName + " and following change(s) has/have been made to your lecture record.<br /><br />"
+                            + "Lecture Session Details Before Opened for Moderations: <br /><br />"
+                            + dataBeforeEdit + "<br /><br />"
+                            + "Lecture Session Details After Completing Moderations: <br /><br />"
+                            + dataAfterEdit + "<br /><br />Thanks & Regards,<br /> WPS";
+
+                        MailCC mailObj = new MailCC()
+                        {
+                            ToMail = timetableRecord.lecturerEmail,
+                            CCMails = new List<string>(),
+                            MailSubject = "WPS: Submitted Conducted Lectures Open For Moderations Notification",
+                            MailBody = mailbody
+                        };
+
+                        Session["OpenForModerationsMailObj"] = mailObj;
 
                         return Json(new
                         {
@@ -11456,6 +11585,14 @@ namespace PMS.Controllers
                     throw raise;
                 }
             }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/18
+        public void SendOpenForModerationsEmail()
+        {
+            MailCC mailObj = Session["OpenForModerationsMailObj"] as MailCC;
+            new MailNotifications().SendEmailToSinglePerson(mailObj.ToMail, mailObj.CCMails, mailObj.MailSubject, mailObj.MailBody);
         }
     }
 }

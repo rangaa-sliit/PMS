@@ -206,6 +206,8 @@
           <Property Name="ModerationOpenedDate" Type="datetime" />
           <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="UsedDesignationId" Type="int" />
+          <Property Name="UsedPaymentRate" Type="float" />
           <Property Name="PaymentAmount" Type="float" />
           <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -240,6 +242,8 @@
           <Property Name="ModerationOpenedDate" Type="datetime" />
           <Property Name="ModerationOpenedBy" Type="nvarchar" MaxLength="256" />
           <Property Name="ModerationOpenedRemark" Type="nvarchar" MaxLength="500" />
+          <Property Name="UsedDesignationId" Type="int" />
+          <Property Name="UsedPaymentRate" Type="float" />
           <Property Name="PaymentAmount" Type="float" />
           <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -793,6 +797,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConductedLectures_Designation">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+          <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationId" />
+            </Principal>
+            <Dependent Role="ConductedLectures">
+              <PropertyRef Name="UsedDesignationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ConductedLectures_LectureHall">
           <End Role="LectureHall" Type="Self.LectureHall" Multiplicity="0..1" />
           <End Role="ConductedLectures" Type="Self.ConductedLectures" Multiplicity="*" />
@@ -850,6 +866,18 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="CLId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConductedLecturesLog_Designation">
+          <End Role="Designation" Type="Self.Designation" Multiplicity="0..1" />
+          <End Role="ConductedLecturesLog" Type="Self.ConductedLecturesLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationId" />
+            </Principal>
+            <Dependent Role="ConductedLecturesLog">
+              <PropertyRef Name="UsedDesignationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1696,6 +1724,10 @@
             <End Role="Campus" EntitySet="Campus" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConductedLectures_Designation" Association="Self.FK_ConductedLectures_Designation">
+            <End Role="Designation" EntitySet="Designation" />
+            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+          </AssociationSet>
           <AssociationSet Name="FK_ConductedLectures_LectureHall" Association="Self.FK_ConductedLectures_LectureHall">
             <End Role="LectureHall" EntitySet="LectureHall" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
@@ -1714,6 +1746,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="Self.FK_ConductedLecturesLog_ConductedLectures">
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConductedLecturesLog_Designation" Association="Self.FK_ConductedLecturesLog_Designation">
+            <End Role="Designation" EntitySet="Designation" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureHall" Association="Self.FK_ConductedLecturesLog_LectureHall">
@@ -2122,6 +2158,10 @@
             <End Role="Campus" EntitySet="Campus" />
             <End Role="LectureHall" EntitySet="LectureHall" />
           </AssociationSet>
+          <AssociationSet Name="FK_ConductedLectures_Designation" Association="PMSModel.FK_ConductedLectures_Designation">
+            <End Role="Designation" EntitySet="Designation" />
+            <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+          </AssociationSet>
           <AssociationSet Name="FK_ConductedLectures_LectureHall" Association="PMSModel.FK_ConductedLectures_LectureHall">
             <End Role="LectureHall" EntitySet="LectureHall" />
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
@@ -2136,6 +2176,10 @@
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_ConductedLectures" Association="PMSModel.FK_ConductedLecturesLog_ConductedLectures">
             <End Role="ConductedLectures" EntitySet="ConductedLectures" />
+            <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConductedLecturesLog_Designation" Association="PMSModel.FK_ConductedLecturesLog_Designation">
+            <End Role="Designation" EntitySet="Designation" />
             <End Role="ConductedLecturesLog" EntitySet="ConductedLecturesLog" />
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLecturesLog_LectureHall" Association="PMSModel.FK_ConductedLecturesLog_LectureHall">
@@ -2568,6 +2612,8 @@
           <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
           <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UsedDesignationId" Type="Int32" />
+          <Property Name="UsedPaymentRate" Type="Double" />
           <Property Name="PaymentAmount" Type="Double" />
           <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2576,6 +2622,7 @@
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLectures_Campus" FromRole="ConductedLectures" ToRole="Campus" />
+          <NavigationProperty Name="Designation" Relationship="PMSModel.FK_ConductedLectures_Designation" FromRole="ConductedLectures" ToRole="Designation" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLectures_LectureHall" FromRole="ConductedLectures" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLectures_LectureTimetable" FromRole="ConductedLectures" ToRole="LectureTimetable" />
           <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLectures_SubWorkflows" FromRole="ConductedLectures" ToRole="SubWorkflows" />
@@ -2607,6 +2654,8 @@
           <Property Name="ModerationOpenedDate" Type="DateTime" Precision="3" />
           <Property Name="ModerationOpenedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ModerationOpenedRemark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UsedDesignationId" Type="Int32" />
+          <Property Name="UsedPaymentRate" Type="Double" />
           <Property Name="PaymentAmount" Type="Double" />
           <Property Name="IsFinalApproved" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -2616,6 +2665,7 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Campus" Relationship="PMSModel.FK_ConductedLecturesLog_Campus" FromRole="ConductedLecturesLog" ToRole="Campus" />
           <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLecturesLog_ConductedLectures" FromRole="ConductedLecturesLog" ToRole="ConductedLectures" />
+          <NavigationProperty Name="Designation" Relationship="PMSModel.FK_ConductedLecturesLog_Designation" FromRole="ConductedLecturesLog" ToRole="Designation" />
           <NavigationProperty Name="LectureHall" Relationship="PMSModel.FK_ConductedLecturesLog_LectureHall" FromRole="ConductedLecturesLog" ToRole="LectureHall" />
           <NavigationProperty Name="LectureTimetable" Relationship="PMSModel.FK_ConductedLecturesLog_LectureTimetable" FromRole="ConductedLecturesLog" ToRole="LectureTimetable" />
           <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_ConductedLecturesLog_SubWorkflows" FromRole="ConductedLecturesLog" ToRole="SubWorkflows" />
@@ -2693,6 +2743,8 @@
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Appointment" Relationship="PMSModel.FK_Appointment_Designation" FromRole="Designation" ToRole="Appointment" />
+          <NavigationProperty Name="ConductedLectures" Relationship="PMSModel.FK_ConductedLectures_Designation" FromRole="Designation" ToRole="ConductedLectures" />
+          <NavigationProperty Name="ConductedLecturesLog" Relationship="PMSModel.FK_ConductedLecturesLog_Designation" FromRole="Designation" ToRole="ConductedLecturesLog" />
           <NavigationProperty Name="PaymentRate" Relationship="PMSModel.FK_PaymentRate_Designation" FromRole="Designation" ToRole="PaymentRate" />
           <NavigationProperty Name="PaymentRateLog" Relationship="PMSModel.FK_PaymentRateLog_Designation" FromRole="Designation" ToRole="PaymentRateLog" />
         </EntityType>
@@ -3471,6 +3523,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConductedLectures_Designation">
+          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="0..1" />
+          <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationId" />
+            </Principal>
+            <Dependent Role="ConductedLectures">
+              <PropertyRef Name="UsedDesignationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ConductedLectures_LectureHall">
           <End Type="PMSModel.LectureHall" Role="LectureHall" Multiplicity="0..1" />
           <End Type="PMSModel.ConductedLectures" Role="ConductedLectures" Multiplicity="*" />
@@ -3516,6 +3580,18 @@
             </Principal>
             <Dependent Role="ConductedLecturesLog">
               <PropertyRef Name="CLId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConductedLecturesLog_Designation">
+          <End Type="PMSModel.Designation" Role="Designation" Multiplicity="0..1" />
+          <End Type="PMSModel.ConductedLecturesLog" Role="ConductedLecturesLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designation">
+              <PropertyRef Name="DesignationId" />
+            </Principal>
+            <Dependent Role="ConductedLecturesLog">
+              <PropertyRef Name="UsedDesignationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4296,6 +4372,8 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
+                <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
                 <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
                 <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
                 <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
@@ -4330,6 +4408,8 @@
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
                 <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
+                <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
                 <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
                 <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
                 <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />

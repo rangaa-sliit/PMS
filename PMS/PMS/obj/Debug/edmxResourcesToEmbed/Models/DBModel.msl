@@ -196,6 +196,8 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+          <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
+          <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
           <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
           <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
           <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />
@@ -230,6 +232,8 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+          <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
+          <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
           <ScalarProperty Name="ModerationOpenedRemark" ColumnName="ModerationOpenedRemark" />
           <ScalarProperty Name="ModerationOpenedBy" ColumnName="ModerationOpenedBy" />
           <ScalarProperty Name="ModerationOpenedDate" ColumnName="ModerationOpenedDate" />

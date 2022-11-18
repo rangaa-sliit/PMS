@@ -19,6 +19,8 @@ namespace PMS.Models
         public Designation()
         {
             this.Appointment = new HashSet<Appointment>();
+            this.ConductedLectures = new HashSet<ConductedLectures>();
+            this.ConductedLecturesLog = new HashSet<ConductedLecturesLog>();
             this.PaymentRate = new HashSet<PaymentRate>();
             this.PaymentRateLog = new HashSet<PaymentRateLog>();
         }
@@ -35,6 +37,10 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentRate> PaymentRate { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

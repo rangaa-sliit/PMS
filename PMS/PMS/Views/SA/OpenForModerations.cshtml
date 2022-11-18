@@ -24,7 +24,7 @@ Developed On:- 2022/11/18*@
             <h6 class="m-0 font-weight-bold text-primary" id="aeConductedLectureCardTitle"></h6>
         </div>
         <div class="card-body">
-            @using (Html.BeginForm("SubmitConductedLectureModerations", "SA", FormMethod.Post, new { onsubmit = "return SubmitConductedLectureForm(this)", @id = "conductedLectureForm", autocomplete = "off" }))
+            @using (Html.BeginForm("SubmitConductedLectureModerations", "SA", FormMethod.Post, new { onsubmit = "return SubmitModerationOpenedConductedLectureForm(this)", @id = "conductedLectureForm", autocomplete = "off" }))
             {
                 <div class="row">
                     <div class="col-6">
@@ -353,7 +353,7 @@ Developed On:- 2022/11/18*@
             }*@
         })
 
-        function SubmitConductedLectureForm(form) {
+        function SubmitModerationOpenedConductedLectureForm(form) {
             $(form).removeData("validator");
             $(form).removeData("unobtrusiveValidation");
             $.validator.unobtrusive.parse(form);
@@ -366,13 +366,13 @@ Developed On:- 2022/11/18*@
                     alert("Lecture Started Time should be less than Lecture Ended Time");
                 }
                 else {
-                    EditCL(form);
+                    AddOrEditCL(form);
                 }
             }
             return false;
         }
 
-        function EditCL(form) {
+        function AddOrEditCL(form) {
             $("#loader").show();
 
             var studentBatches = [];
@@ -389,11 +389,9 @@ Developed On:- 2022/11/18*@
             });
 
             fd.delete("postedFile");
-            fd.delete("TimetableId");
             fd.delete("StudentBatches");
 
             fd.append("postedFile", postedFile);
-            fd.append("TimetableId", parseInt(timetableId));
             fd.append("StudentBatches", studentBatches);
 
             $.ajax({
@@ -410,7 +408,15 @@ Developed On:- 2022/11/18*@
                         $.notify(data.message, {
                             globalPosition: "top center",
                             className: "success"
-                        })
+                        });
+
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("SendOpenForModerationsEmail", "SA")',
+                            success: function (data) {
+
+                            }
+                        });
                     }
                     else {
                         $.notify(data.message, {

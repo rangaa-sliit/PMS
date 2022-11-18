@@ -50,6 +50,8 @@ namespace PMS.Models
         public Nullable<System.DateTime> ModerationOpenedDate { get; set; }
         public string ModerationOpenedBy { get; set; }
         public string ModerationOpenedRemark { get; set; }
+        public Nullable<int> UsedDesignationId { get; set; }
+        public Nullable<double> UsedPaymentRate { get; set; }
         public Nullable<double> PaymentAmount { get; set; }
         public bool IsFinalApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -61,6 +63,7 @@ namespace PMS.Models
         public HttpPostedFileBase postedFile { get; set; }
 
         public virtual Campus Campus { get; set; }
+        public virtual Designation Designation { get; set; }
         public virtual LectureHall LectureHall { get; set; }
         public virtual LectureTimetable LectureTimetable { get; set; }
         public virtual SubWorkflows SubWorkflows { get; set; }
