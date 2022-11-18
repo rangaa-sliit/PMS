@@ -301,22 +301,22 @@ Developed On:- 2022/10/27*@
                 $("#comment").val("");
                 $("#conductedLectureStatusList").val("true");
 
-                if (timetableData.Location != null) {
-                    var hallId = hallList.find(h => h.Text == timetableData.Location).Value;
-                    $("#lectureHallsList").val(hallId).change();
-                }
-                else {
-                    $("#lectureHallsList").val(null).change();
-                }
-
-                if (studentBatches != null) {
-                    $("#studentBatches").val(studentBatches).change();
-                }
-                else {
-                    $("#studentBatches").val(null).change();
-                }
-
                 $("#campusList").val(null).change();
+            }
+
+            if (timetableData.Location != null) {
+                var hallId = hallList.find(h => h.Text == timetableData.Location).Value;
+                $("#lectureHallsList").val(hallId).change();
+            }
+            else {
+                $("#lectureHallsList").val(null).change();
+            }
+
+            if (studentBatches != null) {
+                $("#studentBatches").val(studentBatches).change();
+            }
+            else {
+                $("#studentBatches").val(null).change();
             }
         })
 

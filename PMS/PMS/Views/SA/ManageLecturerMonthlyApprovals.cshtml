@@ -271,14 +271,34 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="openForModerationsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Open For Moderations Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to open selected lecture record for moderations?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" onclick="OpenForModerationsConfirm()">Yes, Open For Moderations</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
-<script>
+    <script>
         var lectureApprovalTbl;
         var selectedCLRecordsList = [];
         var lecturerId = window.location.pathname.toString().split('/')[3];
         var recordMonth = window.location.pathname.toString().split('/')[4];
+        var clId;
 
         lectureApprovalTbl = $("#lectureApprovalTbl").DataTable({
             "responsive": true,
@@ -346,7 +366,13 @@
                             + `<a class='btn btn-sm' href='#' role='button' id='dropdownMenuLink' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>`
                             + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                             + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
-                            + `<a class='dropdown-item btn' onclick='OpenTimetableComparisonForm(` + JSON.stringify(data) + `)'>View Conducted Lecture</a></div></div>`;
+                            + `<a class='dropdown-item btn' onclick='OpenTimetableComparisonForm(` + JSON.stringify(data) + `)'>View Conducted Lecture</a>`;
+
+                        if (data.canSendToApproval == true) {
+                            dynamicContent += `<a class='dropdown-item btn' onclick='OpenForModerations(` + JSON.stringify(data) + `)'>Open For Moderations</a>`;
+                        }
+
+                        dynamicContent += `</div></div>`;
 
                         return dynamicContent;
                     },
@@ -742,5 +768,14 @@
                 }
             });
         }
-</script>
+
+        function OpenForModerations(data) {
+            clId = data.CLId;
+            $("#openForModerationsModal").modal("show");
+        }
+
+        function OpenForModerationsConfirm() {
+            window.location.href = '@Url.Action("OpenForModerations", "SA")/' + lecturerId + "/" + recordMonth + "/" + clId
+        }
+    </script>
 }

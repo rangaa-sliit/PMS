@@ -9091,7 +9091,7 @@ namespace PMS.Controllers
                                                                         join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
                                                                         where ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                         && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
-                                                                        && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
+                                                                        && ncl.IsApprovedOrRejected == null && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                         select ncl).Count(),
                                                  ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                          join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
@@ -9161,7 +9161,7 @@ namespace PMS.Controllers
                                                                             join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
                                                                             where nsem.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                             && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
-                                                                            && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
+                                                                            && ncl.IsApprovedOrRejected == null && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
@@ -9239,7 +9239,7 @@ namespace PMS.Controllers
                                                                             from ndgr in ns_nd.DefaultIfEmpty()
                                                                             where ndgr.DepartmentId.Value.Equals(userRecord.department.DepartmentId) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                             && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
-                                                                            && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
+                                                                            && ncl.IsApprovedOrRejected == null && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
@@ -9293,7 +9293,7 @@ namespace PMS.Controllers
                                                                             join nss in db.SemesterSubject on ntt.SemesterSubjectId equals nss.Id
                                                                             where licSubjectList.Contains(nss.Id) && ntt.LecturerId.Equals(u.Id) && ncl.ActualLectureDate.Year.Equals(cl.ActualLectureDate.Year)
                                                                             && ncl.ActualLectureDate.Month.Equals(cl.ActualLectureDate.Month) && stagesList.Contains(ncl.CurrentStage.Value)
-                                                                            && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
+                                                                            && ncl.IsApprovedOrRejected == null && ncl.IsActive.Equals(true) && ntt.IsActive.Equals(true)
                                                                             select ncl).Count(),
                                                      ApprovedRecordsCount = (from ncl in db.ConductedLectures
                                                                              join ntt in db.LectureTimetable on ncl.TimetableId equals ntt.TimetableId
@@ -9472,7 +9472,7 @@ namespace PMS.Controllers
                 {
                     foreach (ConductedLecturesVM clRecord in conductedLectureRecords)
                     {
-                        if (stagesList.Contains(clRecord.CurrentStage.Value))
+                        if (stagesList.Contains(clRecord.CurrentStage.Value) && clRecord.IsApprovedOrRejected != false)
                         {
                             clRecord.canSendToApproval = true;
                         }
@@ -9487,7 +9487,7 @@ namespace PMS.Controllers
 
                         foreach (ConductedLecturesVM clRecord in filteredRecords)
                         {
-                            if (stagesList.Contains(clRecord.CurrentStage.Value))
+                            if (stagesList.Contains(clRecord.CurrentStage.Value) && clRecord.IsApprovedOrRejected != false)
                             {
                                 clRecord.canSendToApproval = true;
                             }
@@ -9503,7 +9503,7 @@ namespace PMS.Controllers
 
                         foreach (ConductedLecturesVM clRecord in filteredRecords)
                         {
-                            if (stagesList.Contains(clRecord.CurrentStage.Value))
+                            if (stagesList.Contains(clRecord.CurrentStage.Value) && clRecord.IsApprovedOrRejected != false)
                             {
                                 clRecord.canSendToApproval = true;
                             }
@@ -9527,7 +9527,7 @@ namespace PMS.Controllers
 
                         foreach (ConductedLecturesVM clRecord in filteredRecords)
                         {
-                            if (stagesList.Contains(clRecord.CurrentStage.Value))
+                            if (stagesList.Contains(clRecord.CurrentStage.Value) && clRecord.IsApprovedOrRejected != false)
                             {
                                 clRecord.canSendToApproval = true;
                             }
@@ -11107,6 +11107,354 @@ namespace PMS.Controllers
                 }
 
                 db.SaveChanges();
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/18
+        [HttpGet]
+        public ActionResult OpenForModerations(string id, string operation, int additionalId = 0)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                SemesterTimetableVM semesterTimetableRecord = (from cl in db.ConductedLectures
+                                                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                                               join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                                               join ss in db.SemesterSubject on tt.SemesterSubjectId equals ss.Id
+                                                               join sub in db.Subject on ss.SubjectId equals sub.SubjectId
+                                                               join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                                               join lh in db.LectureHall on tt.LocationId equals lh.HallId into tt_lh
+                                                               from hll in tt_lh.DefaultIfEmpty()
+                                                               join c in db.Campus on hll.CampusId equals c.CampusId
+                                                               join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
+                                                               from usr in tt_u.DefaultIfEmpty()
+                                                               join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                               where cl.CLId.Equals(additionalId)
+                                                               select new SemesterTimetableVM
+                                                               {
+                                                                   TimetableId = tt.TimetableId,
+                                                                   SubjectName = sub.SubjectCode + " - " + sub.SubjectName,
+                                                                   LectureDate = tt.LectureDate.ToString(),
+                                                                   FromTime = tt.FromTime.ToString().Substring(0, 5),
+                                                                   ToTime = tt.ToTime.ToString().Substring(0, 5),
+                                                                   Location = hll != null ? c.CampusName + " - " + hll.Building + " - " + hll.Floor + " - " + hll.HallName : null,
+                                                                   LectureTypeName = lt.LectureTypeName,
+                                                                   StudentBatches = tt.StudentBatches,
+                                                                   IsLectureRecordAdded = (from cl in db.ConductedLectures
+                                                                                           where cl.TimetableId.Equals(tt.TimetableId)
+                                                                                           select cl).FirstOrDefault<ConductedLectures>() != null ? true : false
+                                                               }).FirstOrDefault<SemesterTimetableVM>();
+
+                ViewBag.semesterTimetableRecord = semesterTimetableRecord;
+                ViewBag.studentBatches = semesterTimetableRecord.StudentBatches.Trim().Split(',').Select(b => b.Trim()).ToList();
+
+                var lectureHalls = (from lh in db.LectureHall
+                                    join c in db.Campus on lh.CampusId equals c.CampusId
+                                    where lh.IsActive.Equals(true)
+                                    select new
+                                    {
+                                        Text = c.CampusName + " - " + lh.Building + " - " + lh.Floor + " - " + lh.HallName,
+                                        Value = lh.HallId
+                                    }).ToList();
+
+                List<SelectListItem> lectureHallsList = new SelectList(lectureHalls, "Value", "Text").ToList();
+                ViewBag.lectureHallsList = lectureHallsList;
+
+                var campuses = (from c in db.Campus
+                                where c.IsActive.Equals(true)
+                                select new
+                                {
+                                    Text = c.CampusName,
+                                    Value = c.CampusId
+                                }).ToList();
+
+                List<SelectListItem> campusList = new SelectList(campuses, "Value", "Text").ToList();
+                ViewBag.campusList = campusList;
+
+                ConductedLectures conductedLectureRecord = (from cl in db.ConductedLectures where cl.CLId.Equals(additionalId) select cl).FirstOrDefault<ConductedLectures>();
+
+                if (conductedLectureRecord.StudentAttendanceSheetLocation != null)
+                {
+                    var splittedUploadedFileName = conductedLectureRecord.StudentAttendanceSheetLocation.Split('/');
+                    ViewBag.uploadedFileName = splittedUploadedFileName[3];
+                }
+
+                return View(conductedLectureRecord);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/18
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SubmitConductedLectureModerations(ConductedLectures clObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var currentDateTime = DateTime.Now;
+                    var username = "ranga.a";
+                    double paymentRate = 0.0;
+                    double paymentAmount = 0.0;
+                    bool considerMinimumStudentCount = false;
+                    int lecturerDesignationId = 0;
+                    int minimumStudentCount = 0;
+
+                    var timetableRecord = (from cl in db.ConductedLectures
+                                           join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                           join lt in db.LectureType on tt.LectureTypeId equals lt.LectureTypeId
+                                           join u in db.AspNetUsers on tt.LecturerId equals u.Id
+                                           join ttl in db.Title on u.EmployeeTitle equals ttl.TitleId
+                                           join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+                                           where cl.CLId.Equals(clObj.CLId)
+                                           select new
+                                           {
+                                               ttRecord = tt,
+                                               considerMinimumStudentCount = lt.ConsiderMinimumStudentCount,
+                                               lecturerUsername = u.UserName,
+                                               lecturerId = u.Id,
+                                               lecturerName = ttl.TitleName + " " + u.FirstName + " " + u.LastName,
+                                               facultyId = sem.FacultyId.Value
+                                           }).FirstOrDefault();
+
+                    if(timetableRecord.lecturerUsername == username)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "You cannot open your own record for moderations"
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
+                                                                       join d in db.Designation on a.DesignationId equals d.DesignationId
+                                                                       where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= timetableRecord.ttRecord.LectureDate.Value
+                                                                       && d.IsActive.Equals(true)
+                                                                       select a).ToList();
+
+                        for (int i = 0; i < lectureAppointmentDetails.Count; i++)
+                        {
+                            DateTime appointmentToDate = lectureAppointmentDetails[i].AppointmentTo.Value;
+
+                            if (appointmentToDate != null)
+                            {
+                                DateTime toDate = Convert.ToDateTime(appointmentToDate.Year + "-" + appointmentToDate.Month + "-" + appointmentToDate.Day + " 23:59:59.999");
+
+                                if (timetableRecord.ttRecord.LectureDate.Value <= toDate)
+                                {
+                                    lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (lectureAppointmentDetails[i].IsActive == true)
+                                {
+                                    lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                                    break;
+                                }
+                            }
+                            //if (lectureAppointmentDetails[i].AppointmentTo.Value == null)
+                            //{
+                            //    lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                            //    break;
+                            //}
+                            //else
+                            //{
+                            //    if (currentDateTime <= lectureAppointmentDetails[i].AppointmentTo.Value)
+                            //    {
+                            //        lecturerDesignationId = lectureAppointmentDetails[i].DesignationId;
+                            //        break;
+                            //    }
+                            //}
+                        }
+
+                        if (lecturerDesignationId != 0)
+                        {
+                            PaymentRate facultyPaymentRate = (from p in db.PaymentRate
+                                                              where p.DesignationId.Equals(lecturerDesignationId) && p.LectureTypeId.Value.Equals(timetableRecord.ttRecord.LectureTypeId) && p.FacultyId.Value.Equals(timetableRecord.facultyId) && p.IsActive.Equals(true)
+                                                              select p).FirstOrDefault();
+
+                            if (facultyPaymentRate != null)
+                            {
+                                if (facultyPaymentRate.IsApproved == true)
+                                {
+                                    paymentRate = facultyPaymentRate.RatePerHour;
+                                }
+                                else
+                                {
+                                    if (facultyPaymentRate.SentForApproval == true || facultyPaymentRate.IsApproved == false)
+                                    {
+                                        paymentRate = facultyPaymentRate.OldRatePerHour;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (timetableRecord.considerMinimumStudentCount == true)
+                        {
+                            considerMinimumStudentCount = true;
+                            ConfigurationalSettings csSetting = (from cs in db.ConfigurationalSettings
+                                                                 where cs.ConfigurationKey.Equals("Minimum Student Count For Session") && cs.FacultyId.Value.Equals(timetableRecord.facultyId)
+                                                                 select cs).FirstOrDefault();
+
+                            if (csSetting != null)
+                            {
+                                int minCount = 0;
+                                if (int.TryParse(csSetting.ConfigurationValue, out minCount))
+                                {
+                                    minimumStudentCount = int.Parse(csSetting.ConfigurationValue);
+                                }
+                            }
+                        }
+
+                        var editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
+
+                        TimeSpan duration = DateTime.Parse(timetableRecord.ttRecord.ToTime.ToString()).Subtract(DateTime.Parse(timetableRecord.ttRecord.FromTime.ToString()));
+
+                        int numbeofHours = duration.Hours;
+                        int numbeofMinutes = duration.Minutes;
+
+                        ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
+                        if (clObj.postedFile != null)
+                        {
+                            List<string> allowedFileTypes = new List<string> { "pdf", "jpg", "jpeg", "png" };
+                            var uploadedFileExtension = Path.GetExtension(clObj.postedFile.FileName).Substring(1);
+                            if (allowedFileTypes.Contains(uploadedFileExtension))
+                            {
+                                if (clObj.postedFile.ContentLength > 1000000)
+                                {
+                                    return Json(new
+                                    {
+                                        success = false,
+                                        message = "File size should be less than 1 MB"
+                                    }, JsonRequestBehavior.AllowGet);
+                                }
+                                else
+                                {
+                                    string renamedFileName = clObj.TimetableId.ToString() + "." + uploadedFileExtension;
+                                    string path = "/UploadedFiles/AttendanceSheets/" + renamedFileName;
+                                    string absolutePath = Server.MapPath(Path.Combine("~/UploadedFiles/AttendanceSheets", renamedFileName));
+
+                                    if (System.IO.File.Exists(absolutePath))
+                                    {
+                                        System.IO.File.Delete(absolutePath);
+                                    }
+
+                                    clObj.postedFile.SaveAs(absolutePath);
+                                    editingConductedLecture.StudentAttendanceSheetLocation = path;
+                                    clLogObj.StudentAttendanceSheetLocation = path;
+                                }
+                            }
+                            else
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = "Only PDF & Image files supported"
+                                }, JsonRequestBehavior.AllowGet);
+                            }
+                        }
+
+                        if (considerMinimumStudentCount == true)
+                        {
+                            if (clObj.StudentCount.HasValue)
+                            {
+                                if (minimumStudentCount <= clObj.StudentCount.Value)
+                                {
+                                    if (numbeofHours != 0)
+                                    {
+                                        paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                                    }
+
+                                    if (numbeofMinutes != 0)
+                                    {
+                                        paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (numbeofHours != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofHours;
+                            }
+
+                            if (numbeofMinutes != 0)
+                            {
+                                paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                            }
+                        }
+
+                        editingConductedLecture.ActualLectureDate = clObj.ActualLectureDate;
+                        editingConductedLecture.ActualFromTime = clObj.ActualFromTime;
+                        editingConductedLecture.ActualToTime = clObj.ActualToTime;
+                        editingConductedLecture.ActualLocationId = clObj.ActualLocationId;
+                        editingConductedLecture.CampusId = clObj.CampusId;
+                        editingConductedLecture.StudentBatches = clObj.StudentBatches;
+                        editingConductedLecture.StudentCount = clObj.StudentCount;
+                        editingConductedLecture.Comment = clObj.Comment;
+                        editingConductedLecture.PaymentAmount = paymentAmount;
+                        editingConductedLecture.IsOpenForModerations = true;
+                        editingConductedLecture.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
+                        editingConductedLecture.ModerationOpenedBy = "Ranga";
+                        editingConductedLecture.ModerationOpenedDate = currentDateTime;
+                        editingConductedLecture.IsActive = clObj.IsActive;
+
+                        db.Entry(editingConductedLecture).State = EntityState.Modified;
+
+                        clLogObj.CLId = editingConductedLecture.CLId;
+                        clLogObj.TimetableId = editingConductedLecture.TimetableId;
+                        clLogObj.ActualLectureDate = clObj.ActualLectureDate;
+                        clLogObj.ActualFromTime = clObj.ActualFromTime;
+                        clLogObj.ActualToTime = clObj.ActualToTime;
+                        clLogObj.ActualLocationId = clObj.ActualLocationId;
+                        clLogObj.CampusId = clObj.CampusId;
+                        clLogObj.StudentBatches = clObj.StudentBatches;
+                        clLogObj.StudentCount = clObj.StudentCount;
+                        clLogObj.Comment = clObj.Comment;
+                        clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
+                        clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
+                        clLogObj.PaymentAmount = paymentAmount;
+                        clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
+                        clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
+                        clLogObj.ModifiedDate = editingConductedLecture.ModifiedDate;
+                        clLogObj.ModifiedBy = editingConductedLecture.ModifiedBy;
+                        clLogObj.IsOpenForModerations = true;
+                        clLogObj.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
+                        clLogObj.ModerationOpenedDate = currentDateTime;
+                        clLogObj.ModerationOpenedBy = "Ranga";
+                        clLogObj.IsActive = clObj.IsActive;
+
+                        db.ConductedLecturesLog.Add(clLogObj);
+                        db.SaveChanges();
+
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Successfully Updated"
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
             }
         }
     }
