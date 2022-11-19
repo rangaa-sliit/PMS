@@ -373,10 +373,12 @@
     <Compile Include="ViewModels\DegreeVM.cs" />
     <Compile Include="ViewModels\AppointmentVM.cs" />
     <Compile Include="ViewModels\DepartmentVM.cs" />
+    <Compile Include="ViewModels\FacultyLecturersVM.cs" />
     <Compile Include="ViewModels\FacultyVM.cs" />
     <Compile Include="ViewModels\IntakeVM.cs" />
     <Compile Include="ViewModels\LectureHallVM.cs" />
     <Compile Include="ViewModels\LecturerAssignmentsVM.cs" />
+    <Compile Include="ViewModels\LecturersSummaryVM.cs" />
     <Compile Include="ViewModels\PaymentRateVM.cs" />
     <Compile Include="ViewModels\SemesterRegistrationVM.cs" />
     <Compile Include="ViewModels\SemesterSubjectLICVM.cs" />
