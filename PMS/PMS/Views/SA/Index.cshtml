@@ -301,29 +301,54 @@
             <h6 class="m-0 font-weight-bold text-primary">Dashboard</h6>
         </div>
         <div class="card-body">
+            <!-- All Data -->
             <div class="row" style="margin-left:1px; margin-right:1px;">
-
                 <!-- Total Conducted Hours Monthly -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                             <div class="dropdown">
-
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" onclick="onTotalConductedHoursMonthlyClick()">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="tchYear" name="tchYear" oninput="onTCHYearInput()" />
+                                    </div>
                                     <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
-                                    <a class="dropdown-item" href="#">January</a>
-                                    <a class="dropdown-item" href="#">February</a>
-                                    <a class="dropdown-item" href="#">March</a>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tchMonth" onchange="onTCHMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterTCH()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearTCH()">Clear</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1">
-                                        Total Conducted Hours
+                                    <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1" id="tclhActual">
+                                        Actual Lecture Duration
                                     </div>
-                                    <div class="h5 mb-2 font-weight-bold text-gray-800">160 Hours</div>
-                                    <div class="h6 cardsubtitle">Monthly</div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tclhActualValue"></div>
+                                    <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1" id="tclhTimetable">
+                                        Timetable Lecture Duration
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tclhTimetableValue"></div>
+                                    <div class="h6 cardsubtitle pt-2" id="tclhDescription"></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -339,21 +364,50 @@
                         <div class="card-body">
                             <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                             <div class="dropdown">
-
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <h6 class="dropdown-header" style="color:#4e73df">Select Faculty</h6>
-                                    <a class="dropdown-item" href="#">IT</a>
-                                    <a class="dropdown-item" href="#">Business</a>
-                                    <a class="dropdown-item" href="#">Architecture</a>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tchFaculty" onchange="onTCHFacultyChange(this.value)"></select>
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="tchFacultyYear" name="tchFacultyYear" oninput="onTCHFacultyYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tchFacultyMonth" onchange="onTCHFacultyMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterTCHFaculty()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearTCHFaculty()">Clear</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs cardtitle font-weight-bold text-success text-uppercase mb-1">
-                                        Total Conducted Hours
+                                        Actual Lecture Duration
                                     </div>
-                                    <div class="h5 mb-2 font-weight-bold text-gray-800">145 Hours</div>
-                                    <div class="h6 cardsubtitle">Faculty</div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tclhFacultyActualValue">0 Hours 0 Minutes</div>
+                                    <div class="text-xs cardtitle font-weight-bold text-success text-uppercase mb-1">
+                                        Timetable Lecture Duration
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tclhFacultyTimetableValue">0 Hours 0 Minutes</div>
+                                    <div class="h6 cardsubtitle pt-2" id="tclhFacultyDescription"></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-building fa-2x text-gray-300"></i>
@@ -369,12 +423,33 @@
                         <div class="card-body">
                             <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                             <div class="dropdown">
-
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="tpYear" name="tpYear" oninput="onTPYearInput()" />
+                                    </div>
                                     <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
-                                    <a class="dropdown-item" href="#">January</a>
-                                    <a class="dropdown-item" href="#">February</a>
-                                    <a class="dropdown-item" href="#">March</a>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tpMonth" onchange="onTPMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterTP()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearTP()">Clear</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row no-gutters align-items-center">
@@ -382,8 +457,8 @@
                                     <div class="text-xs cardtitle font-weight-bold text-info text-uppercase mb-1">
                                         Amount Paid
                                     </div>
-                                    <div class="h5 mb-2 font-weight-bold text-gray-800">RS 500,000</div>
-                                    <div class="h6 cardsubtitle">Monthly</div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tpValue"></div>
+                                    <div class="h6 cardsubtitle" id="paDescription"></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-money-bill fa-2x text-gray-300"></i>
@@ -400,21 +475,46 @@
                         <div class="card-body">
                             <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                             <div class="dropdown">
-
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <h6 class="dropdown-header" style="color:#4e73df">Select Faculty</h6>
-                                    <a class="dropdown-item" href="#">IT</a>
-                                    <a class="dropdown-item" href="#">Business</a>
-                                    <a class="dropdown-item" href="#">Architecture</a>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tpFaculty" onchange="onTPFacultyChange(this.value)"></select>
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="tpFacultyYear" name="tpFacultyYear" oninput="onTPFacultyYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="tpFacultyMonth" onchange="onTPFacultyMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterTPFaculty()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearTPFaculty()">Clear</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs cardtitle font-weight-bold text-warning text-uppercase mb-1">
-                                        Amount Paid
+                                        Amount Paid (Faculty Wise)
                                     </div>
-                                    <div class="h5 mb-2 font-weight-bold text-gray-800">RS 2000,000</div>
-                                    <div class="h6 cardsubtitle">Faculty</div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="tpFacultyValue">Rs. 0.00</div>
+                                    <div class="h6 cardsubtitle" id="paFacultyDescription"></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -426,90 +526,232 @@
                 </div>
             </div>
 
+            <!-- Lecturer Wise Data -->
             <div class="row" style="margin-left:1px; margin-right:1px;">
-
-
-
-                <div class="col-md-6 grid-margin stretch-card">
-
-
-
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Monthly Salary Approval Levels</h6>
-                        </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
-
-                            <div class="timeline">
-
-
-
-                                <div class="rightbox">
-                                    <div class="rb-container">
-                                        <ul class="rb">
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Programme Cordinator
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 1</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 14</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Head of the Department
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Faculty Admin
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Dean of the Faculty
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Executive Finance
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Senior Manager Finance
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                            <li class="rb-item" ng-repeat="itembx">
-                                                <div class="timestamp">
-                                                    Director Finance
-                                                </div>
-                                                <div class="item-title"><span class="approval-pending app-status"><i class="fas fa-exclamation-triangle"></i> Pending: 15</span> <span class="approval-rejected app-status"><i class="fas fa-window-close"></i> Rejected: 15</span> <span class="approval-approved app-status"><i class="fas fa-check-circle"></i> Approved: 15</span></div>
-                                            </li>
-                                        </ul>
-
-
-
+                            <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="dropdown">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Categoty</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="ltchCategory" onchange="onLTCHCategoryChange(this.value)">
+                                            <option value="All">All</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Approval Pending">Approval Pending</option>
+                                            <option value="Rejected">Rejected</option>
+                                            <option value="NSTA">Not Sent to Approval</option>
+                                        </select>
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="ltchYear" name="ltchYear" oninput="onLTCHYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="ltchMonth" onchange="onLTCHMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterLTCH()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearLTCH()">Clear</button>
                                     </div>
                                 </div>
-
                             </div>
-
-
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1" id="ltclhActual">
+                                        Actual Lecture Duration
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="ltclhActualValue"></div>
+                                    <div class="text-xs cardtitle font-weight-bold text-primary text-uppercase mb-1" id="ltclhTimetable">
+                                        Timetable Lecture Duration
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="ltclhTimetableValue"></div>
+                                    <div class="h6 cardsubtitle pt-2" id="ltclhDescription"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                    <font-awesome-icon icon="fa-solid fa-people" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- Total Conducted Hours Faculties -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="dropdown">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="ltchAPYear" name="ltchAPYear" oninput="onLTCHAPYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="ltchAPMonth" onchange="onLTCHAPMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterLTCHAP()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearLTCHAP()">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs cardtitle font-weight-bold text-success text-uppercase mb-1">
+                                        Payment Amount (Approved)
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="ltclhAPValue"></div>
+                                    <div class="h6 cardsubtitle pt-2" id="ltclhAPDescription"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-money-bill fa-2x text-gray-300"></i>
+                                    <font-awesome-icon icon="fa-solid fa-people" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Total Amount Paid Monthly -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="dropdown">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="ltchPPYear" name="ltchPPYear" oninput="onLtchPPYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="ltchPPMonth" onchange="onLtchPPMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterLTCHPP()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearLTCHPP()">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs cardtitle font-weight-bold text-info text-uppercase mb-1">
+                                        Payment Amount (Pending)
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="ltchPPValue"></div>
+                                    <div class="h6 cardsubtitle" id="ltclhPPDescription"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-money-bill fa-2x text-gray-300"></i>
+                                    <font-awesome-icon icon="fa-solid fa-people" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Amount Paid Faculties -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <i class="far fa-caret-square-down drp-dwn-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="dropdown">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <h6 class="dropdown-header" style="color:#4e73df">Enter year</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <input type="number" class="form-control" id="ltchRPYear" name="ltchRPYear" oninput="onLtchRPYearInput()" />
+                                    </div>
+                                    <h6 class="dropdown-header" style="color:#4e73df">Select Month</h6>
+                                    <div class="form-group ml-2 mr-2">
+                                        <select class="custom-select pl-2" id="ltchRPMonth" onchange="onLtchRPMonthChange(this.value)">
+                                            <option value="0">-- Select Month --</option>
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2 mr-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="filterLTCHRP()">Filter</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary float-right mr-2" onclick="clearLTCHRP()">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs cardtitle font-weight-bold text-danger text-uppercase mb-1">
+                                        Payment Amount (Rejected)
+                                    </div>
+                                    <div class="h5 mb-2 font-weight-bold text-gray-800" id="ltchRPValue"></div>
+                                    <div class="h6 cardsubtitle" id="ltclhRPDescription"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-money-bill fa-2x text-gray-300"></i>
+                                    <font-awesome-icon icon="fa-solid fa-people" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
-                <!-- Content Row-Faculty wise Lectures -->
-
+            <div class="row" style="margin-left:1px; margin-right:1px;">
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Faculty Details</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Faculty Lecturers / Instructors Counts</h6>
                         </div>
                         <div class="card-body">
                             <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -520,13 +762,13 @@
                             </main>
                         </div>
                     </div>
+                </div>
 
 
-                    <!-- Content Row-Lecturer Details -->
+                <!-- Content Row-Faculty wise Lectures -->
 
-
-
-                    <div class="card  mt-3">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Lecturers Details Summary</h6>
                         </div>
@@ -546,6 +788,31 @@
     <script>
         var lecturersSummaryTbl;
         var facultyLecturers = @Html.Raw(Json.Encode(ViewBag.FacultyLecturers));
+        var facultyList = @Html.Raw(Json.Encode(ViewBag.facultyList));
+
+        $("#tchFaculty").html("");
+        $("#tpFaculty").html("");
+
+        $('.dropdown-menu option, .dropdown-menu select').click(function (e) {
+            e.stopPropagation();
+        });
+
+        $(document).ready(function () {
+            filterTCH();
+            filterTP();
+            filterLTCH();
+            filterLTCHAP();
+            filterLTCHPP();
+            filterLTCHRP();
+
+            var facultyListContent = ``;
+            for (var i = 0; i < facultyList.length; i++) {
+                facultyListContent += `<option value="` + facultyList[i].Value + `">` + facultyList[i].Text + `</option>`;
+            }
+
+            $("#tchFaculty").html(facultyListContent);
+            $("#tpFaculty").html(facultyListContent);
+        });
 
         var facLecPieChartData = [['Faculty', 'Amount']];
 
@@ -660,6 +927,325 @@
             "language": {
                 "emptyTable": "No Lecturers Summary Details Found!"
             }
-        })
+        });
+
+        function onTCHYearInput() {
+
+        }
+
+        function onTCHMonthChange(val) {
+
+        }
+
+        function filterTCH() {
+            $("#tclhActualValue").html("");
+            $("#tclhTimetableValue").html("");
+            $("#tclhDescription").html("");
+
+            var year = $("#tchYear").val();
+            var month = $("#tchMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardTotalConductedLectureHours", "SA")/" + year + "/" + month,
+                dataType: "json",
+                success: function (data) {
+                    $("#tclhActualValue").html(data.actualTCLH);
+                    $("#tclhTimetableValue").html(data.ttTCLH);
+                    $("#tclhDescription").html(data.tclhDescription);
+                }
+            });
+        }
+
+        function clearTCH() {
+            $("#tchYear").val("");
+            $("#tchMonth").val("0");
+        }
+
+        function onTCHFacultyChange(val) {
+
+        }
+
+        function onTCHFacultyYearInput() {
+
+        }
+
+        function onTCHFacultyMonthChange(val) {
+
+        }
+
+        function filterTCHFaculty() {
+            $("#tclhFacultyActualValue").html("");
+            $("#tclhFacultyTimetableValue").html("");
+            $("#tclhFacultyDescription").html("");
+
+            var faculty = $("#tchFaculty :selected").val();
+            var year = $("#tchFacultyYear").val();
+            var month = $("#tchFacultyMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            if (faculty == "") {
+                alert("You must choose a faculty");
+            }
+            else {
+                $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardFacultyConductedLectureHours", "SA")/" + faculty + "/" + year + "/" + month,
+                dataType: "json",
+                    success: function (data) {
+                        $("#tclhFacultyActualValue").html(data.actualTCLH);
+                        $("#tclhFacultyTimetableValue").html(data.ttTCLH);
+                        $("#tclhFacultyDescription").html(data.tclhFacultyDescription);
+                    }
+                });
+            }
+        }
+
+        function clearTCHFaculty() {
+            $("#tchFaculty").val("");
+            $("#tchFacultyYear").val("");
+            $("#tchFacultyMonth").val("0");
+        }
+
+        function onTPYearInput() {
+
+        }
+
+        function onTPMonthChange(val) {
+
+        }
+
+        function filterTP() {
+            $("#tpValue").html("");
+            $("#paDescription").html("");
+
+            var year = $("#tpYear").val();
+            var month = $("#tpMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardAmountPaid", "SA")/" + year + "/" + month,
+                dataType: "json",
+                success: function (data) {
+                    $("#tpValue").html(data.totalPaidAmount);
+                    $("#paDescription").html(data.paDescription);
+                }
+            });
+        }
+
+        function clearTP() {
+            $("#tpYear").val("");
+            $("#tpMonth").val("0");
+        }
+
+        function onTPFacultyChange(val) {
+
+        }
+
+        function onTPFacultyYearInput() {
+
+        }
+
+        function onTPFacultyMonthChange(val) {
+
+        }
+
+        function filterTPFaculty() {
+            $("#tpFacultyValue").html("");
+            $("#paFacultyDescription").html("");
+
+            var faculty = $("#tpFaculty :selected").val();
+            var year = $("#tpFacultyYear").val();
+            var month = $("#tpFacultyMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            if (faculty == "") {
+                alert("You must choose a faculty");
+            }
+            else {
+                $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardFacultyAmountPaid", "SA")/" + faculty + "/" + year + "/" + month,
+                dataType: "json",
+                    success: function (data) {
+                        $("#tpFacultyValue").html(data.totalPaidAmount);
+                        $("#paFacultyDescription").html(data.paFacultyDescription);
+                    }
+                });
+            }
+        }
+
+        function clearTPFaculty() {
+            $("#tpFaculty").val("");
+            $("#tpFacultyYear").val("");
+            $("#tpFacultyMonth").val("0");
+        }
+
+        function onLTCHCategoryChange(val) {
+
+        }
+
+        function onLTCHYearInput() {
+
+        }
+
+        function onLTCHMonthChange(val) {
+
+        }
+
+        function filterLTCH() {
+            $("#ltclhActualValue").html("");
+            $("#ltclhTimetableValue").html("");
+            $("#ltclhDescription").html("");
+
+            var category = $("#ltchCategory :selected").val();
+            var year = $("#ltchYear").val();
+            var month = $("#ltchMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            if (category == "") {
+                alert("You must choose a category");
+            }
+            else {
+                $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardLecturerTotalConductedHours", "SA")/" + year + "/" + month + "/" + category,
+                dataType: "json",
+                    success: function (data) {
+                        $("#ltclhActualValue").html(data.actualTCLH);
+                        $("#ltclhTimetableValue").html(data.ttTCLH);
+                        $("#ltclhDescription").html(data.tclhDescription);
+                    }
+                });
+            }
+        }
+
+        function clearLTCH() {
+            $("#tchFaculty").val("");
+            $("#tchFacultyYear").val("");
+            $("#tchFacultyMonth").val("0");
+        }
+
+        function onLTCHAPYearInput() {
+
+        }
+
+        function onLTCHAPMonthChange(val) {
+
+        }
+
+        function filterLTCHAP() {
+            $("#ltclhAPValue").html("");
+            $("#ltclhAPDescription").html("");
+
+            var year = $("#ltchAPYear").val();
+            var month = $("#ltchAPMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardLecturerAmountPaid", "SA")/" + year + "/" + month + "/Approved",
+                dataType: "json",
+                success: function (data) {
+                    $("#ltclhAPValue").html(data.totalPaidAmount);
+                    $("#ltclhAPDescription").html(data.lpaDescription);
+                }
+            });
+        }
+
+        function clearLTCHAP() {
+            $("#ltchAPYear").val("");
+            $("#ltchAPMonth").val("0");
+        }
+
+        function onLtchPPYearInput() {
+
+        }
+
+        function onLtchPPMonthChange(val) {
+
+        }
+
+        function filterLTCHPP() {
+            $("#ltchPPValue").html("");
+            $("#ltclhPPDescription").html("");
+
+            var year = $("#ltchPPYear").val();
+            var month = $("#ltchPPMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardLecturerAmountPaid", "SA")/" + year + "/" + month + "/Pending",
+                dataType: "json",
+                success: function (data) {
+                    $("#ltchPPValue").html(data.totalPaidAmount);
+                    $("#ltclhPPDescription").html(data.lpaDescription);
+                }
+            });
+        }
+
+        function clearLTCHPP() {
+            $("#ltchPPYear").val("");
+            $("#ltchPPMonth").val("0");
+        }
+
+        function onLtchRPYearInput() {
+
+        }
+
+        function onLtchRPMonthChange(val) {
+
+        }
+
+        function filterLTCHRP() {
+            $("#ltchRPValue").html("");
+            $("#ltclhRPDescription").html("");
+
+            var year = $("#ltchRPYear").val();
+            var month = $("#ltchRPMonth :selected").val();
+
+            if (year == "") {
+                year = "NA";
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDashboardLecturerAmountPaid", "SA")/" + year + "/" + month + "/Rejected",
+                dataType: "json",
+                success: function (data) {
+                    $("#ltchRPValue").html(data.totalPaidAmount);
+                    $("#ltclhRPDescription").html(data.lpaDescription);
+                }
+            });
+        }
+
+        function clearLTCHRP() {
+            $("#ltchRPYear").val("");
+            $("#ltchRPMonth").val("0");
+        }
     </script>
 }

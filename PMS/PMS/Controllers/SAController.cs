@@ -28,19 +28,23 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
+                var currentDateTime = DateTime.Now;
+
+                var faculties = (from f in db.Faculty
+                                 where f.IsActive.Equals(true)
+                                 select new
+                                 {
+                                     Value = f.FacultyId,
+                                     Text = f.FacultyCode
+                                 }).ToList();
+
+                List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
+                facultyList.Insert(0, new SelectListItem() { Text = "-- Select Faculty --", Value = "", Disabled = false, Selected = true });
+                ViewBag.facultyList = facultyList;
+                //ViewBag.tclhData = this.GetDashboardTotalConductedLectureHours(currentDateTime.Year.ToString(), currentDateTime.Month.ToString());
+                this.GetDashboardFacultyLecturers();
                 this.AutoUpdateAppointments();
 
-                List<FacultyLecturersVM> facLecturers = (from f in db.Faculty
-                                                         select new FacultyLecturersVM
-                                                         {
-                                                             FacultyName = f.FacultyName,
-                                                             FacultyLecturersCount = (from a in db.Appointment
-                                                                                      join u in db.AspNetUsers on a.UserId equals u.Id
-                                                                                      where u.FacultyId.Value.Equals(f.FacultyId) && a.IsActive.Equals(true) && u.IsActive.Equals(true)
-                                                                                      select u.Id).Distinct().ToList().Count
-                                                         }).ToList();
-
-                ViewBag.FacultyLecturers = facLecturers;
                 return View();
             }
         }
@@ -4370,19 +4374,40 @@ namespace PMS.Controllers
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
             using(PMSEntities db = new PMSEntities())
             {
-                List<FacultyLecturersVM> facLecturers = (from f in db.Faculty
-                                                         select new FacultyLecturersVM
-                                                         {
-                                                             FacultyName = f.FacultyName,
-                                                             FacultyLecturersCount = (from a in db.Appointment
-                                                                                      join u in db.AspNetUsers on a.UserId equals u.Id
-                                                                                      where u.FacultyId.Value.Equals(f.FacultyId) && a.IsActive.Equals(true) && u.IsActive.Equals(true)
-                                                                                      select u.Id).Distinct().ToList().Count
-                                                         }).ToList();
+                var username = "ranga.a";
+                var currentDateTime = DateTime.Now;
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var userDetails = (from u in db.AspNetUsers
+                                   join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                   where u.UserName.Equals(username)
+                                   select new
+                                   {
+                                       userId = u.Id,
+                                       name = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                   }).FirstOrDefault();
+
+                var tclhList = (from cl in db.ConductedLectures
+                                join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                where tt.LecturerId.Equals(userDetails.userId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                select new
+                                {
+                                    isFinalApproved = cl.IsFinalApproved,
+                                    currentStage = cl.CurrentStage,
+                                    approvedOrRejected = cl.IsApprovedOrRejected,
+                                    actualLectureDate = cl.ActualLectureDate,
+                                    actualFromTime = cl.ActualFromTime,
+                                    actualToTime = cl.ActualToTime,
+                                    timetableFromTime = tt.FromTime.Value,
+                                    timetableToTime = tt.ToTime.Value,
+                                }).ToList();
 
                 return Json(new
                 {
-                    data = facLecturers
+                    data = tclhList
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -11929,6 +11954,627 @@ namespace PMS.Controllers
                                                                  }).Distinct().ToList();
 
                 return Json(new { data = lecturersSummaryList }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public void GetDashboardFacultyLecturers()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<FacultyLecturersVM> facLecturers = (from f in db.Faculty
+                                                         select new FacultyLecturersVM
+                                                         {
+                                                             FacultyName = f.FacultyName,
+                                                             FacultyLecturersCount = (from a in db.Appointment
+                                                                                      join u in db.AspNetUsers on a.UserId equals u.Id
+                                                                                      where u.FacultyId.Value.Equals(f.FacultyId) && a.IsActive.Equals(true) && u.IsActive.Equals(true)
+                                                                                      select u.Id).Distinct().ToList().Count
+                                                         }).ToList();
+
+                ViewBag.FacultyLecturers = facLecturers;
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardTotalConductedLectureHours(string id, string operation)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var currentDateTime = DateTime.Now;
+                string tclhDescription = "";
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var tclhList = (from cl in db.ConductedLectures
+                                join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                where cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                select new {
+                                    actualLectureDate = cl.ActualLectureDate,
+                                    actualFromTime = cl.ActualFromTime,
+                                    actualToTime = cl.ActualToTime,
+                                    timetableFromTime = tt.FromTime.Value,
+                                    timetableToTime = tt.ToTime.Value,
+                                }).ToList();
+
+                if(id == "NA" && operation == "0")
+                {
+                    tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    tclhDescription = currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if(id != "NA" && operation != "0")
+                    {
+                        int year = int.Parse(id);
+                        int month = int.Parse(operation);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        tclhDescription = year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if(id != "NA")
+                    {
+                        int year = int.Parse(id);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        tclhDescription = year.ToString();
+                    }
+                    else if(operation != "0")
+                    {
+                        int month = int.Parse(operation);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        tclhDescription = currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                int actualHours = 0;
+                int actualMinutes = 0;
+                int ttHours = 0;
+                int ttMinutes = 0;
+
+                foreach (var record in tclhList)
+                {
+                    TimeSpan actualDuration = DateTime.Parse(record.actualToTime.ToString()).Subtract(DateTime.Parse(record.actualFromTime.ToString()));
+
+                    actualHours += actualDuration.Hours;
+                    actualMinutes += actualDuration.Minutes;
+
+                    TimeSpan ttDuration = DateTime.Parse(record.timetableToTime.ToString()).Subtract(DateTime.Parse(record.timetableFromTime.ToString()));
+
+                    ttHours += ttDuration.Hours;
+                    ttMinutes += ttDuration.Minutes;
+                }
+
+                string actualTCLH = "";
+                string ttTCLH = "";
+
+                if ((actualMinutes / 60) != 0)
+                {
+                    actualHours += (actualMinutes / 60);
+                    actualTCLH = actualHours.ToString() + " Hours " + (actualMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    actualTCLH = actualHours.ToString() + " Hours " + actualMinutes.ToString() + " Minutes";
+                }
+
+                if ((ttMinutes / 60) != 0)
+                {
+                    ttHours += (ttMinutes / 60);
+                    ttTCLH = ttHours.ToString() + " Hours " + (ttMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    ttTCLH = ttHours.ToString() + " Hours " + ttMinutes.ToString() + " Minutes";
+                }
+
+                return Json(new {
+                    actualTCLH = actualTCLH,
+                    ttTCLH = ttTCLH,
+                    tclhDescription = tclhDescription
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardFacultyConductedLectureHours(string id, string operation, string additionalId)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var currentDateTime = DateTime.Now;
+                int facultyId = int.Parse(id);
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var faculty = (from f in db.Faculty where f.FacultyId.Equals(facultyId) select f).FirstOrDefault();
+
+                var tclhList = (from cl in db.ConductedLectures
+                                join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                where s.FacultyId.Value.Equals(facultyId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                select new
+                                {
+                                    actualLectureDate = cl.ActualLectureDate,
+                                    actualFromTime = cl.ActualFromTime,
+                                    actualToTime = cl.ActualToTime,
+                                    timetableFromTime = tt.FromTime.Value,
+                                    timetableToTime = tt.ToTime.Value,
+                                }).ToList();
+
+
+                string tclhFacultyDescription = faculty.FacultyCode + " - ";
+
+                if (operation == "NA" && additionalId == "0")
+                {
+                    tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    tclhFacultyDescription += currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if (operation != "NA" && additionalId != "0")
+                    {
+                        int year = int.Parse(operation);
+                        int month = int.Parse(additionalId);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        tclhFacultyDescription += year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if (operation != "NA")
+                    {
+                        int year = int.Parse(operation);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        tclhFacultyDescription += year.ToString();
+                    }
+                    else if (additionalId != "0")
+                    {
+                        int month = int.Parse(additionalId);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        tclhFacultyDescription += currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                int actualHours = 0;
+                int actualMinutes = 0;
+                int ttHours = 0;
+                int ttMinutes = 0;
+
+                foreach (var record in tclhList)
+                {
+                    TimeSpan actualDuration = DateTime.Parse(record.actualToTime.ToString()).Subtract(DateTime.Parse(record.actualFromTime.ToString()));
+
+                    actualHours += actualDuration.Hours;
+                    actualMinutes += actualDuration.Minutes;
+
+                    TimeSpan ttDuration = DateTime.Parse(record.timetableToTime.ToString()).Subtract(DateTime.Parse(record.timetableFromTime.ToString()));
+
+                    ttHours += ttDuration.Hours;
+                    ttMinutes += ttDuration.Minutes;
+                }
+
+                string actualTCLH = "";
+                string ttTCLH = "";
+
+                if ((actualMinutes / 60) != 0)
+                {
+                    actualHours += (actualMinutes / 60);
+                    actualTCLH = actualHours.ToString() + " Hours " + (actualMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    actualTCLH = actualHours.ToString() + " Hours " + actualMinutes.ToString() + " Minutes";
+                }
+
+                if ((ttMinutes / 60) != 0)
+                {
+                    ttHours += (ttMinutes / 60);
+                    ttTCLH = ttHours.ToString() + " Hours " + (ttMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    ttTCLH = ttHours.ToString() + " Hours " + ttMinutes.ToString() + " Minutes";
+                }
+
+                return Json(new
+                {
+                    actualTCLH = actualTCLH,
+                    ttTCLH = ttTCLH,
+                    tclhFacultyDescription = tclhFacultyDescription
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardAmountPaid(string id, string operation)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var currentDateTime = DateTime.Now;
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var tclList = (from cl in db.ConductedLectures
+                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                               where cl.IsFinalApproved.Equals(true) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                               select new
+                               {
+                                   actualLectureDate = cl.ActualLectureDate,
+                                   amountPaid = cl.PaymentAmount.Value
+                               }).ToList();
+
+
+                string paDescription = "";
+
+                if (id == "NA" && operation == "0")
+                {
+                    tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    paDescription = currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if (id != "NA" && operation != "0")
+                    {
+                        int year = int.Parse(id);
+                        int month = int.Parse(operation);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        paDescription = year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if (id != "NA")
+                    {
+                        int year = int.Parse(id);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        paDescription = year.ToString();
+                    }
+                    else if (operation != "0")
+                    {
+                        int month = int.Parse(operation);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        paDescription = currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                double totalPayment = 0.00;
+                string paymentAmount = "Rs. ";
+
+                foreach (var record in tclList)
+                {
+                    totalPayment += record.amountPaid;
+                }
+
+                paymentAmount += totalPayment.ToString("N");
+
+                return Json(new
+                {
+                    totalPaidAmount = paymentAmount,
+                    paDescription = paDescription
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardFacultyAmountPaid(string id, string operation, string additionalId)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var currentDateTime = DateTime.Now;
+                int facultyId = int.Parse(id);
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var faculty = (from f in db.Faculty where f.FacultyId.Equals(facultyId) select f).FirstOrDefault();
+
+                var tclList = (from cl in db.ConductedLectures
+                                join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                join s in db.SemesterRegistration on tt.SemesterId equals s.SemesterId
+                                where s.FacultyId.Value.Equals(facultyId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                select new
+                                {
+                                    actualLectureDate = cl.ActualLectureDate,
+                                    amountPaid = cl.PaymentAmount.Value
+                                }).ToList();
+
+
+                string paFacultyDescription = faculty.FacultyCode + " - ";
+
+                if (operation == "NA" && additionalId == "0")
+                {
+                    tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    paFacultyDescription += currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if (operation != "NA" && additionalId != "0")
+                    {
+                        int year = int.Parse(operation);
+                        int month = int.Parse(additionalId);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        paFacultyDescription += year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if (operation != "NA")
+                    {
+                        int year = int.Parse(operation);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        paFacultyDescription += year.ToString();
+                    }
+                    else if (additionalId != "0")
+                    {
+                        int month = int.Parse(additionalId);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        paFacultyDescription += currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                double totalPayment = 0.00;
+                string paymentAmount = "Rs. ";
+
+                foreach (var record in tclList)
+                {
+                    totalPayment += record.amountPaid;
+                }
+
+                paymentAmount += totalPayment.ToString("N");
+                
+
+                return Json(new
+                {
+                    totalPaidAmount = paymentAmount,
+                    paFacultyDescription = paFacultyDescription
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardLecturerTotalConductedHours(string id, string operation, string additionalId)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "ranga.a";
+                var currentDateTime = DateTime.Now;
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var userDetails = (from u in db.AspNetUsers
+                                   join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                   where u.UserName.Equals(username)
+                                   select new {
+                                       userId = u.Id,
+                                       name = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                   }).FirstOrDefault();
+
+                string ltclhDescription = userDetails.name + " - ";
+
+                var tclhList = (from cl in db.ConductedLectures
+                                join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                                where tt.LecturerId.Equals(userDetails.userId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                select new
+                                {
+                                    isFinalApproved = cl.IsFinalApproved,
+                                    currentStage = cl.CurrentStage,
+                                    approvedOrRejected = cl.IsApprovedOrRejected,
+                                    actualLectureDate = cl.ActualLectureDate,
+                                    actualFromTime = cl.ActualFromTime,
+                                    actualToTime = cl.ActualToTime,
+                                    timetableFromTime = tt.FromTime.Value,
+                                    timetableToTime = tt.ToTime.Value,
+                                }).ToList();
+
+                if(additionalId == "Approved")
+                {
+                    tclhList = tclhList.Where(r => r.isFinalApproved.Equals(true)).ToList();
+                }
+                else if (additionalId == "Approval Pending")
+                {
+                    tclhList = tclhList.Where(r => (r.currentStage.HasValue ? true : false) && r.isFinalApproved.Equals(false)).ToList();
+                }
+                else if (additionalId == "Rejected")
+                {
+                    tclhList = tclhList.Where(r => r.approvedOrRejected.HasValue ? r.approvedOrRejected.Value.Equals(false) ? true : false : false).ToList();
+                }
+                else if (additionalId == "NSTA")
+                {
+                    tclhList = tclhList.Where(r => r.currentStage.HasValue ? false : true).ToList();
+                }
+
+                if (id == "NA" && operation == "0")
+                {
+                    tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    ltclhDescription += currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if (id != "NA" && operation != "0")
+                    {
+                        int year = int.Parse(id);
+                        int month = int.Parse(operation);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        ltclhDescription += year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if (id != "NA")
+                    {
+                        int year = int.Parse(id);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        ltclhDescription += year.ToString();
+                    }
+                    else if (operation != "0")
+                    {
+                        int month = int.Parse(operation);
+
+                        tclhList = tclhList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        ltclhDescription += currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                int actualHours = 0;
+                int actualMinutes = 0;
+                int ttHours = 0;
+                int ttMinutes = 0;
+
+                foreach (var record in tclhList)
+                {
+                    TimeSpan actualDuration = DateTime.Parse(record.actualToTime.ToString()).Subtract(DateTime.Parse(record.actualFromTime.ToString()));
+
+                    actualHours += actualDuration.Hours;
+                    actualMinutes += actualDuration.Minutes;
+
+                    TimeSpan ttDuration = DateTime.Parse(record.timetableToTime.ToString()).Subtract(DateTime.Parse(record.timetableFromTime.ToString()));
+
+                    ttHours += ttDuration.Hours;
+                    ttMinutes += ttDuration.Minutes;
+                }
+
+                string actualTCLH = "";
+                string ttTCLH = "";
+
+                if ((actualMinutes / 60) != 0)
+                {
+                    actualHours += (actualMinutes / 60);
+                    actualTCLH = actualHours.ToString() + " Hours " + (actualMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    actualTCLH = actualHours.ToString() + " Hours " + actualMinutes.ToString() + " Minutes";
+                }
+
+                if ((ttMinutes / 60) != 0)
+                {
+                    ttHours += (ttMinutes / 60);
+                    ttTCLH = ttHours.ToString() + " Hours " + (ttMinutes % 60).ToString() + " Minutes";
+                }
+                else
+                {
+                    ttTCLH = ttHours.ToString() + " Hours " + ttMinutes.ToString() + " Minutes";
+                }
+
+                return Json(new
+                {
+                    actualTCLH = actualTCLH,
+                    ttTCLH = ttTCLH,
+                    tclhDescription = ltclhDescription
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/08/20
+        public ActionResult GetDashboardLecturerAmountPaid(string id, string operation, string additionalId)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "ranga.a";
+                var currentDateTime = DateTime.Now;
+                List<string> months = new List<string>()
+                {
+                    "January","February","March","April","May","June","July","August","September","October","November","December"
+                };
+
+                var userDetails = (from u in db.AspNetUsers
+                                   join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                   where u.UserName.Equals(username)
+                                   select new
+                                   {
+                                       userId = u.Id,
+                                       name = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                   }).FirstOrDefault();
+
+                string lpaDescription = userDetails.name + " - ";
+
+                var tclList = (from cl in db.ConductedLectures
+                               join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+                               where tt.LecturerId.Equals(userDetails.userId) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                               select new
+                               {
+                                   isFinalApproved = cl.IsFinalApproved,
+                                   currentStage = cl.CurrentStage,
+                                   approvedOrRejected = cl.IsApprovedOrRejected,
+                                   actualLectureDate = cl.ActualLectureDate,
+                                   amountPaid = cl.PaymentAmount.Value
+                               }).ToList();
+
+                if (additionalId == "Approved")
+                {
+                    tclList = tclList.Where(r => r.isFinalApproved.Equals(true)).ToList();
+                }
+                else if (additionalId == "Pending")
+                {
+                    tclList = tclList.Where(r => (r.currentStage.HasValue ? true : false) && r.isFinalApproved.Equals(false)).ToList();
+                }
+                else if (additionalId == "Rejected")
+                {
+                    tclList = tclList.Where(r => r.approvedOrRejected.HasValue ? r.approvedOrRejected.Value.Equals(false) ? true : false : false).ToList();
+                }
+
+                if (id == "NA" && operation == "0")
+                {
+                    tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(currentDateTime.Month)).ToList();
+                    lpaDescription += currentDateTime.Year.ToString() + " - " + months[currentDateTime.Month - 1].ToString();
+                }
+                else
+                {
+                    if (id != "NA" && operation != "0")
+                    {
+                        int year = int.Parse(id);
+                        int month = int.Parse(operation);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        lpaDescription += year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                    else if (id != "NA")
+                    {
+                        int year = int.Parse(id);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(year)).ToList();
+                        lpaDescription += year.ToString();
+                    }
+                    else if (operation != "0")
+                    {
+                        int month = int.Parse(operation);
+
+                        tclList = tclList.Where(r => r.actualLectureDate.Year.Equals(currentDateTime.Year) && r.actualLectureDate.Month.Equals(month)).ToList();
+                        lpaDescription += currentDateTime.Year.ToString() + " - " + months[month - 1].ToString();
+                    }
+                }
+
+                double totalPayment = 0.00;
+                string paymentAmount = "Rs. ";
+
+                foreach (var record in tclList)
+                {
+                    totalPayment += record.amountPaid;
+                }
+
+                paymentAmount += totalPayment.ToString("N");
+
+                return Json(new
+                {
+                    totalPaidAmount = paymentAmount,
+                    lpaDescription = lpaDescription
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }
