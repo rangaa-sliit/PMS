@@ -25,6 +25,8 @@ namespace PMS.ViewModels
         public string ApprovedOrRejectedBy { get; set; }
         public string ApprovedOrRejectedRemark { get; set; }
         public bool IsOpenForModerations { get; set; }
+        public string UsedDesignationName { get; set; }
+        public Nullable<double> UsedPaymentRate { get; set; }
         public Nullable<double> PaymentAmount { get; set; }
         public bool IsFinalApproved { get; set; }
         public bool IsActive { get; set; }

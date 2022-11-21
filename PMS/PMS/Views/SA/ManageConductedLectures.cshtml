@@ -24,6 +24,7 @@ Developed On:- 2022/11/05*@
         </div>
         <div class="card-body">
             <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
+            <button type="button" class="btn btn-sm btn-outline-success float-right mb-3 mr-2" onclick="onrefreshPaymentsClick()"><i class="fa fa-sync-alt"></i> Refresh Payments</button>
             <div class="table-responsive">
                 <table id="conductedLecturesTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -135,6 +136,30 @@ Developed On:- 2022/11/05*@
                         }
                         else {
                             return "N/A";
+                        }
+                    }
+                },
+                {
+                    "title": "Considered Designation",
+                    "data": "UsedDesignationName",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Considered rate Per Hour (Rs.)",
+                    "data": "UsedPaymentRate",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return parseFloat(data).toFixed(2);
                         }
                     }
                 },
