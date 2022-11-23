@@ -2581,39 +2581,20 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
-                    Degree validationRecord = (from d in db.Degree where d.Code.Equals(degree.Code) || d.Name.Equals(degree.Name) select d).FirstOrDefault<Degree>();
+                    Degree validationRecord = (from d in db.Degree
+                                               where (d.Code.Equals(degree.Code) || d.Name.Equals(degree.Name)) 
+                                               && d.FacultyId.Value.Equals(degree.FacultyId.Value) && d.InstituteId.Value.Equals(degree.InstituteId.Value)
+                                               select d).FirstOrDefault<Degree>();
 
                     if (degree.DegreeId == 0)
                     {
                         if (validationRecord != null)
                         {
-                            if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
+                            return Json(new
                             {
-                                return Json(new
-                                {
-                                    success = false,
-                                    message = "This Degree Code and Name Already Exists"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                            else
-                            {
-                                if (validationRecord.Code == degree.Code)
-                                {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Degree Code Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Degree Name Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                            }
+                                success = false,
+                                message = "This Record Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
                         }
                         else
                         {
@@ -2636,37 +2617,15 @@ namespace PMS.Controllers
                     {
                         Degree editingDegree = (from d in db.Degree where d.DegreeId.Equals(degree.DegreeId) select d).FirstOrDefault<Degree>();
 
-                        if (editingDegree.Code != degree.Code || editingDegree.Name != degree.Name || editingDegree.Description != degree.Description || editingDegree.FacultyId != degree.FacultyId || editingDegree.InstituteId != degree.InstituteId || editingDegree.DepartmentId != degree.DepartmentId || editingDegree.IsActive != degree.IsActive)
+                        if (editingDegree.Code != degree.Code || editingDegree.Name != degree.Name || editingDegree.Description != degree.Description || editingDegree.FacultyId.Value != degree.FacultyId.Value || editingDegree.InstituteId.Value != degree.InstituteId.Value || editingDegree.DepartmentId.Value != degree.DepartmentId.Value || editingDegree.IsActive != degree.IsActive)
                         {
                             if (validationRecord != null && validationRecord.DegreeId != degree.DegreeId)
                             {
-                                if (validationRecord.Code == degree.Code && validationRecord.Name == degree.Name)
+                                return Json(new
                                 {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Degree Code and Name Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    if (validationRecord.Code == degree.Code)
-                                    {
-                                        return Json(new
-                                        {
-                                            success = false,
-                                            message = "This Degree Code Already Exists"
-                                        }, JsonRequestBehavior.AllowGet);
-                                    }
-                                    else
-                                    {
-                                        return Json(new
-                                        {
-                                            success = false,
-                                            message = "This Degree Name Already Exists"
-                                        }, JsonRequestBehavior.AllowGet);
-                                    }
-                                }
+                                    success = false,
+                                    message = "This Record Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
@@ -2823,39 +2782,20 @@ namespace PMS.Controllers
                 try
                 {
                     var dateTime = DateTime.Now;
-                    Specialization validationRecord = (from s in db.Specialization where s.Code.Equals(specialization.Code) || s.Name.Equals(specialization.Name) select s).FirstOrDefault<Specialization>();
+                    Specialization validationRecord = (from s in db.Specialization
+                                                       where (s.Code.Equals(specialization.Code) || s.Name.Equals(specialization.Name))
+                                                       && s.DegreeId.Value.Equals(specialization.DegreeId.Value) && s.InstituteId.Value.Equals(specialization.InstituteId.Value)
+                                                       select s).FirstOrDefault<Specialization>();
 
                     if (specialization.SpecializationId == 0)
                     {
                         if (validationRecord != null)
                         {
-                            if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
+                            return Json(new
                             {
-                                return Json(new
-                                {
-                                    success = false,
-                                    message = "This Specialization Code and Name Already Exists"
-                                }, JsonRequestBehavior.AllowGet);
-                            }
-                            else
-                            {
-                                if (validationRecord.Code == specialization.Code)
-                                {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Specialization Code Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Specialization Name Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                            }
+                                success = false,
+                                message = "This Record Already Exists"
+                            }, JsonRequestBehavior.AllowGet);
                         }
                         else
                         {
@@ -2878,37 +2818,15 @@ namespace PMS.Controllers
                     {
                         Specialization editingSpecialization = (from s in db.Specialization where s.SpecializationId.Equals(specialization.SpecializationId) select s).FirstOrDefault<Specialization>();
 
-                        if (editingSpecialization.Code != specialization.Code || editingSpecialization.Name != specialization.Name || editingSpecialization.DegreeId != specialization.DegreeId || editingSpecialization.InstituteId != specialization.InstituteId || editingSpecialization.DepartmentId != specialization.DepartmentId || editingSpecialization.IsActive != specialization.IsActive)
+                        if (editingSpecialization.Code != specialization.Code || editingSpecialization.Name != specialization.Name || editingSpecialization.DegreeId.Value != specialization.DegreeId.Value || editingSpecialization.InstituteId.Value != specialization.InstituteId.Value || editingSpecialization.DepartmentId.Value != specialization.DepartmentId.Value || editingSpecialization.IsActive != specialization.IsActive)
                         {
                             if (validationRecord != null && validationRecord.SpecializationId != specialization.SpecializationId)
                             {
-                                if (validationRecord.Code == specialization.Code && validationRecord.Name == specialization.Name)
+                                return Json(new
                                 {
-                                    return Json(new
-                                    {
-                                        success = false,
-                                        message = "This Specialization Code and Name Already Exists"
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else
-                                {
-                                    if (validationRecord.Code == specialization.Code)
-                                    {
-                                        return Json(new
-                                        {
-                                            success = false,
-                                            message = "This Specialization Code Already Exists"
-                                        }, JsonRequestBehavior.AllowGet);
-                                    }
-                                    else
-                                    {
-                                        return Json(new
-                                        {
-                                            success = false,
-                                            message = "This Specialization Name Already Exists"
-                                        }, JsonRequestBehavior.AllowGet);
-                                    }
-                                }
+                                    success = false,
+                                    message = "This Record Already Exists"
+                                }, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
@@ -4382,9 +4300,15 @@ namespace PMS.Controllers
                 //                                               orderby a.AppointmentId ascending
                 //                                               select a).ToList();
 
+                var ttd = (from tt in db.LectureTimetable where tt.TimetableId.Equals(6230) select tt).FirstOrDefault();
+
+                DateTime lectureEndDateTime = new DateTime(ttd.LectureDate.Value.Year, ttd.LectureDate.Value.Month,
+                                    ttd.LectureDate.Value.Day, ttd.ToTime.Value.Hours, ttd.ToTime.Value.Minutes,
+                                    ttd.ToTime.Value.Seconds, ttd.ToTime.Value.Milliseconds);
+
                 return Json(new
                 {
-                    data = ""
+                    data = lectureEndDateTime.ToString()
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -9204,6 +9128,7 @@ namespace PMS.Controllers
                                                    && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
                                                    select new {
                                                        lectureRecord = cl,
+                                                       timetableLectureDate = tt.LectureDate.Value,
                                                        facultyId = sem.FacultyId.Value
                                                    }).ToList();
 
@@ -9268,8 +9193,8 @@ namespace PMS.Controllers
                             {
                                 nextWorkflows.Add(nextWorkflowRecord);
 
-                                if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year 
-                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                                if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year 
+                                    && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
                                 {
                                     conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
                                     conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
@@ -9282,8 +9207,8 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
-                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                            if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year
+                                    && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
                             {
                                 conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
                                 conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
@@ -12596,13 +12521,19 @@ namespace PMS.Controllers
 
                     //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
                     List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
-                    List<SubWorkflow_WorkflowCC> nextWorkflows = new List<SubWorkflow_WorkflowCC>();
 
                     var userRecord = (from u in db.AspNetUsers
                                       join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                       from fac in u_f.DefaultIfEmpty()
                                       where u.UserName.Equals(username)
                                       select u).FirstOrDefault();
+
+                    var lecturerAppointments = (from a in db.Appointment
+                                                where a.UserId.Equals(userRecord.Id)
+                                                select a).ToList();
+
+                    var paymentRates = (from pr in db.PaymentRate select pr).ToList();
+                    var paymentRateLogs = (from prl in db.PaymentRateLog select prl).ToList();
 
                     var conductedLectureRecords = (from cl in db.ConductedLectures
                                                    join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
@@ -12612,9 +12543,12 @@ namespace PMS.Controllers
                                                    select new
                                                    {
                                                        lectureRecord = cl,
+                                                       timetableLectureDate = tt.LectureDate.Value,
+                                                       timetableLectureStartTime = tt.FromTime.Value,
+                                                       timetableLectureEndTime = tt.ToTime.Value,
                                                        facultyId = sem.FacultyId.Value
                                                    }).ToList();
-
+                    List<string> x = new List<string>();
                     for (var i = 0; i < conductedLectureRecords.Count; i++)
                     {
                         int deadlineDays = 0;
@@ -12658,46 +12592,106 @@ namespace PMS.Controllers
                             paymentConsideringMonth = currentDateTime.Month;
                         }
 
-                        var checkingWorkflow = nextWorkflows.Find(sw => sw.WorkflowRecord.FacultyId.Value == facultyId);
-
-                        if (checkingWorkflow == null)
+                        if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year
+                                    && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
                         {
-                            var nextWorkflowRecord = (from sw in db.SubWorkflows
-                                                      join w in db.Workflows on sw.WorkflowId equals w.Id
-                                                      join r in db.AspNetRoles on sw.WorkflowRole equals r.Id
-                                                      where sw.WorkflowStep.Equals(2) && w.FacultyId.Value == facultyId
-                                                      select new SubWorkflow_WorkflowCC
-                                                      {
-                                                          SubWorkflowRecord = sw,
-                                                          WorkflowRole = r.Name,
-                                                          WorkflowRecord = w
-                                                      }).FirstOrDefault();
+                            int usedDesignationId = conductedLectureRecords[i].lectureRecord.UsedDesignationId.Value;
+                            int newLecturerDesignationId = 0;
+                            double newPaymentRate = 0;
 
-                            if (nextWorkflowRecord != null)
+                            var consideringAppointments = lecturerAppointments.Where(a => a.AppointmentFrom.Value <= conductedLectureRecords[i].timetableLectureDate
+                                && (a.AppointmentTo.HasValue ? conductedLectureRecords[i].timetableLectureDate < a.AppointmentTo.Value : true)).ToList();
+
+                            foreach (var appointment in consideringAppointments)
                             {
-                                nextWorkflows.Add(nextWorkflowRecord);
-
-                                if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
-                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+                                if (appointment.AppointmentTo.HasValue)
                                 {
-                                    conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
-                                    conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
-                                    conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                                    conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+                                    DateTime appointmentToDate = appointment.AppointmentTo.Value;
 
-                                    db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+                                    if (conductedLectureRecords[i].timetableLectureDate < appointmentToDate)
+                                    {
+                                        newLecturerDesignationId = appointment.DesignationId;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    if (appointment.IsActive == true)
+                                    {
+                                        newLecturerDesignationId = appointment.DesignationId;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (conductedLectureRecords[i].lectureRecord.ActualLectureDate.Year == currentDateTime.Year
-                                    && conductedLectureRecords[i].lectureRecord.ActualLectureDate.Month == paymentConsideringMonth)
+
+                            if(newLecturerDesignationId != usedDesignationId && newLecturerDesignationId != 0)
                             {
-                                conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
-                                conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
-                                conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                                conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+                                DateTime lectureEndDateTime = new DateTime(conductedLectureRecords[i].timetableLectureDate.Year, conductedLectureRecords[i].timetableLectureDate.Month,
+                                    conductedLectureRecords[i].timetableLectureDate.Day, conductedLectureRecords[i].timetableLectureEndTime.Hours, conductedLectureRecords[i].timetableLectureEndTime.Minutes,
+                                    conductedLectureRecords[i].timetableLectureEndTime.Seconds, conductedLectureRecords[i].timetableLectureEndTime.Milliseconds);
+
+                                var checkingPaymentRate = paymentRates.Where(pr => pr.DesignationId.Equals(newLecturerDesignationId) && pr.FacultyId.Value.Equals(facultyId)).FirstOrDefault();
+
+                                if(checkingPaymentRate != null)
+                                {
+                                    if(checkingPaymentRate.ModifiedDate <= lectureEndDateTime)
+                                    {
+                                        if (checkingPaymentRate.IsApproved == true)
+                                        {
+                                            newPaymentRate = checkingPaymentRate.RatePerHour;
+                                        }
+                                        else
+                                        {
+                                            if (checkingPaymentRate.SentForApproval == true || checkingPaymentRate.IsApproved == false)
+                                            {
+                                                newPaymentRate = checkingPaymentRate.OldRatePerHour;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var checkingPRLogs = paymentRateLogs.Where(prl => prl.PaymentRateId.Equals(checkingPaymentRate.Id)
+                                            && !prl.ModifiedDate.Equals(checkingPaymentRate.ModifiedDate)).OrderByDescending(r => r.ModifiedDate).ToList();
+
+                                        foreach(var prLog in checkingPRLogs)
+                                        {
+                                            if(prLog.ModifiedDate <= lectureEndDateTime)
+                                            {
+                                                if (prLog.IsApproved == true)
+                                                {
+                                                    newPaymentRate = prLog.RatePerHour;
+                                                }
+                                                else
+                                                {
+                                                    if (prLog.SentForApproval == true || prLog.IsApproved == false)
+                                                    {
+                                                        newPaymentRate = prLog.OldRatePerHour;
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                TimeSpan duration = DateTime.Parse(conductedLectureRecords[i].timetableLectureEndTime.ToString()).Subtract(DateTime.Parse(conductedLectureRecords[i].timetableLectureStartTime.ToString()));
+
+                                int numbeofHours = duration.Hours;
+                                int numbeofMinutes = duration.Minutes;
+                                double newPaymentAmount = 0.00;
+
+                                if (numbeofHours != 0)
+                                {
+                                    newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofHours;
+                                }
+
+                                if (numbeofMinutes != 0)
+                                {
+                                    newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                }
+
+                                conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
+                                conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
+                                conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
 
                                 db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
                             }
@@ -12709,7 +12703,7 @@ namespace PMS.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "Successfully Sent for Approval"
+                        message = "Payments Successfully Refreshed"
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)

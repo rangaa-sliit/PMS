@@ -24,7 +24,7 @@ Developed On:- 2022/11/05*@
         </div>
         <div class="card-body">
             <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
-            <button type="button" class="btn btn-sm btn-outline-success float-right mb-3 mr-2" onclick="onrefreshPaymentsClick()"><i class="fa fa-sync-alt"></i> Refresh Payments</button>
+            <button type="button" class="btn btn-sm btn-outline-success float-right mb-3 mr-2" onclick="onRefreshPaymentsClick()"><i class="fa fa-sync-alt"></i> Refresh Payments</button>
             <div class="table-responsive">
                 <table id="conductedLecturesTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -47,6 +47,26 @@ Developed On:- 2022/11/05*@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
                     <button type="button" class="btn btn-primary" onclick="SendToApprovalConfirm()">Yes, Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="refreshPaymentsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Refresh Payments Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to refresh your lecture records payments?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="RefreshPaymentsConfirm()">Yes, Refresh</button>
                 </div>
             </div>
         </div>
@@ -241,5 +261,33 @@ Developed On:- 2022/11/05*@
             });
         }
 
+        function onRefreshPaymentsClick() {
+            $("#refreshPaymentsModal").modal("show");
+        }
+
+        function RefreshPaymentsConfirm() {
+            $("#loader").show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RefreshPayments", "SA")',
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#refreshPaymentsModal").modal("hide");
+                        conductedLecturesTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }
     </script>
 }

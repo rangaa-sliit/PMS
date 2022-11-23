@@ -49,10 +49,11 @@ Developed On:- 2022/08/18*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.FacultyDean, "Faculty Dean: ")
+                        @Html.LabelFor(model => model.FacultyDean, "Faculty Dean: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.FacultyDean, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onFacultyDeanChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyDean)
                     </div>
                 </div>
                 <div class="form-group row">

@@ -27,10 +27,13 @@ namespace PMS.Models
         public int HallId { get; set; }
         [Required(ErrorMessage = "Campus is required")]
         public int CampusId { get; set; }
+        [Required(ErrorMessage = "Building is required")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string Building { get; set; }
+        [Required(ErrorMessage = "Floor is required")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string Floor { get; set; }
+        [Required(ErrorMessage = "Hall Name is required")]
         [MaxLength(150, ErrorMessage = "Maximum 150 characters exceeded")]
         public string HallName { get; set; }
         public System.DateTime CreatedDate { get; set; }

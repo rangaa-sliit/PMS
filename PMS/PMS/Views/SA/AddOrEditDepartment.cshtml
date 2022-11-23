@@ -49,18 +49,20 @@ Developed On:- 2022/08/19*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.HOD, "Head Of Department: ")
+                        @Html.LabelFor(model => model.HOD, "Head Of Department: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.HOD, (IEnumerable<SelectListItem>)ViewBag.usersList, new { @class = "form-control", @id = "usersList", onchange = "onHODChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.HOD)
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.FacultyId, "Faculty: ")
+                        @Html.LabelFor(model => model.FacultyId, "Faculty: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.DropDownListFor(model => model.FacultyId, (IEnumerable<SelectListItem>)ViewBag.facultyList, new { @class = "form-control", @id = "facultyList", onchange = "onFacultyChange(this.value)" })
+                        @Html.ValidationMessageFor(model => model.FacultyId)
                     </div>
                 </div>
                 <div class="form-group row">

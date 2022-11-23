@@ -40,7 +40,7 @@ Developed On:- 2022/08/19*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Building, "Building: ")
+                        @Html.LabelFor(model => model.Building, "Building: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.EditorFor(model => model.Building, new { htmlAttributes = new { @class = "form-control", @placeholder = "Building", @id = "building", oninput = "onBuildingInput()" } })
@@ -49,7 +49,7 @@ Developed On:- 2022/08/19*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.Floor, "Floor: ")
+                        @Html.LabelFor(model => model.Floor, "Floor: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.EditorFor(model => model.Floor, new { htmlAttributes = new { @class = "form-control", @placeholder = "Floor", @id = "floor", oninput = "onFloorInput()" } })
@@ -58,7 +58,7 @@ Developed On:- 2022/08/19*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
-                        @Html.LabelFor(model => model.HallName, "Hall Name: ")
+                        @Html.LabelFor(model => model.HallName, "Hall Name: ", new { @class = "required" })
                     </div>
                     <div class="col-sm-9">
                         @Html.EditorFor(model => model.HallName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Hall Name", @id = "hallName", oninput = "onHallNameInput()" } })

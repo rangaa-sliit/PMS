@@ -400,6 +400,30 @@
                     "data": "ActualToTime"
                 },
                 {
+                    "title": "Considered Designation",
+                    "data": "UsedDesignationName",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "title": "Considered rate Per Hour (Rs.)",
+                    "data": "UsedPaymentRate",
+                    "render": function (data) {
+                        if (data == true) {
+                            return "N/A";
+                        }
+                        else {
+                            return parseFloat(data).toFixed(2);
+                        }
+                    }
+                },
+                {
                     "title": "Payment Amount (Rs.)",
                     "data": "PaymentAmount",
                     "render": function (data) {

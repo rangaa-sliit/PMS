@@ -1,4 +1,4 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Newtonsoft.Json.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -188,10 +188,10 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Security.Principal.Windows.
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Helpers.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Mvc.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Optimization.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Deployment.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.Razor.xml
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Newtonsoft.Json.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Antlr3.Runtime.pdb
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\EntityFramework.SqlServer.xml
@@ -212,3 +212,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

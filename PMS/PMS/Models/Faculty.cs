@@ -35,6 +35,7 @@ namespace PMS.Models
         [Required(ErrorMessage = "Faculty Name is required")]
         [MaxLength(200, ErrorMessage = "Maximum 200 characters exceeded")]
         public string FacultyName { get; set; }
+        [Required(ErrorMessage = "Faculty Dean is required")]
         public string FacultyDean { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
