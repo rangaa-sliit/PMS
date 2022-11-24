@@ -15,6 +15,12 @@ namespace PMS.Models
 
     public partial class Appointment
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Appointment()
+        {
+            this.AppointmentLog = new HashSet<AppointmentLog>();
+        }
+    
         public int AppointmentId { get; set; }
         [Required(ErrorMessage = "Employee is required")]
         public string UserId { get; set; }
@@ -34,10 +40,14 @@ namespace PMS.Models
         public System.DateTime ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
         public string Comment { get; set; }
+        public string AutoUpdateRemark { get; set; }
+        public Nullable<System.DateTime> AutoUpdateDate { get; set; }
         public bool IsActive { get; set; }
     
         public virtual AppointmentType AppointmentType { get; set; }
         public virtual AspNetUsers AspNetUsers { get; set; }
         public virtual Designation Designation { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AppointmentLog> AppointmentLog { get; set; }
     }
 }

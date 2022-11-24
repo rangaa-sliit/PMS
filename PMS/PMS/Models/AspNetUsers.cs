@@ -19,12 +19,12 @@ namespace PMS.Models
         public AspNetUsers()
         {
             this.Appointment = new HashSet<Appointment>();
+            this.AppointmentLog = new HashSet<AppointmentLog>();
             this.AspNetUserClaims = new HashSet<AspNetUserClaims>();
             this.AspNetUserLogins = new HashSet<AspNetUserLogins>();
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
             this.Department = new HashSet<Department>();
             this.Faculty1 = new HashSet<Faculty>();
-            this.LecturerAssignments = new HashSet<LecturerAssignments>();
             this.LectureTimetable = new HashSet<LectureTimetable>();
             this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
             this.Notifications = new HashSet<Notifications>();
@@ -52,6 +52,10 @@ namespace PMS.Models
         public string UserName { get; set; }
         [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string PhoneNumber { get; set; }
+        public string PhotoPath { get; set; }
+        public string Photo_Name { get; set; }
+        public byte[] Photo_Data { get; set; }
+        public string Photo_ContentType { get; set; }
         public Nullable<int> FacultyId { get; set; }
         public Nullable<int> DepartmentId { get; set; }
         public System.DateTime CreatedDate { get; set; }
@@ -76,6 +80,8 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AppointmentLog> AppointmentLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUserClaims> AspNetUserClaims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUserLogins> AspNetUserLogins { get; set; }
@@ -87,8 +93,6 @@ namespace PMS.Models
         public virtual ICollection<Department> Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LecturerAssignments> LecturerAssignments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

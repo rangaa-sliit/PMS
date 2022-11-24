@@ -219,6 +219,7 @@
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />
     <Compile Include="Custom_Classes\SubWorkflow_WorkflowCC.cs" />
+    <Compile Include="Custom_Classes\UserCC.cs" />
     <Compile Include="Custom_Classes\UserClaimCC.cs" />
     <Compile Include="Custom_Classes\UserGroupsRolesCC.cs" />
     <Compile Include="Custom_Classes\SubWorkflowCC.cs" />
@@ -235,6 +236,9 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Appointment.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AppointmentLog.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AppointmentType.cs">
@@ -310,9 +314,6 @@
     <Compile Include="Models\LectureHall.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\LecturerAssignments.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\LectureTimetable.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -330,6 +331,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentRateLog.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RoleClaims.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SemesterRegistration.cs">
@@ -613,6 +617,7 @@
     <Content Include="Views\SA\LecInsPaymentReports.cshtml" />
     <Content Include="Views\SA\AcademicPaymentReports.cshtml" />
     <Content Include="Views\SA\OpenForModerations.cshtml" />
+    <Content Include="Views\SA\UserProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

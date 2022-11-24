@@ -276,6 +276,7 @@ Developed On:- 2022/09/05*@
                 }
             }
             else {
+                initialLoadForAdd = true;
                 $("#aeSemesterRegistrationMainTitle").html("Add Semester Registration");
                 $("#aeSemesterRegistrationCardTitle").html("Add Semester Registration");
                 $("#breadCrumbWrapper").append(`<li class="breadcrumb-item active">Add Semester Registration</li>`);
@@ -418,20 +419,27 @@ Developed On:- 2022/09/05*@
             $("#semesterRegistrationSubmitBtn").prop("disabled", false);
             $("#semesterRegistrationClearBtn").prop("disabled", false);
 
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetIntakesByIntakeYear", "SA")/' + intakeYear,
-                success: function (response) {
-                    $("#intakeList").find('option').not(':first').remove();
-                    var dynamicContent = ``;
+            if (intakeYear.toString()) {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetIntakesByIntakeYear", "SA")/' + intakeYear,
+                    success: function (response) {
+                        $("#intakeList").html("");
+                        //$("#intakeList").find('option').not(':first').remove();
+                        //alert(response);
+                        var dynamicContent = ``;
 
-                    for (var i = 0; i < response.length; i++) {
-                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                        for (var i = 0; i < response.length; i++) {
+                            dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                        }
+
+                        //$("#intakeList option:first").after(dynamicContent);
+                        $("#intakeList").html(dynamicContent);
+                        $("#intakeList").val(null).change();
+                        //$("#intakeList").html(dynamicContent);
                     }
-
-                    $("#intakeList option:first").after(dynamicContent);
-                }
-            })
+                });
+            }
         }
 
         function onIntakeChange(intake) {
@@ -490,37 +498,42 @@ Developed On:- 2022/09/05*@
                 url: '@Url.Action("GetDegreesByFacultyInstitute", "SA")',
                 data: facInsObj,
                 success: function (response) {
-                    $("#degreeList").find('option').not(':first').remove();
+                    $("#degreeList").html("");
                     var dynamicContent = ``;
 
                     for (var i = 0; i < response.length; i++) {
                         dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
                     }
 
-                    $("#degreeList option:first").after(dynamicContent);
+                    $("#degreeList").html(dynamicContent);
+                    $("#degreeList").val(null).change();
                 }
             })
         }
 
         function onDegreeChange(degreeId) {
+            //alert(degreeId);
             $("#semesterRegistrationSubmitBtn").prop("disabled", false);
             $("#semesterRegistrationClearBtn").prop("disabled", false);
 
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetSpecializationsByDegree", "SA")/' + degreeId,
-                success: function (response) {
-                    $("#specializationList").find('option').not(':first').remove();
-                    var dynamicContent = ``;
+            if (degreeId.toString()) {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetSpecializationsByDegree", "SA")/' + degreeId,
+                    success: function (response) {
+                        $("#specializationList").find('option').not(':first').remove();
+                        //$("#specializationList").html("");
+                        var dynamicContent = ``;
 
-                    for (var i = 0; i < response.length; i++) {
-                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                        for (var i = 0; i < response.length; i++) {
+                            dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                        }
+
+                        $("#specializationList option:first").after(dynamicContent);
                     }
-
-                    $("#specializationList option:first").after(dynamicContent);
-                }
-            });
-            $("#specializationList").val(null).change();
+                });
+                $("#specializationList").val(null).change();
+            }
         }
 
         function onSpecializationChange(specialization) {

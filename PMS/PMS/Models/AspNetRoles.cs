@@ -19,6 +19,7 @@ namespace PMS.Models
         public AspNetRoles()
         {
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
+            this.RoleClaims = new HashSet<RoleClaims>();
             this.SubWorkflows = new HashSet<SubWorkflows>();
         }
     
@@ -38,6 +39,8 @@ namespace PMS.Models
         public virtual AccessGroup AccessGroup { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RoleClaims> RoleClaims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubWorkflows> SubWorkflows { get; set; }
     }

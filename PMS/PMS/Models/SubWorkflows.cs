@@ -19,6 +19,7 @@ namespace PMS.Models
         {
             this.ConductedLectures = new HashSet<ConductedLectures>();
             this.ConductedLecturesLog = new HashSet<ConductedLecturesLog>();
+            this.Notifications = new HashSet<Notifications>();
         }
     
         public int SubWorkflowId { get; set; }
@@ -40,6 +41,8 @@ namespace PMS.Models
         public virtual ICollection<ConductedLectures> ConductedLectures { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ConductedLecturesLog> ConductedLecturesLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Notifications> Notifications { get; set; }
         public virtual Workflows Workflows { get; set; }
     }
 }

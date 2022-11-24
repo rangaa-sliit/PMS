@@ -32,6 +32,7 @@
                     <label>Record Month: <span id="empName" class="text-dark">@ViewBag.RecordMonth</span></label>
                 </div>
             </div>
+            @*<button type="button" class="btn btn-sm btn-outline-success" onclick="onRefreshPaymentsClick()"><i class="fa fa-sync-alt"></i> Refresh Payments</button>*@
             <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-check"></i> Approve</button>
             <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2 mb-3" onclick="onRejectClick()"><i class="fa fa-times"></i> Reject</button>
             <div class="table-responsive">
@@ -290,6 +291,26 @@
             </div>
         </div>
     </div>
+
+    @*<div class="modal fade" id="refreshPaymentsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Refresh Payments Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to refresh lecture records payments?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" onclick="RefreshPaymentsConfirm()">Yes, Refresh</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
 </div>
 
 @section scripts {
@@ -801,5 +822,35 @@
         function OpenForModerationsConfirm() {
             window.location.href = '@Url.Action("OpenForModerations", "SA")/' + lecturerId + "/" + recordMonth + "/" + clId
         }
+
+        @*function onRefreshPaymentsClick() {
+            $("#refreshPaymentsModal").modal("show");
+        }
+
+        function RefreshPaymentsConfirm() {
+            $("#loader").show();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RefreshPayments", "SA")',
+                data: lecturerId,
+                success: function (data) {
+                    $("#loader").hide();
+                    if (data.success) {
+                        $("#refreshPaymentsModal").modal("hide");
+                        lectureApprovalTbl.ajax.reload();
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "success"
+                        })
+                    }
+                    else {
+                        $.notify(data.message, {
+                            globalPosition: "top center",
+                            className: "error"
+                        })
+                    }
+                }
+            });
+        }*@
     </script>
 }

@@ -2128,11 +2128,12 @@ namespace PMS.Controllers
             {
                 try
                 {
-                    var dateTime = DateTime.Now;
+                    var currentDateTime = DateTime.Now;
                     Appointment validationRecord = (from a in db.Appointment
                                                     where a.UserId.Equals(appointment.UserId) && a.DesignationId.Equals(appointment.DesignationId)
                                                     && a.AppointmentTypeId.Equals(appointment.AppointmentTypeId)
                                                     select a).FirstOrDefault<Appointment>();
+                    var currentDate = currentDateTime.Date;
 
                     if (appointment.AppointmentId == 0)
                     {
@@ -2146,7 +2147,6 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            var currentDate = dateTime.Date;
                             var appointmentFrom = Convert.ToDateTime(appointment.AppointmentFrom);
 
                             List<Appointment> activeAppointments = (from a in db.Appointment
@@ -2157,14 +2157,14 @@ namespace PMS.Controllers
                             {
                                 if (!activeAppointments[i].AppointmentTo.HasValue)
                                 {
-                                    if(appointmentFrom >= currentDate)
+                                    activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
+
+                                    if (appointmentFrom >= currentDate)
                                     {
-                                        activeAppointments[i].AppointmentTo = appointment.AppointmentFrom;
                                         activeAppointments[i].IsActive = true;
                                     }
                                     else
                                     {
-                                        activeAppointments[i].AppointmentTo = currentDate;
                                         activeAppointments[i].IsActive = false;
                                     }
                                 }
@@ -2187,14 +2187,14 @@ namespace PMS.Controllers
                                 
                                 activeAppointments[i].Comment = "Due to New Appointment Creation";
                                 activeAppointments[i].ModifiedBy = "Ranga";
-                                activeAppointments[i].ModifiedDate = dateTime;
+                                activeAppointments[i].ModifiedDate = currentDateTime;
                                 db.Entry(activeAppointments[i]).State = EntityState.Modified;
                             }
 
                             appointment.CreatedBy = "Ranga";
-                            appointment.CreatedDate = dateTime;
+                            appointment.CreatedDate = currentDateTime;
                             appointment.ModifiedBy = "Ranga";
-                            appointment.ModifiedDate = dateTime;
+                            appointment.ModifiedDate = currentDateTime;
 
                             db.Appointment.Add(appointment);
                             db.SaveChanges();
@@ -2230,10 +2230,97 @@ namespace PMS.Controllers
                                 editingAppointment.AppointmentTo = appointment.AppointmentTo;
                                 editingAppointment.IsActive = appointment.IsActive;
                                 editingAppointment.ModifiedBy = "Ranga";
-                                editingAppointment.ModifiedDate = dateTime;
+                                editingAppointment.ModifiedDate = currentDateTime;
 
                                 db.Entry(editingAppointment).State = EntityState.Modified;
                                 db.SaveChanges();
+
+                                //var appointmentFromDate = editingAppointment.AppointmentFrom.Value;
+                                //var appointmentToDate = editingAppointment.AppointmentTo;
+
+                                //List<Appointment> checkingAppointments = (from a in db.Appointment
+                                //                                          where a.UserId.Equals(editingAppointment.UserId) && !a.AppointmentId.Equals(editingAppointment.AppointmentId)
+                                //                                          //&& ((a.AppointmentTo.HasValue ? appointmentFromDate < a.AppointmentTo.Value : false) || (appointmentToDate.HasValue ? appointmentToDate.Value > a.AppointmentFrom : false))
+                                //                                          select a).ToList();
+
+                                //var beforeAppointments = checkingAppointments.FindAll(a => a.AppointmentTo.HasValue ? appointmentFromDate < a.AppointmentTo.Value : false).ToList();
+                                //var afterAppointments = checkingAppointments.FindAll(a => appointmentToDate.HasValue ? appointmentToDate.Value > a.AppointmentFrom.Value : false).ToList();
+
+                                //foreach (var bfrAppointment in beforeAppointments)
+                                //{
+                                //    if (appointmentFromDate < bfrAppointment.AppointmentFrom.Value)
+                                //    {
+                                //        bfrAppointment.AppointmentFrom = appointmentFromDate;
+                                //        bfrAppointment.AppointmentTo = appointmentFromDate;
+                                //        bfrAppointment.IsActive = false;
+                                //    }
+                                //    else
+                                //    {
+                                //        bfrAppointment.AppointmentTo = appointmentFromDate;
+
+                                //        if (appointmentFromDate >= currentDate)
+                                //        {
+                                //            bfrAppointment.IsActive = true;
+                                //        }
+                                //        else
+                                //        {
+                                //            bfrAppointment.IsActive = false;
+                                //        }
+                                //    }
+
+                                //    db.Entry(bfrAppointment).State = EntityState.Modified;
+                                //}
+
+                                //foreach (var aftrAppointment in afterAppointments)
+                                //{
+                                //    if (appointmentToDate.HasValue)
+                                //    {
+                                //        if (appointmentToDate.Value > aftrAppointment.AppointmentFrom.Value)
+                                //        {
+                                //            if (aftrAppointment.AppointmentTo.HasValue)
+                                //            {
+                                //                if (appointmentToDate.Value >= aftrAppointment.AppointmentTo.Value)
+                                //                {
+                                //                    aftrAppointment.AppointmentFrom = appointmentToDate.Value;
+                                //                    aftrAppointment.AppointmentTo = appointmentToDate.Value;
+                                //                    aftrAppointment.IsActive = false;
+                                //                }
+                                //                else
+                                //                {
+                                //                    aftrAppointment.AppointmentFrom = appointmentToDate.Value;
+                                //                }
+                                //            }
+                                //            else
+                                //            {
+                                //                aftrAppointment.AppointmentFrom = appointmentToDate.Value;
+                                //            }
+                                //        }
+                                //    }
+                                //    else
+                                //    {
+                                //        aftrAppointment.IsActive = false;
+                                //    }
+
+                                //    if (aftrAppointment.AppointmentTo.HasValue)
+                                //    {
+                                //        if (aftrAppointment.AppointmentTo >= currentDate)
+                                //        {
+                                //            aftrAppointment.IsActive = true;
+                                //        }
+                                //        else
+                                //        {
+                                //            aftrAppointment.IsActive = false;
+                                //        }
+                                //    }
+                                //    else
+                                //    {
+                                //        aftrAppointment.IsActive = true;
+                                //    }
+
+                                //    db.Entry(aftrAppointment).State = EntityState.Modified;
+                                //}
+
+                                //db.SaveChanges();
 
                                 return Json(new
                                 {
@@ -5823,35 +5910,35 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/12
-        public ActionResult ManageLecturerAssignments(int id)
-        {
-            return View();
-        }
+        //public ActionResult ManageLecturerAssignments(int id)
+        //{
+        //    return View();
+        //}
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/12
-        public ActionResult GetLecturerAssignments(int id)
-        {
-            using (PMSEntities db = new PMSEntities())
-            {
-                List<LecturerAssignmentsVM> lecturerAssignmentsList = (from la in db.LecturerAssignments
-                                                                       join sr in db.SemesterRegistration on la.SemesterId equals sr.SemesterId
-                                                                       join u in db.AspNetUsers on la.LecturerId equals u.Id
-                                                                       join t in db.Title on u.EmployeeTitle equals t.TitleId
-                                                                       join ss in db.SemesterSubject on la.SemesterSubjectId equals ss.Id
-                                                                       join s in db.Subject on ss.SubjectId equals s.SubjectId
-                                                                       select new LecturerAssignmentsVM {
-                                                                           Id = la.Id,
-                                                                           SemesterId = la.SemesterId,
-                                                                           LecturerName = t.TitleName + " " + u.FirstName + " " + u.LastName,
-                                                                           SubjectName = s.SubjectCode + " " + s.SubjectName,
-                                                                           StudentBatches = la.StudentBatches,
-                                                                           IsActive = la.IsActive
-                                                                       }).ToList();
+        //public ActionResult GetLecturerAssignments(int id)
+        //{
+        //    using (PMSEntities db = new PMSEntities())
+        //    {
+        //        List<LecturerAssignmentsVM> lecturerAssignmentsList = (from la in db.LecturerAssignments
+        //                                                               join sr in db.SemesterRegistration on la.SemesterId equals sr.SemesterId
+        //                                                               join u in db.AspNetUsers on la.LecturerId equals u.Id
+        //                                                               join t in db.Title on u.EmployeeTitle equals t.TitleId
+        //                                                               join ss in db.SemesterSubject on la.SemesterSubjectId equals ss.Id
+        //                                                               join s in db.Subject on ss.SubjectId equals s.SubjectId
+        //                                                               select new LecturerAssignmentsVM {
+        //                                                                   Id = la.Id,
+        //                                                                   SemesterId = la.SemesterId,
+        //                                                                   LecturerName = t.TitleName + " " + u.FirstName + " " + u.LastName,
+        //                                                                   SubjectName = s.SubjectCode + " " + s.SubjectName,
+        //                                                                   StudentBatches = la.StudentBatches,
+        //                                                                   IsActive = la.IsActive
+        //                                                               }).ToList();
 
-                return Json(new { data = lecturerAssignmentsList }, JsonRequestBehavior.AllowGet);
-            }
-        }
+        //        return Json(new { data = lecturerAssignmentsList }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/10/13
@@ -7574,54 +7661,67 @@ namespace PMS.Controllers
 
                                             if (String.IsNullOrEmpty(row["Calendar Year"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Calendar Period"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 2].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 2].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Intake Year"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 3].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 3].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Intake Name"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 4].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 4].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Academic Year"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 5].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Academic Semester"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 6].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Faculty"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 7].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Institute"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 8].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 8].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Degree"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 9].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 9].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["From Date"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 11].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 11].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["To Date"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 12].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 12].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Student Batches"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 13].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 13].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
                                             if (String.IsNullOrEmpty(row["Semester Subjects"].ToString().Trim()))
                                             {
+                                                srSheet.Cells[index, 14].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                                 srSheet.Cells[index, 14].Style.Fill.BackgroundColor.SetColor(Color.Orange);
                                             }
 
@@ -9121,6 +9221,13 @@ namespace PMS.Controllers
                                       where u.UserName.Equals(username)
                                       select u).FirstOrDefault();
 
+                    var lecturerAppointments = (from a in db.Appointment
+                                                where a.UserId.Equals(userRecord.Id)
+                                                select a).ToList();
+
+                    var paymentRates = (from pr in db.PaymentRate select pr).ToList();
+                    var paymentRateLogs = (from prl in db.PaymentRateLog select prl).ToList();
+
                     var conductedLectureRecords = (from cl in db.ConductedLectures
                                                    join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                                    join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
@@ -9129,6 +9236,8 @@ namespace PMS.Controllers
                                                    select new {
                                                        lectureRecord = cl,
                                                        timetableLectureDate = tt.LectureDate.Value,
+                                                       timetableLectureStartTime = tt.FromTime.Value,
+                                                       timetableLectureEndTime = tt.ToTime.Value,
                                                        facultyId = sem.FacultyId.Value
                                                    }).ToList();
 
@@ -9196,6 +9305,104 @@ namespace PMS.Controllers
                                 if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year 
                                     && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
                                 {
+                                    int usedDesignationId = conductedLectureRecords[i].lectureRecord.UsedDesignationId.Value;
+                                    int newLecturerDesignationId = 0;
+                                    double newPaymentRate = 0;
+
+                                    var consideringAppointments = lecturerAppointments.Where(a => a.AppointmentFrom.Value <= conductedLectureRecords[i].timetableLectureDate
+                                        && (a.AppointmentTo.HasValue ? conductedLectureRecords[i].timetableLectureDate < a.AppointmentTo.Value : true)).ToList();
+
+                                    foreach (var appointment in consideringAppointments)
+                                    {
+                                        if (appointment.AppointmentTo.HasValue)
+                                        {
+                                            DateTime appointmentToDate = appointment.AppointmentTo.Value;
+
+                                            if (conductedLectureRecords[i].timetableLectureDate < appointmentToDate)
+                                            {
+                                                newLecturerDesignationId = appointment.DesignationId;
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (appointment.IsActive == true)
+                                            {
+                                                newLecturerDesignationId = appointment.DesignationId;
+                                            }
+                                        }
+                                    }
+
+                                    if (newLecturerDesignationId != usedDesignationId && newLecturerDesignationId != 0)
+                                    {
+                                        DateTime lectureEndDateTime = new DateTime(conductedLectureRecords[i].timetableLectureDate.Year, conductedLectureRecords[i].timetableLectureDate.Month,
+                                            conductedLectureRecords[i].timetableLectureDate.Day, conductedLectureRecords[i].timetableLectureEndTime.Hours, conductedLectureRecords[i].timetableLectureEndTime.Minutes,
+                                            conductedLectureRecords[i].timetableLectureEndTime.Seconds, conductedLectureRecords[i].timetableLectureEndTime.Milliseconds);
+
+                                        var checkingPaymentRate = paymentRates.Where(pr => pr.DesignationId.Equals(newLecturerDesignationId) && pr.FacultyId.Value.Equals(facultyId)).FirstOrDefault();
+
+                                        if (checkingPaymentRate != null)
+                                        {
+                                            if (checkingPaymentRate.ModifiedDate <= lectureEndDateTime)
+                                            {
+                                                if (checkingPaymentRate.IsApproved == true)
+                                                {
+                                                    newPaymentRate = checkingPaymentRate.RatePerHour;
+                                                }
+                                                else
+                                                {
+                                                    if (checkingPaymentRate.SentForApproval == true || checkingPaymentRate.IsApproved == false)
+                                                    {
+                                                        newPaymentRate = checkingPaymentRate.OldRatePerHour;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var checkingPRLogs = paymentRateLogs.Where(prl => prl.PaymentRateId.Equals(checkingPaymentRate.Id)
+                                                    && !prl.ModifiedDate.Equals(checkingPaymentRate.ModifiedDate)).OrderByDescending(r => r.ModifiedDate).ToList();
+
+                                                foreach (var prLog in checkingPRLogs)
+                                                {
+                                                    if (prLog.ModifiedDate <= lectureEndDateTime)
+                                                    {
+                                                        if (prLog.IsApproved == true)
+                                                        {
+                                                            newPaymentRate = prLog.RatePerHour;
+                                                        }
+                                                        else
+                                                        {
+                                                            if (prLog.SentForApproval == true || prLog.IsApproved == false)
+                                                            {
+                                                                newPaymentRate = prLog.OldRatePerHour;
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        TimeSpan duration = DateTime.Parse(conductedLectureRecords[i].timetableLectureEndTime.ToString()).Subtract(DateTime.Parse(conductedLectureRecords[i].timetableLectureStartTime.ToString()));
+
+                                        int numbeofHours = duration.Hours;
+                                        int numbeofMinutes = duration.Minutes;
+                                        double newPaymentAmount = 0.00;
+
+                                        if (numbeofHours != 0)
+                                        {
+                                            newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofHours;
+                                        }
+
+                                        if (numbeofMinutes != 0)
+                                        {
+                                            newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                        }
+
+                                        conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
+                                        conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
+                                        conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+                                    }
                                     conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
                                     conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
                                     conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
@@ -9210,6 +9417,104 @@ namespace PMS.Controllers
                             if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year
                                     && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
                             {
+                                int usedDesignationId = conductedLectureRecords[i].lectureRecord.UsedDesignationId.Value;
+                                int newLecturerDesignationId = 0;
+                                double newPaymentRate = 0;
+
+                                var consideringAppointments = lecturerAppointments.Where(a => a.AppointmentFrom.Value <= conductedLectureRecords[i].timetableLectureDate
+                                    && (a.AppointmentTo.HasValue ? conductedLectureRecords[i].timetableLectureDate < a.AppointmentTo.Value : true)).ToList();
+
+                                foreach (var appointment in consideringAppointments)
+                                {
+                                    if (appointment.AppointmentTo.HasValue)
+                                    {
+                                        DateTime appointmentToDate = appointment.AppointmentTo.Value;
+
+                                        if (conductedLectureRecords[i].timetableLectureDate < appointmentToDate)
+                                        {
+                                            newLecturerDesignationId = appointment.DesignationId;
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (appointment.IsActive == true)
+                                        {
+                                            newLecturerDesignationId = appointment.DesignationId;
+                                        }
+                                    }
+                                }
+
+                                if (newLecturerDesignationId != usedDesignationId && newLecturerDesignationId != 0)
+                                {
+                                    DateTime lectureEndDateTime = new DateTime(conductedLectureRecords[i].timetableLectureDate.Year, conductedLectureRecords[i].timetableLectureDate.Month,
+                                        conductedLectureRecords[i].timetableLectureDate.Day, conductedLectureRecords[i].timetableLectureEndTime.Hours, conductedLectureRecords[i].timetableLectureEndTime.Minutes,
+                                        conductedLectureRecords[i].timetableLectureEndTime.Seconds, conductedLectureRecords[i].timetableLectureEndTime.Milliseconds);
+
+                                    var checkingPaymentRate = paymentRates.Where(pr => pr.DesignationId.Equals(newLecturerDesignationId) && pr.FacultyId.Value.Equals(facultyId)).FirstOrDefault();
+
+                                    if (checkingPaymentRate != null)
+                                    {
+                                        if (checkingPaymentRate.ModifiedDate <= lectureEndDateTime)
+                                        {
+                                            if (checkingPaymentRate.IsApproved == true)
+                                            {
+                                                newPaymentRate = checkingPaymentRate.RatePerHour;
+                                            }
+                                            else
+                                            {
+                                                if (checkingPaymentRate.SentForApproval == true || checkingPaymentRate.IsApproved == false)
+                                                {
+                                                    newPaymentRate = checkingPaymentRate.OldRatePerHour;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var checkingPRLogs = paymentRateLogs.Where(prl => prl.PaymentRateId.Equals(checkingPaymentRate.Id)
+                                                && !prl.ModifiedDate.Equals(checkingPaymentRate.ModifiedDate)).OrderByDescending(r => r.ModifiedDate).ToList();
+
+                                            foreach (var prLog in checkingPRLogs)
+                                            {
+                                                if (prLog.ModifiedDate <= lectureEndDateTime)
+                                                {
+                                                    if (prLog.IsApproved == true)
+                                                    {
+                                                        newPaymentRate = prLog.RatePerHour;
+                                                    }
+                                                    else
+                                                    {
+                                                        if (prLog.SentForApproval == true || prLog.IsApproved == false)
+                                                        {
+                                                            newPaymentRate = prLog.OldRatePerHour;
+                                                        }
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    TimeSpan duration = DateTime.Parse(conductedLectureRecords[i].timetableLectureEndTime.ToString()).Subtract(DateTime.Parse(conductedLectureRecords[i].timetableLectureStartTime.ToString()));
+
+                                    int numbeofHours = duration.Hours;
+                                    int numbeofMinutes = duration.Minutes;
+                                    double newPaymentAmount = 0.00;
+
+                                    if (numbeofHours != 0)
+                                    {
+                                        newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofHours;
+                                    }
+
+                                    if (numbeofMinutes != 0)
+                                    {
+                                        newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                    }
+
+                                    conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
+                                    conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
+                                    conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+                                }
                                 conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
                                 conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
                                 conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
@@ -9683,6 +9988,8 @@ namespace PMS.Controllers
                                                                      join u in db.AspNetUsers on tt.LecturerId equals u.Id into tt_u
                                                                      from usr in tt_u.DefaultIfEmpty()
                                                                      join ttl in db.Title on usr.EmployeeTitle equals ttl.TitleId
+                                                                     join dsg in db.Designation on cl.UsedDesignationId equals dsg.DesignationId into cl_dsg
+                                                                     from des in cl_dsg.DefaultIfEmpty()
                                                                      where !string.IsNullOrEmpty(cl.CurrentStage.Value.ToString()) && tt.LecturerId.Equals(id) && cl.ActualLectureDate.Year.Equals(lectureMonthInDateTime.Year)
                                                                      && cl.ActualLectureDate.Month.Equals(lectureMonthInDateTime.Month) && cl.IsActive.Equals(true)
                                                                      && tt.IsActive.Equals(true)
@@ -9704,6 +10011,8 @@ namespace PMS.Controllers
                                                                          CurrentStageDisplayName = cl.CurrentStageDisplayName,
                                                                          IsApprovedOrRejected = cl.IsApprovedOrRejected,
                                                                          ApprovedOrRejectedRemark = cl.ApprovedOrRejectedRemark,
+                                                                         UsedDesignationName = des != null ? des.DesignationName : null,
+                                                                         UsedPaymentRate = cl.UsedPaymentRate,
                                                                          PaymentAmount = cl.PaymentAmount,
                                                                          IsActive = cl.IsActive,
                                                                          canSendToApproval = false,
@@ -12508,7 +12817,7 @@ namespace PMS.Controllers
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/21
         [HttpPost]
-        public ActionResult RefreshPayments()
+        public ActionResult RefreshPaymentsByUser()
         {
             using (PMSEntities db = new PMSEntities())
             {
@@ -12517,9 +12826,6 @@ namespace PMS.Controllers
                     var currentDateTime = DateTime.Now;
                     var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
                     var username = "ranga.a";
-                    //int deadlineDays = 0;
-
-                    //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
                     List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
 
                     var userRecord = (from u in db.AspNetUsers
@@ -12723,5 +13029,337 @@ namespace PMS.Controllers
                 }
             }
         }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/24
+        [HttpGet]
+        public ActionResult UserProfile()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "ranga.a";
+
+                var titles = (from t in db.Title
+                              where t.IsActive.Equals(true)
+                              select new
+                              {
+                                  Text = t.TitleName,
+                                  Value = t.TitleId
+                              }).ToList();
+
+                List<SelectListItem> titleList = new SelectList(titles, "Value", "Text").ToList();
+                ViewBag.titleList = titleList;
+
+                UserCC userrecord = (from u in db.AspNetUsers
+                                     where u.UserName.Equals(username)
+                                     select new UserCC
+                                     {
+                                         Id = u.Id,
+                                         EmployeeNumber = u.EmployeeNumber,
+                                         EmployeeTitle = u.EmployeeTitle,
+                                         FirstName = u.FirstName,
+                                         LastName = u.LastName,
+                                         Email = u.Email,
+                                         PhoneNumber = u.PhoneNumber
+                                     }).FirstOrDefault<UserCC>();
+
+                return View(userrecord);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/24
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditProfile(UserCC user)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    UserFunctions usrFunctions = new UserFunctions();
+                    string employeeNumber = usrFunctions.GenerateEmployeeNumber(usrFunctions.ExtractNumbers(user.EmployeeNumber));
+                    AspNetUsers validationRecord = (from u in db.AspNetUsers
+                                                    where u.EmployeeNumber.Equals(employeeNumber) || ((u.FirstName.Equals(user.FirstName)) && (u.LastName.Equals(user.LastName)))
+                                                    || u.Email.Equals(user.Email)
+                                                    select u).FirstOrDefault<AspNetUsers>();
+
+                    AspNetUsers editingUser = (from u in db.AspNetUsers where u.Id.Equals(user.Id) select u).FirstOrDefault<AspNetUsers>();
+
+                    if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle
+                        || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName
+                        || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber)
+                    {
+                        if (validationRecord != null && validationRecord.Id != user.Id)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = "This User Already Exist"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            editingUser.EmployeeNumber = employeeNumber;
+                            editingUser.EmployeeTitle = user.EmployeeTitle;
+                            editingUser.FirstName = user.FirstName;
+                            editingUser.LastName = user.LastName;
+                            editingUser.PhoneNumber = user.PhoneNumber;
+                            editingUser.ModifiedBy = "Ranga";
+                            editingUser.ModifiedDate = dateTime;
+
+                            db.Entry(editingUser).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            return Json(new
+                            {
+                                success = true,
+                                message = "Successfully Updated"
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "You didn't make any new changes"
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/24
+        //[HttpPost]
+        //public ActionResult RefreshPayments(string id)
+        //{
+        //    using (PMSEntities db = new PMSEntities())
+        //    {
+        //        try
+        //        {
+        //            var currentDateTime = DateTime.Now;
+        //            var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+        //            //var username = "ranga.a";
+        //            List<ConfigurationalSettings> deadlineCSList = new List<ConfigurationalSettings>();
+
+        //            var userRecord = (from u in db.AspNetUsers
+        //                              join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
+        //                              from fac in u_f.DefaultIfEmpty()
+        //                              where u.Id.Equals(id)
+        //                              select u).FirstOrDefault();
+
+        //            var lecturerAppointments = (from a in db.Appointment
+        //                                        where a.UserId.Equals(userRecord.Id)
+        //                                        select a).ToList();
+
+        //            var paymentRates = (from pr in db.PaymentRate select pr).ToList();
+        //            var paymentRateLogs = (from prl in db.PaymentRateLog select prl).ToList();
+
+        //            var conductedLectureRecords = (from cl in db.ConductedLectures
+        //                                           join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
+        //                                           join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
+        //                                           where tt.LecturerId.Equals(userRecord.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+        //                                           && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
+        //                                           select new
+        //                                           {
+        //                                               lectureRecord = cl,
+        //                                               timetableLectureDate = tt.LectureDate.Value,
+        //                                               timetableLectureStartTime = tt.FromTime.Value,
+        //                                               timetableLectureEndTime = tt.ToTime.Value,
+        //                                               facultyId = sem.FacultyId.Value
+        //                                           }).ToList();
+        //            List<string> x = new List<string>();
+        //            for (var i = 0; i < conductedLectureRecords.Count; i++)
+        //            {
+        //                int deadlineDays = 0;
+        //                var paymentConsideringMonth = 0;
+        //                int facultyId = conductedLectureRecords[i].facultyId;
+
+        //                var checkingCS = deadlineCSList.Find(cs => cs.FacultyId.Value == facultyId);
+
+        //                if (checkingCS == null)
+        //                {
+        //                    var deadlineCSRecord = (from c in db.ConfigurationalSettings
+        //                                            where c.ConfigurationKey.Equals("Lecture Submission Deadline Date") && c.FacultyId.Value == facultyId
+        //                                            select c).FirstOrDefault();
+
+        //                    if (deadlineCSRecord != null)
+        //                    {
+        //                        deadlineCSList.Add(deadlineCSRecord);
+        //                        deadlineDays = int.Parse(deadlineCSRecord.ConfigurationValue);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    deadlineDays = int.Parse(checkingCS.ConfigurationValue);
+        //                }
+
+        //                if (deadlineDays != 0)
+        //                {
+        //                    var deadlineDate = monthStartDate.AddDays(deadlineDays);
+
+        //                    if (currentDateTime <= deadlineDate)
+        //                    {
+        //                        paymentConsideringMonth = currentDateTime.AddMonths(-1).Month;
+        //                    }
+        //                    else
+        //                    {
+        //                        paymentConsideringMonth = currentDateTime.Month;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    paymentConsideringMonth = currentDateTime.Month;
+        //                }
+
+        //                if (conductedLectureRecords[i].timetableLectureDate.Year == currentDateTime.Year
+        //                            && conductedLectureRecords[i].timetableLectureDate.Month == paymentConsideringMonth)
+        //                {
+        //                    int usedDesignationId = conductedLectureRecords[i].lectureRecord.UsedDesignationId.Value;
+        //                    int newLecturerDesignationId = 0;
+        //                    double newPaymentRate = 0;
+
+        //                    var consideringAppointments = lecturerAppointments.Where(a => a.AppointmentFrom.Value <= conductedLectureRecords[i].timetableLectureDate
+        //                        && (a.AppointmentTo.HasValue ? conductedLectureRecords[i].timetableLectureDate < a.AppointmentTo.Value : true)).ToList();
+
+        //                    foreach (var appointment in consideringAppointments)
+        //                    {
+        //                        if (appointment.AppointmentTo.HasValue)
+        //                        {
+        //                            DateTime appointmentToDate = appointment.AppointmentTo.Value;
+
+        //                            if (conductedLectureRecords[i].timetableLectureDate < appointmentToDate)
+        //                            {
+        //                                newLecturerDesignationId = appointment.DesignationId;
+        //                                break;
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            if (appointment.IsActive == true)
+        //                            {
+        //                                newLecturerDesignationId = appointment.DesignationId;
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (newLecturerDesignationId != usedDesignationId && newLecturerDesignationId != 0)
+        //                    {
+        //                        DateTime lectureEndDateTime = new DateTime(conductedLectureRecords[i].timetableLectureDate.Year, conductedLectureRecords[i].timetableLectureDate.Month,
+        //                            conductedLectureRecords[i].timetableLectureDate.Day, conductedLectureRecords[i].timetableLectureEndTime.Hours, conductedLectureRecords[i].timetableLectureEndTime.Minutes,
+        //                            conductedLectureRecords[i].timetableLectureEndTime.Seconds, conductedLectureRecords[i].timetableLectureEndTime.Milliseconds);
+
+        //                        var checkingPaymentRate = paymentRates.Where(pr => pr.DesignationId.Equals(newLecturerDesignationId) && pr.FacultyId.Value.Equals(facultyId)).FirstOrDefault();
+
+        //                        if (checkingPaymentRate != null)
+        //                        {
+        //                            if (checkingPaymentRate.ModifiedDate <= lectureEndDateTime)
+        //                            {
+        //                                if (checkingPaymentRate.IsApproved == true)
+        //                                {
+        //                                    newPaymentRate = checkingPaymentRate.RatePerHour;
+        //                                }
+        //                                else
+        //                                {
+        //                                    if (checkingPaymentRate.SentForApproval == true || checkingPaymentRate.IsApproved == false)
+        //                                    {
+        //                                        newPaymentRate = checkingPaymentRate.OldRatePerHour;
+        //                                    }
+        //                                }
+        //                            }
+        //                            else
+        //                            {
+        //                                var checkingPRLogs = paymentRateLogs.Where(prl => prl.PaymentRateId.Equals(checkingPaymentRate.Id)
+        //                                    && !prl.ModifiedDate.Equals(checkingPaymentRate.ModifiedDate)).OrderByDescending(r => r.ModifiedDate).ToList();
+
+        //                                foreach (var prLog in checkingPRLogs)
+        //                                {
+        //                                    if (prLog.ModifiedDate <= lectureEndDateTime)
+        //                                    {
+        //                                        if (prLog.IsApproved == true)
+        //                                        {
+        //                                            newPaymentRate = prLog.RatePerHour;
+        //                                        }
+        //                                        else
+        //                                        {
+        //                                            if (prLog.SentForApproval == true || prLog.IsApproved == false)
+        //                                            {
+        //                                                newPaymentRate = prLog.OldRatePerHour;
+        //                                            }
+        //                                        }
+        //                                        break;
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+
+        //                        TimeSpan duration = DateTime.Parse(conductedLectureRecords[i].timetableLectureEndTime.ToString()).Subtract(DateTime.Parse(conductedLectureRecords[i].timetableLectureStartTime.ToString()));
+
+        //                        int numbeofHours = duration.Hours;
+        //                        int numbeofMinutes = duration.Minutes;
+        //                        double newPaymentAmount = 0.00;
+
+        //                        if (numbeofHours != 0)
+        //                        {
+        //                            newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofHours;
+        //                        }
+
+        //                        if (numbeofMinutes != 0)
+        //                        {
+        //                            newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+        //                        }
+
+        //                        conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
+        //                        conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
+        //                        conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+
+        //                        db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+        //                    }
+        //                }
+        //            }
+
+        //            db.SaveChanges();
+
+        //            return Json(new
+        //            {
+        //                success = true,
+        //                message = "Payments Successfully Refreshed"
+        //            }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+        //        {
+        //            Exception raise = dbEx;
+        //            foreach (var validationErrors in dbEx.EntityValidationErrors)
+        //            {
+        //                foreach (var validationError in validationErrors.ValidationErrors)
+        //                {
+        //                    string message = string.Format("{0}:{1}",
+        //                        validationErrors.Entry.Entity.ToString(),
+        //                        validationError.ErrorMessage);
+        //                    raise = new InvalidOperationException(message, raise);
+        //                }
+        //            }
+        //            throw raise;
+        //        }
+        //    }
+        //}
     }
 }

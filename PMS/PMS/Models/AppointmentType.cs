@@ -19,6 +19,7 @@ namespace PMS.Models
         public AppointmentType()
         {
             this.Appointment = new HashSet<Appointment>();
+            this.AppointmentLog = new HashSet<AppointmentLog>();
         }
     
         public int AppointmentTypeId { get; set; }
@@ -33,5 +34,7 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AppointmentLog> AppointmentLog { get; set; }
     }
 }

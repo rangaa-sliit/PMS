@@ -29,6 +29,7 @@ namespace PMS.Models
         public virtual DbSet<AccessGroup> AccessGroup { get; set; }
         public virtual DbSet<AccessGroupClaims> AccessGroupClaims { get; set; }
         public virtual DbSet<Appointment> Appointment { get; set; }
+        public virtual DbSet<AppointmentLog> AppointmentLog { get; set; }
         public virtual DbSet<AppointmentType> AppointmentType { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
@@ -48,13 +49,13 @@ namespace PMS.Models
         public virtual DbSet<Institute> Institute { get; set; }
         public virtual DbSet<Intake> Intake { get; set; }
         public virtual DbSet<LectureHall> LectureHall { get; set; }
-        public virtual DbSet<LecturerAssignments> LecturerAssignments { get; set; }
         public virtual DbSet<LectureTimetable> LectureTimetable { get; set; }
         public virtual DbSet<LectureTimetableLog> LectureTimetableLog { get; set; }
         public virtual DbSet<LectureType> LectureType { get; set; }
         public virtual DbSet<Notifications> Notifications { get; set; }
         public virtual DbSet<PaymentRate> PaymentRate { get; set; }
         public virtual DbSet<PaymentRateLog> PaymentRateLog { get; set; }
+        public virtual DbSet<RoleClaims> RoleClaims { get; set; }
         public virtual DbSet<SemesterRegistration> SemesterRegistration { get; set; }
         public virtual DbSet<SemesterSubject> SemesterSubject { get; set; }
         public virtual DbSet<SemesterSubjectLIC> SemesterSubjectLIC { get; set; }

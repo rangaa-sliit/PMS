@@ -269,7 +269,7 @@ Developed On:- 2022/11/05*@
             $("#loader").show();
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("RefreshPayments", "SA")',
+                url: '@Url.Action("RefreshPaymentsByUser", "SA")',
                 success: function (data) {
                     $("#loader").hide();
                     if (data.success) {

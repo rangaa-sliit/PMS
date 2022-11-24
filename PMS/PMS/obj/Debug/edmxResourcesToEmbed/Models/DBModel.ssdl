@@ -41,6 +41,28 @@
     <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="Comment" Type="nvarchar" MaxLength="256" />
+    <Property Name="AutoUpdateRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="AutoUpdateDate" Type="datetime" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="AppointmentLog">
+    <Key>
+      <PropertyRef Name="AppointmentLogId" />
+    </Key>
+    <Property Name="AppointmentLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AppointmentId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="AppointmentTypeId" Type="int" Nullable="false" />
+    <Property Name="DesignationId" Type="int" Nullable="false" />
+    <Property Name="AppointmentFrom" Type="date" />
+    <Property Name="AppointmentTo" Type="date" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="256" />
+    <Property Name="AutoUpdateRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="AutoUpdateDate" Type="datetime" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="AppointmentType">
@@ -114,6 +136,10 @@
     <Property Name="Email" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="UserName" Type="nvarchar" MaxLength="150" Nullable="false" />
     <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
+    <Property Name="PhotoPath" Type="nvarchar(max)" />
+    <Property Name="Photo_Name" Type="nvarchar" MaxLength="100" />
+    <Property Name="Photo_Data" Type="varbinary(max)" />
+    <Property Name="Photo_ContentType" Type="nvarchar" MaxLength="100" />
     <Property Name="FacultyId" Type="int" />
     <Property Name="DepartmentId" Type="int" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -204,6 +230,9 @@
     <Property Name="UsedDesignationId" Type="int" />
     <Property Name="UsedPaymentRate" Type="float" />
     <Property Name="PaymentAmount" Type="float" />
+    <Property Name="PaymentAutoRefreshedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="PaymentAutoRefreshedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="PaymentRefreshedDate" Type="datetime" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -240,6 +269,9 @@
     <Property Name="UsedDesignationId" Type="int" />
     <Property Name="UsedPaymentRate" Type="float" />
     <Property Name="PaymentAmount" Type="float" />
+    <Property Name="PaymentAutoRefreshedRemark" Type="nvarchar" MaxLength="500" />
+    <Property Name="PaymentAutoRefreshedBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="PaymentRefreshedDate" Type="datetime" />
     <Property Name="IsFinalApproved" Type="bit" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -364,21 +396,6 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
-  <EntityType Name="LecturerAssignments">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="SemesterId" Type="int" Nullable="false" />
-    <Property Name="LecturerId" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="SemesterSubjectId" Type="int" Nullable="false" />
-    <Property Name="StudentBatches" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="IsActive" Type="bit" Nullable="false" />
-  </EntityType>
   <EntityType Name="LectureTimetable">
     <Key>
       <PropertyRef Name="TimetableId" />
@@ -438,7 +455,8 @@
       <PropertyRef Name="NotificationId" />
     </Key>
     <Property Name="NotificationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="UserId" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="256" />
+    <Property Name="SubWorkflowId" Type="int" />
     <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -498,6 +516,19 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
     <Property Name="PaymentRateId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="RoleClaims">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="ClaimId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
@@ -716,6 +747,54 @@
         <PropertyRef Name="DesignationId" />
       </Principal>
       <Dependent Role="Appointment">
+        <PropertyRef Name="DesignationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AppointmentLog_Appointment">
+    <End Role="Appointment" Type="Self.Appointment" Multiplicity="1" />
+    <End Role="AppointmentLog" Type="Self.AppointmentLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Appointment">
+        <PropertyRef Name="AppointmentId" />
+      </Principal>
+      <Dependent Role="AppointmentLog">
+        <PropertyRef Name="AppointmentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AppointmentLog_AppointmentType">
+    <End Role="AppointmentType" Type="Self.AppointmentType" Multiplicity="1" />
+    <End Role="AppointmentLog" Type="Self.AppointmentLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AppointmentType">
+        <PropertyRef Name="AppointmentTypeId" />
+      </Principal>
+      <Dependent Role="AppointmentLog">
+        <PropertyRef Name="AppointmentTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AppointmentLog_AspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="AppointmentLog" Type="Self.AppointmentLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AppointmentLog">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AppointmentLog_Designation">
+    <End Role="Designation" Type="Self.Designation" Multiplicity="1" />
+    <End Role="AppointmentLog" Type="Self.AppointmentLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Designation">
+        <PropertyRef Name="DesignationId" />
+      </Principal>
+      <Dependent Role="AppointmentLog">
         <PropertyRef Name="DesignationId" />
       </Dependent>
     </ReferentialConstraint>
@@ -1034,42 +1113,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_LecturerAssignments_AspNetUsers">
-    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
-    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="AspNetUsers">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="LecturerAssignments">
-        <PropertyRef Name="LecturerId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_LecturerAssignments_SemesterRegistration">
-    <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="1" />
-    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="SemesterRegistration">
-        <PropertyRef Name="SemesterId" />
-      </Principal>
-      <Dependent Role="LecturerAssignments">
-        <PropertyRef Name="SemesterId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_LecturerAssignments_SemesterSubject">
-    <End Role="SemesterSubject" Type="Self.SemesterSubject" Multiplicity="1" />
-    <End Role="LecturerAssignments" Type="Self.LecturerAssignments" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="SemesterSubject">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="LecturerAssignments">
-        <PropertyRef Name="SemesterSubjectId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_LectureTimetable_AspNetUsers">
     <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
     <End Role="LectureTimetable" Type="Self.LectureTimetable" Multiplicity="*" />
@@ -1203,7 +1246,7 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="FK_Notifications_AspNetUsers">
-    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
     <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="AspNetUsers">
@@ -1211,6 +1254,18 @@
       </Principal>
       <Dependent Role="Notifications">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Notifications_SubWorkflows">
+    <End Role="SubWorkflows" Type="Self.SubWorkflows" Multiplicity="0..1" />
+    <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SubWorkflows">
+        <PropertyRef Name="SubWorkflowId" />
+      </Principal>
+      <Dependent Role="Notifications">
+        <PropertyRef Name="SubWorkflowId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1367,6 +1422,30 @@
       </Principal>
       <Dependent Role="PaymentRateLog">
         <PropertyRef Name="SubjectId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RoleClaims_AspNetRoles">
+    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+    <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetRoles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="RoleClaims">
+        <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RoleClaims_Claim">
+    <End Role="Claim" Type="Self.Claim" Multiplicity="1" />
+    <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Claim">
+        <PropertyRef Name="ClaimId" />
+      </Principal>
+      <Dependent Role="RoleClaims">
+        <PropertyRef Name="ClaimId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1638,6 +1717,7 @@
     <EntitySet Name="AccessGroup" EntityType="Self.AccessGroup" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AccessGroupClaims" EntityType="Self.AccessGroupClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AppointmentLog" EntityType="Self.AppointmentLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -1657,13 +1737,13 @@
     <EntitySet Name="Institute" EntityType="Self.Institute" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Intake" EntityType="Self.Intake" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureHall" EntityType="Self.LectureHall" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="LecturerAssignments" EntityType="Self.LecturerAssignments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureTimetable" EntityType="Self.LectureTimetable" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureTimetableLog" EntityType="Self.LectureTimetableLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="LectureType" EntityType="Self.LectureType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="RoleClaims" EntityType="Self.RoleClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubjectLIC" EntityType="Self.SemesterSubjectLIC" Schema="dbo" store:Type="Tables" />
@@ -1694,6 +1774,22 @@
     <AssociationSet Name="FK_Appointment_Designation" Association="Self.FK_Appointment_Designation">
       <End Role="Designation" EntitySet="Designation" />
       <End Role="Appointment" EntitySet="Appointment" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AppointmentLog_Appointment" Association="Self.FK_AppointmentLog_Appointment">
+      <End Role="Appointment" EntitySet="Appointment" />
+      <End Role="AppointmentLog" EntitySet="AppointmentLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AppointmentLog_AppointmentType" Association="Self.FK_AppointmentLog_AppointmentType">
+      <End Role="AppointmentType" EntitySet="AppointmentType" />
+      <End Role="AppointmentLog" EntitySet="AppointmentLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AppointmentLog_AspNetUsers" Association="Self.FK_AppointmentLog_AspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="AppointmentLog" EntitySet="AppointmentLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AppointmentLog_Designation" Association="Self.FK_AppointmentLog_Designation">
+      <End Role="Designation" EntitySet="Designation" />
+      <End Role="AppointmentLog" EntitySet="AppointmentLog" />
     </AssociationSet>
     <AssociationSet Name="FK_AspNetRoles_AccessGroup" Association="Self.FK_AspNetRoles_AccessGroup">
       <End Role="AccessGroup" EntitySet="AccessGroup" />
@@ -1799,18 +1895,6 @@
       <End Role="Campus" EntitySet="Campus" />
       <End Role="LectureHall" EntitySet="LectureHall" />
     </AssociationSet>
-    <AssociationSet Name="FK_LecturerAssignments_AspNetUsers" Association="Self.FK_LecturerAssignments_AspNetUsers">
-      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
-    </AssociationSet>
-    <AssociationSet Name="FK_LecturerAssignments_SemesterRegistration" Association="Self.FK_LecturerAssignments_SemesterRegistration">
-      <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
-      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
-    </AssociationSet>
-    <AssociationSet Name="FK_LecturerAssignments_SemesterSubject" Association="Self.FK_LecturerAssignments_SemesterSubject">
-      <End Role="SemesterSubject" EntitySet="SemesterSubject" />
-      <End Role="LecturerAssignments" EntitySet="LecturerAssignments" />
-    </AssociationSet>
     <AssociationSet Name="FK_LectureTimetable_AspNetUsers" Association="Self.FK_LectureTimetable_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
       <End Role="LectureTimetable" EntitySet="LectureTimetable" />
@@ -1857,6 +1941,10 @@
     </AssociationSet>
     <AssociationSet Name="FK_Notifications_AspNetUsers" Association="Self.FK_Notifications_AspNetUsers">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Notifications" EntitySet="Notifications" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Notifications_SubWorkflows" Association="Self.FK_Notifications_SubWorkflows">
+      <End Role="SubWorkflows" EntitySet="SubWorkflows" />
       <End Role="Notifications" EntitySet="Notifications" />
     </AssociationSet>
     <AssociationSet Name="FK_PaymentRate_Degree" Association="Self.FK_PaymentRate_Degree">
@@ -1910,6 +1998,14 @@
     <AssociationSet Name="FK_PaymentRateLog_Subject" Association="Self.FK_PaymentRateLog_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RoleClaims_AspNetRoles" Association="Self.FK_RoleClaims_AspNetRoles">
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+      <End Role="RoleClaims" EntitySet="RoleClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RoleClaims_Claim" Association="Self.FK_RoleClaims_Claim">
+      <End Role="Claim" EntitySet="Claim" />
+      <End Role="RoleClaims" EntitySet="RoleClaims" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="Self.FK_SemesterRegistration_CalendarPeriod">
       <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />

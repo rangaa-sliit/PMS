@@ -17,7 +17,6 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SemesterSubject()
         {
-            this.LecturerAssignments = new HashSet<LecturerAssignments>();
             this.LectureTimetable = new HashSet<LectureTimetable>();
             this.LectureTimetableLog = new HashSet<LectureTimetableLog>();
             this.SemesterSubjectLIC = new HashSet<SemesterSubjectLIC>();
@@ -32,8 +31,6 @@ namespace PMS.Models
         public string ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LecturerAssignments> LecturerAssignments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LectureTimetable> LectureTimetable { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

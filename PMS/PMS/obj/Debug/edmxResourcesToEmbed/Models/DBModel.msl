@@ -33,6 +33,8 @@
       <EntityTypeMapping TypeName="PMSModel.Appointment">
         <MappingFragment StoreEntitySet="Appointment">
           <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="AutoUpdateDate" ColumnName="AutoUpdateDate" />
+          <ScalarProperty Name="AutoUpdateRemark" ColumnName="AutoUpdateRemark" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
           <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
@@ -44,6 +46,27 @@
           <ScalarProperty Name="AppointmentTypeId" ColumnName="AppointmentTypeId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="AppointmentId" ColumnName="AppointmentId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AppointmentLog">
+      <EntityTypeMapping TypeName="PMSModel.AppointmentLog">
+        <MappingFragment StoreEntitySet="AppointmentLog">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="AutoUpdateDate" ColumnName="AutoUpdateDate" />
+          <ScalarProperty Name="AutoUpdateRemark" ColumnName="AutoUpdateRemark" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="AppointmentTo" ColumnName="AppointmentTo" />
+          <ScalarProperty Name="AppointmentFrom" ColumnName="AppointmentFrom" />
+          <ScalarProperty Name="DesignationId" ColumnName="DesignationId" />
+          <ScalarProperty Name="AppointmentTypeId" ColumnName="AppointmentTypeId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="AppointmentId" ColumnName="AppointmentId" />
+          <ScalarProperty Name="AppointmentLogId" ColumnName="AppointmentLogId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -131,6 +154,10 @@
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+          <ScalarProperty Name="Photo_ContentType" ColumnName="Photo_ContentType" />
+          <ScalarProperty Name="Photo_Data" ColumnName="Photo_Data" />
+          <ScalarProperty Name="Photo_Name" ColumnName="Photo_Name" />
+          <ScalarProperty Name="PhotoPath" ColumnName="PhotoPath" />
           <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
           <ScalarProperty Name="UserName" ColumnName="UserName" />
           <ScalarProperty Name="Email" ColumnName="Email" />
@@ -195,6 +222,9 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
+          <ScalarProperty Name="PaymentRefreshedDate" ColumnName="PaymentRefreshedDate" />
+          <ScalarProperty Name="PaymentAutoRefreshedBy" ColumnName="PaymentAutoRefreshedBy" />
+          <ScalarProperty Name="PaymentAutoRefreshedRemark" ColumnName="PaymentAutoRefreshedRemark" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
           <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
           <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
@@ -231,6 +261,9 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="IsFinalApproved" ColumnName="IsFinalApproved" />
+          <ScalarProperty Name="PaymentRefreshedDate" ColumnName="PaymentRefreshedDate" />
+          <ScalarProperty Name="PaymentAutoRefreshedBy" ColumnName="PaymentAutoRefreshedBy" />
+          <ScalarProperty Name="PaymentAutoRefreshedRemark" ColumnName="PaymentAutoRefreshedRemark" />
           <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
           <ScalarProperty Name="UsedPaymentRate" ColumnName="UsedPaymentRate" />
           <ScalarProperty Name="UsedDesignationId" ColumnName="UsedDesignationId" />
@@ -384,22 +417,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="LecturerAssignments">
-      <EntityTypeMapping TypeName="PMSModel.LecturerAssignments">
-        <MappingFragment StoreEntitySet="LecturerAssignments">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="StudentBatches" ColumnName="StudentBatches" />
-          <ScalarProperty Name="SemesterSubjectId" ColumnName="SemesterSubjectId" />
-          <ScalarProperty Name="LecturerId" ColumnName="LecturerId" />
-          <ScalarProperty Name="SemesterId" ColumnName="SemesterId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="LectureTimetable">
       <EntityTypeMapping TypeName="PMSModel.LectureTimetable">
         <MappingFragment StoreEntitySet="LectureTimetable">
@@ -466,6 +483,7 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="SubWorkflowId" ColumnName="SubWorkflowId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="NotificationId" ColumnName="NotificationId" />
         </MappingFragment>
@@ -522,6 +540,20 @@
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
           <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
           <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RoleClaims">
+      <EntityTypeMapping TypeName="PMSModel.RoleClaims">
+        <MappingFragment StoreEntitySet="RoleClaims">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

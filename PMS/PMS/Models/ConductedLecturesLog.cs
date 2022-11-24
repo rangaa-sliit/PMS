@@ -39,6 +39,9 @@ namespace PMS.Models
         public Nullable<int> UsedDesignationId { get; set; }
         public Nullable<double> UsedPaymentRate { get; set; }
         public Nullable<double> PaymentAmount { get; set; }
+        public string PaymentAutoRefreshedRemark { get; set; }
+        public string PaymentAutoRefreshedBy { get; set; }
+        public Nullable<System.DateTime> PaymentRefreshedDate { get; set; }
         public bool IsFinalApproved { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
