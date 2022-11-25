@@ -28,6 +28,7 @@ Developed On:- 2022/10/18*@
             <input type="file" name="semTimetableExcel" id="semTimetableExcel" style="display: none;" onchange="onExcelUpload()" />
             <button type="button" class="btn btn-outline-success btn-sm mt-2 usrBtn float-right" onclick="uploadSemesterTimetable()"><i class="fa fa-upload"></i> Upload Timetable</button>
             <a class="btn btn-outline-success btn-sm mr-2 mt-2 usrBtn float-right" href="javascript:DownloadSemesterTimetableFormat('@Url.Action("DownloadSemesterTimetableFormat", "SA")')"><i class="fa fa-download"></i> Download Sample Format</a>
+            <button type="button" class="btn btn-outline-primary btn-sm mr-2 mt-2 float-right" onclick="ViewSTExample()"><i class="fa fa-eye"></i> View Instrcutions</button>
             <div class="table-responsive">
                 <table id="semesterTimetableTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -45,6 +46,83 @@ Developed On:- 2022/10/18*@
                 </div>
                 <div class="modal-body" id="studentBatchFormContent">
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewSTExampleModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Semester Timetable Excel Upload Instructions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                        <tr>
+                            <td>Subject Code</td>
+                            <td>Subject Code from 'Semester Subjects' Sheet</td>
+                            <td>IT1110</td>
+                        </tr>
+                        <tr>
+                            <td>Start Date</td>
+                            <td>Session Starting Date</td>
+                            <td>1/1/2022</td>
+                        </tr>
+                        <tr>
+                            <td>No. of Consecutive Weeks (Optional)</td>
+                            <td>No. of Consecutive Weeks as Integer Value (If Value is entered lecture sessions will be created for mentioned No. of weeks)</td>
+                            <td>15</td>
+                        </tr>
+                        <tr>
+                            <td>End Date (Optional)</td>
+                            <td>End Date as Integer Value (If Value is entered lecture sessions will be created till the mentioned End Date)</td>
+                            <td>3/1/2022</td>
+                        </tr>
+                        <tr>
+                            <td>Time From (24 Hrs)</td>
+                            <td>Session Starting Time</td>
+                            <td>8:00</td>
+                        </tr>
+                        <tr>
+                            <td>Time To (24 Hrs)</td>
+                            <td>Session Ending Time</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>Lecture Type</td>
+                            <td>Lecture Type Name from 'Lecture types' Sheet</td>
+                            <td>Lecture</td>
+                        </tr>
+                        <tr>
+                            <td>Location</td>
+                            <td>Location Id from 'Locations (Lecture Halls)' Sheet</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Lecturers</td>
+                            <td>Comma Separated Employee Numbers from 'Lecturers' sheet</td>
+                            <td>EMPxxxx, EMPyyyy</td>
+                        </tr>
+                        <tr>
+                            <td>LIC</td>
+                            <td>LIC's Employee Number from 'Lecturers' sheet</td>
+                            <td>Empzzzz</td>
+                        </tr>
+                        <tr>
+                            <td>Student Batches</td>
+                            <td>Comma Separated Student Batch Names from 'Student Batches' sheet</td>
+                            <td>Batch 1, Batch 2</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
@@ -200,6 +278,10 @@ Developed On:- 2022/10/18*@
             else {
                 window.location.href = url + "/" + timetableId + "/View";
             }
+        }
+
+        function ViewSTExample() {
+            $("#viewSTExampleModal").modal("show");
         }
     </script>
 }
