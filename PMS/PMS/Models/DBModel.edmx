@@ -31,6 +31,19 @@
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="AccessGroupRoleClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AccessGroupClaimId" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Appointment">
           <Key>
             <PropertyRef Name="AppointmentId" />
@@ -522,19 +535,6 @@
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="PaymentRateId" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="RoleClaims">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="ClaimId" Type="int" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-          <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-        </EntityType>
         <EntityType Name="SemesterRegistration">
           <Key>
             <PropertyRef Name="SemesterId" />
@@ -717,6 +717,30 @@
             </Principal>
             <Dependent Role="AccessGroupClaims">
               <PropertyRef Name="ClaimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccessGroupRoleClaims_AccessGroupClaims">
+          <End Role="AccessGroupClaims" Type="Self.AccessGroupClaims" Multiplicity="1" />
+          <End Role="AccessGroupRoleClaims" Type="Self.AccessGroupRoleClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccessGroupClaims">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccessGroupRoleClaims">
+              <PropertyRef Name="AccessGroupClaimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccessGroupRoleClaims_AspNetRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+          <End Role="AccessGroupRoleClaims" Type="Self.AccessGroupRoleClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccessGroupRoleClaims">
+              <PropertyRef Name="RoleId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1430,30 +1454,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_RoleClaims_AspNetRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
-          <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetRoles">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RoleClaims">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RoleClaims_Claim">
-          <End Role="Claim" Type="Self.Claim" Multiplicity="1" />
-          <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Claim">
-              <PropertyRef Name="ClaimId" />
-            </Principal>
-            <Dependent Role="RoleClaims">
-              <PropertyRef Name="ClaimId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_SemesterRegistration_CalendarPeriod">
           <End Role="CalendarPeriod" Type="Self.CalendarPeriod" Multiplicity="0..1" />
           <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
@@ -1721,6 +1721,7 @@
         <EntityContainer Name="PMSModelStoreContainer">
           <EntitySet Name="AccessGroup" EntityType="Self.AccessGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AccessGroupClaims" EntityType="Self.AccessGroupClaims" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccessGroupRoleClaims" EntityType="Self.AccessGroupRoleClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AppointmentLog" EntityType="Self.AppointmentLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
@@ -1748,7 +1749,6 @@
           <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RoleClaims" EntityType="Self.RoleClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SemesterSubjectLIC" EntityType="Self.SemesterSubjectLIC" Schema="dbo" store:Type="Tables" />
@@ -1767,6 +1767,14 @@
           <AssociationSet Name="FK_AccessGroupClaims_Claim" Association="Self.FK_AccessGroupClaims_Claim">
             <End Role="Claim" EntitySet="Claim" />
             <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccessGroupRoleClaims_AccessGroupClaims" Association="Self.FK_AccessGroupRoleClaims_AccessGroupClaims">
+            <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+            <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccessGroupRoleClaims_AspNetRoles" Association="Self.FK_AccessGroupRoleClaims_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_Appointment_AppointmentType" Association="Self.FK_Appointment_AppointmentType">
             <End Role="AppointmentType" EntitySet="AppointmentType" />
@@ -2004,14 +2012,6 @@
             <End Role="Subject" EntitySet="Subject" />
             <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
           </AssociationSet>
-          <AssociationSet Name="FK_RoleClaims_AspNetRoles" Association="Self.FK_RoleClaims_AspNetRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="RoleClaims" EntitySet="RoleClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RoleClaims_Claim" Association="Self.FK_RoleClaims_Claim">
-            <End Role="Claim" EntitySet="Claim" />
-            <End Role="RoleClaims" EntitySet="RoleClaims" />
-          </AssociationSet>
           <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="Self.FK_SemesterRegistration_CalendarPeriod">
             <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />
             <End Role="SemesterRegistration" EntitySet="SemesterRegistration" />
@@ -2108,6 +2108,7 @@
         <EntityContainer Name="PMSEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AccessGroup" EntityType="PMSModel.AccessGroup" />
           <EntitySet Name="AccessGroupClaims" EntityType="PMSModel.AccessGroupClaims" />
+          <EntitySet Name="AccessGroupRoleClaims" EntityType="PMSModel.AccessGroupRoleClaims" />
           <EntitySet Name="Appointment" EntityType="PMSModel.Appointment" />
           <EntitySet Name="AppointmentLog" EntityType="PMSModel.AppointmentLog" />
           <EntitySet Name="AppointmentType" EntityType="PMSModel.AppointmentType" />
@@ -2135,7 +2136,6 @@
           <EntitySet Name="Notifications" EntityType="PMSModel.Notifications" />
           <EntitySet Name="PaymentRate" EntityType="PMSModel.PaymentRate" />
           <EntitySet Name="PaymentRateLog" EntityType="PMSModel.PaymentRateLog" />
-          <EntitySet Name="RoleClaims" EntityType="PMSModel.RoleClaims" />
           <EntitySet Name="SemesterRegistration" EntityType="PMSModel.SemesterRegistration" />
           <EntitySet Name="SemesterSubject" EntityType="PMSModel.SemesterSubject" />
           <EntitySet Name="SemesterSubjectLIC" EntityType="PMSModel.SemesterSubjectLIC" />
@@ -2159,9 +2159,17 @@
             <End Role="Claim" EntitySet="Claim" />
             <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
           </AssociationSet>
+          <AssociationSet Name="FK_AccessGroupRoleClaims_AccessGroupClaims" Association="PMSModel.FK_AccessGroupRoleClaims_AccessGroupClaims">
+            <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+            <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
+          </AssociationSet>
           <AssociationSet Name="FK_UserClaims_AccessGroupClaims" Association="PMSModel.FK_UserClaims_AccessGroupClaims">
             <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
             <End Role="UserClaims" EntitySet="UserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AccessGroupRoleClaims_AspNetRoles" Association="PMSModel.FK_AccessGroupRoleClaims_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_Appointment_AppointmentType" Association="PMSModel.FK_Appointment_AppointmentType">
             <End Role="AppointmentType" EntitySet="AppointmentType" />
@@ -2194,10 +2202,6 @@
           <AssociationSet Name="FK_AspNetUserRoles_AspNetRoles_RoleId" Association="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RoleClaims_AspNetRoles" Association="PMSModel.FK_RoleClaims_AspNetRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="RoleClaims" EntitySet="RoleClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_SubWorkflows_AspNetRoles" Association="PMSModel.FK_SubWorkflows_AspNetRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
@@ -2270,10 +2274,6 @@
           <AssociationSet Name="FK_LectureHall_Campus" Association="PMSModel.FK_LectureHall_Campus">
             <End Role="Campus" EntitySet="Campus" />
             <End Role="LectureHall" EntitySet="LectureHall" />
-          </AssociationSet>
-          <AssociationSet Name="FK_RoleClaims_Claim" Association="PMSModel.FK_RoleClaims_Claim">
-            <End Role="Claim" EntitySet="Claim" />
-            <End Role="RoleClaims" EntitySet="RoleClaims" />
           </AssociationSet>
           <AssociationSet Name="FK_ConductedLectures_Designation" Association="PMSModel.FK_ConductedLectures_Designation">
             <End Role="Designation" EntitySet="Designation" />
@@ -2517,7 +2517,23 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AccessGroupClaims_AccessGroup" FromRole="AccessGroupClaims" ToRole="AccessGroup" />
           <NavigationProperty Name="Claim" Relationship="PMSModel.FK_AccessGroupClaims_Claim" FromRole="AccessGroupClaims" ToRole="Claim" />
+          <NavigationProperty Name="AccessGroupRoleClaims" Relationship="PMSModel.FK_AccessGroupRoleClaims_AccessGroupClaims" FromRole="AccessGroupClaims" ToRole="AccessGroupRoleClaims" />
           <NavigationProperty Name="UserClaims" Relationship="PMSModel.FK_UserClaims_AccessGroupClaims" FromRole="AccessGroupClaims" ToRole="UserClaims" />
+        </EntityType>
+        <EntityType Name="AccessGroupRoleClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AccessGroupClaimId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AccessGroupRoleClaims_AccessGroupClaims" FromRole="AccessGroupRoleClaims" ToRole="AccessGroupClaims" />
+          <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_AccessGroupRoleClaims_AspNetRoles" FromRole="AccessGroupRoleClaims" ToRole="AspNetRoles" />
         </EntityType>
         <EntityType Name="Appointment">
           <Key>
@@ -2595,8 +2611,8 @@
           <Property Name="NormalizedName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="AccessGroupId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="AccessGroup" Relationship="PMSModel.FK_AspNetRoles_AccessGroup" FromRole="AspNetRoles" ToRole="AccessGroup" />
+          <NavigationProperty Name="AccessGroupRoleClaims" Relationship="PMSModel.FK_AccessGroupRoleClaims_AspNetRoles" FromRole="AspNetRoles" ToRole="AccessGroupRoleClaims" />
           <NavigationProperty Name="AspNetUserRoles" Relationship="PMSModel.FK_AspNetUserRoles_AspNetRoles_RoleId" FromRole="AspNetRoles" ToRole="AspNetUserRoles" />
-          <NavigationProperty Name="RoleClaims" Relationship="PMSModel.FK_RoleClaims_AspNetRoles" FromRole="AspNetRoles" ToRole="RoleClaims" />
           <NavigationProperty Name="SubWorkflows" Relationship="PMSModel.FK_SubWorkflows_AspNetRoles" FromRole="AspNetRoles" ToRole="SubWorkflows" />
         </EntityType>
         <EntityType Name="AspNetUserClaims">
@@ -2732,7 +2748,6 @@
           <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AccessGroupClaims" Relationship="PMSModel.FK_AccessGroupClaims_Claim" FromRole="Claim" ToRole="AccessGroupClaims" />
-          <NavigationProperty Name="RoleClaims" Relationship="PMSModel.FK_RoleClaims_Claim" FromRole="Claim" ToRole="RoleClaims" />
         </EntityType>
         <EntityType Name="ConductedLectures">
           <Key>
@@ -3133,21 +3148,6 @@
           <NavigationProperty Name="Specialization" Relationship="PMSModel.FK_PaymentRateLog_Specialization" FromRole="PaymentRateLog" ToRole="Specialization" />
           <NavigationProperty Name="Subject" Relationship="PMSModel.FK_PaymentRateLog_Subject" FromRole="PaymentRateLog" ToRole="Subject" />
         </EntityType>
-        <EntityType Name="RoleClaims">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="ClaimId" Type="Int32" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AspNetRoles" Relationship="PMSModel.FK_RoleClaims_AspNetRoles" FromRole="RoleClaims" ToRole="AspNetRoles" />
-          <NavigationProperty Name="Claim" Relationship="PMSModel.FK_RoleClaims_Claim" FromRole="RoleClaims" ToRole="Claim" />
-        </EntityType>
         <EntityType Name="SemesterRegistration">
           <Key>
             <PropertyRef Name="SemesterId" />
@@ -3385,6 +3385,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AccessGroupRoleClaims_AccessGroupClaims">
+          <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="1" />
+          <End Type="PMSModel.AccessGroupRoleClaims" Role="AccessGroupRoleClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccessGroupClaims">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccessGroupRoleClaims">
+              <PropertyRef Name="AccessGroupClaimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserClaims_AccessGroupClaims">
           <End Type="PMSModel.AccessGroupClaims" Role="AccessGroupClaims" Multiplicity="1" />
           <End Type="PMSModel.UserClaims" Role="UserClaims" Multiplicity="*" />
@@ -3394,6 +3406,18 @@
             </Principal>
             <Dependent Role="UserClaims">
               <PropertyRef Name="AccessGroupClaimId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AccessGroupRoleClaims_AspNetRoles">
+          <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1" />
+          <End Type="PMSModel.AccessGroupRoleClaims" Role="AccessGroupRoleClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AccessGroupRoleClaims">
+              <PropertyRef Name="RoleId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3489,18 +3513,6 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="AspNetUserRoles">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RoleClaims_AspNetRoles">
-          <End Type="PMSModel.AspNetRoles" Role="AspNetRoles" Multiplicity="1" />
-          <End Type="PMSModel.RoleClaims" Role="RoleClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetRoles">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="RoleClaims">
               <PropertyRef Name="RoleId" />
             </Dependent>
           </ReferentialConstraint>
@@ -3720,18 +3732,6 @@
             </Principal>
             <Dependent Role="LectureHall">
               <PropertyRef Name="CampusId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_RoleClaims_Claim">
-          <End Type="PMSModel.Claim" Role="Claim" Multiplicity="1" />
-          <End Type="PMSModel.RoleClaims" Role="RoleClaims" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Claim">
-              <PropertyRef Name="ClaimId" />
-            </Principal>
-            <Dependent Role="RoleClaims">
-              <PropertyRef Name="ClaimId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4405,6 +4405,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="AccessGroupRoleClaims">
+            <EntityTypeMapping TypeName="PMSModel.AccessGroupRoleClaims">
+              <MappingFragment StoreEntitySet="AccessGroupRoleClaims">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="AccessGroupClaimId" ColumnName="AccessGroupClaimId" />
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Appointment">
             <EntityTypeMapping TypeName="PMSModel.Appointment">
               <MappingFragment StoreEntitySet="Appointment">
@@ -4916,20 +4930,6 @@
                 <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
                 <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
                 <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RoleClaims">
-            <EntityTypeMapping TypeName="PMSModel.RoleClaims">
-              <MappingFragment StoreEntitySet="RoleClaims">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

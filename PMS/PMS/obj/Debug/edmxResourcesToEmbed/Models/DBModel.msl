@@ -29,6 +29,20 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="AccessGroupRoleClaims">
+      <EntityTypeMapping TypeName="PMSModel.AccessGroupRoleClaims">
+        <MappingFragment StoreEntitySet="AccessGroupRoleClaims">
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="AccessGroupClaimId" ColumnName="AccessGroupClaimId" />
+          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Appointment">
       <EntityTypeMapping TypeName="PMSModel.Appointment">
         <MappingFragment StoreEntitySet="Appointment">
@@ -540,20 +554,6 @@
           <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
           <ScalarProperty Name="SpecializationId" ColumnName="SpecializationId" />
           <ScalarProperty Name="DegreeId" ColumnName="DegreeId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="RoleClaims">
-      <EntityTypeMapping TypeName="PMSModel.RoleClaims">
-        <MappingFragment StoreEntitySet="RoleClaims">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
-          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

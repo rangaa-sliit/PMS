@@ -4875,6 +4875,34 @@ namespace PMS.Controllers
         }
 
         //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/25
+        [HttpPost]
+        public ActionResult GetClaimsByRole(UserClaimCC userClaimCC)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<AccessGroupClaim_ClaimCC> claimList = new List<AccessGroupClaim_ClaimCC>();
+
+                if (userClaimCC.SelectedUserRoleIds.Count != 0)
+                {
+                    claimList = (from agrc in db.AccessGroupRoleClaims
+                                 join agc in db.AccessGroupClaims on agrc.AccessGroupClaimId equals agc.Id
+                                 join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                 where userClaimCC.SelectedUserRoleIds.Contains(agrc.RoleId) && agrc.IsActive.Equals(true)
+                                 && agc.IsActive.Equals(true) && c.IsActive.Equals(true)
+                                 select new AccessGroupClaim_ClaimCC
+                                 {
+                                     RoleId = agrc.RoleId,
+                                     AccessGroupClaimId = agc.Id,
+                                     ClaimName = c.ClaimName
+                                 }).ToList();
+                }
+
+                return Json(claimList, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/09/28
         [HttpPost]
         public ActionResult AddOrEditUserClaim(UserClaimCC userClaimCC)
@@ -13361,5 +13389,150 @@ namespace PMS.Controllers
         //        }
         //    }
         //}
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/25
+        public ActionResult ManageRoleClaims(string id, int operation)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                AccessGroupRoleClaimsCC roleClaimDetails = new AccessGroupRoleClaimsCC();
+                roleClaimDetails.RoleId = id;
+
+                var roleDetails = (from r in db.AspNetRoles
+                                   join ag in db.AccessGroup on r.AccessGroupId equals ag.AccessGroupId
+                                   where r.Id.Equals(id) && ag.AccessGroupId.Equals(operation)
+                                   select new
+                                   {
+                                       roleName = r.Name,
+                                       accessGroupName = ag.AccessGroupName
+                                   }).FirstOrDefault();
+
+                roleClaimDetails.RoleName = roleDetails.roleName;
+                roleClaimDetails.AccessGroupName = roleDetails.accessGroupName;
+                roleClaimDetails.ClaimsList = (from agc in db.AccessGroupClaims
+                                               join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                               where agc.AccessGroupId.Equals(operation) && agc.IsActive.Equals(true) && c.IsActive.Equals(true)
+                                               select new AccessGroupClaim_ClaimCC {
+                                                   AccessGroupClaimId = agc.Id,
+                                                   ClaimName = c.ClaimName
+                                               }).ToList();
+
+                roleClaimDetails.SelectedRoleClaims = (from agrc in db.AccessGroupRoleClaims
+                                                       join agc in db.AccessGroupClaims on agrc.AccessGroupClaimId equals agc.Id
+                                                       join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                                       where agrc.RoleId.Equals(id) && agrc.IsActive.Equals(true)
+                                                       && agc.IsActive.Equals(true) && c.IsActive.Equals(true)
+                                                       select new AccessGroupClaim_ClaimCC {
+                                                           AccessGroupClaimId = agc.Id,
+                                                           ClaimName = c.ClaimName
+                                                       }).ToList();
+
+                return View(roleClaimDetails);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/25
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEditRoleClaim(AccessGroupRoleClaimsCC roleClaimObj)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                try
+                {
+                    var dateTime = DateTime.Now;
+                    var passingClaimList = new JavaScriptSerializer().Deserialize<List<string>>(roleClaimObj.passingRoleClaimIds).ToList();
+                    List<AccessGroupRoleClaims> claimsForRole = (from rc in db.AccessGroupRoleClaims where rc.RoleId == roleClaimObj.RoleId select rc).ToList();
+
+                    if (passingClaimList.Count != 0)
+                    {
+                        for (int i = 0; i < passingClaimList.Count; i++)
+                        {
+                            if (claimsForRole.Find(rc => rc.AccessGroupClaimId == int.Parse(passingClaimList[i])) == null)
+                            {
+                                AccessGroupRoleClaims roleClaim = new AccessGroupRoleClaims();
+                                roleClaim.RoleId = roleClaimObj.RoleId;
+                                roleClaim.AccessGroupClaimId = int.Parse(passingClaimList[i]);
+                                roleClaim.CreatedBy = "Ranga";
+                                roleClaim.CreatedDate = dateTime;
+                                roleClaim.ModifiedBy = "Ranga";
+                                roleClaim.ModifiedDate = dateTime;
+                                roleClaim.IsActive = true;
+
+                                db.AccessGroupRoleClaims.Add(roleClaim);
+                            }
+                            else
+                            {
+                                int matchingIndex = claimsForRole.FindIndex(rc => rc.AccessGroupClaimId == int.Parse(passingClaimList[i]));
+                                if (claimsForRole[matchingIndex].IsActive == false)
+                                {
+                                    claimsForRole[matchingIndex].IsActive = true;
+                                    claimsForRole[matchingIndex].ModifiedBy = "Ranga";
+                                    claimsForRole[matchingIndex].ModifiedDate = dateTime;
+
+                                    db.Entry(claimsForRole[matchingIndex]).State = EntityState.Modified;
+                                }
+                                claimsForRole.RemoveAt(claimsForRole.FindIndex(agc => agc.AccessGroupClaimId == int.Parse(passingClaimList[i])));
+                            }
+                        }
+
+                        db.SaveChanges();
+
+                        if (claimsForRole.Count != 0)
+                        {
+                            for (int j = 0; j < claimsForRole.Count; j++)
+                            {
+                                claimsForRole[j].IsActive = false;
+                                claimsForRole[j].ModifiedBy = "Ranga";
+                                claimsForRole[j].ModifiedDate = dateTime;
+
+                                db.Entry(claimsForRole[j]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        if (claimsForRole.Count != 0)
+                        {
+                            for (int i = 0; i < claimsForRole.Count; i++)
+                            {
+                                claimsForRole[i].IsActive = false;
+                                claimsForRole[i].ModifiedBy = "Ranga";
+                                claimsForRole[i].ModifiedDate = dateTime;
+
+                                db.Entry(claimsForRole[i]).State = EntityState.Modified;
+                            }
+
+                            db.SaveChanges();
+                        }
+                    }
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Successfully Saved"
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+        }
     }
 }

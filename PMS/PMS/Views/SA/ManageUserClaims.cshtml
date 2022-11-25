@@ -178,6 +178,7 @@ Developed On:- 2022/09/27*@
         var userId;
         var selectedUserGroups = [];
         var selectedUserRoles = [];
+        var roleClaims = [];
 
         $(document).ready(function () {
             userId = window.location.pathname.toString().split('/')[3];
@@ -187,7 +188,7 @@ Developed On:- 2022/09/27*@
             selectedUserGroups = [];
 
             $("input:checkbox[name=userGroup]:checked").each(function () {
-                selectedUserGroups.push($(this).val());
+                selectedUserGroups.push($(this).val().toString());
             });
 
             var postData = {
@@ -234,23 +235,75 @@ Developed On:- 2022/09/27*@
                 })
             }
             else {
+                $("#userRolesCardBody").html("");
                 $("#userClaimsCardBody").html("");
-                $("#userClaimsCardBody").html("");
+            }
+
+            if (selectedUserGroups.length != 0) {
+                $("#userClaimsCardBody").removeAttr('hidden');
+            }
+            else {
+                $("#userClaimsCardBody").attr('hidden', true);
             }
         }
 
         function onUserRoleChange(roleVal) {
             selectedUserRoles = [];
 
+            if ($("#ur-" + roleVal).prop('checked') == false) {
+                var removingRole = [];
+                removingRole.push(roleVal);
+                var removingData = {
+                    SelectedUserRoleIds: removingRole
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetClaimsByRole", "SA")',
+                    data: removingData,
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            if ($("#cl-" + data[i].AccessGroupClaimId).length != 0) {
+                                $("#cl-" + data[i].AccessGroupClaimId).prop('checked', false);
+                            }
+                        }
+                    }
+                })
+                //var matchingRoleClaims = roleClaims.filter(c => c.RoleId == roleVal);
+                //if (matchingRoleClaims.length != 0) {
+                //    for (var i = 0; i < matchingRoleClaims.length; i++) {
+                //        if ($("#cl-" + matchingRoleClaims[i].AccessGroupClaimId).length != 0) {
+                //            $("#cl-" + matchingRoleClaims[i].AccessGroupClaimId).prop('checked', false);
+                //        }
+                //    }
+                //}
+            }
+
             $("input:checkbox[name=userRole]:checked").each(function () {
                 selectedUserRoles.push($(this).val());
             });
 
+            var postData = {
+                SelectedUserRoleIds: selectedUserRoles
+            };
+
             if (selectedUserRoles.length != 0) {
-                $("#userClaimsCardBody").removeAttr('hidden');
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetClaimsByRole", "SA")',
+                    data: postData,
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            //roleClaims.push(data[i]);
+                            if ($("#cl-" + data[i].AccessGroupClaimId).length != 0) {
+                                $("#cl-" + data[i].AccessGroupClaimId).prop('checked', true);
+                            }
+                        }
+                    }
+                })
             }
             else {
-                $("#userClaimsCardBody").attr('hidden', true);
+                $("input:checkbox[name=userClaim]").prop('checked', false);
             }
         }
 

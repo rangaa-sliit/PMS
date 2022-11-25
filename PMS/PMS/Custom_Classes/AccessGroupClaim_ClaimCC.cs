@@ -7,6 +7,7 @@ namespace PMS.Custom_Classes
 {
     public class AccessGroupClaim_ClaimCC
     {
+        public string RoleId { get; set; }
         public int AccessGroupClaimId { get; set; }
         public string ClaimName { get; set; }
     }

@@ -26,6 +26,19 @@
     <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="AccessGroupRoleClaims">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="AccessGroupClaimId" Type="int" Nullable="false" />
+    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="Appointment">
     <Key>
       <PropertyRef Name="AppointmentId" />
@@ -517,19 +530,6 @@
     <Property Name="IsActive" Type="bit" Nullable="false" />
     <Property Name="PaymentRateId" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="RoleClaims">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="ClaimId" Type="int" Nullable="false" />
-    <Property Name="CreatedDate" Type="datetime" Nullable="false" />
-    <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
-    <Property Name="ModifiedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
-    <Property Name="IsActive" Type="bit" Nullable="false" />
-  </EntityType>
   <EntityType Name="SemesterRegistration">
     <Key>
       <PropertyRef Name="SemesterId" />
@@ -712,6 +712,30 @@
       </Principal>
       <Dependent Role="AccessGroupClaims">
         <PropertyRef Name="ClaimId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AccessGroupRoleClaims_AccessGroupClaims">
+    <End Role="AccessGroupClaims" Type="Self.AccessGroupClaims" Multiplicity="1" />
+    <End Role="AccessGroupRoleClaims" Type="Self.AccessGroupRoleClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AccessGroupClaims">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AccessGroupRoleClaims">
+        <PropertyRef Name="AccessGroupClaimId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AccessGroupRoleClaims_AspNetRoles">
+    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+    <End Role="AccessGroupRoleClaims" Type="Self.AccessGroupRoleClaims" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetRoles">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AccessGroupRoleClaims">
+        <PropertyRef Name="RoleId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -1425,30 +1449,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_RoleClaims_AspNetRoles">
-    <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
-    <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="AspNetRoles">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="RoleClaims">
-        <PropertyRef Name="RoleId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_RoleClaims_Claim">
-    <End Role="Claim" Type="Self.Claim" Multiplicity="1" />
-    <End Role="RoleClaims" Type="Self.RoleClaims" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Claim">
-        <PropertyRef Name="ClaimId" />
-      </Principal>
-      <Dependent Role="RoleClaims">
-        <PropertyRef Name="ClaimId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_SemesterRegistration_CalendarPeriod">
     <End Role="CalendarPeriod" Type="Self.CalendarPeriod" Multiplicity="0..1" />
     <End Role="SemesterRegistration" Type="Self.SemesterRegistration" Multiplicity="*" />
@@ -1716,6 +1716,7 @@
   <EntityContainer Name="PMSModelStoreContainer">
     <EntitySet Name="AccessGroup" EntityType="Self.AccessGroup" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AccessGroupClaims" EntityType="Self.AccessGroupClaims" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="AccessGroupRoleClaims" EntityType="Self.AccessGroupRoleClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AppointmentLog" EntityType="Self.AppointmentLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AppointmentType" EntityType="Self.AppointmentType" Schema="dbo" store:Type="Tables" />
@@ -1743,7 +1744,6 @@
     <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRate" EntityType="Self.PaymentRate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PaymentRateLog" EntityType="Self.PaymentRateLog" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="RoleClaims" EntityType="Self.RoleClaims" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterRegistration" EntityType="Self.SemesterRegistration" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubject" EntityType="Self.SemesterSubject" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SemesterSubjectLIC" EntityType="Self.SemesterSubjectLIC" Schema="dbo" store:Type="Tables" />
@@ -1762,6 +1762,14 @@
     <AssociationSet Name="FK_AccessGroupClaims_Claim" Association="Self.FK_AccessGroupClaims_Claim">
       <End Role="Claim" EntitySet="Claim" />
       <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AccessGroupRoleClaims_AccessGroupClaims" Association="Self.FK_AccessGroupRoleClaims_AccessGroupClaims">
+      <End Role="AccessGroupClaims" EntitySet="AccessGroupClaims" />
+      <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AccessGroupRoleClaims_AspNetRoles" Association="Self.FK_AccessGroupRoleClaims_AspNetRoles">
+      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+      <End Role="AccessGroupRoleClaims" EntitySet="AccessGroupRoleClaims" />
     </AssociationSet>
     <AssociationSet Name="FK_Appointment_AppointmentType" Association="Self.FK_Appointment_AppointmentType">
       <End Role="AppointmentType" EntitySet="AppointmentType" />
@@ -1998,14 +2006,6 @@
     <AssociationSet Name="FK_PaymentRateLog_Subject" Association="Self.FK_PaymentRateLog_Subject">
       <End Role="Subject" EntitySet="Subject" />
       <End Role="PaymentRateLog" EntitySet="PaymentRateLog" />
-    </AssociationSet>
-    <AssociationSet Name="FK_RoleClaims_AspNetRoles" Association="Self.FK_RoleClaims_AspNetRoles">
-      <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-      <End Role="RoleClaims" EntitySet="RoleClaims" />
-    </AssociationSet>
-    <AssociationSet Name="FK_RoleClaims_Claim" Association="Self.FK_RoleClaims_Claim">
-      <End Role="Claim" EntitySet="Claim" />
-      <End Role="RoleClaims" EntitySet="RoleClaims" />
     </AssociationSet>
     <AssociationSet Name="FK_SemesterRegistration_CalendarPeriod" Association="Self.FK_SemesterRegistration_CalendarPeriod">
       <End Role="CalendarPeriod" EntitySet="CalendarPeriod" />

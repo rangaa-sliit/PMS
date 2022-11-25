@@ -19,7 +19,6 @@ namespace PMS.Models
         public Claim()
         {
             this.AccessGroupClaims = new HashSet<AccessGroupClaims>();
-            this.RoleClaims = new HashSet<RoleClaims>();
         }
     
         public int ClaimId { get; set; }
@@ -38,7 +37,5 @@ namespace PMS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccessGroupClaims> AccessGroupClaims { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RoleClaims> RoleClaims { get; set; }
     }
 }

@@ -215,6 +215,8 @@
     <Compile Include="Custom_Classes\MailCC.cs" />
     <Compile Include="Custom_Classes\PaymentRateApprovalCC.cs" />
     <Compile Include="Custom_Classes\ReportsCC.cs" />
+    <Compile Include="Custom_Classes\AccessGroupRoleClaimsCC.cs" />
+    <Compile Include="Custom_Classes\RoleClaim_ClaimCC.cs" />
     <Compile Include="Custom_Classes\SemesterRegistrationCC.cs" />
     <Compile Include="Custom_Classes\SemesterSubjectCC.cs" />
     <Compile Include="Custom_Classes\SemesterTimetableCC.cs" />
@@ -232,6 +234,9 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccessGroupClaims.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccessGroupRoleClaims.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
@@ -331,9 +336,6 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentRateLog.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RoleClaims.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SemesterRegistration.cs">
@@ -618,6 +620,7 @@
     <Content Include="Views\SA\AcademicPaymentReports.cshtml" />
     <Content Include="Views\SA\OpenForModerations.cshtml" />
     <Content Include="Views\SA\UserProfile.cshtml" />
+    <Content Include="Views\SA\ManageRoleClaims.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

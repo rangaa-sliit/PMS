@@ -18,8 +18,8 @@ namespace PMS.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public AspNetRoles()
         {
+            this.AccessGroupRoleClaims = new HashSet<AccessGroupRoleClaims>();
             this.AspNetUserRoles = new HashSet<AspNetUserRoles>();
-            this.RoleClaims = new HashSet<RoleClaims>();
             this.SubWorkflows = new HashSet<SubWorkflows>();
         }
     
@@ -38,9 +38,9 @@ namespace PMS.Models
     
         public virtual AccessGroup AccessGroup { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual ICollection<AccessGroupRoleClaims> AccessGroupRoleClaims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RoleClaims> RoleClaims { get; set; }
+        public virtual ICollection<AspNetUserRoles> AspNetUserRoles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubWorkflows> SubWorkflows { get; set; }
     }

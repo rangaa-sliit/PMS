@@ -74,7 +74,8 @@ Developed On:- 2022/09/20*@
                                 + `<i class='fa fa-ellipsis-v' aria-hidden='true'></i></a>`
                                 + `<div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>`
                                 + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupRole", "SA")/` + data + `', 'View')">View Role</a>`
-                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupRole", "SA")/` + data + `', 'Edit')">Edit Role</a></div></div>`
+                                + `<a class='dropdown-item btn' onclick="PopupAccessGroupRolesForm('@Url.Action("AddOrEditAccessGroupRole", "SA")/` + data + `', 'Edit')">Edit Role</a>`
+                                + `<a class='dropdown-item btn' onclick="NavigateRoleClaimsForm('@Url.Action("ManageRoleClaims", "SA")/` + data + `')">Manage Role Claims</a></div></div>`
                     },
                     "orderable": false,
                     "searchable": false,
@@ -187,6 +188,10 @@ Developed On:- 2022/09/20*@
         function onRoleStatusChange(newStatus) {
             $("#accessGroupRoleSubmitBtn").prop("disabled", false);
             $("#accessGroupRoleClearBtn").prop("disabled", false);
+        }
+
+        function NavigateRoleClaimsForm(url) {
+            window.location.href = url + "/" + accessGroupId;
         }
     </script>
 }
