@@ -43,7 +43,7 @@ namespace PMS.Controllers
                 ViewBag.facultyList = facultyList;
                 //ViewBag.tclhData = this.GetDashboardTotalConductedLectureHours(currentDateTime.Year.ToString(), currentDateTime.Month.ToString());
                 this.GetDashboardFacultyLecturers();
-                //this.AutoUpdateAppointments();
+                this.AutoUpdateAppointments();
 
                 return View();
             }
@@ -2224,6 +2224,99 @@ namespace PMS.Controllers
                             }
                             else
                             {
+                                var appointmentFromDate = editingAppointment.AppointmentFrom.Value;
+                                var appointmentToDate = editingAppointment.AppointmentTo;
+                                var newFromDate = appointment.AppointmentFrom.Value;
+                                var newToDate = appointment.AppointmentTo;
+
+                                List<Appointment> checkingAppointments = (from a in db.Appointment
+                                                                          where a.UserId.Equals(editingAppointment.UserId) && !a.AppointmentId.Equals(editingAppointment.AppointmentId)
+                                                                          //&& ((a.AppointmentTo.HasValue ? appointmentFromDate < a.AppointmentTo.Value : false) || (appointmentToDate.HasValue ? appointmentToDate.Value > a.AppointmentFrom : false))
+                                                                          select a).ToList();
+
+                                var beforeAppointments = checkingAppointments.FindAll(a => a.AppointmentTo.HasValue ? a.AppointmentTo.Value <= appointmentFromDate : false).ToList();
+                                var afterAppointments = checkingAppointments.FindAll(a => appointmentToDate.HasValue ? appointmentToDate.Value <= a.AppointmentFrom.Value : false).ToList();
+
+                                foreach (var bfrAppointment in beforeAppointments)
+                                {
+                                    if (newFromDate < bfrAppointment.AppointmentTo.Value)
+                                    {
+                                        if (newFromDate <= bfrAppointment.AppointmentFrom.Value)
+                                        {
+                                            bfrAppointment.AppointmentTo = bfrAppointment.AppointmentFrom.Value;
+                                            bfrAppointment.IsActive = false;
+                                        }
+                                        else
+                                        {
+                                            bfrAppointment.AppointmentTo = newFromDate;
+
+                                            if (newFromDate >= currentDate)
+                                            {
+                                                bfrAppointment.IsActive = true;
+                                            }
+                                            else
+                                            {
+                                                bfrAppointment.IsActive = false;
+                                            }
+                                        }
+                                    }
+
+                                    db.Entry(bfrAppointment).State = EntityState.Modified;
+                                }
+
+                                db.SaveChanges();
+
+                                foreach (var aftrAppointment in afterAppointments)
+                                {
+                                    if (newToDate.HasValue)
+                                    {
+                                        if (newToDate.Value > aftrAppointment.AppointmentFrom.Value)
+                                        {
+                                            if (aftrAppointment.AppointmentTo.HasValue)
+                                            {
+                                                if (newToDate.Value >= aftrAppointment.AppointmentTo.Value)
+                                                {
+                                                    aftrAppointment.AppointmentFrom = newToDate.Value;
+                                                    aftrAppointment.AppointmentTo = newToDate.Value;
+                                                    aftrAppointment.IsActive = false;
+                                                }
+                                                else
+                                                {
+                                                    aftrAppointment.AppointmentFrom = newToDate.Value;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                aftrAppointment.AppointmentFrom = newToDate.Value;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        aftrAppointment.IsActive = false;
+                                    }
+
+                                    if (aftrAppointment.AppointmentTo.HasValue)
+                                    {
+                                        if (aftrAppointment.AppointmentTo.Value >= currentDate)
+                                        {
+                                            aftrAppointment.IsActive = true;
+                                        }
+                                        else
+                                        {
+                                            aftrAppointment.IsActive = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        aftrAppointment.IsActive = true;
+                                    }
+
+                                    db.Entry(aftrAppointment).State = EntityState.Modified;
+                                }
+
+                                db.SaveChanges();
+
                                 editingAppointment.DesignationId = appointment.DesignationId;
                                 editingAppointment.AppointmentTypeId = appointment.AppointmentTypeId;
                                 editingAppointment.AppointmentFrom = appointment.AppointmentFrom;
@@ -2234,97 +2327,6 @@ namespace PMS.Controllers
 
                                 db.Entry(editingAppointment).State = EntityState.Modified;
                                 db.SaveChanges();
-
-                                //var appointmentFromDate = editingAppointment.AppointmentFrom.Value;
-                                //var appointmentToDate = editingAppointment.AppointmentTo;
-
-                                //List<Appointment> checkingAppointments = (from a in db.Appointment
-                                //                                          where a.UserId.Equals(editingAppointment.UserId) && !a.AppointmentId.Equals(editingAppointment.AppointmentId)
-                                //                                          //&& ((a.AppointmentTo.HasValue ? appointmentFromDate < a.AppointmentTo.Value : false) || (appointmentToDate.HasValue ? appointmentToDate.Value > a.AppointmentFrom : false))
-                                //                                          select a).ToList();
-
-                                //var beforeAppointments = checkingAppointments.FindAll(a => a.AppointmentTo.HasValue ? appointmentFromDate < a.AppointmentTo.Value : false).ToList();
-                                //var afterAppointments = checkingAppointments.FindAll(a => appointmentToDate.HasValue ? appointmentToDate.Value > a.AppointmentFrom.Value : false).ToList();
-
-                                //foreach (var bfrAppointment in beforeAppointments)
-                                //{
-                                //    if (appointmentFromDate < bfrAppointment.AppointmentTo.Value)
-                                //    {
-                                //        if(appointmentFromDate <= bfrAppointment.AppointmentFrom.Value)
-                                //        {
-                                //            bfrAppointment.AppointmentTo = bfrAppointment.AppointmentFrom.Value;
-                                //            bfrAppointment.IsActive = false;
-                                //        }
-                                //        else
-                                //        {
-                                //            bfrAppointment.AppointmentTo = appointmentFromDate;
-
-                                //            if(appointmentFromDate >= currentDate)
-                                //            {
-                                //                bfrAppointment.IsActive = true;
-                                //            }
-                                //            else
-                                //            {
-                                //                bfrAppointment.IsActive = false;
-                                //            }
-                                //        }
-                                //    }
-
-                                //    db.Entry(bfrAppointment).State = EntityState.Modified;
-                                //}
-
-                                //db.SaveChanges();
-
-                                //foreach (var aftrAppointment in afterAppointments)
-                                //{
-                                //    if (appointmentToDate.HasValue)
-                                //    {
-                                //        if (appointmentToDate.Value > aftrAppointment.AppointmentFrom.Value)
-                                //        {
-                                //            if (aftrAppointment.AppointmentTo.HasValue)
-                                //            {
-                                //                if (appointmentToDate.Value >= aftrAppointment.AppointmentTo.Value)
-                                //                {
-                                //                    aftrAppointment.AppointmentFrom = appointmentToDate.Value;
-                                //                    aftrAppointment.AppointmentTo = appointmentToDate.Value;
-                                //                    aftrAppointment.IsActive = false;
-                                //                }
-                                //                else
-                                //                {
-                                //                    aftrAppointment.AppointmentFrom = appointmentToDate.Value;
-                                //                }
-                                //            }
-                                //            else
-                                //            {
-                                //                aftrAppointment.AppointmentFrom = appointmentToDate.Value;
-                                //            }
-                                //        }
-                                //    }
-                                //    else
-                                //    {
-                                //        aftrAppointment.IsActive = false;
-                                //    }
-
-                                //    if (aftrAppointment.AppointmentTo.HasValue)
-                                //    {
-                                //        if (aftrAppointment.AppointmentTo >= currentDate)
-                                //        {
-                                //            aftrAppointment.IsActive = true;
-                                //        }
-                                //        else
-                                //        {
-                                //            aftrAppointment.IsActive = false;
-                                //        }
-                                //    }
-                                //    else
-                                //    {
-                                //        aftrAppointment.IsActive = true;
-                                //    }
-
-                                //    db.Entry(aftrAppointment).State = EntityState.Modified;
-                                //}
-
-                                //db.SaveChanges();
 
                                 return Json(new
                                 {
@@ -8755,7 +8757,7 @@ namespace PMS.Controllers
                                         }
                                     }
 
-                                    if(lecturerDesignationId != 0)
+                                    if (lecturerDesignationId != 0)
                                     {
                                         clObj.UsedDesignationId = lecturerDesignationId;
                                         clLogObj.UsedDesignationId = lecturerDesignationId;
@@ -8763,7 +8765,7 @@ namespace PMS.Controllers
 
                                     clObj.UsedPaymentRate = paymentRate;
                                     clObj.CurrentStageDisplayName = "Saved";
-                                    clObj.PaymentAmount = Math.Round(paymentAmount,2);
+                                    clObj.PaymentAmount = Math.Round(paymentAmount, 2);
                                     clObj.CreatedBy = "Ranga";
                                     clObj.CreatedDate = currentDateTime;
                                     clObj.ModifiedBy = "Ranga";
@@ -8995,7 +8997,7 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/04
-        public ActionResult GetSemesterSubjectLICs()
+        public ActionResult GetSemesterSubjectLICs(int id)
         {
             using (PMSEntities db = new PMSEntities())
             {
@@ -9004,6 +9006,7 @@ namespace PMS.Controllers
                                                         join s in db.Subject on ss.SubjectId equals s.SubjectId
                                                         join u in db.AspNetUsers on ssl.LICId equals u.Id
                                                         join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                                        where ss.SemesterRegistrationId.Equals(id)
                                                         select new SemesterSubjectLICVM
                                                         {
                                                             SSLICId = ssl.SSLICId,
@@ -9734,21 +9737,25 @@ namespace PMS.Controllers
                                  where u.UserName.Equals(username) && ur.IsActive.Equals(true) && r.IsActive.Equals(true)
                                  select r.Id).ToList();
 
-                if (userRecord.faculty != null)
-                {
-                    subWorkflowsList = (from sw in db.SubWorkflows
-                                        join w in db.Workflows on sw.WorkflowId equals w.Id
-                                        where (sw.ConsideringArea != "Initial Level") && w.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && (sw.WorkflowStep >= 2)
-                                        && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
-                                        select sw).ToList();
-                }
-                else
-                {
-                    subWorkflowsList = (from sw in db.SubWorkflows
-                                        join w in db.Workflows on sw.WorkflowId equals w.Id
-                                        where (sw.ConsideringArea != "Initial Level") && (sw.WorkflowStep >= 2) && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
-                                        select sw).ToList();
-                }
+                //if (userRecord.faculty != null)
+                //{
+                //    subWorkflowsList = (from sw in db.SubWorkflows
+                //                        join w in db.Workflows on sw.WorkflowId equals w.Id
+                //                        where (sw.ConsideringArea != "Initial Level") && w.FacultyId.Value.Equals(userRecord.faculty.FacultyId) && (sw.WorkflowStep >= 2)
+                //                        && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
+                //                        select sw).ToList();
+                //}
+                //else
+                //{
+                //    subWorkflowsList = (from sw in db.SubWorkflows
+                //                        join w in db.Workflows on sw.WorkflowId equals w.Id
+                //                        where (sw.ConsideringArea != "Initial Level") && (sw.WorkflowStep >= 2) && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
+                //                        select sw).ToList();
+                //}
+                subWorkflowsList = (from sw in db.SubWorkflows
+                                    join w in db.Workflows on sw.WorkflowId equals w.Id
+                                    where (sw.ConsideringArea != "Initial Level") && (sw.WorkflowStep >= 2) && sw.IsActive.Equals(true) && w.IsActive.Equals(true)
+                                    select sw).ToList();
 
                 List<string> distinctSubWorkflowRoles = subWorkflowsList.Select(sw => sw.WorkflowRole).Distinct().ToList();
 
@@ -11952,10 +11959,10 @@ namespace PMS.Controllers
 
                 for(int i = 0; i < appointmentList.Count; i++)
                 {
-                    var appointmentTo = appointmentList[i].AppointmentTo.Value;
-
-                    if (appointmentTo != null)
+                    if (appointmentList[i].AppointmentTo.HasValue)
                     {
+                        var appointmentTo = appointmentList[i].AppointmentTo.Value;
+
                         DateTime appointmentToDT = new DateTime(appointmentTo.Year, appointmentTo.Month, appointmentTo.Day, 23, 59, 59);
 
                         if (appointmentToDT < currentDateTime)
