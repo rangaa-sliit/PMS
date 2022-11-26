@@ -1,4 +1,4 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Owin.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -9,6 +9,7 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\csi.exe
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\csi.exe.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\csi.rsp
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
@@ -153,7 +154,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.DataSet.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Core.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.EntityFramework.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.AspNet.Identity.Owin.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\Microsoft.Owin.Host.SystemWeb.dll

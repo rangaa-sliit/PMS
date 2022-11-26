@@ -661,6 +661,9 @@
     <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="CurrentStage" Type="Int32" />
     <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsSentToAproval" Type="Boolean" Nullable="false" />
+    <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
     <Property Name="IsApprovedOrRejected" Type="Boolean" />
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -706,6 +709,9 @@
     <Property Name="Comment" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
     <Property Name="CurrentStage" Type="Int32" />
     <Property Name="CurrentStageDisplayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="IsSentToAproval" Type="Boolean" Nullable="false" />
+    <Property Name="SentToApprovalBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="SentToApprovalDate" Type="DateTime" Precision="3" />
     <Property Name="IsApprovedOrRejected" Type="Boolean" />
     <Property Name="ApprovedOrRejectedDate" Type="DateTime" Precision="3" />
     <Property Name="ApprovedOrRejectedBy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />

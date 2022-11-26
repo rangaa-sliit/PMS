@@ -42,6 +42,9 @@ namespace PMS.Models
         public string Comment { get; set; }
         public Nullable<int> CurrentStage { get; set; }
         public string CurrentStageDisplayName { get; set; }
+        public bool IsSentToAproval { get; set; }
+        public string SentToApprovalBy { get; set; }
+        public Nullable<System.DateTime> SentToApprovalDate { get; set; }
         public Nullable<bool> IsApprovedOrRejected { get; set; }
         public Nullable<System.DateTime> ApprovedOrRejectedDate { get; set; }
         public string ApprovedOrRejectedBy { get; set; }

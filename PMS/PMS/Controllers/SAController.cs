@@ -43,7 +43,7 @@ namespace PMS.Controllers
                 ViewBag.facultyList = facultyList;
                 //ViewBag.tclhData = this.GetDashboardTotalConductedLectureHours(currentDateTime.Year.ToString(), currentDateTime.Month.ToString());
                 this.GetDashboardFacultyLecturers();
-                this.AutoUpdateAppointments();
+                //this.AutoUpdateAppointments();
 
                 return View();
             }
@@ -4391,15 +4391,19 @@ namespace PMS.Controllers
                 //                                               orderby a.AppointmentId ascending
                 //                                               select a).ToList();
 
-                var ttd = (from tt in db.LectureTimetable where tt.TimetableId.Equals(6230) select tt).FirstOrDefault();
-
-                DateTime lectureEndDateTime = new DateTime(ttd.LectureDate.Value.Year, ttd.LectureDate.Value.Month,
-                                    ttd.LectureDate.Value.Day, ttd.ToTime.Value.Hours, ttd.ToTime.Value.Minutes,
-                                    ttd.ToTime.Value.Seconds, ttd.ToTime.Value.Milliseconds);
+                //List<FacultyLecturersVM> facLecturers = (from f in db.Faculty
+                //                                         select new
+                //                                         {
+                //                                             f.FacultyName,
+                //                                             FacultyLecturersCount = (from a in db.Appointment
+                //                                                                      join u in db.AspNetUsers on a.UserId equals u.Id
+                //                                                                      where u.FacultyId.Value.Equals(f.FacultyId) && a.IsActive.Equals(true) && u.IsActive.Equals(true)
+                //                                                                      select u.FirstName).Distinct().ToList()
+                //                                         }).ToList();
 
                 return Json(new
                 {
-                    data = lectureEndDateTime.ToString()
+                    data = ""
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -8733,7 +8737,7 @@ namespace PMS.Controllers
 
                                                 if (numbeofMinutes != 0)
                                                 {
-                                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                                    paymentAmount = paymentAmount + ((paymentRate / 60) * numbeofMinutes);
                                                 }
                                             }
                                         }
@@ -8747,7 +8751,7 @@ namespace PMS.Controllers
 
                                         if (numbeofMinutes != 0)
                                         {
-                                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                            paymentAmount = paymentAmount + ((paymentRate / 60) * numbeofMinutes);
                                         }
                                     }
 
@@ -8759,11 +8763,12 @@ namespace PMS.Controllers
 
                                     clObj.UsedPaymentRate = paymentRate;
                                     clObj.CurrentStageDisplayName = "Saved";
-                                    clObj.PaymentAmount = paymentAmount;
+                                    clObj.PaymentAmount = Math.Round(paymentAmount,2);
                                     clObj.CreatedBy = "Ranga";
                                     clObj.CreatedDate = currentDateTime;
                                     clObj.ModifiedBy = "Ranga";
                                     clObj.ModifiedDate = currentDateTime;
+                                    clObj.IsSentToAproval = false;
 
                                     db.ConductedLectures.Add(clObj);
                                     db.SaveChanges();
@@ -8779,12 +8784,13 @@ namespace PMS.Controllers
                                     clLogObj.StudentCount = clObj.StudentCount;
                                     clLogObj.Comment = clObj.Comment;
                                     clLogObj.CurrentStageDisplayName = clObj.CurrentStageDisplayName;
-                                    clObj.UsedPaymentRate = paymentRate;
+                                    clLogObj.UsedPaymentRate = paymentRate;
                                     clLogObj.PaymentAmount = clObj.PaymentAmount;
                                     clLogObj.CreatedDate = clObj.CreatedDate;
                                     clLogObj.CreatedBy = clObj.CreatedBy;
                                     clLogObj.ModifiedDate = clObj.ModifiedDate;
                                     clLogObj.ModifiedBy = clObj.ModifiedBy;
+                                    clLogObj.IsSentToAproval = false;
                                     clLogObj.IsActive = clObj.IsActive;
 
                                     db.ConductedLecturesLog.Add(clLogObj);
@@ -8819,7 +8825,7 @@ namespace PMS.Controllers
                     {
                         ConductedLectures editingConductedLecture = (from cl in db.ConductedLectures where cl.CLId.Equals(clObj.CLId) select cl).FirstOrDefault<ConductedLectures>();
 
-                        if(!string.IsNullOrEmpty(editingConductedLecture.CurrentStage.Value.ToString()))
+                        if (editingConductedLecture.CurrentStage.HasValue)
                         {
                             return Json(new
                             {
@@ -8889,7 +8895,7 @@ namespace PMS.Controllers
 
                                         if (numbeofMinutes != 0)
                                         {
-                                            paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                            paymentAmount = paymentAmount + ((paymentRate / 60) * numbeofMinutes);
                                         }
                                     }
                                 }
@@ -8903,7 +8909,7 @@ namespace PMS.Controllers
 
                                 if (numbeofMinutes != 0)
                                 {
-                                    paymentAmount = paymentAmount + paymentRate * numbeofMinutes;
+                                    paymentAmount = paymentAmount + ((paymentRate / 60) * numbeofMinutes);
                                 }
                             }
 
@@ -8917,7 +8923,7 @@ namespace PMS.Controllers
                             editingConductedLecture.Comment = clObj.Comment;
                             editingConductedLecture.UsedDesignationId = lecturerDesignationId;
                             editingConductedLecture.UsedPaymentRate = paymentRate;
-                            editingConductedLecture.PaymentAmount = paymentAmount;
+                            editingConductedLecture.PaymentAmount = Math.Round(paymentAmount, 2);
                             editingConductedLecture.ModifiedBy = "Ranga";
                             editingConductedLecture.ModifiedDate = currentDateTime;
                             editingConductedLecture.IsActive = clObj.IsActive;
@@ -8942,12 +8948,13 @@ namespace PMS.Controllers
                             clLogObj.Comment = clObj.Comment;
                             clLogObj.CurrentStage = editingConductedLecture.CurrentStage;
                             clLogObj.CurrentStageDisplayName = editingConductedLecture.CurrentStageDisplayName;
-                            clObj.UsedPaymentRate = paymentRate;
-                            clLogObj.PaymentAmount = paymentAmount;
+                            clLogObj.UsedPaymentRate = paymentRate;
+                            clLogObj.PaymentAmount = Math.Round(paymentAmount, 2);
                             clLogObj.CreatedDate = editingConductedLecture.CreatedDate;
                             clLogObj.CreatedBy = editingConductedLecture.CreatedBy;
                             clLogObj.ModifiedDate = currentDateTime;
                             clLogObj.ModifiedBy = "Ranga";
+                            clLogObj.IsSentToAproval = editingConductedLecture.IsSentToAproval;
                             clLogObj.IsActive = clObj.IsActive;
 
                             db.ConductedLecturesLog.Add(clLogObj);
@@ -9241,6 +9248,11 @@ namespace PMS.Controllers
                     var currentDateTime = DateTime.Now;
                     var monthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
                     var username = "ranga.a";
+                    List<string> monthList = new List<string>()
+                    {
+                        "January", "February", "March", "April", "May", "June", "July", 
+                        "August", "September", "October", "November", "December"
+                    };
                     //int deadlineDays = 0;
 
                     //List<ConductedLectures> conductedLectureRecords = new List<ConductedLectures>();
@@ -9248,13 +9260,17 @@ namespace PMS.Controllers
                     List<SubWorkflow_WorkflowCC> nextWorkflows = new List<SubWorkflow_WorkflowCC>();
 
                     var userRecord = (from u in db.AspNetUsers
+                                      join t in db.Title on u.EmployeeTitle equals t.TitleId
                                       join f in db.Faculty on u.FacultyId equals f.FacultyId into u_f
                                       from fac in u_f.DefaultIfEmpty()
                                       where u.UserName.Equals(username)
-                                      select u).FirstOrDefault();
+                                      select new {
+                                          userDetails = u,
+                                          userName = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                      }).FirstOrDefault();
 
                     var lecturerAppointments = (from a in db.Appointment
-                                                where a.UserId.Equals(userRecord.Id)
+                                                where a.UserId.Equals(userRecord.userDetails.Id)
                                                 select a).ToList();
 
                     var paymentRates = (from pr in db.PaymentRate select pr).ToList();
@@ -9263,7 +9279,7 @@ namespace PMS.Controllers
                     var conductedLectureRecords = (from cl in db.ConductedLectures
                                                    join tt in db.LectureTimetable on cl.TimetableId equals tt.TimetableId
                                                    join sem in db.SemesterRegistration on tt.SemesterId equals sem.SemesterId
-                                                   where tt.LecturerId.Equals(userRecord.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
+                                                   where tt.LecturerId.Equals(userRecord.userDetails.Id) && cl.IsActive.Equals(true) && tt.IsActive.Equals(true)
                                                    && string.IsNullOrEmpty(cl.CurrentStage.Value.ToString())
                                                    select new {
                                                        lectureRecord = cl,
@@ -9433,22 +9449,29 @@ namespace PMS.Controllers
 
                                         if (numbeofMinutes != 0)
                                         {
-                                            newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                            newPaymentAmount = newPaymentAmount + ((newPaymentRate / 60) * numbeofMinutes);
                                         }
 
                                         conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
                                         conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
-                                        conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+                                        conductedLectureRecords[i].lectureRecord.PaymentAmount = Math.Round(newPaymentAmount,2);
+                                        conductedLectureRecords[i].lectureRecord.PaymentAutoRefreshedRemark = "Refreshed When Sending to Approval";
+                                        conductedLectureRecords[i].lectureRecord.PaymentAutoRefreshedBy = username;
+                                        conductedLectureRecords[i].lectureRecord.PaymentRefreshedDate = currentDateTime;
 
                                         clLogObj.UsedDesignationId = newLecturerDesignationId;
                                         clLogObj.UsedPaymentRate = newPaymentRate;
-                                        clLogObj.PaymentAmount = newPaymentAmount;
+                                        clLogObj.PaymentAmount = Math.Round(newPaymentAmount, 2);
+                                        clLogObj.PaymentAutoRefreshedRemark = "Refreshed When Sending to Approval";
+                                        clLogObj.PaymentAutoRefreshedBy = username;
+                                        clLogObj.PaymentRefreshedDate = currentDateTime;
                                     }
 
                                     conductedLectureRecords[i].lectureRecord.CurrentStage = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
                                     conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + nextWorkflowRecord.WorkflowRole;
-                                    conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                                    conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+                                    conductedLectureRecords[i].lectureRecord.IsSentToAproval = true;
+                                    conductedLectureRecords[i].lectureRecord.SentToApprovalBy = username;
+                                    conductedLectureRecords[i].lectureRecord.SentToApprovalDate = currentDateTime;
 
                                     db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
 
@@ -9469,9 +9492,24 @@ namespace PMS.Controllers
                                     clLogObj.CreatedBy = conductedLectureRecords[i].lectureRecord.CreatedBy;
                                     clLogObj.ModifiedDate = conductedLectureRecords[i].lectureRecord.ModifiedDate;
                                     clLogObj.ModifiedBy = conductedLectureRecords[i].lectureRecord.ModifiedBy;
+                                    clLogObj.IsSentToAproval = true;
+                                    clLogObj.SentToApprovalBy = username;
+                                    clLogObj.SentToApprovalDate = currentDateTime;
                                     clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
 
                                     db.ConductedLecturesLog.Add(clLogObj);
+
+                                    Notifications notificationObj = new Notifications();
+
+                                    notificationObj.SubWorkflowId = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
+                                    notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
+                                    notificationObj.CreatedDate = currentDateTime;
+                                    notificationObj.CreatedBy = username;
+                                    notificationObj.ModifiedDate = currentDateTime;
+                                    notificationObj.ModifiedBy = username;
+                                    notificationObj.IsActive = true;
+
+                                    db.Notifications.Add(notificationObj);
                                 }
                             }
                         }
@@ -9572,21 +9610,22 @@ namespace PMS.Controllers
 
                                     if (numbeofMinutes != 0)
                                     {
-                                        newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                        newPaymentAmount = newPaymentAmount + ((newPaymentRate / 60) * numbeofMinutes);
                                     }
 
                                     conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
                                     conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
-                                    conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+                                    conductedLectureRecords[i].lectureRecord.PaymentAmount = Math.Round(newPaymentAmount, 2);
 
                                     clLogObj.UsedDesignationId = newLecturerDesignationId;
                                     clLogObj.UsedPaymentRate = newPaymentRate;
-                                    clLogObj.PaymentAmount = newPaymentAmount;
+                                    clLogObj.PaymentAmount = Math.Round(newPaymentAmount, 2);
                                 }
                                 conductedLectureRecords[i].lectureRecord.CurrentStage = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
                                 conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName = "Submitted to " + checkingWorkflow.WorkflowRole;
-                                conductedLectureRecords[i].lectureRecord.ModifiedDate = currentDateTime;
-                                conductedLectureRecords[i].lectureRecord.ModifiedBy = "Ranga";
+                                conductedLectureRecords[i].lectureRecord.IsSentToAproval = true;
+                                conductedLectureRecords[i].lectureRecord.SentToApprovalBy = username;
+                                conductedLectureRecords[i].lectureRecord.SentToApprovalDate = currentDateTime;
 
                                 db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
 
@@ -9607,9 +9646,24 @@ namespace PMS.Controllers
                                 clLogObj.CreatedBy = conductedLectureRecords[i].lectureRecord.CreatedBy;
                                 clLogObj.ModifiedDate = conductedLectureRecords[i].lectureRecord.ModifiedDate;
                                 clLogObj.ModifiedBy = conductedLectureRecords[i].lectureRecord.ModifiedBy;
+                                clLogObj.IsSentToAproval = true;
+                                clLogObj.SentToApprovalBy = username;
+                                clLogObj.SentToApprovalDate = currentDateTime;
                                 clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
 
                                 db.ConductedLecturesLog.Add(clLogObj);
+
+                                Notifications notificationObj = new Notifications();
+
+                                notificationObj.SubWorkflowId = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
+                                notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
+                                notificationObj.CreatedDate = currentDateTime;
+                                notificationObj.CreatedBy = username;
+                                notificationObj.ModifiedDate = currentDateTime;
+                                notificationObj.ModifiedBy = username;
+                                notificationObj.IsActive = true;
+
+                                db.Notifications.Add(notificationObj);
                             }
                         }
                     }
@@ -10441,6 +10495,9 @@ namespace PMS.Controllers
                                 clLogObj.CreatedBy = conductedLectureRecords[i].lectureRecord.CreatedBy;
                                 clLogObj.ModifiedDate = conductedLectureRecords[i].lectureRecord.ModifiedDate;
                                 clLogObj.ModifiedBy = conductedLectureRecords[i].lectureRecord.ModifiedBy;
+                                clLogObj.IsSentToAproval = conductedLectureRecords[i].lectureRecord.IsSentToAproval;
+                                clLogObj.SentToApprovalBy = conductedLectureRecords[i].lectureRecord.SentToApprovalBy;
+                                clLogObj.SentToApprovalDate = conductedLectureRecords[i].lectureRecord.SentToApprovalDate;
                                 clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
 
                                 db.ConductedLecturesLog.Add(clLogObj);
@@ -10514,6 +10571,9 @@ namespace PMS.Controllers
                             clLogObj.CreatedBy = conductedLectureRecords[i].lectureRecord.CreatedBy;
                             clLogObj.ModifiedDate = conductedLectureRecords[i].lectureRecord.ModifiedDate;
                             clLogObj.ModifiedBy = conductedLectureRecords[i].lectureRecord.ModifiedBy;
+                            clLogObj.IsSentToAproval = conductedLectureRecords[i].lectureRecord.IsSentToAproval;
+                            clLogObj.SentToApprovalBy = conductedLectureRecords[i].lectureRecord.SentToApprovalBy;
+                            clLogObj.SentToApprovalDate = conductedLectureRecords[i].lectureRecord.SentToApprovalDate;
                             clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
 
                             db.ConductedLecturesLog.Add(clLogObj);
@@ -12000,7 +12060,6 @@ namespace PMS.Controllers
                     //double paymentRate = 0.0;
                     double paymentAmount = 0.0;
                     bool considerMinimumStudentCount = false;
-                    int lecturerDesignationId = 0;
                     int minimumStudentCount = 0;
 
                     var timetableRecord = (from cl in db.ConductedLectures
@@ -12171,7 +12230,7 @@ namespace PMS.Controllers
 
                                     if (numbeofMinutes != 0)
                                     {
-                                        paymentAmount = paymentAmount + timetableRecord.usedPaymentRate * numbeofMinutes;
+                                        paymentAmount = paymentAmount + ((timetableRecord.usedPaymentRate / 60) * numbeofMinutes);
                                     }
                                 }
                             }
@@ -12185,7 +12244,7 @@ namespace PMS.Controllers
 
                             if (numbeofMinutes != 0)
                             {
-                                paymentAmount = paymentAmount + timetableRecord.usedPaymentRate * numbeofMinutes;
+                                paymentAmount = paymentAmount + ((timetableRecord.usedPaymentRate / 60) * numbeofMinutes);
                             }
                         }
 
@@ -12197,10 +12256,10 @@ namespace PMS.Controllers
                         editingConductedLecture.lectureRecord.StudentBatches = clObj.StudentBatches;
                         editingConductedLecture.lectureRecord.StudentCount = clObj.StudentCount;
                         editingConductedLecture.lectureRecord.Comment = clObj.Comment;
-                        editingConductedLecture.lectureRecord.PaymentAmount = paymentAmount;
+                        editingConductedLecture.lectureRecord.PaymentAmount = Math.Round(paymentAmount, 2);
                         editingConductedLecture.lectureRecord.IsOpenForModerations = true;
                         editingConductedLecture.lectureRecord.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
-                        editingConductedLecture.lectureRecord.ModerationOpenedBy = "Ranga";
+                        editingConductedLecture.lectureRecord.ModerationOpenedBy = username;
                         editingConductedLecture.lectureRecord.ModerationOpenedDate = currentDateTime;
                         editingConductedLecture.lectureRecord.IsActive = clObj.IsActive;
 
@@ -12218,13 +12277,13 @@ namespace PMS.Controllers
                         clLogObj.Comment = clObj.Comment;
                         clLogObj.CurrentStage = editingConductedLecture.lectureRecord.CurrentStage;
                         clLogObj.CurrentStageDisplayName = editingConductedLecture.lectureRecord.CurrentStageDisplayName;
-                        clLogObj.IsApprovedOrRejected = false;
+                        clLogObj.IsApprovedOrRejected = editingConductedLecture.lectureRecord.IsApprovedOrRejected;
                         clLogObj.ApprovedOrRejectedRemark = editingConductedLecture.lectureRecord.ApprovedOrRejectedRemark;
                         clLogObj.ApprovedOrRejectedBy = editingConductedLecture.lectureRecord.ApprovedOrRejectedBy;
                         clLogObj.ApprovedOrRejectedDate = editingConductedLecture.lectureRecord.ApprovedOrRejectedDate;
                         clLogObj.UsedDesignationId = editingConductedLecture.lectureRecord.UsedDesignationId;
                         clLogObj.UsedPaymentRate = editingConductedLecture.lectureRecord.UsedPaymentRate;
-                        clLogObj.PaymentAmount = paymentAmount;
+                        clLogObj.PaymentAmount = Math.Round(paymentAmount, 2);
                         clLogObj.PaymentAutoRefreshedRemark = editingConductedLecture.lectureRecord.PaymentAutoRefreshedRemark;
                         clLogObj.PaymentAutoRefreshedBy = editingConductedLecture.lectureRecord.PaymentAutoRefreshedBy;
                         clLogObj.PaymentRefreshedDate = editingConductedLecture.lectureRecord.PaymentRefreshedDate;
@@ -12236,7 +12295,10 @@ namespace PMS.Controllers
                         clLogObj.IsOpenForModerations = true;
                         clLogObj.ModerationOpenedRemark = clObj.ModerationOpenedRemark;
                         clLogObj.ModerationOpenedDate = currentDateTime;
-                        clLogObj.ModerationOpenedBy = "Ranga";
+                        clLogObj.ModerationOpenedBy = username;
+                        clLogObj.IsSentToAproval = editingConductedLecture.lectureRecord.IsSentToAproval;
+                        clLogObj.SentToApprovalBy = editingConductedLecture.lectureRecord.SentToApprovalBy;
+                        clLogObj.SentToApprovalDate = editingConductedLecture.lectureRecord.SentToApprovalDate;
                         clLogObj.IsActive = clObj.IsActive;
 
                         db.ConductedLecturesLog.Add(clLogObj);
@@ -13175,14 +13237,56 @@ namespace PMS.Controllers
 
                                 if (numbeofMinutes != 0)
                                 {
-                                    newPaymentAmount = newPaymentAmount + newPaymentRate * numbeofMinutes;
+                                    newPaymentAmount = newPaymentAmount + ((newPaymentRate / 60) * numbeofMinutes);
                                 }
 
                                 conductedLectureRecords[i].lectureRecord.UsedDesignationId = newLecturerDesignationId;
                                 conductedLectureRecords[i].lectureRecord.UsedPaymentRate = newPaymentRate;
-                                conductedLectureRecords[i].lectureRecord.PaymentAmount = newPaymentAmount;
+                                conductedLectureRecords[i].lectureRecord.PaymentAmount = Math.Round(newPaymentAmount, 2);
+                                conductedLectureRecords[i].lectureRecord.PaymentAutoRefreshedRemark = "Refreshed By Lecturer";
+                                conductedLectureRecords[i].lectureRecord.PaymentAutoRefreshedBy = username;
+                                conductedLectureRecords[i].lectureRecord.PaymentRefreshedDate = currentDateTime;
+                                conductedLectureRecords[i].lectureRecord.IsSentToAproval = false;
 
                                 db.Entry(conductedLectureRecords[i].lectureRecord).State = EntityState.Modified;
+
+                                ConductedLecturesLog clLogObj = new ConductedLecturesLog();
+
+                                clLogObj.CLId = conductedLectureRecords[i].lectureRecord.CLId;
+                                clLogObj.TimetableId = conductedLectureRecords[i].lectureRecord.TimetableId;
+                                clLogObj.ActualLectureDate = conductedLectureRecords[i].lectureRecord.ActualLectureDate;
+                                clLogObj.ActualFromTime = conductedLectureRecords[i].lectureRecord.ActualFromTime;
+                                clLogObj.ActualToTime = conductedLectureRecords[i].lectureRecord.ActualToTime;
+                                clLogObj.ActualLocationId = conductedLectureRecords[i].lectureRecord.ActualLocationId;
+                                clLogObj.CampusId = conductedLectureRecords[i].lectureRecord.CampusId;
+                                clLogObj.StudentBatches = conductedLectureRecords[i].lectureRecord.StudentBatches;
+                                clLogObj.StudentCount = conductedLectureRecords[i].lectureRecord.StudentCount;
+                                clLogObj.StudentAttendanceSheetLocation = conductedLectureRecords[i].lectureRecord.StudentAttendanceSheetLocation;
+                                clLogObj.Comment = conductedLectureRecords[i].lectureRecord.Comment;
+                                clLogObj.CurrentStageDisplayName = conductedLectureRecords[i].lectureRecord.CurrentStageDisplayName;
+                                clLogObj.IsApprovedOrRejected = conductedLectureRecords[i].lectureRecord.IsApprovedOrRejected;
+                                clLogObj.ApprovedOrRejectedRemark = conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedRemark;
+                                clLogObj.ApprovedOrRejectedBy = conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedBy;
+                                clLogObj.ApprovedOrRejectedDate = conductedLectureRecords[i].lectureRecord.ApprovedOrRejectedDate;
+                                clLogObj.UsedDesignationId = newLecturerDesignationId;
+                                clLogObj.UsedPaymentRate = newPaymentRate;
+                                clLogObj.PaymentAmount = Math.Round(newPaymentAmount, 2);
+                                clLogObj.PaymentAutoRefreshedRemark = "Refreshed By Lecturer";
+                                clLogObj.PaymentAutoRefreshedBy = username;
+                                clLogObj.PaymentRefreshedDate = currentDateTime;
+                                clLogObj.IsFinalApproved = conductedLectureRecords[i].lectureRecord.IsFinalApproved;
+                                clLogObj.CreatedDate = conductedLectureRecords[i].lectureRecord.CreatedDate;
+                                clLogObj.CreatedBy = conductedLectureRecords[i].lectureRecord.CreatedBy;
+                                clLogObj.ModifiedDate = conductedLectureRecords[i].lectureRecord.ModifiedDate;
+                                clLogObj.ModifiedBy = conductedLectureRecords[i].lectureRecord.ModifiedBy;
+                                clLogObj.IsOpenForModerations = conductedLectureRecords[i].lectureRecord.IsOpenForModerations;
+                                clLogObj.ModerationOpenedRemark = conductedLectureRecords[i].lectureRecord.ModerationOpenedRemark;
+                                clLogObj.ModerationOpenedDate = conductedLectureRecords[i].lectureRecord.ModerationOpenedDate;
+                                clLogObj.ModerationOpenedBy = conductedLectureRecords[i].lectureRecord.ModerationOpenedBy;
+                                clLogObj.IsSentToAproval = false;
+                                clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
+
+                                db.ConductedLecturesLog.Add(clLogObj);
                             }
                         }
                     }
@@ -13687,6 +13791,40 @@ namespace PMS.Controllers
                     }
                     throw raise;
                 }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/26
+        public ActionResult GetDashboardUserNotifications()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "roshan.v";
+                var currentDateTime = DateTime.Now;
+
+                var userDetails = (from u in db.AspNetUsers where u.UserName.Equals(username) select u).FirstOrDefault();
+
+                var userSubWorkflows = (from ur in db.AspNetUserRoles
+                                        join r in db.AspNetRoles on ur.RoleId equals r.Id
+                                        join sw in db.SubWorkflows on r.Id equals sw.WorkflowRole
+                                        join w in db.Workflows on sw.WorkflowId equals w.Id
+                                        where ur.UserId.Equals(userDetails.Id) && sw.IsActive.Equals(true)
+                                        && r.IsActive.Equals(true) && ur.IsActive.Equals(true)
+                                        select new {
+                                            subWorkflow = sw,
+                                            facultyId = w.FacultyId.Value
+                                        }).Distinct().ToList();
+
+                if (userDetails.FacultyId.HasValue)
+                {
+                    userSubWorkflows = userSubWorkflows.Where(sw => sw.facultyId == userDetails.FacultyId.Value).ToList();
+                }
+
+                return Json(new
+                {
+                    data = userSubWorkflows
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }

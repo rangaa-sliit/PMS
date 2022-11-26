@@ -232,6 +232,9 @@
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
     <Property Name="CurrentStage" Type="int" />
     <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
+    <Property Name="IsSentToAproval" Type="bit" Nullable="false" />
+    <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="SentToApprovalDate" Type="datetime" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />
@@ -271,6 +274,9 @@
     <Property Name="Comment" Type="nvarchar" MaxLength="500" />
     <Property Name="CurrentStage" Type="int" />
     <Property Name="CurrentStageDisplayName" Type="nvarchar" MaxLength="256" />
+    <Property Name="IsSentToAproval" Type="bit" Nullable="false" />
+    <Property Name="SentToApprovalBy" Type="nvarchar" MaxLength="256" />
+    <Property Name="SentToApprovalDate" Type="datetime" />
     <Property Name="IsApprovedOrRejected" Type="bit" />
     <Property Name="ApprovedOrRejectedDate" Type="datetime" />
     <Property Name="ApprovedOrRejectedBy" Type="nvarchar" MaxLength="256" />

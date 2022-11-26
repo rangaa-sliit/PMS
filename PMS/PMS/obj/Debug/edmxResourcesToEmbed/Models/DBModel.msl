@@ -250,6 +250,9 @@
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
           <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
+          <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+          <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
+          <ScalarProperty Name="IsSentToAproval" ColumnName="IsSentToAproval" />
           <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
           <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
@@ -289,6 +292,9 @@
           <ScalarProperty Name="ApprovedOrRejectedBy" ColumnName="ApprovedOrRejectedBy" />
           <ScalarProperty Name="ApprovedOrRejectedDate" ColumnName="ApprovedOrRejectedDate" />
           <ScalarProperty Name="IsApprovedOrRejected" ColumnName="IsApprovedOrRejected" />
+          <ScalarProperty Name="SentToApprovalDate" ColumnName="SentToApprovalDate" />
+          <ScalarProperty Name="SentToApprovalBy" ColumnName="SentToApprovalBy" />
+          <ScalarProperty Name="IsSentToAproval" ColumnName="IsSentToAproval" />
           <ScalarProperty Name="CurrentStageDisplayName" ColumnName="CurrentStageDisplayName" />
           <ScalarProperty Name="CurrentStage" ColumnName="CurrentStage" />
           <ScalarProperty Name="Comment" ColumnName="Comment" />
