@@ -26,5 +26,7 @@ namespace PMS.Custom_Classes
         public string Email { get; set; }
         [MaxLength(50, ErrorMessage = "Maximum 50 characters exceeded")]
         public string PhoneNumber { get; set; }
+        public string Photo_Name { get; set; }
+        public HttpPostedFileBase postedPhoto { get; set; }
     }
 }

@@ -481,6 +481,7 @@
           <Property Name="NotificationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="256" />
           <Property Name="SubWorkflowId" Type="int" />
+          <Property Name="NotificationType" Type="nvarchar" MaxLength="150" />
           <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />
@@ -3084,6 +3085,7 @@
           <Property Name="NotificationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserId" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="SubWorkflowId" Type="Int32" />
+          <Property Name="NotificationType" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
@@ -4891,6 +4893,7 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
                 <ScalarProperty Name="SubWorkflowId" ColumnName="SubWorkflowId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="NotificationId" ColumnName="NotificationId" />

@@ -503,6 +503,7 @@
           <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
           <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
           <ScalarProperty Name="SubWorkflowId" ColumnName="SubWorkflowId" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="NotificationId" ColumnName="NotificationId" />

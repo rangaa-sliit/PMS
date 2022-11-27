@@ -101,9 +101,9 @@ Developed On:- 2022/10/27*@
                                 @Html.LabelFor(model => model.StudentAttendanceSheetLocation, "Student Attendance Sheet: ")
                             </div>
                             <div class="col-sm-5 form-inline">
-                                <input type="file" name="postedFile" id="studentAttendanceSheet" oninput="onStudentAttendanceSheetInput()">
+                                <input type="file" name="postedFile" id="studentAttendanceSheet" accept=".png,.jpg,.jpeg,.pdf" oninput="onStudentAttendanceSheetInput()">
                                 <a href="javascript:viewUploadedFile('@ViewBag.uploadedFileName')">@ViewBag.uploadedFileName</a>
-                                <small class="form-text text-danger">-- Only Images & PDF Files are supported --</small>
+                                <small class="form-text text-danger">-- Only Images & PDF Files (.png, .jpg, .jpeg, .pdf) are supported --</small>
                             </div>
                         </div>
                         <div class="form-group row">

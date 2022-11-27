@@ -4628,7 +4628,9 @@ namespace PMS.Controllers
                 }
                 else
                 {
-                    return View((from u in db.AspNetUsers where u.Id.Equals(id) select u).FirstOrDefault<AspNetUsers>());
+                    AspNetUsers userDetails = (from u in db.AspNetUsers where u.Id.Equals(id) select u).FirstOrDefault<AspNetUsers>();
+
+                    return View(userDetails);
                 }
             }
         }
@@ -4662,7 +4664,7 @@ namespace PMS.Controllers
                         }
                         else
                         {
-                            if(new UserFunctions().IsValidSLIITEmail(user.Email) == true)
+                            if (new UserFunctions().IsValidSLIITEmail(user.Email) == true)
                             {
                                 user.Id = Guid.NewGuid().ToString();
                                 user.EmployeeNumber = employeeNumber;
@@ -4677,6 +4679,15 @@ namespace PMS.Controllers
                                 user.AccessFailedCount = 0;
                                 user.LockoutEnabled = true;
                                 user.SecurityStamp = Guid.NewGuid().ToString();
+
+                                if(user.postedPhoto != null)
+                                {
+                                    using(var binary = new BinaryReader(user.postedPhoto.InputStream))
+                                    {
+                                        user.Photo_Data = binary.ReadBytes(user.postedPhoto.ContentLength);
+                                        user.Photo_Name = user.Email + ".jpeg";
+                                    }
+                                }
 
                                 db.AspNetUsers.Add(user);
                                 db.SaveChanges();
@@ -4704,7 +4715,7 @@ namespace PMS.Controllers
                         if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle 
                             || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName 
                             || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber || editingUser.IsAcademicUser != user.IsAcademicUser
-                            || editingUser.FacultyId != user.FacultyId || editingUser.DepartmentId != user.DepartmentId || editingUser.IsActive != user.IsActive)
+                            || editingUser.FacultyId != user.FacultyId || editingUser.DepartmentId != user.DepartmentId || editingUser.IsActive != user.IsActive || user.postedPhoto != null)
                         {
                             if (validationRecord != null && validationRecord.Id != user.Id)
                             {
@@ -4731,6 +4742,15 @@ namespace PMS.Controllers
                                     editingUser.IsActive = user.IsActive;
                                     editingUser.ModifiedBy = "Ranga";
                                     editingUser.ModifiedDate = dateTime;
+
+                                    if (user.postedPhoto != null)
+                                    {
+                                        using (var binary = new BinaryReader(user.postedPhoto.InputStream))
+                                        {
+                                            editingUser.Photo_Data = binary.ReadBytes(user.postedPhoto.ContentLength);
+                                            editingUser.Photo_Name = user.Email + ".jpeg";
+                                        }
+                                    }
 
                                     db.Entry(editingUser).State = EntityState.Modified;
                                     db.SaveChanges();
@@ -9502,17 +9522,17 @@ namespace PMS.Controllers
 
                                     db.ConductedLecturesLog.Add(clLogObj);
 
-                                    Notifications notificationObj = new Notifications();
+                                    //Notifications notificationObj = new Notifications();
 
-                                    notificationObj.SubWorkflowId = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
-                                    notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
-                                    notificationObj.CreatedDate = currentDateTime;
-                                    notificationObj.CreatedBy = username;
-                                    notificationObj.ModifiedDate = currentDateTime;
-                                    notificationObj.ModifiedBy = username;
-                                    notificationObj.IsActive = true;
+                                    //notificationObj.SubWorkflowId = nextWorkflowRecord.SubWorkflowRecord.SubWorkflowId;
+                                    //notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
+                                    //notificationObj.CreatedDate = currentDateTime;
+                                    //notificationObj.CreatedBy = username;
+                                    //notificationObj.ModifiedDate = currentDateTime;
+                                    //notificationObj.ModifiedBy = username;
+                                    //notificationObj.IsActive = true;
 
-                                    db.Notifications.Add(notificationObj);
+                                    //db.Notifications.Add(notificationObj);
                                 }
                             }
                         }
@@ -9656,17 +9676,17 @@ namespace PMS.Controllers
 
                                 db.ConductedLecturesLog.Add(clLogObj);
 
-                                Notifications notificationObj = new Notifications();
+                                //Notifications notificationObj = new Notifications();
 
-                                notificationObj.SubWorkflowId = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
-                                notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
-                                notificationObj.CreatedDate = currentDateTime;
-                                notificationObj.CreatedBy = username;
-                                notificationObj.ModifiedDate = currentDateTime;
-                                notificationObj.ModifiedBy = username;
-                                notificationObj.IsActive = true;
+                                //notificationObj.SubWorkflowId = checkingWorkflow.SubWorkflowRecord.SubWorkflowId;
+                                //notificationObj.Message = "You have Approval Pending Lecture records for " + currentDateTime.Year + " - " + monthList[paymentConsideringMonth - 1] + " from " + userRecord.userName;
+                                //notificationObj.CreatedDate = currentDateTime;
+                                //notificationObj.CreatedBy = username;
+                                //notificationObj.ModifiedDate = currentDateTime;
+                                //notificationObj.ModifiedBy = username;
+                                //notificationObj.IsActive = true;
 
-                                db.Notifications.Add(notificationObj);
+                                //db.Notifications.Add(notificationObj);
                             }
                         }
                     }
@@ -10407,11 +10427,14 @@ namespace PMS.Controllers
                     List<string> ccMails = new List<string>();
                     List<string> mailBodyList = new List<string>();
                     List<Faculty_SubworkflowsCC> facultyWiseSubWorkflows = new List<Faculty_SubworkflowsCC>();
+                    List<Notifications> notificationList = new List<Notifications>();
+                    string notificationMessage = "";
 
                     var lecturerDetails = (from u in db.AspNetUsers
                                         join t in db.Title on u.EmployeeTitle equals t.TitleId
                                         where u.Id.Equals(mlRecords.LecturerId)
                                         select new {
+                                            lecturerId = u.Id,
                                             lecturerName = t.TitleName + " " + u.FirstName + " " + u.LastName,
                                             email = u.Email
                                         }).FirstOrDefault();
@@ -10507,6 +10530,8 @@ namespace PMS.Controllers
                                 clLogObj.SentToApprovalDate = conductedLectureRecords[i].lectureRecord.SentToApprovalDate;
                                 clLogObj.IsActive = conductedLectureRecords[i].lectureRecord.IsActive;
 
+                                notificationMessage = currentWorkflow.WorkflowRole + " has rejected one or more conducted lecture records of yours";
+
                                 db.ConductedLecturesLog.Add(clLogObj);
 
                                 string mb = "<b>Subject Name:- </b>" + conductedLectureRecords[i].subjectName + "<br />"
@@ -10585,6 +10610,8 @@ namespace PMS.Controllers
 
                             db.ConductedLecturesLog.Add(clLogObj);
 
+                            notificationMessage = currentWorkflow.WorkflowRole + " has rejected one or more conducted lecture records of yours";
+
                             string mb = "<b>Subject Name:- </b>" + conductedLectureRecords[i].subjectName + "<br />"
                                     + "<b>Lecture Type:- </b>" + conductedLectureRecords[i].lectureTypeName + "<br />"
                                     + "<b>Submitted Session Date:- </b>" + conductedLectureRecords[i].lectureRecord.ActualLectureDate.ToString().Substring(0, 10) + "<br />"
@@ -10608,6 +10635,19 @@ namespace PMS.Controllers
                             rejectedByRole = currentWorkflow.WorkflowRole;
                         }
                     }
+
+                    Notifications notificationObj = new Notifications();
+
+                    notificationObj.UserId = lecturerDetails.lecturerId;
+                    notificationObj.Message = notificationMessage;
+                    notificationObj.NotificationType = "Rejection";
+                    notificationObj.CreatedDate = currentDateTime;
+                    notificationObj.CreatedBy = username;
+                    notificationObj.ModifiedDate = currentDateTime;
+                    notificationObj.ModifiedBy = username;
+                    notificationObj.IsActive = true;
+
+                    db.Notifications.Add(notificationObj);
 
                     db.SaveChanges();
 
@@ -10673,6 +10713,7 @@ namespace PMS.Controllers
                     var username = "ranga.a";
                     List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
                     List<PaymentRateLog> prLogsList = new List<PaymentRateLog>();
+                    List<Notifications> notificationList = new List<Notifications>();
 
                     var paymentRateRecords = (from pr in db.PaymentRate
                                               join de in db.Designation on pr.DesignationId equals de.DesignationId
@@ -10692,6 +10733,7 @@ namespace PMS.Controllers
                                                   designationName = de.DesignationName,
                                                   lectureTypeName = lecTyp.LectureTypeName,
                                                   facultyName = fac.FacultyName,
+                                                  deanId = fac.FacultyDean,
                                                   degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
                                                   specializationName = spzl != null ? spzl.Name : null,
                                                   subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
@@ -10808,6 +10850,30 @@ namespace PMS.Controllers
                         prLog.SentToApprovalDate = currentDateTime;
 
                         db.PaymentRateLog.Add(prLog);
+
+                        if(notificationList.FindAll(n => n.UserId == paymentRateRecords[i].deanId).Count == 0)
+                        {
+                            Notifications notificationObj = new Notifications();
+
+                            notificationObj.UserId = paymentRateRecords[i].deanId;
+                            notificationObj.Message = "You have Approval Pending Payment Rates for " + paymentRateRecords[i].facultyName;
+                            notificationObj.NotificationType = "Information";
+                            notificationObj.CreatedDate = currentDateTime;
+                            notificationObj.CreatedBy = username;
+                            notificationObj.ModifiedDate = currentDateTime;
+                            notificationObj.ModifiedBy = username;
+                            notificationObj.IsActive = true;
+
+                            notificationList.Add(notificationObj);
+                        }
+                    }
+
+                    if(notificationList.Count != 0)
+                    {
+                        foreach(var notification in notificationList)
+                        {
+                            db.Notifications.Add(notification);
+                        }
                     }
 
                     db.SaveChanges();
@@ -10855,6 +10921,7 @@ namespace PMS.Controllers
                     var currentDateTime = DateTime.Now;
                     var username = "anupama.s";
                     List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
+                    List<Notifications> notificationList = new List<Notifications>();
 
                     var paymentRateRecords = (from pr in db.PaymentRate
                                               join de in db.Designation on pr.DesignationId equals de.DesignationId
@@ -10877,7 +10944,8 @@ namespace PMS.Controllers
                                                   facultyName = fac.FacultyName,
                                                   degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
                                                   specializationName = spzl != null ? spzl.Name : null,
-                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
+                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null,
+                                                  requestorId = (from u in db.AspNetUsers where u.UserName.Equals(pr.SentToApprovalBy) select u.Id).FirstOrDefault()
                                               }).ToList();
 
                     for (var i = 0; i < paymentRateRecords.Count; i++)
@@ -10995,6 +11063,30 @@ namespace PMS.Controllers
                         prLog.ApprovalOrRejectionRemark = paymentRates.Remark;
 
                         db.PaymentRateLog.Add(prLog);
+
+                        if (notificationList.FindAll(n => n.UserId == paymentRateRecords[i].requestorId).Count == 0)
+                        {
+                            Notifications notificationObj = new Notifications();
+
+                            notificationObj.UserId = paymentRateRecords[i].requestorId;
+                            notificationObj.Message = "Faculty Dean of " + paymentRateRecords[i].facultyName + " has approved one or more payment rates";
+                            notificationObj.NotificationType = "Approval";
+                            notificationObj.CreatedDate = currentDateTime;
+                            notificationObj.CreatedBy = username;
+                            notificationObj.ModifiedDate = currentDateTime;
+                            notificationObj.ModifiedBy = username;
+                            notificationObj.IsActive = true;
+
+                            notificationList.Add(notificationObj);
+                        }
+                    }
+
+                    if (notificationList.Count != 0)
+                    {
+                        foreach (var notification in notificationList)
+                        {
+                            db.Notifications.Add(notification);
+                        }
                     }
 
                     db.SaveChanges();
@@ -11051,6 +11143,7 @@ namespace PMS.Controllers
                     var currentDateTime = DateTime.Now;
                     var username = "anupama.s";
                     List<PaymentRateMailCC> prMailList = new List<PaymentRateMailCC>();
+                    List<Notifications> notificationList = new List<Notifications>();
 
                     var paymentRateRecords = (from pr in db.PaymentRate
                                               join de in db.Designation on pr.DesignationId equals de.DesignationId
@@ -11073,7 +11166,8 @@ namespace PMS.Controllers
                                                   facultyName = fac.FacultyName,
                                                   degreeName = dgr != null ? dgr.Code + " - " + dgr.Name : null,
                                                   specializationName = spzl != null ? spzl.Name : null,
-                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null
+                                                  subjectName = sub != null ? sub.SubjectCode + " - " + sub.SubjectName : null,
+                                                  requestorId = (from u in db.AspNetUsers where u.UserName.Equals(pr.SentToApprovalBy) select u.Id).FirstOrDefault()
                                               }).ToList();
 
                     for (var i = 0; i < paymentRateRecords.Count; i++)
@@ -11191,6 +11285,30 @@ namespace PMS.Controllers
                         prLog.ApprovalOrRejectionRemark = paymentRates.Remark;
 
                         db.PaymentRateLog.Add(prLog);
+
+                        if (notificationList.FindAll(n => n.UserId == paymentRateRecords[i].requestorId).Count == 0)
+                        {
+                            Notifications notificationObj = new Notifications();
+
+                            notificationObj.UserId = paymentRateRecords[i].requestorId;
+                            notificationObj.Message = "Faculty Dean of " + paymentRateRecords[i].facultyName + " has rejected one or more payment rates";
+                            notificationObj.NotificationType = "Rejection";
+                            notificationObj.CreatedDate = currentDateTime;
+                            notificationObj.CreatedBy = username;
+                            notificationObj.ModifiedDate = currentDateTime;
+                            notificationObj.ModifiedBy = username;
+                            notificationObj.IsActive = true;
+
+                            notificationList.Add(notificationObj);
+                        }
+                    }
+
+                    if (notificationList.Count != 0)
+                    {
+                        foreach (var notification in notificationList)
+                        {
+                            db.Notifications.Add(notification);
+                        }
                     }
 
                     db.SaveChanges();
@@ -13344,7 +13462,7 @@ namespace PMS.Controllers
                 List<SelectListItem> titleList = new SelectList(titles, "Value", "Text").ToList();
                 ViewBag.titleList = titleList;
 
-                UserCC userrecord = (from u in db.AspNetUsers
+                UserCC userRecord = (from u in db.AspNetUsers
                                      where u.UserName.Equals(username)
                                      select new UserCC
                                      {
@@ -13354,10 +13472,11 @@ namespace PMS.Controllers
                                          FirstName = u.FirstName,
                                          LastName = u.LastName,
                                          Email = u.Email,
-                                         PhoneNumber = u.PhoneNumber
+                                         PhoneNumber = u.PhoneNumber,
+                                         Photo_Name = u.Photo_Name
                                      }).FirstOrDefault<UserCC>();
 
-                return View(userrecord);
+                return View(userRecord);
             }
         }
 
@@ -13383,7 +13502,7 @@ namespace PMS.Controllers
 
                     if (editingUser.EmployeeNumber != employeeNumber || editingUser.EmployeeTitle != user.EmployeeTitle
                         || editingUser.FirstName != user.FirstName || editingUser.LastName != user.LastName
-                        || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber)
+                        || editingUser.Email != user.Email || editingUser.PhoneNumber != user.PhoneNumber || editingUser.postedPhoto != null)
                     {
                         if (validationRecord != null && validationRecord.Id != user.Id)
                         {
@@ -13402,6 +13521,15 @@ namespace PMS.Controllers
                             editingUser.PhoneNumber = user.PhoneNumber;
                             editingUser.ModifiedBy = "Ranga";
                             editingUser.ModifiedDate = dateTime;
+
+                            if (user.postedPhoto != null)
+                            {
+                                using (var binary = new BinaryReader(user.postedPhoto.InputStream))
+                                {
+                                    editingUser.Photo_Data = binary.ReadBytes(user.postedPhoto.ContentLength);
+                                    editingUser.Photo_Name = editingUser.Email + ".jpeg";
+                                }
+                            }
 
                             db.Entry(editingUser).State = EntityState.Modified;
                             db.SaveChanges();
@@ -13803,35 +13931,106 @@ namespace PMS.Controllers
 
         //Developed By:- Ranga Athapaththu
         //Developed On:- 2022/11/26
+        [HttpGet]
         public ActionResult GetDashboardUserNotifications()
         {
             using (PMSEntities db = new PMSEntities())
             {
-                var username = "roshan.v";
+                var username = "ranga.a";
                 var currentDateTime = DateTime.Now;
 
-                var userDetails = (from u in db.AspNetUsers where u.UserName.Equals(username) select u).FirstOrDefault();
+                List<DashboardNotificationVM> notificationsList = (from n in db.Notifications
+                                                                   join u in db.AspNetUsers on n.UserId equals u.Id into n_u
+                                                                   from usr in n_u.DefaultIfEmpty()
+                                                                   where usr.UserName.Equals(username)
+                                                                   orderby n.IsActive descending,n.CreatedDate descending
+                                                                   select new DashboardNotificationVM
+                                                                   {
+                                                                       NotificationId = n.NotificationId,
+                                                                       Message = n.Message,
+                                                                       NotificationType = n.NotificationType,
+                                                                       NotificationDate = n.CreatedDate.ToString(),
+                                                                       IsActive = n.IsActive
+                                                                   }).ToList();
 
-                var userSubWorkflows = (from ur in db.AspNetUserRoles
-                                        join r in db.AspNetRoles on ur.RoleId equals r.Id
-                                        join sw in db.SubWorkflows on r.Id equals sw.WorkflowRole
-                                        join w in db.Workflows on sw.WorkflowId equals w.Id
-                                        where ur.UserId.Equals(userDetails.Id) && sw.IsActive.Equals(true)
-                                        && r.IsActive.Equals(true) && ur.IsActive.Equals(true)
-                                        select new {
-                                            subWorkflow = sw,
-                                            facultyId = w.FacultyId.Value
-                                        }).Distinct().ToList();
+                return Json(new { data = notificationsList }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
-                if (userDetails.FacultyId.HasValue)
-                {
-                    userSubWorkflows = userSubWorkflows.Where(sw => sw.facultyId == userDetails.FacultyId.Value).ToList();
-                }
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/27
+        public ActionResult InactivateDashboardUserNotifications(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "ranga.a";
+                var currentDateTime = DateTime.Now;
+
+                Notifications inactivatingNotification = (from n in db.Notifications where n.NotificationId.Equals(id) select n).FirstOrDefault();
+
+                inactivatingNotification.IsActive = false;
+                inactivatingNotification.ModifiedBy = username;
+                inactivatingNotification.ModifiedDate = currentDateTime;
+
+                db.Entry(inactivatingNotification).State = EntityState.Modified;
+                db.SaveChanges();
 
                 return Json(new
                 {
-                    data = userSubWorkflows
+                    success = true,
+                    message = ""
                 }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/27
+        [HttpGet]
+        public FileContentResult GetUserPhoto()
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var username = "ranga.a";
+
+                var userDetails = (from u in db.AspNetUsers where u.UserName.Equals(username) select u).FirstOrDefault();
+
+                if(userDetails.Photo_Data == null)
+                {
+                    string fileName = HttpContext.Server.MapPath(@"~/Content/Images/undraw_profile.svg");
+
+                    byte[] imageData = null;
+                    FileInfo fileInfo = new FileInfo(fileName);
+                    long imageFileLength = fileInfo.Length;
+                    FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new BinaryReader(fs);
+                    imageData = br.ReadBytes((int)imageFileLength);
+
+                    return File(imageData, "image/svg+xml");
+                }
+
+                return new FileContentResult(userDetails.Photo_Data, "image/jpeg");
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/27
+        public void DownloadUserPhoto(string id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var userDetails = (from u in db.AspNetUsers
+                                   join t in db.Title on u.EmployeeTitle equals t.TitleId
+                                   where u.Id.Equals(id)
+                                   select new {
+                                       userPhotoData = u.Photo_Data,
+                                       userName = t.TitleName + " " + u.FirstName + " " + u.LastName
+                                   }).FirstOrDefault();
+
+                Response.Clear();
+                Response.ContentType = "image/jpeg";
+                Response.AddHeader("content-disposition", "attachment; filename=" + userDetails.userName + ".jpeg");
+                Response.BinaryWrite(userDetails.userPhotoData);
+                Response.End();
             }
         }
     }

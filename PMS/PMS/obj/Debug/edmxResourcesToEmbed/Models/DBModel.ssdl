@@ -476,6 +476,7 @@
     <Property Name="NotificationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="UserId" Type="nvarchar" MaxLength="256" />
     <Property Name="SubWorkflowId" Type="int" />
+    <Property Name="NotificationType" Type="nvarchar" MaxLength="150" />
     <Property Name="Message" Type="nvarchar(max)" Nullable="false" />
     <Property Name="CreatedDate" Type="datetime" Nullable="false" />
     <Property Name="CreatedBy" Type="nvarchar" MaxLength="256" Nullable="false" />

@@ -973,6 +973,7 @@
     <Property Name="NotificationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="UserId" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
     <Property Name="SubWorkflowId" Type="Int32" />
+    <Property Name="NotificationType" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="Message" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
     <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />

@@ -376,6 +376,7 @@
     <Compile Include="ViewModels\ConductedLectureApprovalVM.cs" />
     <Compile Include="ViewModels\ConductedLecturesVM.cs" />
     <Compile Include="ViewModels\ConfigurationalSettingsVM.cs" />
+    <Compile Include="ViewModels\DashboardNotificationVM.cs" />
     <Compile Include="ViewModels\DegreeVM.cs" />
     <Compile Include="ViewModels\AppointmentVM.cs" />
     <Compile Include="ViewModels\DepartmentVM.cs" />

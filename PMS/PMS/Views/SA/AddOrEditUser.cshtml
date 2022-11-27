@@ -85,6 +85,17 @@ Developed On:- 2022/09/26*@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-2">
+                        @Html.LabelFor(model => model.Photo_Data, "User Photo: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="file" name="postedPhoto" id="userPhoto" accept=".png,.jpg,.jpeg" oninput="onUserPhotoInput()">
+                        <br />
+                        <a href="javascript:viewUploadedUserPhoto('@Model.Id')">@Model.Photo_Name</a>
+                        <small class="form-text text-danger">-- Only Image Files (.png, .jpg, .jpeg) are supported --</small>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
                         @Html.LabelFor(model => model.IsAcademicUser, "Is Academic User: ")
                     </div>
                     <div class="col-sm-9">
@@ -188,6 +199,7 @@ Developed On:- 2022/09/26*@
                     $("#lastName").prop("disabled", true);
                     $("#userEmail").prop("disabled", true);
                     $("#contactNumber").prop("disabled", true);
+                    $("#userPhoto").prop("disabled", true);
                     $("#isAcademicUser").prop("disabled", true);
                     $("#facultyList").prop("disabled", true);
                     $("#departmentList").prop("disabled", true);
@@ -218,10 +230,24 @@ Developed On:- 2022/09/26*@
 
             if ($(form).valid()) {
                 $("#loader").show();
+
+                var fd = new FormData();
+                var postedPhoto = $("#userPhoto")[0].files[0];
+
+                $.each($(form).serializeArray(), function (key, input) {
+                    fd.append(input.name, input.value);
+                });
+
+                fd.delete("postedPhoto");
+
+                fd.append("postedPhoto", postedPhoto);
+
                 $.ajax({
                     type: "POST",
                     url: form.action,
-                    data: $(form).serialize(),
+                    data: fd,
+                    processData: false,
+                    contentType: false,
                     success: function (data) {
                         $("#loader").hide();
                         if (data.success) {
@@ -243,7 +269,7 @@ Developed On:- 2022/09/26*@
                             $.notify(data.message, {
                                 globalPosition: "top center",
                                 className: "success"
-                            })
+                            });
                         }
                         else {
                             $.notify(data.message, {
@@ -307,6 +333,11 @@ Developed On:- 2022/09/26*@
             $("#userClearBtn").prop("disabled", false);
         }
 
+        function onUserPhotoInput() {
+            $("#userSubmitBtn").prop("disabled", false);
+            $("#userClearBtn").prop("disabled", false);
+        }
+
         function onIsAcademicUserChange() {
             var newIsAcademicUser = $("#isAcademicUser").prop("checked");
 
@@ -338,6 +369,10 @@ Developed On:- 2022/09/26*@
         function onUserStatusChange(newStatus) {
             $("#userSubmitBtn").prop("disabled", false);
             $("#userClearBtn").prop("disabled", false);
+        }
+
+        function viewUploadedUserPhoto(userId) {
+            window.location.href = "@Url.Action("DownloadUserPhoto", "SA")/" + userId;
         }
     </script>
 }

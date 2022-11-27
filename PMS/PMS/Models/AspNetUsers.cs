@@ -12,6 +12,7 @@ namespace PMS.Models
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Web;
 
     public partial class AspNetUsers
     {
@@ -76,7 +77,9 @@ namespace PMS.Models
         public Nullable<bool> PhoneNumberConfirmed { get; set; }
         public string SecurityStamp { get; set; }
         public Nullable<bool> TwoFactorEnabled { get; set; }
-    
+
+        public HttpPostedFileBase postedPhoto { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -82,6 +82,17 @@
                         @Html.ValidationMessageFor(model => model.PhoneNumber)
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        @Html.LabelFor(model => model.postedPhoto, "User Photo: ")
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="file" name="postedPhoto" id="userPhoto" accept=".png,.jpg,.jpeg" oninput="onUserPhotoInput()">
+                        <br />
+                        <a href="javascript:viewUploadedUserPhoto('@Model.Id')">@Model.Photo_Name</a>
+                        <small class="form-text text-danger">-- Only Image Files (.png, .jpg, .jpeg) are supported --</small>
+                    </div>
+                </div>
                 <hr />
                 <div class="form-group">
                     <button class="btn btn-primary" type="submit" id="userSubmitBtn">Save</button>
@@ -113,10 +124,23 @@
 
             if ($(form).valid()) {
                 $("#loader").show();
+
+                var fd = new FormData();
+                var postedPhoto = $("#userPhoto")[0].files[0];
+
+                $.each($(form).serializeArray(), function (key, input) {
+                    fd.append(input.name, input.value);
+                });
+
+                fd.delete("postedPhoto");
+
+                fd.append("postedPhoto", postedPhoto);
                 $.ajax({
                     type: "POST",
                     url: form.action,
-                    data: $(form).serialize(),
+                    data: fd,
+                    processData: false,
+                    contentType: false,
                     success: function (data) {
                         $("#loader").hide();
                         if (data.success) {
@@ -164,6 +188,15 @@
         function onContactNumberInput() {
             $("#userSubmitBtn").prop("disabled", false);
             $("#userClearBtn").prop("disabled", false);
+        }
+
+        function onUserPhotoInput() {
+            $("#userSubmitBtn").prop("disabled", false);
+            $("#userClearBtn").prop("disabled", false);
+        }
+
+        function viewUploadedUserPhoto(userId) {
+            window.location.href = "@Url.Action("DownloadUserPhoto", "SA")/" + userId;
         }
     </script>
 }

@@ -29,6 +29,21 @@ Developed On:- 2022/08/16*@
             @Html.Partial("~/Views/Shared/Footer.cshtml")
         </div>
     </div>
+    <div class="modal fade" id="notificationModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alerts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="notificationTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
+                </div>
+            </div>
+        </div>
+    </div>
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
@@ -41,6 +56,7 @@ Developed On:- 2022/08/16*@
     @Scripts.Render("~/Notify/js")
     <script>
         $("#loader").hide();
+        var notificationTbl;
 
         //(function ($) {
 
@@ -150,6 +166,8 @@ Developed On:- 2022/08/16*@
         });
 
         $(document).ready(function () {
+            getNotifications();
+
             $('#accordionSidebar').find('li.active').removeClass('active');
 
             var cPath = window.location.pathname;
@@ -248,7 +266,145 @@ Developed On:- 2022/08/16*@
             $("#sidebarToggle").on("click", function () {
                 $(".data-table").DataTable().columns.adjust();
             });
-        })
+        });
+
+        function getNotifications() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDashboardUserNotifications", "SA")',
+                success: function (response) {
+                    var data = response.data;
+                    if (data.length != 0) {
+                        var activeNotificationsCount = 0;
+                        var index = 0;
+                        $("#alertContent").html("");
+                        var dynamicContent = `<h6 class="dropdown-header">Alerts Center</h6>`;
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].IsActive) {
+                                activeNotificationsCount++;
+                            }
+
+                            if (index <= 2) {
+                                dynamicContent += `<a class="dropdown-item d-flex align-items-center" href="#"><div class="mr-3">`;
+
+                                if (data[i].NotificationType == "Approval") {
+                                    dynamicContent += `<div class="icon-circle bg-success"><i class="fas fa-thumbs-up text-white"></i></div></div>`;
+                                }
+                                else if (data[i].NotificationType == "Rejection") {
+                                    dynamicContent += `<div class="icon-circle bg-danger"><i class="fas fa-times-circle text-white"></i></div></div>`;
+                                }
+                                else {
+                                    dynamicContent += `<div class="icon-circle bg-warning"><i class="fas fa-exclamation-triangle text-white"></i></div></div>`;
+                                }
+
+                                dynamicContent += `<div><div class="small text-gray-500">` + data[i].NotificationDate + `</div>`;
+
+                                if (data[i].IsActive) {
+                                    dynamicContent += `<button class="btn btn-sm float-right" onclick="onNotificationClick(` + data[i].NotificationId + `)"><i class="fas fa-trash text-gray-500"></i></button>`
+                                        + `<span class="font-weight-bold">` + data[i].Message + `</span></div></a>`;
+                                }
+                                else {
+                                    dynamicContent += `<span>` + data[i].Message + `</span></div></a>`;
+                                }
+                            }
+                            index++;
+                        }
+
+                        dynamicContent += `<a class="dropdown-item text-center small text-gray-500" href="javascript:viewAllAlerts()">Show All Alerts</a>`
+
+                        if (activeNotificationsCount > 3) {
+                            $("#alertCount").html("3+");
+                        }
+                        else {
+                            if (activeNotificationsCount != 0) {
+                                $("#alertCount").html(activeNotificationsCount);
+                            }
+                            else {
+                                $("#alertCount").html("");
+                            }
+                        }
+
+                        $("#alertContent").html(dynamicContent);
+                    }
+                }
+            });
+        }
+
+        function onNotificationClick(notificationId) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("InactivateDashboardUserNotifications", "SA")/' + notificationId,
+                success: function (data) {
+                    getNotifications();
+                }
+            });
+        }
+
+        function viewAllAlerts() {
+            notificationTbl = $("#notificationTbl").DataTable({
+                "responsive": true,
+                "scrollY": "30vh",
+                "scrollX": true,
+                "scroller": true,
+                "order": [],
+                "ajax": {
+                    "url": "@Url.Action("GetDashboardUserNotifications", "SA")",
+                    "type": "GET",
+                    "dataType": "json"
+                },
+                "columns": [
+                    {
+                        "title": "",
+                        "data": null,
+                        "render": function (data) {
+                            if (data.IsActive) {
+                                return `<button class="btn btn-sm" onclick="onNotificationClick(` + data.NotificationId + `)"><i class="fas fa-trash text-gray-500"></i></button>`;
+                            }
+                            else {
+                                return "";
+                            }
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "20px"
+                    },
+                    {
+                        "title": "",
+                        "data": "NotificationType",
+                        "render": function (data) {
+                            if (data == "Approval") {
+                                return `<div class="icon-circle bg-success"><i class="fas fa-thumbs-up text-white"></i></div></div>`;
+                            }
+                            else if (data == "Rejection") {
+                                return `<div class="icon-circle bg-danger"><i class="fas fa-times-circle text-white"></i></div></div>`;
+                            }
+                            else {
+                                return `<div class="icon-circle bg-warning"><i class="fas fa-exclamation-triangle text-white"></i></div></div>`;
+                            }
+                        },
+                        "orderable": false,
+                        "searchable": false
+                    },
+                    {
+                        "title": "Message",
+                        "data": "Message"
+                    },
+                    {
+                        "title": "Alerts Date",
+                        "data": "NotificationDate"
+                    }
+                ],
+                "language": {
+                    "emptyTable": "No Alerts Found!"
+                }
+            });
+
+            $("#notificationModal").modal("show");
+        }
+
+        $('#notificationModal').on('shown.bs.modal', function (e) {
+            notificationTbl.columns.adjust();
+        });
     </script>
     <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/select/1.5.0/js/dataTables.select.min.js"></script>

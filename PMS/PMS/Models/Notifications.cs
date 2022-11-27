@@ -17,6 +17,7 @@ namespace PMS.Models
         public int NotificationId { get; set; }
         public string UserId { get; set; }
         public Nullable<int> SubWorkflowId { get; set; }
+        public string NotificationType { get; set; }
         public string Message { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
