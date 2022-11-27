@@ -2189,6 +2189,25 @@ namespace PMS.Controllers
                                 activeAppointments[i].ModifiedBy = "Ranga";
                                 activeAppointments[i].ModifiedDate = currentDateTime;
                                 db.Entry(activeAppointments[i]).State = EntityState.Modified;
+
+                                AppointmentLog activeAppLog = new AppointmentLog();
+
+                                activeAppLog.AppointmentId = activeAppointments[i].AppointmentId;
+                                activeAppLog.UserId = activeAppointments[i].UserId;
+                                activeAppLog.AppointmentTypeId = activeAppointments[i].AppointmentTypeId;
+                                activeAppLog.DesignationId = activeAppointments[i].DesignationId;
+                                activeAppLog.AppointmentFrom = activeAppointments[i].AppointmentFrom;
+                                activeAppLog.AppointmentTo = activeAppointments[i].AppointmentTo;
+                                activeAppLog.CreatedDate = activeAppointments[i].CreatedDate;
+                                activeAppLog.CreatedBy = activeAppointments[i].CreatedBy;
+                                activeAppLog.ModifiedDate = activeAppointments[i].ModifiedDate;
+                                activeAppLog.ModifiedBy = activeAppointments[i].ModifiedBy;
+                                activeAppLog.Comment = activeAppointments[i].Comment;
+                                activeAppLog.AutoUpdateRemark = activeAppointments[i].AutoUpdateRemark;
+                                activeAppLog.AutoUpdateDate = activeAppointments[i].AutoUpdateDate;
+                                activeAppLog.IsActive = activeAppointments[i].IsActive;
+
+                                db.AppointmentLog.Add(activeAppLog);
                             }
 
                             appointment.CreatedBy = "Ranga";
@@ -2197,6 +2216,26 @@ namespace PMS.Controllers
                             appointment.ModifiedDate = currentDateTime;
 
                             db.Appointment.Add(appointment);
+                            db.SaveChanges();
+
+                            AppointmentLog appLog = new AppointmentLog();
+
+                            appLog.AppointmentId = appointment.AppointmentId;
+                            appLog.UserId = appointment.UserId;
+                            appLog.AppointmentTypeId = appointment.AppointmentTypeId;
+                            appLog.DesignationId = appointment.DesignationId;
+                            appLog.AppointmentFrom = appointment.AppointmentFrom;
+                            appLog.AppointmentTo = appointment.AppointmentTo;
+                            appLog.CreatedDate = appointment.CreatedDate;
+                            appLog.CreatedBy = appointment.CreatedBy;
+                            appLog.ModifiedDate = appointment.ModifiedDate;
+                            appLog.ModifiedBy = appointment.ModifiedBy;
+                            appLog.Comment = appointment.Comment;
+                            appLog.AutoUpdateRemark = appointment.AutoUpdateRemark;
+                            appLog.AutoUpdateDate = appointment.AutoUpdateDate;
+                            appLog.IsActive = appointment.IsActive;
+
+                            db.AppointmentLog.Add(appLog);
                             db.SaveChanges();
 
                             return Json(new
@@ -2262,6 +2301,25 @@ namespace PMS.Controllers
                                     }
 
                                     db.Entry(bfrAppointment).State = EntityState.Modified;
+
+                                    AppointmentLog beforeAppLog = new AppointmentLog();
+
+                                    beforeAppLog.AppointmentId = bfrAppointment.AppointmentId;
+                                    beforeAppLog.UserId = bfrAppointment.UserId;
+                                    beforeAppLog.AppointmentTypeId = bfrAppointment.AppointmentTypeId;
+                                    beforeAppLog.DesignationId = bfrAppointment.DesignationId;
+                                    beforeAppLog.AppointmentFrom = bfrAppointment.AppointmentFrom;
+                                    beforeAppLog.AppointmentTo = bfrAppointment.AppointmentTo;
+                                    beforeAppLog.CreatedDate = bfrAppointment.CreatedDate;
+                                    beforeAppLog.CreatedBy = bfrAppointment.CreatedBy;
+                                    beforeAppLog.ModifiedDate = bfrAppointment.ModifiedDate;
+                                    beforeAppLog.ModifiedBy = bfrAppointment.ModifiedBy;
+                                    beforeAppLog.Comment = bfrAppointment.Comment;
+                                    beforeAppLog.AutoUpdateRemark = bfrAppointment.AutoUpdateRemark;
+                                    beforeAppLog.AutoUpdateDate = bfrAppointment.AutoUpdateDate;
+                                    beforeAppLog.IsActive = bfrAppointment.IsActive;
+
+                                    db.AppointmentLog.Add(beforeAppLog);
                                 }
 
                                 db.SaveChanges();
@@ -2313,6 +2371,25 @@ namespace PMS.Controllers
                                     }
 
                                     db.Entry(aftrAppointment).State = EntityState.Modified;
+
+                                    AppointmentLog afterAppLog = new AppointmentLog();
+
+                                    afterAppLog.AppointmentId = aftrAppointment.AppointmentId;
+                                    afterAppLog.UserId = aftrAppointment.UserId;
+                                    afterAppLog.AppointmentTypeId = aftrAppointment.AppointmentTypeId;
+                                    afterAppLog.DesignationId = aftrAppointment.DesignationId;
+                                    afterAppLog.AppointmentFrom = aftrAppointment.AppointmentFrom;
+                                    afterAppLog.AppointmentTo = aftrAppointment.AppointmentTo;
+                                    afterAppLog.CreatedDate = aftrAppointment.CreatedDate;
+                                    afterAppLog.CreatedBy = aftrAppointment.CreatedBy;
+                                    afterAppLog.ModifiedDate = aftrAppointment.ModifiedDate;
+                                    afterAppLog.ModifiedBy = aftrAppointment.ModifiedBy;
+                                    afterAppLog.Comment = aftrAppointment.Comment;
+                                    afterAppLog.AutoUpdateRemark = aftrAppointment.AutoUpdateRemark;
+                                    afterAppLog.AutoUpdateDate = aftrAppointment.AutoUpdateDate;
+                                    afterAppLog.IsActive = aftrAppointment.IsActive;
+
+                                    db.AppointmentLog.Add(afterAppLog);
                                 }
 
                                 db.SaveChanges();
@@ -2326,6 +2403,26 @@ namespace PMS.Controllers
                                 editingAppointment.ModifiedDate = currentDateTime;
 
                                 db.Entry(editingAppointment).State = EntityState.Modified;
+                                db.SaveChanges();
+
+                                AppointmentLog appLog = new AppointmentLog();
+
+                                appLog.AppointmentId = editingAppointment.AppointmentId;
+                                appLog.UserId = editingAppointment.UserId;
+                                appLog.AppointmentTypeId = editingAppointment.AppointmentTypeId;
+                                appLog.DesignationId = editingAppointment.DesignationId;
+                                appLog.AppointmentFrom = editingAppointment.AppointmentFrom;
+                                appLog.AppointmentTo = editingAppointment.AppointmentTo;
+                                appLog.CreatedDate = editingAppointment.CreatedDate;
+                                appLog.CreatedBy = editingAppointment.CreatedBy;
+                                appLog.ModifiedDate = editingAppointment.ModifiedDate;
+                                appLog.ModifiedBy = editingAppointment.ModifiedBy;
+                                appLog.Comment = editingAppointment.Comment;
+                                appLog.AutoUpdateRemark = editingAppointment.AutoUpdateRemark;
+                                appLog.AutoUpdateDate = editingAppointment.AutoUpdateDate;
+                                appLog.IsActive = editingAppointment.IsActive;
+
+                                db.AppointmentLog.Add(appLog);
                                 db.SaveChanges();
 
                                 return Json(new

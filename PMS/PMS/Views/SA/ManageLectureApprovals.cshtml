@@ -23,7 +23,7 @@ Developed On:- 2022/11/06*@
             <h6 class="m-0 font-weight-bold text-primary">Lecture Approvals</h6>
         </div>
         <div class="card-body">
-            @*<button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>*@
+            <button type="button" class="btn btn-sm btn-outline-primary float-right mb-3" onclick="OpenColorCodingDescription()"><i class="fa fa-eye"></i> Color Coding Desctription</button>
             <div class="table-responsive">
                 <table id="lectureApprovalTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -50,6 +50,38 @@ Developed On:- 2022/11/06*@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="colorCodingDescriptionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Color Coding Descriptions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Color Code</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><div class="icon-circle pendingRow"></div></td>
+                            <td>Approval Pending Lecture Records Remaining</td>
+                        </tr>
+                        <tr>
+                            <td><div class="icon-circle approvedRow"></div></td>
+                            <td>All Lecture Records Approved</td>
+                        </tr>
+                        <tr>
+                            <td><div class="icon-circle cancelledRow"></div></td>
+                            <td>All Lecture Records Rejected</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
@@ -66,6 +98,20 @@ Developed On:- 2022/11/06*@
                 "url": "@Url.Action("GetConductedLecturesForApproval", "SA")",
                 "type": "GET",
                 "dataType": "json"
+            },
+            "createdRow": function (row, data, dataIndex) {
+                if (data.PendingRecordsCount != 0) {
+                    $(row).addClass("pendingRow");
+                    $(row).addClass("text-dark");
+                }
+                else if (data.PendingRecordsCount == 0 && data.RejectedRecordsCount == 0) {
+                    $(row).addClass("approvedRow");
+                    $(row).addClass("text-dark");
+                }
+                else if (data.PendingRecordsCount == 0 && data.ApprovedRecordsCount == 0) {
+                    $(row).addClass("cancelledRow");
+                    $(row).addClass("text-dark");
+                }
             },
             "columns": [
                 {
@@ -121,5 +167,8 @@ Developed On:- 2022/11/06*@
             window.location.href = "@Url.Action("ManageLecturerMonthlyApprovals", "SA")/" + lecturerId + "/" + recordMonth;
         }
 
+        function OpenColorCodingDescription() {
+            $("#colorCodingDescriptionModal").modal("show");
+        }
     </script>
 }

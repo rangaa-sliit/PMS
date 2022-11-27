@@ -27,7 +27,7 @@
             <button type="button" class="btn btn-sm btn-outline-primary float-right" onclick="onSendToApprovalClick()"><i class="fa fa-arrow-right"></i> Send To Approval</button>
             <button type="button" class="btn btn-sm btn-outline-success float-right mr-2" onclick="onApproveClick()"><i class="fa fa-check"></i> Approve</button>
             <button type="button" class="btn btn-sm btn-outline-danger float-right mr-2" onclick="onRejectClick()"><i class="fa fa-times"></i> Reject</button>
-            <button type="button" class="btn btn-sm btn-outline-primary float-right mr-2" onclick="OpenWorkflowMap('@Url.Action("ViewSubWorkFlowMap", "SA")')"><i class="fa fa-eye"></i> Color Coding Desctription</button>
+            <button type="button" class="btn btn-sm btn-outline-primary float-right mr-2" onclick="OpenColorCodingDescription()"><i class="fa fa-eye"></i> Color Coding Desctription</button>
             <div class="table-responsive">
                 <table id="paymentRateTbl" class="table table-bordered data-table nowrap" style="width: 100%;"></table>
             </div>
@@ -113,6 +113,34 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="colorCodingDescriptionModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Color Coding Descriptions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-labelledby="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Color Code</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><div class="icon-circle pendingRow"></div></td>
+                            <td>Payment Rates that not have been sent for approval</td>
+                        </tr>
+                        <tr>
+                            <td><div class="icon-circle bg-warning"></div></td>
+                            <td>Payment Rates that have been sent for approval / Pending Approval</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
@@ -163,8 +191,15 @@
                 "dataType": "json"
             },
             "createdRow": function (row, data, dataIndex) {
-                if (data.IsApproved == null) {
+                if (data.IsApproved == null && data.SentForApproval == null) {
                     $(row).addClass("pendingRow");
+                    $(row).addClass("text-dark");
+                }
+                else {
+                    if (data.IsApproved == null && data.SentForApproval != null) {
+                        $(row).addClass("bg-warning");
+                        $(row).addClass("text-dark");
+                    }
                 }
             },
             "columns": [
@@ -527,6 +562,10 @@
                     }
                 }
             });
+        }
+
+        function OpenColorCodingDescription() {
+            $("#colorCodingDescriptionModal").modal("show");
         }
     </script>
 }
