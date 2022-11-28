@@ -317,7 +317,7 @@
                             <td>Approved Lecture Records</td>
                         </tr>
                         <tr>
-                            <td><div class="icon-circle cancelledRow"></div></td>
+                            <td><div class="icon-circle rejectedRow"></div></td>
                             <td>Rejected Lecture Records</td>
                         </tr>
                     </table>
@@ -412,7 +412,7 @@
                         $(row).addClass("text-dark");
                     }
                     else if (data.IsApprovedOrRejected == false) {
-                        $(row).addClass("cancelledRow");
+                        $(row).addClass("rejectedRow");
                         $(row).addClass("text-dark");
                     }
                 }

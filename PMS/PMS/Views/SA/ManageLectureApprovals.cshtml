@@ -74,7 +74,7 @@ Developed On:- 2022/11/06*@
                             <td>All Lecture Records Approved</td>
                         </tr>
                         <tr>
-                            <td><div class="icon-circle cancelledRow"></div></td>
+                            <td><div class="icon-circle rejectedRow"></div></td>
                             <td>All Lecture Records Rejected</td>
                         </tr>
                     </table>
@@ -109,7 +109,7 @@ Developed On:- 2022/11/06*@
                     $(row).addClass("text-dark");
                 }
                 else if (data.PendingRecordsCount == 0 && data.ApprovedRecordsCount == 0) {
-                    $(row).addClass("cancelledRow");
+                    $(row).addClass("rejectedRow");
                     $(row).addClass("text-dark");
                 }
             },

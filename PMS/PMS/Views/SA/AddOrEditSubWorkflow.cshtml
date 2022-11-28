@@ -365,6 +365,10 @@
                                     $("#workflowStatusList").val("true");
                                     $("#landingRoleList").prop("disabled", true);
                                 }
+                                else {
+                                    $("#workflowSubmitBtn").prop("disabled", true);
+                                    $("#workflowClearBtn").prop("disabled", true);
+                                }
 
                                 $.notify(data.message, {
                                     globalPosition: "top center",

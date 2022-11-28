@@ -1,5 +1,4 @@
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.ValueTuple.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Mvc.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll.config
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\PMS.pdb
@@ -14,7 +13,6 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSha
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.CSharp.Core.targets
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
@@ -138,6 +136,7 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Threading.Tasks.Parallel.dl
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Threading.Thread.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Threading.ThreadPool.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Threading.Timer.dll
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.ValueTuple.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.ReaderWriter.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.XDocument.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Xml.XmlDocument.dll
@@ -186,6 +185,7 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\bin\ExcelDataReader.DataSet.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.DirectoryServices.Protocols.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Security.Principal.Windows.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Helpers.xml
+E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Mvc.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Optimization.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.Razor.xml
 E:\My Developments\PMS\SourceCode\PMS\PMS\bin\System.Web.WebPages.xml
@@ -212,3 +212,4 @@ E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CoreCompileInputs
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csproj.CopyComplete
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.dll
 E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.pdb
+E:\My Developments\PMS\SourceCode\PMS\PMS\obj\Debug\PMS.csprojAssemblyReference.cache

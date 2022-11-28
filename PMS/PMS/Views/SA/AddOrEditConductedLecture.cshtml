@@ -257,6 +257,21 @@ Developed On:- 2022/10/27*@
             var studentBatches = @Html.Raw(Json.Encode(ViewBag.studentBatches));
             var hallList = @Html.Raw(Json.Encode(ViewBag.lectureHallsList));
 
+            if (timetableData.Location != null) {
+                var hallId = hallList.find(h => h.Text == timetableData.Location).Value;
+                $("#lectureHallsList").val(hallId).change();
+            }
+            else {
+                $("#lectureHallsList").val(null).change();
+            }
+
+            if (studentBatches != null) {
+                $("#studentBatches").val(studentBatches).change();
+            }
+            else {
+                $("#studentBatches").val(null).change();
+            }
+
             if (operation != undefined) {
                 $("#conductedLectureSubmitBtn").prop("disabled", true);
                 $("#conductedLectureClearBtn").prop("disabled", true);
@@ -302,21 +317,6 @@ Developed On:- 2022/10/27*@
                 $("#conductedLectureStatusList").val("true");
 
                 $("#campusList").val(null).change();
-            }
-
-            if (timetableData.Location != null) {
-                var hallId = hallList.find(h => h.Text == timetableData.Location).Value;
-                $("#lectureHallsList").val(hallId).change();
-            }
-            else {
-                $("#lectureHallsList").val(null).change();
-            }
-
-            if (studentBatches != null) {
-                $("#studentBatches").val(studentBatches).change();
-            }
-            else {
-                $("#studentBatches").val(null).change();
             }
         })
 

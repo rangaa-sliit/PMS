@@ -33,6 +33,13 @@ select.input-validation-error {
     color: red;
 }
 
+/*table .dropdown-menu {
+    position: fixed !important;
+    top: 60% !important;
+    left: 10% !important;
+    transform: translate(-10%, -60%) !important;
+}*/
+
 #loader {
     position: fixed;
     width: 100%;
@@ -262,11 +269,11 @@ table.dataTable tbody td {
 }
 
 .approvedRow {
-    background-color: palegreen !important;
+    background-color: #ABEBC6 !important;
 }
 
 .rejectedRow {
-    background-color: lightcoral !important;
+    background-color: #F5B7B1 !important;
 }
 
 .cancelledRow {
@@ -274,7 +281,11 @@ table.dataTable tbody td {
 }
 
 .pendingRow {
-    background-color: lightcyan !important;
+    background-color: #F9E79F !important;
+}
+
+.notSendRow {
+    background-color: #AED6F1 !important;
 }
 
 /*#steps {

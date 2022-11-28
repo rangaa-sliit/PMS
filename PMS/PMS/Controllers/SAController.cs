@@ -5850,83 +5850,96 @@ namespace PMS.Controllers
                         {
                             if (workflowCC.Prefix != "" && workflowCC.LandingRole != null)
                             {
-                                int landingWorkflowStep = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(workflowCC.WorkflowId) && sw.WorkflowRole.Equals(workflowCC.LandingRole) select sw.WorkflowStep).FirstOrDefault<int>();
+                                var checkingLandingWorkflow = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(workflowCC.WorkflowId) && sw.WorkflowRole.Equals(workflowCC.LandingRole) select sw).FirstOrDefault();
 
-                                if (workflowCC.Prefix == "Before")
+                                int landingWorkflowStep = checkingLandingWorkflow != null ? checkingLandingWorkflow.WorkflowStep : 0;
+
+                                if (landingWorkflowStep != 0)
                                 {
-                                    editingSubWorkflow.WorkflowStep = landingWorkflowStep;
-
-                                    //editingWorkflow.ModifiedDate = dateTime;
-                                    //editingWorkflow.ModifiedBy = "Ranga";
-
-                                    //db.Entry(editingWorkflow).State = EntityState.Modified;
-                                    //db.SaveChanges();
-
-                                    List<SubWorkflows> tarversingWorkflows = (from sw in db.SubWorkflows where (sw.IsActive.Equals(true)) && (sw.SubWorkflowId != workflowCC.SubWorkflowId) && (sw.WorkflowStep >= landingWorkflowStep) select sw).ToList();
-
-                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    if (workflowCC.Prefix == "Before")
                                     {
-                                        int wfStep = tarversingWorkflows[i].WorkflowStep;
-                                        tarversingWorkflows[i].WorkflowStep = wfStep + 1;
-                                        tarversingWorkflows[i].ModifiedDate = dateTime;
-                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
+                                        editingSubWorkflow.WorkflowStep = landingWorkflowStep;
 
-                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                        //editingWorkflow.ModifiedDate = dateTime;
+                                        //editingWorkflow.ModifiedBy = "Ranga";
+
+                                        //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                        //db.SaveChanges();
+
+                                        List<SubWorkflows> tarversingWorkflows = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(workflowCC.WorkflowId) && (sw.IsActive.Equals(true)) && (sw.SubWorkflowId != workflowCC.SubWorkflowId) && (sw.WorkflowStep >= landingWorkflowStep) select sw).ToList();
+
+                                        for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                        {
+                                            int wfStep = tarversingWorkflows[i].WorkflowStep;
+                                            tarversingWorkflows[i].WorkflowStep = wfStep + 1;
+                                            tarversingWorkflows[i].ModifiedDate = dateTime;
+                                            tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                            db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                        }
+
+                                        //db.SaveChanges();
+                                    }
+                                    else if (workflowCC.Prefix == "On")
+                                    {
+                                        editingSubWorkflow.WorkflowStep = landingWorkflowStep;
+                                        //editingWorkflow.ModifiedDate = dateTime;
+                                        //editingWorkflow.ModifiedBy = "Ranga";
+
+                                        //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                        //db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        editingSubWorkflow.WorkflowStep = landingWorkflowStep + 1;
+                                        //editingWorkflow.ModifiedDate = dateTime;
+                                        //editingWorkflow.ModifiedBy = "Ranga";
+
+                                        //db.Entry(editingWorkflow).State = EntityState.Modified;
+                                        //db.SaveChanges();
+
+                                        List<SubWorkflows> tarversingWorkflows = (from sw in db.SubWorkflows where sw.WorkflowId.Equals(workflowCC.WorkflowId) && (sw.IsActive.Equals(true)) && (sw.SubWorkflowId != workflowCC.SubWorkflowId) && (sw.WorkflowStep > landingWorkflowStep) select sw).ToList();
+
+                                        for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                        {
+                                            int wfStep = tarversingWorkflows[i].WorkflowStep;
+                                            tarversingWorkflows[i].WorkflowStep = wfStep + 1;
+                                            tarversingWorkflows[i].ModifiedDate = dateTime;
+                                            tarversingWorkflows[i].ModifiedBy = "Ranga";
+
+                                            db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
+                                        }
+
+                                        //db.SaveChanges();
                                     }
 
-                                    //db.SaveChanges();
-                                }
-                                else if (workflowCC.Prefix == "On")
-                                {
-                                    editingSubWorkflow.WorkflowStep = landingWorkflowStep;
-                                    //editingWorkflow.ModifiedDate = dateTime;
-                                    //editingWorkflow.ModifiedBy = "Ranga";
+                                    editingSubWorkflow.ConsideringArea = workflowCC.ConsideringArea;
+                                    editingSubWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
+                                    editingSubWorkflow.WorkflowUser = workflowCC.WorkflowUser;
+                                    editingSubWorkflow.IsActive = workflowCC.IsActive;
+                                    editingSubWorkflow.ModifiedDate = dateTime;
+                                    editingSubWorkflow.ModifiedBy = "Ranga";
 
+                                    db.Entry(editingSubWorkflow).State = EntityState.Modified;
+                                    db.SaveChanges();
                                     //db.Entry(editingWorkflow).State = EntityState.Modified;
-                                    //db.SaveChanges();
+
+                                    this.ReArrangeWorkflow(db, workflowCC.WorkflowId, dateTime);
+
+                                    return Json(new
+                                    {
+                                        success = true,
+                                        message = "Successfully Updated"
+                                    }, JsonRequestBehavior.AllowGet);
                                 }
                                 else
                                 {
-                                    editingSubWorkflow.WorkflowStep = landingWorkflowStep + 1;
-                                    //editingWorkflow.ModifiedDate = dateTime;
-                                    //editingWorkflow.ModifiedBy = "Ranga";
-
-                                    //db.Entry(editingWorkflow).State = EntityState.Modified;
-                                    //db.SaveChanges();
-
-                                    List<SubWorkflows> tarversingWorkflows = (from sw in db.SubWorkflows where (sw.IsActive.Equals(true)) && (sw.SubWorkflowId != workflowCC.SubWorkflowId) && (sw.WorkflowStep > landingWorkflowStep) select sw).ToList();
-
-                                    for (var i = 0; i < tarversingWorkflows.Count; i++)
+                                    return Json(new
                                     {
-                                        int wfStep = tarversingWorkflows[i].WorkflowStep;
-                                        tarversingWorkflows[i].WorkflowStep = wfStep + 1;
-                                        tarversingWorkflows[i].ModifiedDate = dateTime;
-                                        tarversingWorkflows[i].ModifiedBy = "Ranga";
-
-                                        db.Entry(tarversingWorkflows[i]).State = EntityState.Modified;
-                                    }
-
-                                    //db.SaveChanges();
+                                        success = false,
+                                        message = "Selected Workflow Step / Position Not Found"
+                                    }, JsonRequestBehavior.AllowGet);
                                 }
-
-                                editingSubWorkflow.ConsideringArea = workflowCC.ConsideringArea;
-                                editingSubWorkflow.IsSpecificUser = workflowCC.IsSpecificUser;
-                                editingSubWorkflow.WorkflowUser = workflowCC.WorkflowUser;
-                                editingSubWorkflow.IsActive = workflowCC.IsActive;
-                                editingSubWorkflow.ModifiedDate = dateTime;
-                                editingSubWorkflow.ModifiedBy = "Ranga";
-
-                                db.Entry(editingSubWorkflow).State = EntityState.Modified;
-                                db.SaveChanges();
-                                //db.Entry(editingWorkflow).State = EntityState.Modified;
-
-                                this.ReArrangeWorkflow(db, workflowCC.WorkflowId, dateTime);
-
-                                return Json(new
-                                {
-                                    success = true,
-                                    message = "Successfully Updated"
-                                }, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {

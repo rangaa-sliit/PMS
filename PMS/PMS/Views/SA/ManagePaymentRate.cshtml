@@ -129,11 +129,11 @@
                             <th>Description</th>
                         </tr>
                         <tr>
-                            <td><div class="icon-circle pendingRow"></div></td>
+                            <td><div class="icon-circle notSendRow"></div></td>
                             <td>Payment Rates that not have been sent for approval</td>
                         </tr>
                         <tr>
-                            <td><div class="icon-circle bg-warning"></div></td>
+                            <td><div class="icon-circle pendingRow"></div></td>
                             <td>Payment Rates that have been sent for approval / Pending Approval</td>
                         </tr>
                     </table>
@@ -192,12 +192,12 @@
             },
             "createdRow": function (row, data, dataIndex) {
                 if (data.IsApproved == null && data.SentForApproval == null) {
-                    $(row).addClass("pendingRow");
+                    $(row).addClass("notSendRow");
                     $(row).addClass("text-dark");
                 }
                 else {
                     if (data.IsApproved == null && data.SentForApproval != null) {
-                        $(row).addClass("bg-warning");
+                        $(row).addClass("pendingRow");
                         $(row).addClass("text-dark");
                     }
                 }
