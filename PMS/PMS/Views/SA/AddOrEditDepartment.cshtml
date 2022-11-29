@@ -93,11 +93,19 @@ Developed On:- 2022/08/19*@
 
         $(function () {
             $("#usersList").select2({
-                theme: "bootstrap4"
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select HOD --"
+                }
             });
 
             $("#facultyList").select2({
-                theme: "bootstrap4"
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty --"
+                }
             });
         });
 

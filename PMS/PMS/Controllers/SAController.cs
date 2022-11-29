@@ -460,7 +460,6 @@ namespace PMS.Controllers
                              }).ToList();
 
                 List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
-                usersList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.usersList = usersList;
 
                 if (id == 0)
@@ -671,7 +670,6 @@ namespace PMS.Controllers
                              }).ToList();
 
                 List<SelectListItem> usersList = new SelectList(users, "Value", "Text").ToList();
-                usersList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.usersList = usersList;
 
                 var faculties = (from f in db.Faculty
@@ -683,7 +681,6 @@ namespace PMS.Controllers
                                  }).ToList();
 
                 List<SelectListItem> facultyList = new SelectList(faculties, "Value", "Text").ToList();
-                facultyList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.facultyList = facultyList;
 
                 if (id == 0)
@@ -2737,15 +2734,15 @@ namespace PMS.Controllers
                 //instituteList.Insert(0, new SelectListItem() { Text = "-- Select Institute --", Value = "", Disabled = true, Selected = true });
                 ViewBag.instituteList = instituteList;
 
-                var department = (from d in db.Department
-                                 where d.IsActive.Equals(true)
-                                 select new
-                                 {
-                                     Text = d.DepartmentName,
-                                     Value = d.DepartmentId
-                                 }).ToList();
+                //var department = (from d in db.Department
+                //                 where d.IsActive.Equals(true)
+                //                 select new
+                //                 {
+                //                     Text = d.DepartmentName,
+                //                     Value = d.DepartmentId
+                //                 }).ToList();
 
-                List<SelectListItem> departmentList = new SelectList(department, "Value", "Text").ToList();
+                List<SelectListItem> departmentList = new List<SelectListItem>();
                 departmentList.Insert(0, new SelectListItem() { Text = "-- N/A --", Value = "", Disabled = false, Selected = true });
                 ViewBag.departmentList = departmentList;
 
@@ -2757,6 +2754,25 @@ namespace PMS.Controllers
                 {
                     return View((from d in db.Degree where d.DegreeId.Equals(id) select d).FirstOrDefault<Degree>());
                 }
+            }
+        }
+
+        //Developed By:- Ranga Athapaththu
+        //Developed On:- 2022/11/29
+        [HttpGet]
+        public ActionResult GetDepartmentsByFaculty(int id)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                var departments = (from d in db.Department
+                                   where d.FacultyId.Value == id && d.IsActive.Equals(true)
+                                   select new
+                                   {
+                                       Text = d.DepartmentName,
+                                       Value = d.DepartmentId
+                                   }).ToList();
+
+                return Json(departments, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -4482,27 +4498,18 @@ namespace PMS.Controllers
             //ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("Errors List");
             using(PMSEntities db = new PMSEntities())
             {
-                //List<Appointment> lectureAppointmentDetails = (from a in db.Appointment
-                //                                               join d in db.Designation on a.DesignationId equals d.DesignationId
-                //                                               where a.UserId.Equals(timetableRecord.lecturerId) && a.AppointmentFrom.Value <= timetableRecord.ttRecord.LectureDate.Value
-                //                                               && (a.AppointmentTo.HasValue ? timetableRecord.ttRecord.LectureDate.Value <= a.AppointmentTo.Value : true)
-                //                                               && d.IsActive.Equals(true)
-                //                                               orderby a.AppointmentId ascending
-                //                                               select a).ToList();
+                var username = "roshan.v";
 
-                //List<FacultyLecturersVM> facLecturers = (from f in db.Faculty
-                //                                         select new
-                //                                         {
-                //                                             f.FacultyName,
-                //                                             FacultyLecturersCount = (from a in db.Appointment
-                //                                                                      join u in db.AspNetUsers on a.UserId equals u.Id
-                //                                                                      where u.FacultyId.Value.Equals(f.FacultyId) && a.IsActive.Equals(true) && u.IsActive.Equals(true)
-                //                                                                      select u.FirstName).Distinct().ToList()
-                //                                         }).ToList();
+                var userDetails = (from u in db.AspNetUsers where u.UserName.Equals(username) select u).FirstOrDefault();
+                var subStr = userDetails.Photo_Data;
+                //var bytes = Enumerable.Range(0, subStr.Length)
+                //     .Where(x => x % 2 == 0)
+                //     .Select(x => Convert.ToByte(subStr.Substring(x, 2), 16))
+                //     .ToArray();
 
                 return Json(new
                 {
-                    data = ""
+                    data = subStr
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -14100,7 +14107,7 @@ namespace PMS.Controllers
         {
             using (PMSEntities db = new PMSEntities())
             {
-                var username = "ranga.a";
+                var username = "roshan.v";
 
                 var userDetails = (from u in db.AspNetUsers where u.UserName.Equals(username) select u).FirstOrDefault();
 

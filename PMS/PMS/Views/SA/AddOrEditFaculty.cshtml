@@ -84,7 +84,11 @@ Developed On:- 2022/08/18*@
 
         $(function () {
             $("#usersList").select2({
-                theme: "bootstrap4"
+                theme: "bootstrap4",
+                placeholder: {
+                    id: '',
+                    text: "-- Select Faculty Dean --"
+                }
             });
         });
 

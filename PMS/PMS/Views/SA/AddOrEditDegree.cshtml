@@ -246,6 +246,22 @@
         function onFacultyChange(newFaculty) {
             $("#degreeSubmitBtn").prop("disabled", false);
             $("#degreeClearBtn").prop("disabled", false);
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDepartmentsByFaculty", "SA")/' + newFaculty,
+                success: function (response) {
+                    $("#DepartmentId").find('option').not(':first').remove();
+                    var dynamicContent = ``;
+
+                    for (var i = 0; i < response.length; i++) {
+                        dynamicContent = dynamicContent + `<option value="` + response[i].Value + `">` + response[i].Text + `</option>`;
+                    }
+
+                    $("#DepartmentId option:first").after(dynamicContent);
+                }
+            });
+            $("#DepartmentId").val(null).change();
         }
 
         function onInstituteChange(newInstitute) {
