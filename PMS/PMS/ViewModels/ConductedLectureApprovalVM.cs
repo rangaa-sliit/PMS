@@ -10,6 +10,7 @@ namespace PMS.ViewModels
         public string LecturerId { get; set; }
         public string LecturerName { get; set; }
         public string RecordMonth { get; set; }
+        public int TotalRecordsCount { get; set; }
         public int PendingRecordsCount { get; set; }
         public int ApprovedRecordsCount { get; set; }
         public int RejectedRecordsCount { get; set; }
