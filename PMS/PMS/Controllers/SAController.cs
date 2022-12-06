@@ -5553,7 +5553,7 @@ namespace PMS.Controllers
                 {
                     var dateTime = DateTime.Now;
                     Workflows validationRecord = (from w in db.Workflows
-                                                  where w.WorkflowName.Equals(workflowObj.WorkflowName) && w.FacultyId.Value.Equals(workflowObj.FacultyId.Value)
+                                                  where w.WorkflowName.Equals(workflowObj.WorkflowName) || w.FacultyId.Value.Equals(workflowObj.FacultyId.Value)
                                                   select w).FirstOrDefault<Workflows>();
 
                     if (workflowObj.Id == 0)

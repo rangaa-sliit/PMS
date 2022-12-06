@@ -59,5 +59,42 @@ namespace PMS.Custom_Classes
                 return authorize;
             }
         }
+
+        public static List<string> UserClaimsList(string currentUser)
+        {
+            using (PMSEntities db = new PMSEntities())
+            {
+                List<string> allClaims = new List<string>();
+                List<Claim> usrClaims = (from u in db.AspNetUsers
+                                         join uc in db.UserClaims on u.Id equals uc.UserId
+                                         join agc in db.AccessGroupClaims on uc.AccessGroupClaimId equals agc.Id
+                                         join c in db.Claim on agc.ClaimId equals c.ClaimId
+                                         where u.UserName.Equals(currentUser) && u.IsActive.Equals(true) && uc.IsActive.Equals(true)
+                                         && agc.IsActive.Equals(true) && c.IsActive.Equals(true)
+                                         select c).ToList();
+
+                for (int i = 0; i < usrClaims.Count; i++)
+                {
+                    var claimsList = new JavaScriptSerializer().Deserialize<List<string>>(usrClaims[i].ClaimValue).ToList();
+
+                    if (usrClaims[i].SubOperation != null)
+                    {
+                        for (int j = 0; j < claimsList.Count; j++)
+                        {
+                            allClaims.Add(claimsList[j] + "/" + usrClaims[i].SubOperation);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < claimsList.Count; j++)
+                        {
+                            allClaims.Add(claimsList[j]);
+                        }
+                    }
+                }
+
+                return allClaims;
+            }
+        }
     }
 }

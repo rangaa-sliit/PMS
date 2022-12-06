@@ -269,7 +269,8 @@ Developed On:- 2022/11/18*@
             $("#conductedLectureSubmitBtn").prop("disabled", true);
             $("#conductedLectureClearBtn").prop("disabled", true);
 
-            breadcumText = `<li class="breadcrumb-item"><a href="@Url.Action("ManageLecturerMonthlyApprovals", "SA")/` + lecturerId + `/` + recordMonth + `">Manage Lecturer Monthly Approvals</a></li>`
+            breadcumText = `<li class="breadcrumb-item"><a href="@Url.Action("ManageLectureApprovals", "SA")">Manage Lecturer Approvals</a></li>`
+                + `<li class="breadcrumb-item"><a href="@Url.Action("ManageLecturerMonthlyApprovals", "SA")/` + lecturerId + `/` + recordMonth + `">Manage Lecturer Monthly Approvals</a></li>`
                 + `<li class="breadcrumb-item active">Open For Moderations</li>`;
 
             $("#breadCrumbWrapper").append(breadcumText);
